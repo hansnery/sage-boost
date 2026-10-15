@@ -3,7 +3,7 @@
 Where the three repositories and the installed game stand, for a model or
 person picking the work up. Rules, build steps and branches are in
 [AGENTS.md](../AGENTS.md); the Realms side (factions, AI, files outside the
-repo, backlog) is in the Realms data repo's `AGENTS.md`; what the docs can't
+repo, backlog) is in the Realms repo's `data\AGENTS.md`; what the docs can't
 settle is in [BACKLOG.md](BACKLOG.md). Re-check anything below against the
 files before relying on it.
 
@@ -15,7 +15,7 @@ in each repo.
 | repo | branch | local commits not on origin |
 |---|---|---|
 | sage-boost (`C:\repositories\sage-boost`) | `feat/perf-dll`, `main` | none (all pushed 2026-10-15; `main` = `feat/perf-dll`) |
-| Realms data (`...\realms_nightly\data`) | `master` | none (all pushed 2026-10-15) |
+| Realms in Exile (`...\realms_nightly`, [hansnery/realms-nightly](https://github.com/hansnery/realms-nightly); was `...\realms_nightly\data`, hansnery/data, until 2026-10-15) | `master` | check with `git log --oneline @{u}..`; the move and the Dorwinion fix were pushed 2026-10-15 |
 | realms-worldbuilder (`C:\Jogos\AgeoftheRing\realms-worldbuilder`) | `main` | none (all pushed 2026-10-15) |
 
 The six files that can show as modified (`docs/plans/...`, `perf/Makefile`,
@@ -146,7 +146,7 @@ confirmed in game"):
 
 ## Backlog
 
-Realms data: see *Backlog* in its `AGENTS.md` (capture flags, civilian
+Realms in Exile: see *Backlog* in its `data\AGENTS.md` (capture flags, civilian
 castles, redundant alternate maps, buildings outside the inflation filter,
 Carn Dûm pad portrait, off-radar buildings, unconfirmed change-log entries).
 

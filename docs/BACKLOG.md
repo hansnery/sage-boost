@@ -1,8 +1,8 @@
 # Handoff backlog (2026-10-15)
 
 What the documentation can't settle on its own, for sage-boost and for the
-Realms in Exile data repo. Read this together with [STATUS.md](STATUS.md)
-and [AGENTS.md](../AGENTS.md) (and the Realms data repo's `AGENTS.md`).
+Realms in Exile repo (hansnery/realms-nightly). Read this together with [STATUS.md](STATUS.md)
+and [AGENTS.md](../AGENTS.md) (and the Realms repo's `data\AGENTS.md`).
 Strike an item through, with the date, when it's done.
 
 ## Before the handoff (the user)
@@ -59,7 +59,8 @@ saves.
 ## Starting a new model
 
 - [ ] Tell it explicitly to read, before anything else: `AGENTS.md` and
-  `docs/STATUS.md` here, this file, and `AGENTS.md` in the Realms data repo.
+  `docs/STATUS.md` here, this file, and `data\AGENTS.md` in the Realms repo
+  (`realms_nightly`, hansnery/realms-nightly).
   sage-boost also has a `CLAUDE.md` pointing to `AGENTS.md`; the Realms
   repo has only `AGENTS.md`.
 - [ ] **The docs haven't been tried by a fresh reader.** They were written

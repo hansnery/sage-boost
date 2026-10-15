@@ -14,7 +14,7 @@ Related repos:
 | repo | remote | local path |
 |---|---|---|
 | sage-boost (this one) | [hansnery/sage-boost](https://github.com/hansnery/sage-boost) | `C:\repositories\sage-boost` |
-| Realms in Exile data | [hansnery/data](https://github.com/hansnery/data) (private), `master` | `C:\Program Files (x86)\Realms in Exile Nightly\realms_nightly\data` (has its own `AGENTS.md`) |
+| Realms in Exile | [hansnery/realms-nightly](https://github.com/hansnery/realms-nightly) (private, Git LFS), `master` | `C:\Program Files (x86)\Realms in Exile Nightly\realms_nightly` (its agent notes are `data\AGENTS.md`). Since 2026-10-15 it replaces [hansnery/data](https://github.com/hansnery/data) and [hansnery/art](https://github.com/hansnery/art), which are only archives now |
 | Realms WorldBuilder | [hansnery/realms-worldbuilder](https://github.com/hansnery/realms-worldbuilder), `main` | `C:\Jogos\AgeoftheRing\realms-worldbuilder` |
 | Open-BFME-2 (reference, read only) | [Open-BFME/Open-BFME-2](https://github.com/Open-BFME/Open-BFME-2) | `C:\repositories\Open-BFME-2` |
 
