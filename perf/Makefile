@@ -1,0 +1,171 @@
+# bfme2perf: performance plugin for BFME2 / ROTWK, loaded by Miles from the
+# game's mss\ folder.
+# Run from a POSIX shell (Git Bash, MSYS2, Linux) with a 32-bit MinGW-w64 GCC:
+#   make                  build/bfme2perf.asi
+#   make test             row, config, site, hook and load tests
+#   make dist             dist/ folder: copy its contents into the game's mss\
+#   make CROSS=i686-w64-mingw32-   when the compiler is prefixed (Linux cross)
+
+CROSS    ?=
+CC       := $(CROSS)gcc
+WINDRES  := $(CROSS)windres
+
+BUILD := build
+SRCS  := src/main.c src/log.c src/rt.c src/scan.c src/sites.c src/patch.c src/stubs.c \
+         src/timing.c src/csvrow.c src/clock.c src/reflect.c src/config.c src/uistate.c \
+         src/inst.c src/fpsites.c src/fps.c src/fpsmath.c src/btnclock.c src/passflag.c \
+         src/shadowpass.c src/spsites.c src/fxguard.c src/catchup.c src/cusites.c src/notice.c \
+         src/lights.c src/ltsites.c
+OBJS  := $(SRCS:src/%.c=$(BUILD)/%.o) $(BUILD)/version.o
+
+COMMON_FLAGS := -std=gnu11 -Wall -Wextra -Werror -DWIN32_LEAN_AND_MEAN -DUNICODE -D_UNICODE
+# No C runtime in the DLL: nothing runs before or around DllMain but our code.
+# The hook stubs run between a game function's return and its caller, so no
+# x87 or SSE register may change: general registers only.
+CFLAGS  := -O2 $(COMMON_FLAGS) -ffreestanding -fno-stack-protector \
+           -fno-asynchronous-unwind-tables -fno-tree-loop-distribute-patterns \
+           -mgeneral-regs-only
+LDFLAGS := -shared -nostdlib -s -Wl,-e,_DllMain@12 -Wl,--enable-stdcall-fixup \
+           -Wl,--dynamicbase -Wl,--nxcompat
+LIBS    := -lkernel32 -lgcc
+
+TEST_CFLAGS := -O1 $(COMMON_FLAGS) -Isrc -Itests
+
+AOTR_DAT  ?= C:/Jogos/AgeoftheRing/rotwk/game.dat
+ROTWK_DAT ?= C:/Jogos/AgeoftheRing/rotwk/game820.dat
+SITE_TEST_ARGS := $(if $(wildcard $(AOTR_DAT)),--aotr "$(AOTR_DAT)") \
+                  $(if $(wildcard $(ROTWK_DAT)),--rotwk "$(ROTWK_DAT)")
+
+.PHONY: all test dist clean check-arch inst-gpu shadow-fx
+
+all: check-arch $(BUILD)/bfme2perf.asi
+
+check-arch:
+	@case "$$($(CC) -dumpmachine)" in \
+	  i686-*|i586-*|i386-*) ;; \
+	  *) echo "error: need a 32-bit (i686) MinGW-w64 gcc, '$(CC)' targets $$($(CC) -dumpmachine)"; exit 1;; \
+	esac
+
+$(BUILD):
+	mkdir -p $@
+
+$(BUILD)/%.o: src/%.c src/*.h | $(BUILD)
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+# The one unit with floating point (see src/fpsmath.h): SSE scalar only, no
+# vectorizing, no x87.
+FPSMATH_CFLAGS := -O2 $(COMMON_FLAGS) -ffreestanding -fno-stack-protector \
+                  -fno-asynchronous-unwind-tables -fno-tree-loop-distribute-patterns \
+                  -msse2 -mfpmath=sse -fno-math-errno -fno-tree-vectorize -fno-tree-slp-vectorize
+
+$(BUILD)/fpsmath.o: src/fpsmath.c src/*.h | $(BUILD)
+	$(CC) $(FPSMATH_CFLAGS) -c -o $@ $<
+
+$(BUILD)/version.o: src/version.rc | $(BUILD)
+	$(WINDRES) -O coff -o $@ $<
+
+$(BUILD)/bfme2perf.asi: $(OBJS) src/bfme2perf.def
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) src/bfme2perf.def $(LIBS)
+
+$(BUILD)/test_load.exe: tests/test_load.c | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -static -o $@ $<
+
+$(BUILD)/test_sites.exe: tests/test_sites.c src/scan.c src/sites.c src/uistate.c src/fpsites.c \
+                         src/btnclock.c src/passflag.c src/spsites.c src/cusites.c src/ltsites.c \
+                         src/*.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
+
+$(BUILD)/test_config.exe: tests/test_config.c src/config.c src/*.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
+
+$(BUILD)/test_row.exe: tests/test_row.c src/csvrow.c src/clock.c src/*.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
+
+$(BUILD)/test_reflect.exe: tests/test_reflect.c src/reflect.c src/*.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
+
+$(BUILD)/test_btn.exe: tests/test_btn.c src/btnclock.c src/scan.c src/sites.c src/*.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
+
+$(BUILD)/test_hooks.exe: tests/test_hooks.c src/scan.c src/patch.c src/stubs.c src/timing.c \
+                         src/csvrow.c src/clock.c src/reflect.c src/uistate.c src/fps.c src/log.c \
+                         src/fpsmath.c src/btnclock.c src/shadowpass.c src/catchup.c src/notice.c \
+                         src/lights.c src/*.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
+
+$(BUILD)/test_fps.exe: tests/test_fps.c src/fps.c src/stubs.c src/log.c src/fpsmath.c \
+                       src/btnclock.c src/scan.c src/*.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
+
+$(BUILD)/test_inst.exe: tests/test_inst.c src/inst.c src/log.c src/scan.c src/patch.c src/stubs.c \
+                        src/timing.c src/csvrow.c src/clock.c src/reflect.c src/uistate.c \
+                        src/fps.c src/fpsmath.c src/btnclock.c src/shadowpass.c src/catchup.c \
+                        src/notice.c src/lights.c src/*.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
+
+$(BUILD)/test_catchup.exe: tests/test_catchup.c src/catchup.c src/notice.c src/log.c src/uistate.c \
+                           src/scan.c src/patch.c src/stubs.c src/timing.c src/csvrow.c src/clock.c \
+                           src/reflect.c src/fps.c src/fpsmath.c src/btnclock.c src/shadowpass.c \
+                           src/lights.c src/*.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
+
+$(BUILD)/test_shadowpass.exe: tests/test_shadowpass.c src/shadowpass.c src/fxguard.c src/spsites.c \
+                              src/scan.c src/fps.c src/stubs.c src/log.c src/fpsmath.c \
+                              src/btnclock.c src/*.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
+
+$(BUILD)/test_lights.exe: tests/test_lights.c src/lights.c src/shadowpass.c src/stubs.c src/log.c \
+                          src/*.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
+
+test: all $(BUILD)/test_row.exe $(BUILD)/test_reflect.exe $(BUILD)/test_config.exe \
+      $(BUILD)/test_sites.exe $(BUILD)/test_hooks.exe $(BUILD)/test_fps.exe $(BUILD)/test_load.exe \
+      $(BUILD)/test_inst.exe $(BUILD)/test_btn.exe $(BUILD)/test_shadowpass.exe \
+      $(BUILD)/test_catchup.exe $(BUILD)/test_lights.exe
+	./$(BUILD)/test_row.exe
+	./$(BUILD)/test_reflect.exe
+	./$(BUILD)/test_btn.exe
+	./$(BUILD)/test_config.exe
+	./$(BUILD)/test_sites.exe $(SITE_TEST_ARGS)
+	./$(BUILD)/test_hooks.exe
+	./$(BUILD)/test_fps.exe
+	./$(BUILD)/test_load.exe "$(BUILD)/bfme2perf.asi"
+	./$(BUILD)/test_inst.exe
+	./$(BUILD)/test_shadowpass.exe
+	./$(BUILD)/test_catchup.exe
+	./$(BUILD)/test_lights.exe
+
+# Off-line GPU check of the instanced shaders against the game's (needs a GPU and
+# the game's Shaders.big; DXVK's d3d9.dll is used for the second run when present).
+DXVK_D3D9 ?= C:/Jogos/AgeoftheRing/rotwk/d3d9.dll
+
+$(BUILD)/inst_gpu/inst_gpu.exe: tests/inst_gpu/harness.c src/inst_shaders.h src/depthcmp.h \
+                                | $(BUILD)
+	mkdir -p $(BUILD)/inst_gpu
+	$(CC) -O1 -std=gnu11 -Wall -Wextra -Werror -Isrc -static -o $@ $<
+
+inst-gpu: $(BUILD)/inst_gpu/inst_gpu.exe
+	./$(BUILD)/inst_gpu/inst_gpu.exe
+	if [ -f "$(DXVK_D3D9)" ]; then \
+	  mkdir -p $(BUILD)/inst_gpu_dxvk && cp $(BUILD)/inst_gpu/inst_gpu.exe "$(DXVK_D3D9)" $(BUILD)/inst_gpu_dxvk/ && \
+	  (cd $(BUILD)/inst_gpu_dxvk && DXVK_LOG_LEVEL=none ./inst_gpu.exe); fi
+
+# Off-line proof that no effect's _CreateShadowMap technique reads the light
+# environment or the fog colour (ShadowBatchIgnoreLight); needs a GPU, the
+# game's Shaders.big and d3dx9_43.dll.
+$(BUILD)/shadow_fx/shadow_fx.exe: tests/shadow_fx/shadow_fx.c src/shadowfx_table.h | $(BUILD)
+	mkdir -p $(BUILD)/shadow_fx
+	$(CC) -O1 -std=gnu11 -Wall -Wextra -Werror -Isrc -static -o $@ $<
+
+shadow-fx: $(BUILD)/shadow_fx/shadow_fx.exe
+	./$(BUILD)/shadow_fx/shadow_fx.exe
+	if [ -f "$(DXVK_D3D9)" ]; then \
+	  mkdir -p $(BUILD)/shadow_fx_dxvk && cp $(BUILD)/shadow_fx/shadow_fx.exe "$(DXVK_D3D9)" $(BUILD)/shadow_fx_dxvk/ && \
+	  (cd $(BUILD)/shadow_fx_dxvk && DXVK_LOG_LEVEL=none ./shadow_fx.exe); fi
+
+dist: all
+	mkdir -p dist
+	cp $(BUILD)/bfme2perf.asi bfme2perf.ini dist/
+
+clean:
+	rm -rf $(BUILD) dist

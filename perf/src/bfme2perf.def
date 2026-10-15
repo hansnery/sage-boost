@@ -1,0 +1,4 @@
+LIBRARY bfme2perf.asi
+EXPORTS
+    _RIB_Main@8 = RIB_Main@8
+    RIB_Main = RIB_Main@8

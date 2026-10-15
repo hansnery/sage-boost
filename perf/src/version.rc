@@ -1,0 +1,26 @@
+#include <winver.h>
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     0,9,10,0
+PRODUCTVERSION  0,9,10,0
+FILEOS          VOS_NT_WINDOWS32
+FILETYPE        VFT_DLL
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "FileDescription", "BFME2 performance plugin (Miles .asi)"
+            VALUE "FileVersion", "0.9.10"
+            VALUE "InternalName", "bfme2perf"
+            VALUE "LegalCopyright", "MIT License"
+            VALUE "OriginalFilename", "bfme2perf.asi"
+            VALUE "ProductName", "sage-boost performance plugin"
+            VALUE "ProductVersion", "0.9.10"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
