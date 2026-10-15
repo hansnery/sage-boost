@@ -202,8 +202,9 @@ loop alone, and a player with it can play with players without it:
 exact: shadows or reflections can lag by up to N−1 frames. Logic changes that
 would need every player on the same version (target search, pathfinding)
 are deliberately out of scope. The safety comes from this design and the
-run-time checks above; replays and a network game between a PC with the
-plugin and one without are in the test plan of the
+run-time checks above. A network game with every player on 0.9.10 has
+been played without problems; replays and a network game between a PC
+with the plugin and one without are still in the test plan of the
 [design notes](docs/specs/2026-10-13-perf-dll-design.md).
 
 ## Building
@@ -731,6 +732,7 @@ Middle-earth II* and *The Rise of the Witch-king* belong to Electronic Arts.
 | [AGENTS.md](AGENTS.md), [docs/STATUS.md](docs/STATUS.md), [docs/BACKLOG.md](docs/BACKLOG.md) | rules, branches, build and deploy steps; what is installed and pending; what still needs the user (in-game tests, WorldBuilder work) |
 | [HANDOFF.md](HANDOFF.md) | the brief the unlocker was built from (completed) |
 | [faction-limit-findings.md](faction-limit-findings.md), [side-string-lifecycle.md](side-string-lifecycle.md) | research |
+| [command-button-limits.md](command-button-limits.md) | research: the 33-button CommandSet and the porter's 12-button side bar (not acted on) |
 | [DISCREPANCIES.md](DISCREPANCIES.md) | where the research and the image disagreed |
 
 ## Legal

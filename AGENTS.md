@@ -78,6 +78,11 @@ perf-fps, perf-instancing, perf-skeleton, perf-shadow-inst, perf-shadowpass,
 perf-lowshaders, perf-catchup, perf-lights) and the `perf-v*` tags were all
 merged and were deleted, locally and on origin, with that squash.
 
+Releases are tagged per component on the commit they are built from:
+`perf-v<PERF_VERSION>` for the plugin and `unlocker-v<version>` for the
+faction unlocker (first ones: `perf-v0.9.10` and `unlocker-v0.4.0`,
+2026-10-15). Tag and push tags only when the user asks.
+
 Check again with `git branch -a -vv` and `git worktree list`. If you add a
 worktree for a feature, remove it only when the user agrees
 (`git worktree remove <path>`).
@@ -147,3 +152,5 @@ copy before reading.
   `docs/specs/2026-10-12-native-sides-design.md`; plans in `docs/plans/`.
 - Unlocker research: `faction-limit-findings.md`, `side-string-lifecycle.md`,
   `DISCREPANCIES.md`. `HANDOFF.md` is the original, completed brief.
+- UI research, not acted on (the user's call, 2026-10-15):
+  `command-button-limits.md` (CommandSet size, the porter's side bar).

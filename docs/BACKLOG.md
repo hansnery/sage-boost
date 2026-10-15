@@ -38,9 +38,11 @@ one of each kind first. The checklists are in [STATUS.md](STATUS.md),
   building for the new factions.
 - [ ] The Carn Dûm pads (Angmar subfaction art) once `fortress_carndum.bse`
   is fixed.
-- [ ] Multiplayer with the plugin: a network game between a PC with it and
-  one without, and a replay (in the plugin design notes' test plan; never
-  done).
+- [x] Multiplayer with the plugin, every player running 0.9.10: played
+  2026-10-15, worked fine (the user's report).
+- [ ] Multiplayer with the plugin on only some PCs (a PC with it and one
+  without), and a replay of a game played with it (both in the plugin
+  design notes' test plan; not done yet).
 
 ## The user's own WorldBuilder work
 

@@ -95,6 +95,9 @@ Plugin 0.9.10:
 - Moving units still look smooth at `FrameSmoothing=3`.
 - The catch-up notice shows only when catching up is sustained (6 skipped
   frames within 2 s), and the battle keeps its speed.
+- Multiplayer: a network game with every player on 0.9.10 worked fine
+  (played 2026-10-15). Still open: a game where only some PCs have the
+  plugin, and a replay.
 
 Realms in Exile (details in its `AGENTS.md` change log, all "not yet
 confirmed in game"):
