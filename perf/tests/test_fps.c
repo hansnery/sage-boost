@@ -570,7 +570,7 @@ int main(void)
     g_real_clock = 1;
     pf_fps_set_clock(NULL);
     {
-        unsigned i, t = 90000, lates = 0, extras = 0;
+        unsigned i, t = 90000, lates = 0, extras = 0, probes = 0;
         for (i = 0; i < 10; i++)
             game_draw(3000, 0);
         g_draw_spin_us = 40000;
@@ -578,9 +578,9 @@ int main(void)
         wait_at(13);
         pf_fps_take_row(&row);
         /* From here the extra frames cost 22 ms, far over the 3 ms draw: the
-         * first one tried at the guess is late; none after it. */
+         * first guess is late; only bounded recovery probes may follow. */
         g_draw_spin_us = 22000;
-        for (i = 1; i < 400; i++) {
+        for (i = 1; i < 1400; i++) {
             t += 33;
             g_frame_start = t;
             game_draw(3000, 0);
@@ -588,13 +588,55 @@ int main(void)
             pf_fps_take_row(&row);
             lates += row.late;
             extras += row.extra;
+            probes += row.probes[2];
         }
-        CHECK(lates == 1 && extras == 1 && row.cost_us >= 22000,
+        CHECK(lates == 4 && extras == 4 && probes == 3 && row.cost_us >= 22000,
               "22 ms extra frames with 20 ms left: %u late, %u drawn, expected %u us", lates,
               extras, row.cost_us);
-        CHECK(!pf_fps_stopped() && !pf_fps_resting(), "stopped %s, resting %s",
+        CHECK(!pf_fps_stopped() && pf_fps_resting(), "stopped %s, resting %s",
               pf_fps_stopped() ? pf_fps_stopped() : "no",
               pf_fps_resting() ? pf_fps_resting() : "no");
+    }
+    printf("recovery from a learned floor above the entire frame budget\n");
+    start_cold(120);
+    g_real_clock = 1;
+    pf_fps_set_clock(NULL);
+    {
+        unsigned i, t = 0xffffd000u, resumed = 0;
+        for (i = 0; i < 10; i++)
+            game_draw(3000, 0);
+        /* The first draw is guessed: a transient locks the learned floor. */
+        g_draw_spin_us = 31000;
+        g_frame_start = t;
+        wait_at(13);
+        pf_fps_take_row(&row);
+        CHECK(row.extra == 1 && row.late == 1 && row.cost_us >= 31000,
+              "seed recovery trap: %u extras, %u late, %u us", row.extra, row.late, row.cost_us);
+        g_draw_spin_us = 1000;
+        pf_fps_set_hold(fake_behind);
+        for (i = 0; i < 750 && !resumed; i++) {
+            t += 33; /* Cross the 32-bit millisecond clock wrap. */
+            g_frame_start = t;
+            game_draw(3000, 0);
+            g_behind = i == 180;
+            g_screenshots = i == 200;
+            g_iconic = i == 220;
+            wait_at(i == 240 ? 33 : 13);
+            if (g_behind) wait_at(14); /* Repeated waits count one frame. */
+            pf_fps_take_row(&row);
+            if (g_behind) CHECK(row.blocked[1] == 1, "hold counted per wait, not frame");
+            if (i == 260) {
+                /* A game frame with no limiter wait also breaks the run. */
+                pf_fps_frame_edge(0);
+                pf_fps_frame_edge(1);
+            }
+            resumed = row.extra;
+            CHECK(!row.late, "cheap recovery draw was late");
+        }
+        g_behind = 0;
+        pf_fps_set_hold(NULL);
+        CHECK(resumed && i >= 560 && row.probes[0] == 1 && row.probes[1] == 1, "bounded recovery: resumed %u after %u frames", resumed, i);
+        CHECK(row.cost_us < 10000, "stale estimate survived successful recovery: %u", row.cost_us);
     }
     g_real_clock = 0;
     g_draw_spin_us = 0;

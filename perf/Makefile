@@ -13,7 +13,7 @@ WINDRES  := $(CROSS)windres
 BUILD := build
 SRCS  := src/main.c src/log.c src/rt.c src/scan.c src/sites.c src/patch.c src/stubs.c \
          src/timing.c src/csvrow.c src/clock.c src/reflect.c src/config.c src/uistate.c \
-         src/inst.c src/fpsites.c src/fps.c src/fpsmath.c src/btnclock.c src/passflag.c \
+         src/inst.c src/declcache.c src/fpsites.c src/fps.c src/fpsmath.c src/btnclock.c src/passflag.c \
          src/shadowpass.c src/spsites.c src/fxguard.c src/catchup.c src/cusites.c src/notice.c \
          src/lights.c src/ltsites.c
 OBJS  := $(SRCS:src/%.c=$(BUILD)/%.o) $(BUILD)/version.o
@@ -97,7 +97,10 @@ $(BUILD)/test_fps.exe: tests/test_fps.c src/fps.c src/stubs.c src/log.c src/fpsm
                        src/btnclock.c src/scan.c src/*.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
 
-$(BUILD)/test_inst.exe: tests/test_inst.c src/inst.c src/log.c src/scan.c src/patch.c src/stubs.c \
+$(BUILD)/test_declcache.exe: tests/test_declcache.c src/declcache.c src/*.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
+
+$(BUILD)/test_inst.exe: tests/test_inst.c src/inst.c src/declcache.c src/log.c src/scan.c src/patch.c src/stubs.c \
                         src/timing.c src/csvrow.c src/clock.c src/reflect.c src/uistate.c \
                         src/fps.c src/fpsmath.c src/btnclock.c src/shadowpass.c src/catchup.c \
                         src/notice.c src/lights.c src/*.h | $(BUILD)
@@ -120,7 +123,7 @@ $(BUILD)/test_lights.exe: tests/test_lights.c src/lights.c src/shadowpass.c src/
 
 test: all $(BUILD)/test_row.exe $(BUILD)/test_reflect.exe $(BUILD)/test_config.exe \
       $(BUILD)/test_sites.exe $(BUILD)/test_hooks.exe $(BUILD)/test_fps.exe $(BUILD)/test_load.exe \
-      $(BUILD)/test_inst.exe $(BUILD)/test_btn.exe $(BUILD)/test_shadowpass.exe \
+      $(BUILD)/test_inst.exe $(BUILD)/test_declcache.exe $(BUILD)/test_btn.exe $(BUILD)/test_shadowpass.exe \
       $(BUILD)/test_catchup.exe $(BUILD)/test_lights.exe
 	./$(BUILD)/test_row.exe
 	./$(BUILD)/test_reflect.exe
@@ -130,6 +133,7 @@ test: all $(BUILD)/test_row.exe $(BUILD)/test_reflect.exe $(BUILD)/test_config.e
 	./$(BUILD)/test_hooks.exe
 	./$(BUILD)/test_fps.exe
 	./$(BUILD)/test_load.exe "$(BUILD)/bfme2perf.asi"
+	./$(BUILD)/test_declcache.exe
 	./$(BUILD)/test_inst.exe
 	./$(BUILD)/test_shadowpass.exe
 	./$(BUILD)/test_catchup.exe

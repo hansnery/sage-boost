@@ -7,6 +7,30 @@ repo, backlog) is in the Realms repo's `data\AGENTS.md`; what the docs can't
 settle is in [BACKLOG.md](BACKLOG.md). Re-check anything below against the
 files before relying on it.
 
+## Performance beta 0.9.11-beta.1 (2026-10-17)
+
+- User approved focused performance beta and larger render investigation.
+  Baseline `bb072a9` was verified clean and pushed on `main` and
+  `feat/perf-dll` before development. New work is on `codex/perf-beta`.
+- Implements bounded recovery from a stale learned extra-frame cost floor,
+  a 256-entry LRU declaration cache, and appended timing diagnostics.
+- Full `perf/` test suite passed. All 59 existing instanced shader variants
+  passed offline comparisons on native D3D9 and DXVK. The new mandatory CPU
+  cache test covers 600 identities, hot reuse, negative caching and COM
+  reference balance. Recovery tests cover a transient, repeated expensive
+  probes, interrupted eligibility and millisecond-clock wraparound.
+- Local build/package only: no installed files changed, no publication,
+  push of beta commits or tag. The stable branches remain at the baseline.
+- [Release notes](releases/perf-0.9.11-beta.1.md),
+  [approved design](specs/2026-10-17-perf-beta-design.md),
+  [next render audit](specs/2026-10-17-render-audit.md).
+- Both missing shader hashes identify normalmapped shadow-pass variants;
+  a new independently verified shadow family is the next candidate.
+  Skeleton threads are deferred on measured cost and current FP rules.
+- User reports current sage-boost works online (2026-10-17), but mostly at
+  30 FPS. The captured log's match mode is not confirmed. Beta gameplay,
+  mixed performance-plugin versions and replay validation remain pending.
+
 ## Current work: unlocker 0.5.0 LAN faction fix (2026-10-17)
 
 - User reported 17 exact faction-index wraps and an early multiplayer desync.

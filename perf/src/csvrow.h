@@ -105,6 +105,7 @@ typedef struct {
     pf_lt_counts lt;                  /* renderOneObject and the light cuts, whole row */
     unsigned logic_calls;             /* GameLogic::update calls, whole row */
     pf_cu_row cu;                     /* catch-up, whole row */
+    unsigned fps_blocked[4], fps_probes[3], fps_learned_us;
     unsigned have;              /* PF_HAVE_*: columns that were measured */
 } pf_row;
 

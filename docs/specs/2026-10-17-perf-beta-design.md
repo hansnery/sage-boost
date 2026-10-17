@@ -1,6 +1,7 @@
 # Performance beta: extra-frame recovery and render throughput
 
-Status: proposed for review. The user selected the focused beta and larger
+Status: approved by the user on 2026-10-17; first beta implemented and
+offline-tested. The user selected the focused beta and larger
 rendering investigation on 2026-10-17, skipping settings-only experiments.
 Baseline `bb072a9` is clean and pushed on `main` and `feat/perf-dll`.
 Development is isolated on `codex/perf-beta`; no installation or publication
@@ -158,6 +159,6 @@ back up the installed binary, INI and logs before an authorized deployment.
 
 ## Next implementation step
 
-Review this design, then write the exact implementation plan for the first
-beta. Larger rendering audits can proceed read-only while the first beta
+The implementation plan is `docs/plans/2026-10-17-perf-beta.md`. The first
+beta is built locally; gameplay validation and publication are pending. Larger rendering audits can proceed read-only while the first beta
 is developed, but must not silently expand its code scope.

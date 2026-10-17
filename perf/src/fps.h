@@ -62,6 +62,10 @@ typedef struct {
      * drew, and game frames with an extra frame that drew no clock on a
      * button asked for one (see btnclock.h). */
     unsigned clock_requests, clocks_noted, clock_unseen;
+    /* Once per limiter frame; reasons can overlap: cost, catch-up, pause, stop. */
+    unsigned blocked[4];
+    unsigned probes[3]; /* attempted, timely, late */
+    unsigned learned_us;
 } pf_fps_row;
 
 /* Before installing; max_fps 30 = off. NULL sites = nothing found.

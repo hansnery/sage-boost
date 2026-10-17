@@ -89,7 +89,8 @@ const char pf_csv_header[] =
     "lt_scene_kept_views,lt_dyn_views,lt_dyn_kept_views,"
     "lt_skipped,lt_decided,lt_reuse_hits,lt_reuse_misses,lt_fallback,lt_verify_samples,"
     "lt_verify_bad,lt_stale_draws,sb_light_fixed,sb_light_missed,lt_extra_hits,"
-    "lt_extra_misses\r\n";
+    "lt_extra_misses,fps_block_cost,fps_block_catchup,fps_block_pause,fps_block_stop,"
+    "fps_probe_attempts,fps_probe_success,fps_probe_late,fps_learned_ms\r\n";
 
 const char pf_scope_header[] = "time_s,scope,calls_per_frame,ms_per_frame\r\n";
 
@@ -475,6 +476,18 @@ unsigned pf_format_row(const pf_row *r, char *out, unsigned cap)
     sep(&o);
     if (r->have & PF_HAVE_LIGHTS)
         put_u(&o, r->lt.extra_misses);
+    {
+        unsigned i;
+        for (i = 0; i < 4; i++) {
+            sep(&o);
+            if (r->have & PF_HAVE_FPS) put_u(&o, r->fps_blocked[i]);
+        }
+        for (i = 0; i < 3; i++) {
+            sep(&o);
+            if (r->have & PF_HAVE_FPS) put_u(&o, r->fps_probes[i]);
+        }
+        ms_field(&o, (r->have & PF_HAVE_FPS) != 0, r->fps_learned_us, 1);
+    }
     return finish(&o, cap);
 }
 

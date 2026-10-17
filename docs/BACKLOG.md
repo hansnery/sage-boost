@@ -5,6 +5,18 @@ Realms in Exile repo (hansnery/realms-nightly). Read this together with [STATUS.
 and [AGENTS.md](../AGENTS.md) (and the Realms repo's `data\AGENTS.md`).
 Strike an item through, with the date, when it's done.
 
+## Performance beta 0.9.11-beta.1 (2026-10-17)
+
+- [x] Full plugin suite and offline shader checks (59 variants each on native
+  D3D9 and DXVK); new cache and scheduler regression tests.
+- [ ] User-authorized local deployment after backup; preserve installed INI.
+- [ ] Comparable SP/MP scenes, transient hitch recovery, sustained battles,
+  camera/visual checks, mixed performance-plugin clients and replay test.
+- [ ] Verify launcher beta isolation/rollback before authorized publication.
+- [ ] Next rendering experiment: independently authored normalmapped shadow
+  variants for hashes CF3571C7/94092159; see
+  [render audit](specs/2026-10-17-render-audit.md).
+
 ## Unlocker 0.5.0 LAN validation (2026-10-17)
 
 - [ ] Both PCs run the new DLL with identical Realms data and matching INIs.

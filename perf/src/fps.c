@@ -150,6 +150,11 @@ static unsigned g_cost_us, g_cost_avg_us, g_dry;
 static int g_cost_guess;
 /* This game frame had room for an extra frame of the reference cost only. */
 static int g_blocked;
+/* A stale learned floor is retried only after sustained spare capacity. */
+#define PF_FPS_PROBE_FRAMES 300u
+#define PF_FPS_PROBE_FAILURES 3u
+static unsigned g_probe_ready, g_probe_cost, g_probe_failures, g_block_bits;
+
 /* The game's own draw: its average cost, draws timed, and the one being
  * timed. g_learned_us: the reference's floor after a guess made a frame late. */
 static unsigned g_ref_us, g_ref_n, g_learned_us, g_draw_depth;
@@ -158,6 +163,13 @@ static int g_draw_skipped;
 static LONGLONG g_prev_wait, g_idle_ticks; /* summed in ticks: the gaps are sub-microsecond */
 static int g_seen_frame;
 static pf_fps_row g_row;
+static void blocked(unsigned reason)
+{
+    if (!(g_block_bits & (1u << reason))) {
+        g_block_bits |= 1u << reason;
+        g_row.blocked[reason]++;
+    }
+}
 
 unsigned pf_fps_schedule(const pf_fps_sched *s, unsigned *start)
 {
@@ -462,6 +474,7 @@ void pf_fps_init(const pf_fps_sites *sites, const char *why_not, unsigned max_fp
     g_cost_guess = g_blocked = g_draw_skipped = 0;
     g_ref_us = g_ref_n = g_learned_us = g_draw_depth = 0;
     g_rests = 0;
+    g_probe_ready = g_probe_cost = g_probe_failures = g_block_bits = 0;
     g_rest_why = 0;
     g_paused = g_any_late = g_logged = g_repeats = g_counted_repeats = 0;
     g_pause_until = g_backoff_ms = g_last_late = g_grace_until = g_log_at = g_log_skipped = 0;
@@ -576,11 +589,17 @@ void pf_fps_take_row(pf_fps_row *row)
     g_row.clocks_noted = since(b.noted, g_btn_row.noted);
     g_row.clock_unseen = since(b.unseen, g_btn_row.unseen);
     g_btn_row = b;
+    g_row.learned_us = g_learned_us;
     g_row.cost_us = expected_cost();
     g_row.ref_us = g_ref_n >= PF_FPS_REF_DRAWS ? g_ref_us : 0;
     g_row.idle_us = to_us(g_idle_ticks);
     g_idle_ticks = 0;
     *row = g_row;
+    {
+        unsigned i;
+        for (i = 0; i < 4; i++) g_row.blocked[i] = 0;
+        for (i = 0; i < 3; i++) g_row.probes[i] = 0;
+    }
     g_row.idle_us = g_row.extra_us = g_row.outside_us = g_row.wait_us = g_row.budget_us = 0;
     g_row.waits = g_row.extra = g_row.late = g_row.units = g_row.sleeps = 0;
     g_row.extra_max_us = g_row.late_ms = g_row.held = 0;
@@ -612,6 +631,7 @@ void pf_fps_frame_edge(int entering)
         g_row.outside_us += to_us(g_first_wait - g_update_exit);
         g_row.wait_us += to_us(t - g_first_wait);
     } else {
+        g_probe_ready = g_probe_cost = 0;
         g_row.outside_us += to_us(t - g_update_exit);
     }
 }
@@ -1142,10 +1162,13 @@ static void plan_frame(unsigned period_ms, unsigned elapsed_ms)
     pf_fps_sched s;
     unsigned start[4], fit;
 
+    g_probe_cost = 0;
     g_plan_n = 0;
     g_period_us = period_ms * 1000;
-    if (elapsed_ms >= period_ms)
+    if (elapsed_ms >= period_ms) {
+        g_probe_ready = 0;
         return;
+    }
     g_budget_us = (period_ms - elapsed_ms) * 1000;
     s.period = g_period_us;
     s.budget = g_budget_us;
@@ -1177,6 +1200,36 @@ static void plan_frame(unsigned period_ms, unsigned elapsed_ms)
     }
     s.extras = g_cur_n;
     g_plan_n = pf_fps_schedule(&s, g_plan_start);
+    if (!fit) blocked(0);
+    /* This is a separate one-draw plan: do not decay the learned floor
+     * without a successful measurement. Never probe while held or paused. */
+    if (fit || g_ref_n < PF_FPS_REF_DRAWS || !g_learned_us ||
+        (g_hold && g_hold()) || *S.screenshots || !*S.hwnd ||
+        ((iconic_fn)S.is_iconic)(*S.hwnd) ||
+        (g_paused && (int)(g_frame_ms - g_pause_until) < 0)) {
+        g_probe_ready = 0;
+        return;
+    }
+    s.extras = 1;
+    s.cost = g_ref_us > 0x7fffffffu ? ~0u : 2 * g_ref_us;
+    if (s.cost < PF_FPS_MIN_COST_US) s.cost = PF_FPS_MIN_COST_US;
+    /* Avoid overflow in scheduler cost + margin calculations. */
+    if (s.cost >= s.budget) {
+        g_probe_ready = 0;
+        return;
+    }
+    s.avg = s.cost;
+    s.margin = margin_for(s.cost);
+    if (!pf_fps_schedule(&s, start)) {
+        g_probe_ready = 0;
+        return;
+    }
+    if (++g_probe_ready >= PF_FPS_PROBE_FRAMES) {
+        g_probe_ready = 0;
+        g_probe_cost = s.cost;
+        g_plan_n = 1;
+        g_plan_start[0] = start[0];
+    }
 }
 
 /* At the limiter's Sleep call. slot[0] is the return address (the site + 5),
@@ -1217,6 +1270,9 @@ static void wait(void **slot)
         if (!g_seen_frame || g_frame_ms - g_prev_frame_ms > PF_FPS_STALL_MS)
             g_grace_until = g_frame_ms + PF_FPS_GRACE_MS;
         g_seen_frame = 1;
+        if (g_frame_ms - g_prev_frame_ms > 200)
+            g_probe_ready = 0;
+        g_block_bits = 0;
         g_done = g_drawn = 0;
         g_row.waits++;
         g_prev_wait = now;
@@ -1241,11 +1297,15 @@ static void wait(void **slot)
     g_row.sleeps++;
     g_idle_ticks += now - g_prev_wait;
     g_prev_wait = now;
-    if (period_ms < 10 || period_ms > 200)
+    if (period_ms < 10 || period_ms > 200) {
+        g_probe_ready = g_probe_cost = 0;
         return;
+    }
     /* Behind the schedule (catch-up): the wait's time goes to catching up,
      * and says nothing about what an extra frame costs. */
     if (g_hold && g_hold()) {
+        blocked(1);
+        g_probe_ready = g_probe_cost = 0;
         g_blocked = 0;
         return;
     }
@@ -1254,15 +1314,22 @@ static void wait(void **slot)
     for (;;) {
         unsigned at, now_us, expected, margin, disp, f, end_us;
         int guess;
-        if (g_stopped)
+        if (g_stopped) {
+            blocked(3);
+            g_probe_ready = g_probe_cost = 0;
             return;
+        }
         if (*S.screenshots > 0) {
+            g_probe_ready = g_probe_cost = 0;
             g_blocked = 0;
             return;
         }
         if (g_paused) {
-            if ((int)(g_frame_ms - g_pause_until) < 0)
+            if ((int)(g_frame_ms - g_pause_until) < 0) {
+                blocked(2);
+                g_probe_ready = g_probe_cost = 0;
                 return;
+            }
             g_paused = 0;
             if (g_rest_why) {
                 g_rest_why = 0;
@@ -1272,6 +1339,7 @@ static void wait(void **slot)
         }
         hwnd = *S.hwnd;
         if (!hwnd || ((iconic_fn)S.is_iconic)(hwnd)) {
+            g_probe_ready = g_probe_cost = 0;
             g_blocked = 0;
             return;
         }
@@ -1281,7 +1349,7 @@ static void wait(void **slot)
         elapsed_ms = now_ms - g_frame_ms;
         if (elapsed_ms >= period_ms)
             return;
-        expected = expected_cost();
+        expected = g_probe_cost ? g_probe_cost : expected_cost();
         guess = cost_is_guess();
         margin = margin_for(expected);
         now_us = g_fine() - g_shown_us;
@@ -1302,10 +1370,11 @@ static void wait(void **slot)
             return;
         /* Where things are when this frame will be on screen: when its draw
          * returns, the average cost from now. */
-        disp = now_us + g_cost_avg_us;
+        disp = now_us + (g_probe_cost ? g_probe_cost : g_cost_avg_us);
         f = g_shown_us - g_prev_shown_us > 200000
                 ? PF_FPS_NONE
                 : (unsigned)((unsigned long long)disp * 65536u / g_period_us);
+        if (g_probe_cost) g_row.probes[0]++;
         if (!extra_frame(engine, f, &cost))
             return;
         end_us = g_fine() - g_shown_us;
@@ -1319,11 +1388,35 @@ static void wait(void **slot)
             g_row.extra_max_us = cost;
         cost_measured(cost);
         elapsed_ms = g_time() - g_frame_ms;
+        g_probe_ready = 0;
         if (elapsed_ms > period_ms) {
-            late_frame(cost, expected, elapsed_ms - period_ms, guess);
+            int probe = g_probe_cost != 0;
+            if (probe) {
+                g_row.probes[2]++;
+                if (cost > g_learned_us) g_learned_us = cost;
+                g_probe_cost = 0;
+            }
+            late_frame(cost, expected, elapsed_ms - period_ms, probe ? 0 : guess);
+            if (probe && ++g_probe_failures >= PF_FPS_PROBE_FAILURES && !g_stopped) {
+                g_probe_failures = 0;
+                if (!g_rest_why) rest("three recovery probes made game frames late");
+            }
             g_prev_wait = qpc();
             return;
         }
+        if (g_probe_cost) {
+            unsigned i;
+            g_row.probes[1]++;
+            g_probe_cost = g_probe_failures = 0;
+            g_learned_us = g_cost_us = g_cost_avg_us = cost ? cost : 1;
+            g_cost_guess = 0;
+            for (i = 0; i < PF_FPS_COST_FRAMES; i++) {
+                g_cost_ring[i] = g_cost_us;
+                g_cost_given[i] = 0;
+            }
+            fu_log_event("fps: recovery probe fit in %u us; stale cost history reset", cost);
+        }
+        g_probe_failures = 0;
         /* It fit: the reference's floor from an earlier late eases toward it. */
         if (g_learned_us > cost)
             g_learned_us -= (g_learned_us - cost) / 8;

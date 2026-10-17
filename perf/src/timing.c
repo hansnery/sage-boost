@@ -241,6 +241,12 @@ static void write_row(unsigned time_s)
         r.outside_us = fr.outside_us;
         r.sleeps = fr.sleeps;
         r.budget_us = fr.budget_us;
+        {
+            unsigned i;
+            for (i = 0; i < 4; i++) r.fps_blocked[i] = fr.blocked[i];
+            for (i = 0; i < 3; i++) r.fps_probes[i] = fr.probes[i];
+            r.fps_learned_us = fr.learned_us;
+        }
         r.extra_cost_us = fr.cost_us;
         r.extra_ref_us = fr.ref_us;
         r.extra_max_us = fr.extra_max_us;

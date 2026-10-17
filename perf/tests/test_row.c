@@ -64,7 +64,9 @@ int main(void)
                   "lt_scene_kept_views,lt_dyn_views,lt_dyn_kept_views,"
                   "lt_skipped,lt_decided,lt_reuse_hits,lt_reuse_misses,lt_fallback,"
                   "lt_verify_samples,lt_verify_bad,lt_stale_draws,sb_light_fixed,"
-                  "sb_light_missed,lt_extra_hits,lt_extra_misses\r\n"),
+                  "sb_light_missed,lt_extra_hits,lt_extra_misses,"
+                  "fps_block_cost,fps_block_catchup,fps_block_pause,fps_block_stop,"
+                  "fps_probe_attempts,fps_probe_success,fps_probe_late,fps_learned_ms\r\n"),
           "header");
     CHECK(!strcmp(pf_scope_labels[PF_SCOPE_VIEWS], "RenderViews") &&
               !strcmp(pf_scope_labels[PF_SCOPE_FX_BATCH], "RenderFXShaderBatch"),
@@ -223,9 +225,15 @@ int main(void)
     /* The speed is game frames / 30 (30 here), not the 27 logic calls. */
     strcat(expect, ",5,27,100.0,10.000,25,21.000,3.500,4,6.500,5");
     strcat(expect, ",10,2.000,1.000,0.500,20,3,40,5,0,0.000,0.000,0.000,0,0,0,0"
-                   ",30,4.000,3.000,1.000,60,10,120,20,10,30,15,5,2,8,0,0,45,0,40,3\r\n");
+                   ",30,4.000,3.000,1.000,60,10,120,20,10,30,15,5,2,8,0,0,45,0,40,3,0,0,0,0,0,0,0,0.000\r\n");
     n = pf_format_row(&r, buf, sizeof buf);
     CHECK(n == strlen(buf) && !strcmp(buf, expect), "full row:\n%s%s", buf, expect);
+    r.fps_blocked[0] = 12; r.fps_blocked[1] = 3;
+    r.fps_blocked[2] = 4; r.fps_blocked[3] = 5;
+    r.fps_probes[0] = 2; r.fps_probes[1] = 1; r.fps_probes[2] = 1;
+    r.fps_learned_us = 30614;
+    pf_format_row(&r, buf, sizeof buf);
+    CHECK(strstr(buf, ",12,3,4,5,2,1,1,30.614\r\n"), "recovery diagnostics: %s", buf);
     r.extra_ref_us = 0;
     r.cu.ticks_on = 0;
     n = pf_format_row(&r, buf, sizeof buf);
@@ -243,7 +251,7 @@ int main(void)
     strcpy(expect, "7,30,10.000,12.345,,,,,,0,0,");
     commas(expect, 20);
     strcat(expect, "10.000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
-    commas(expect, 21 + 12 + 8 + 2 + 32 + 2 + 2);
+    commas(expect, 21 + 12 + 8 + 2 + 32 + 2 + 2 + 8);
     strcat(expect, "\r\n");
     CHECK(n && !strcmp(buf, expect), "frame only:\n%s%s", buf, expect);
 
@@ -254,7 +262,7 @@ int main(void)
     strcpy(expect, "7,30,10.000,12.345,,,0.000,0.000,0,0,0,");
     commas(expect, 19);
     strcat(expect, ",0.000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
-    commas(expect, 21 + 12 + 8 + 2 + 32 + 2 + 2);
+    commas(expect, 21 + 12 + 8 + 2 + 32 + 2 + 2 + 8);
     strcat(expect, "\r\n");
     CHECK(n && !strcmp(buf, expect), "no skeleton calls:\n%s%s", buf, expect);
     CHECK(pf_format_row(&r, buf, 10) == 0, "too small a buffer is refused");

@@ -3,6 +3,7 @@
 #include <stddef.h>
 
 #include "d3d9vt.h"
+#include "declcache.h"
 #include "depthcmp.h"
 #include "inst_shaders.h"
 #include "log.h"
@@ -20,11 +21,9 @@ _Static_assert(offsetof(pf_inst_counts, shadow) == PF_INST_PASS_COUNTS * sizeof(
 /* Both caches hold a reference on the game's object, so its address can't be
  * reused by another one while it is cached. */
 #define VS_CACHE 256
-#define DECL_CACHE 256
 /* Groups whose bone list differs in length from their joints per vertex get most of
  * the verify samples until this many of them were checked. */
 #define VERIFY_BONELIST_TARGET 60
-#define MAX_ELEMENTS 64
 #define MAX_REGS 256
 #define MAX_FUNCTION 32768
 #define VERIFY_SIZE 512
@@ -51,12 +50,6 @@ typedef struct {
     int unknown;  /* then its slot in g_unknown, or -1 */
 } vs_entry;
 
-typedef struct {
-    void *game, *ours;
-    unsigned streams;     /* bit s: the game's declaration reads stream s */
-    unsigned inst_stream; /* ours */
-} decl_entry;
-
 typedef void *(__attribute__((thiscall)) * htree_fn)(void *self);
 typedef void(__attribute__((thiscall)) * render_fn)(const void *mesh, void *method, int count);
 
@@ -81,7 +74,7 @@ typedef struct {
     unsigned mm; /* why the group's stock meshes count as mismatch (MM_*) */
     int variant;
     unsigned cat; /* the verify category: variant, + PF_INST_VARIANTS in the shadow pass */
-    decl_entry *decl;
+    pf_decl_entry *decl;
     void *dev, *ea_vs;
     unsigned dip[6];
     void *prev_vb;
@@ -97,7 +90,7 @@ static group g;
  * the instanced draw needs. */
 enum {
     MM_REFS, MM_GEOMETRY, MM_FACING, MM_BONES_NONE, MM_JOINTS_BAD, MM_JOINTS_SHADER, MM_DRAWS,
-    MM_STATE, MM_MODEL, MM_SKIN_SHADER, MM_DECL, MM_DECL_FULL, MM_FREQ, MM_COUNT
+    MM_STATE, MM_MODEL, MM_SKIN_SHADER, MM_DECL, MM_FREQ, MM_COUNT
 };
 static unsigned g_mm[MM_COUNT], g_splits, g_bone_logs;
 /* The unknown vertex shaders (no_shader): meshes per shader. */
@@ -113,8 +106,7 @@ static unsigned g_stage[MAX_REGS * 4], g_saved[MAX_REGS * 4];
 static unsigned char g_function[MAX_FUNCTION];
 static vs_entry g_vs[VS_CACHE];
 static unsigned g_vs_n;
-static decl_entry g_decl[DECL_CACHE];
-static unsigned g_decl_n;
+static pf_decl_cache g_decl;
 static void *g_ours[PF_INST_VARIANTS];
 static unsigned char g_ours_failed[PF_INST_VARIANTS];
 static void *g_dev;
@@ -221,8 +213,8 @@ static void fail_session(const char *why, unsigned code)
     g_failed = 1;
 }
 
-/* Caches belong to one device; a new device (recreated by the game) drops
- * them without releasing (the old device may be gone). */
+/* Caches belong to one device. Declaration references are released on
+ * transitions; the pre-existing shader/buffer caches retain their policy. */
 static int use_device(void *dev)
 {
     unsigned caps[PF_CAPS_SIZE / 4], probe[4], total = 0, s, j;
@@ -235,7 +227,10 @@ static int use_device(void *dev)
     if (g_dev)
         fu_log_event("inst: the device changed, cached objects dropped");
     g_dev = dev;
-    g_vs_n = g_decl_n = 0;
+    g_vs_n = 0;
+    /* Held COM references keep declarations alive across device recreation.
+     * capture is entered only for a new leader, with no pending draw. */
+    pf_decl_cache_clear(&g_decl);
     g_ivb = 0;
     for (j = 0; j < PF_INST_VARIANTS; j++) {
         g_ours[j] = 0;
@@ -338,58 +333,6 @@ static int variant_of(void *vs, int *unknown)
     return variant;
 }
 
-static decl_entry *decl_of(void *dev, void *game)
-{
-    pf_vertex_element el[MAX_ELEMENTS + 2];
-    UINT n = 0;
-    unsigned i, streams = 0, top = 0;
-    pf_get_data_fn get;
-    decl_entry *d;
-    void *ours = 0;
-
-    if (!game)
-        return 0;
-    for (i = 0; i < g_decl_n; i++)
-        if (g_decl[i].game == game)
-            return g_decl[i].ours ? &g_decl[i] : 0;
-    if (g_decl_n == DECL_CACHE) {
-        g.mm = MM_DECL_FULL;
-        return 0;
-    }
-    d = &g_decl[g_decl_n++];
-    add_ref(game);
-    d->game = game;
-    d->ours = 0;
-    get = (pf_get_data_fn)PF_VT(game)[PF_DECL_GET_DECLARATION];
-    if (FAILED(get(game, 0, &n)) || n < 2 || n > MAX_ELEMENTS || FAILED(get(game, el, &n)))
-        return 0;
-    for (i = 0; i < n && el[i].stream != 0xFF; i++) {
-        if (el[i].usage == PF_D3DDECLUSAGE_TEXCOORD && el[i].usage_index == 7)
-            return 0;
-        if (el[i].stream >= 15)
-            return 0;
-        streams |= 1u << el[i].stream;
-        if (el[i].stream > top)
-            top = el[i].stream;
-    }
-    el[i].stream = (WORD)(top + 1);
-    el[i].offset = 0;
-    el[i].type = PF_D3DDECLTYPE_FLOAT1;
-    el[i].method = 0;
-    el[i].usage = PF_D3DDECLUSAGE_TEXCOORD;
-    el[i].usage_index = 7;
-    el[i + 1].stream = 0xFF;
-    el[i + 1].offset = 0;
-    el[i + 1].type = PF_D3DDECLTYPE_UNUSED;
-    el[i + 1].method = el[i + 1].usage = el[i + 1].usage_index = 0;
-    if (FAILED(((pf_create_obj_fn)PF_VT(dev)[PF_DEV_CREATE_DECL])(dev, el, &ours)) || !ours)
-        return 0;
-    d->ours = ours;
-    d->streams = streams;
-    d->inst_stream = top + 1;
-    return d;
-}
-
 /* At the leader's DrawIndexedPrimitive: the device holds the group's full
  * state. Records the draw and decides whether the group can be instanced. */
 static void capture(void **slot)
@@ -449,7 +392,7 @@ static void capture(void **slot)
         decl = 0;
     release(decl);
     g.mm = MM_DECL;
-    g.decl = decl_of(dev, decl);
+    g.decl = pf_decl_cache_get(&g_decl, dev, decl);
     if (!g.decl)
         return;
     g.mm = MM_FREQ;
@@ -616,17 +559,20 @@ static void summary(void)
                  "change %u; groups split at a model change %u",
                  g_mm[MM_REFS], g_mm[MM_GEOMETRY], g_mm[MM_FACING],
                  g_mm[MM_BONES_NONE] + g_mm[MM_JOINTS_BAD] + g_mm[MM_JOINTS_SHADER], g_mm[MM_DRAWS],
-                 g_mm[MM_STATE] + g_mm[MM_SKIN_SHADER] + g_mm[MM_DECL] + g_mm[MM_DECL_FULL] +
+                 g_mm[MM_STATE] + g_mm[MM_SKIN_SHADER] + g_mm[MM_DECL] +
                      g_mm[MM_FREQ],
                  g_mm[MM_MODEL], g_splits);
     fu_log_event("inst:   bone map: no bone list %u, joints per vertex not 1 or 2 %u, joints unlike "
                  "the bound shader's %u",
                  g_mm[MM_BONES_NONE], g_mm[MM_JOINTS_BAD], g_mm[MM_JOINTS_SHADER]);
     fu_log_event("inst:   device state: shader skinning unlike the mesh's %u, vertex declaration "
-                 "not usable %u, declaration cache full %u, stream frequency set %u, stream not "
+                 "not usable %u, stream frequency set %u, stream not "
                  "readable %u (declarations cached %u, shaders %u)",
-                 g_mm[MM_SKIN_SHADER], g_mm[MM_DECL], g_mm[MM_DECL_FULL], g_mm[MM_FREQ],
-                 g_mm[MM_STATE], g_decl_n, g_vs_n);
+                 g_mm[MM_SKIN_SHADER], g_mm[MM_DECL], g_mm[MM_FREQ],
+                 g_mm[MM_STATE], g_decl.count, g_vs_n);
+    fu_log_event("inst:   declaration cache (all draws): hits %u, misses %u, evictions %u, "
+                 "creation failures %u", g_decl.hits, g_decl.misses, g_decl.evictions,
+                 g_decl.failures);
     for (i = 0; i < g_unknown_n; i++)
         fu_log_event("inst:   no shader: vertex shader %08X (%u bytes): %u meshes",
                      g_unknown_hash[i], g_unknown_size[i], g_unknown_meshes[i]);
@@ -934,6 +880,9 @@ static int lead(const unsigned char *mesh)
         g.nbones = 0;
         g.stride = 3;
     }
+    /* Previous subgroups were drawn and restored by member(); new groups
+     * reset their counts in begin_group(). No cache entry is live here. */
+    g.decl = 0;
     g.mode = M_LEADER;
     g.armed = 1;
     return 1;
