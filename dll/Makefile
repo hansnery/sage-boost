@@ -21,7 +21,7 @@ ENGINE_TEST_ARGS := --bfme2 "$(GAME_DAT)" --wb "$(WB_EXE)" \
 
 BUILD := build
 SRCS  := src/main.c src/unlocker.c src/engine.c src/patch_table.c src/gameversion.c \
-         src/config.c src/log.c src/hooks.c src/sides.c src/skirmish.c src/rt.c
+         src/config.c src/log.c src/hooks.c src/sides.c src/skirmish.c src/network.c src/rt.c
 OBJS  := $(SRCS:src/%.c=$(BUILD)/%.o) $(BUILD)/version.o
 
 COMMON_FLAGS := -std=gnu11 -Wall -Wextra -Werror -DWIN32_LEAN_AND_MEAN -DUNICODE -D_UNICODE
@@ -58,13 +58,13 @@ $(BUILD)/dinput8.dll: $(OBJS) src/dinput8.def
 
 ENGINE_TEST_SRCS := tests/test_engine.c src/unlocker.c src/engine.c src/patch_table.c \
                     src/gameversion.c src/config.c src/log.c src/hooks.c src/sides.c \
-                    src/skirmish.c
+                    src/skirmish.c src/network.c
 
 $(BUILD)/test_engine.exe: $(ENGINE_TEST_SRCS) tests/baseline_expect.h src/*.h | $(BUILD)
-	$(CC) $(TEST_CFLAGS) -static -o $@ $(ENGINE_TEST_SRCS)
+	$(CC) $(TEST_CFLAGS) -DFU_TESTING -static -o $@ $(ENGINE_TEST_SRCS)
 
 HOOK_TEST_SRCS := tests/test_hooks.c src/engine.c src/patch_table.c src/log.c src/hooks.c \
-                  src/sides.c src/skirmish.c
+                  src/sides.c src/skirmish.c src/network.c
 
 $(BUILD)/test_hooks.exe: $(HOOK_TEST_SRCS) src/*.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -static -o $@ $(HOOK_TEST_SRCS)
@@ -72,11 +72,15 @@ $(BUILD)/test_hooks.exe: $(HOOK_TEST_SRCS) src/*.h | $(BUILD)
 $(BUILD)/test_proxy.exe: tests/test_proxy.c | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -static -o $@ $<
 
-test: all $(BUILD)/test_engine.exe $(BUILD)/test_hooks.exe $(BUILD)/test_proxy.exe
+$(BUILD)/test_network.exe: tests/test_network.c src/engine.c src/patch_table.c src/hooks.c src/network.c src/log.c src/sides.c src/skirmish.c src/*.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
+
+test: all $(BUILD)/test_engine.exe $(BUILD)/test_hooks.exe $(BUILD)/test_proxy.exe $(BUILD)/test_network.exe
 	$(PYTHON) ../tools/verify_sites.py
 	./$(BUILD)/test_engine.exe $(ENGINE_TEST_ARGS)
 	./$(BUILD)/test_hooks.exe "$(GAME_DAT)"
 	./$(BUILD)/test_proxy.exe "$(BUILD)/dinput8.dll"
+	./$(BUILD)/test_network.exe $(ENGINE_TEST_ARGS)
 
 dist: all
 	mkdir -p dist

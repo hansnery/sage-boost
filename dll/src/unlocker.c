@@ -7,6 +7,7 @@
 #include "log.h"
 #include "sides.h"
 #include "skirmish.h"
+#include "network.h"
 
 static WCHAR g_log_path[MAX_PATH];
 static int g_hooked[FU_MAX_PATCHES];
@@ -90,6 +91,8 @@ static void log_result(const fu_patch_def *def, const fu_patch_result *r)
         if (def->kind == FU_KIND_ENTRY_HOOK && r->status == FU_ST_APPLIED)
             fu_logf("    stub 0x%08X, stolen bytes run from trampoline 0x%08X",
                     (unsigned)(UINT_PTR)r->hook_stub, (unsigned)(UINT_PTR)r->hook_next);
+        else if (fu_network_stub(def->hook) && r->status == FU_ST_APPLIED)
+            fu_logf("    protocol 1 replacement stub 0x%08X", (unsigned)(UINT_PTR)r->hook_stub);
         else if (def->kind == FU_KIND_CALL_HOOK && r->status == FU_ST_APPLIED)
             fu_logf("    stub 0x%08X, continues at the original callee 0x%08X",
                     (unsigned)(UINT_PTR)r->hook_stub, (unsigned)(UINT_PTR)r->hook_next);
@@ -240,6 +243,8 @@ void fu_startup(HMODULE self, HMODULE game)
     }
     fu_logf("summary: %u %s, %u refused, %u off", applied, cfg.dry_run ? "located" : "applied",
             refused, off);
+    if (g_hooked[find_patch("NW1")])
+        fu_logf("network: LAN protocol 1 enabled; every player needs unlocker 0.5.0 or compatible");
     configure_skirmish();
     fu_log_close();
     if (cfg.log) {
@@ -260,9 +265,10 @@ void fu_shutdown(void)
         return;
     fu_log_append(g_log_path);
     fu_logf("exit: hook activity this session");
+    fu_network_report();
     for (i = 0; i < fu_patch_count; i++) {
         unsigned calls, hits;
-        if (!g_hooked[i])
+        if (!g_hooked[i] || fu_network_stub(fu_patch_defs[i].hook))
             continue;
         fu_hook_counts(i, &calls, &hits);
         fu_logf("    [%s] %s: %u calls, %u with the Side replaced", fu_patch_defs[i].id,

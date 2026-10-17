@@ -2,6 +2,13 @@
 
 #include "hooks.h"
 
+#ifdef FU_TESTING
+extern BOOL fu_test_protect(void *, SIZE_T, DWORD, DWORD *);
+#define FU_PROTECT fu_test_protect
+#else
+#define FU_PROTECT VirtualProtect
+#endif
+
 typedef struct {
     unsigned len;
     unsigned char bytes[FU_MAX_PATTERN];
@@ -270,41 +277,67 @@ static void locate(const fu_image *img, unsigned k, fu_patch_result *r)
     r->status = FU_ST_LOCATED;
 }
 
-static void apply(const fu_image *img, unsigned k, fu_patch_result *r)
+/* Reserve trampolines and writable pages for the whole group before changing
+ * any code. Restore protections in reverse order: multiple sites can share a
+ * page, in which case later VirtualProtect calls see the temporary RWX flag. */
+static void apply_group(const fu_image *img, unsigned first, fu_patch_result *results)
 {
-    const fu_patch_def *def = &fu_patch_defs[k];
-    unsigned char *site = img->base + r->site_rva;
-    DWORD old, unused;
-    unsigned i;
-
-    for (i = 0; i < r->len; i++) {
-        if (site[i] != r->original[i]) {
-            r->status = FU_ST_VERIFY_FAILED;
-            return;
+    unsigned members[FU_MAX_PATCHES], count = 0, protected = 0, n, j;
+    DWORD old[FU_MAX_PATCHES], unused;
+    unsigned group = fu_patch_defs[first].group;
+    for (n = first; n < fu_patch_count; n++) {
+        if (n != first && (!group || fu_patch_defs[n].group != group))
+            continue;
+        if (results[n].status == FU_ST_LOCATED)
+            members[count++] = n;
+    }
+    for (n = 0; n < count; n++) {
+        unsigned k = members[n];
+        const fu_patch_def *def = &fu_patch_defs[k];
+        fu_patch_result *r = &results[k];
+        unsigned char *site = img->base + r->site_rva;
+        for (j = 0; j < r->len; j++) {
+            if (site[j] != r->original[j]) {
+                r->status = FU_ST_VERIFY_FAILED;
+                goto refused;
+            }
         }
-    }
-    /* The continuation must be in place before the site can reach the stub. */
-    if (def->kind == FU_KIND_ENTRY_HOOK) {
-        /* The stolen bytes are position independent (verify_sites.py checks). */
-        r->hook_next = fu_hook_trampoline(r->original, def->steal, site + def->steal);
-        if (!r->hook_next) {
-            r->status = FU_ST_NO_MEMORY;
-            return;
+        if (def->kind == FU_KIND_ENTRY_HOOK) {
+            r->hook_next = fu_hook_trampoline(r->original, def->steal, site + def->steal);
+            if (!r->hook_next) {
+                r->status = FU_ST_NO_MEMORY;
+                goto refused;
+            }
+        } else if (def->kind == FU_KIND_CALL_HOOK) {
+            r->hook_next = site + 5 + (int)read_le32(r->original + 1);
         }
-        fu_hook_set_next(k, r->hook_next);
-    } else if (def->kind == FU_KIND_CALL_HOOK) {
-        r->hook_next = site + 5 + (int)read_le32(r->original + 1);
-        fu_hook_set_next(k, r->hook_next);
+        if (!FU_PROTECT(site, r->len, PAGE_EXECUTE_READWRITE, &old[n])) {
+            r->status = FU_ST_PROTECT_FAILED;
+            goto refused;
+        }
+        protected++;
     }
-    if (!VirtualProtect(site, r->len, PAGE_EXECUTE_READWRITE, &old)) {
-        r->status = FU_ST_PROTECT_FAILED;
-        return;
+    for (n = 0; n < count; n++) {
+        unsigned k = members[n];
+        fu_patch_result *r = &results[k];
+        unsigned char *site = img->base + r->site_rva;
+        if (r->hook_next)
+            fu_hook_set_next(k, r->hook_next);
+        for (j = 0; j < r->len; j++)
+            site[j] = r->patched[j];
+        FlushInstructionCache(GetCurrentProcess(), site, r->len);
+        r->status = FU_ST_APPLIED;
     }
-    for (i = 0; i < r->len; i++)
-        site[i] = r->patched[i];
-    VirtualProtect(site, r->len, old, &unused);
-    FlushInstructionCache(GetCurrentProcess(), site, r->len);
-    r->status = FU_ST_APPLIED;
+    goto restore;
+refused:
+    for (n = 0; n < count; n++)
+        if (results[members[n]].status == FU_ST_LOCATED)
+            results[members[n]].status = FU_ST_GROUP_REFUSED;
+restore:
+    while (protected) {
+        fu_patch_result *r = &results[members[--protected]];
+        VirtualProtect(img->base + r->site_rva, r->len, old[protected], &unused);
+    }
 }
 
 void fu_engine_run(const fu_image *img, const int *enabled, int dry_run,
@@ -336,7 +369,7 @@ void fu_engine_run(const fu_image *img, const int *enabled, int dry_run,
         return;
     for (i = 0; i < fu_patch_count; i++)
         if (results[i].status == FU_ST_LOCATED)
-            apply(img, i, &results[i]);
+            apply_group(img, i, results);
 }
 
 const char *fu_status_name(fu_status st)

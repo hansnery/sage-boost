@@ -4,7 +4,7 @@
 
 #include <windows.h>
 
-#define FU_MAX_PATCHES 16
+#define FU_MAX_PATCHES 20
 #define FU_MAX_PATTERN 96
 #define FU_MAX_STEAL 16
 
@@ -22,7 +22,12 @@ typedef enum {
     FU_HOOK_NONE,
     FU_HOOK_SIDE_ALIAS,   /* replace a `const AsciiString &` Side argument with its donor */
     FU_HOOK_SKIRMISH_THIS, /* entry hook: this+0x58 is the Side; substitute `this` for the resolved one */
-    FU_HOOK_SKIRMISH_ARG  /* replace a `const AsciiString &` Side argument with the resolved Side */
+    FU_HOOK_SKIRMISH_ARG, /* replace a `const AsciiString &` Side argument with the resolved Side */
+    FU_HOOK_NETWORK_WRITE,
+    FU_HOOK_NETWORK_READ,
+    FU_HOOK_NETWORK_SPLIT,
+    FU_HOOK_NETWORK_WRITE_START,
+    FU_HOOK_NETWORK_READ_START
 } fu_hook;
 
 typedef struct {

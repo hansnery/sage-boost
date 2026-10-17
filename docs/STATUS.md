@@ -1,4 +1,4 @@
-# Status and handoff (2026-10-15)
+# Status and handoff (2026-10-17)
 
 Where the three repositories and the installed game stand, for a model or
 person picking the work up. Rules, build steps and branches are in
@@ -6,6 +6,23 @@ person picking the work up. Rules, build steps and branches are in
 repo, backlog) is in the Realms repo's `data\AGENTS.md`; what the docs can't
 settle is in [BACKLOG.md](BACKLOG.md). Re-check anything below against the
 files before relying on it.
+
+## Current work: unlocker 0.5.0 LAN faction fix (2026-10-17)
+
+- User reported 17 exact faction-index wraps and an early multiplayer desync.
+  The LAN nibble codec explains every mapping; the subsequent crash has not
+  been reproduced independently.
+- 0.5.0 replaces ten human/AI colour/faction/start call sites as one group.
+  Packet length is unchanged, including eight-player games. All players need
+  the updated protocol. Performance plugin unchanged.
+- Source and launcher packaging instructions: [release notes](releases/unlocker-0.5.0.md).
+- Full `dll/` test suite passed on 2026-10-17: site verification, engine,
+  original hooks, proxy and network tests (110,592 native round trips across
+  the three images plus all 65,536 field values).
+- Build is prepared locally, not installed into the game. No push or tag.
+- Required user test before public rollout: two PCs, explicit high-index
+  factions and Random/AI, correct colours/starts, then a sustained match.
+- The installed-build details below describe the previous deployment.
 
 ## Unpushed commits
 

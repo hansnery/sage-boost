@@ -298,6 +298,52 @@ PATCHES = [
 ]
 
 
+# LAN slot colour/template codec. Local offsets and ESI/+0C/+18 accesses
+# are fixed deliberately: the adapters depend on these exact caller layouts.
+_NETWORK_SITES = [
+    ("NW1", "NetworkWriteHuman", "WRITE",
+     "8B 4E 0C 6A FE 89 45 0C 8B 46 18 6A FF 50 51 E8 ?? ?? ?? ?? 88 45 DC 57 FF 75 DC FF 75 0C | E8 ?? ?? ?? ?? 8B 4E 10",
+     (0x447E91, "E8 FB F9 FF FF", 0x447891), (0x44AB5E, "E8 D4 F9 FF FF", 0x44A537)),
+    ("NW2", "NetworkWriteAI", "WRITE",
+     "8B 4E 0C 6A FE 89 45 0C 8B 46 18 6A FF 50 51 E8 ?? ?? ?? ?? 88 45 D4 57 FF 75 D4 FF 75 0C | E8 ?? ?? ?? ?? 8B 4E 10",
+     (0x447F3F, "E8 4D F9 FF FF", 0x447891), (0x44AC0C, "E8 26 F9 FF FF", 0x44A537)),
+    ("NR1", "NetworkReadHuman", "READ",
+     "FF 75 F0 8D 45 98 50 57 | E8 ?? ?? ?? ?? 8B D8 83 C4 0C 3B 5D EC",
+     (0x44877C, "E8 19 F2 FF FF", 0x44799A), (0x44B445, "E8 F6 F1 FF FF", 0x44A640)),
+    ("NR2", "NetworkReadAI", "READ",
+     "FF 75 F0 8D 45 9C 50 57 | E8 ?? ?? ?? ?? 8B D8 83 C4 0C 3B 5D EC",
+     (0x448A73, "E8 22 EF FF FF", 0x44799A), (0x44B73C, "E8 FF EE FF FF", 0x44A640)),
+    ("NS1", "NetworkSplitHuman", "SPLIT",
+     "8D 45 E6 50 8D 45 E4 50 6A FE 6A FF FF 75 98 89 5D EC | E8 ?? ?? ?? ?? 83 C4 14",
+     (0x4487AA, "E8 F6 35 12 00", 0x56BDA5), (0x44B473, "E8 41 84 12 00", 0x5738B9)),
+    ("NS2", "NetworkSplitAI", "SPLIT",
+     "8D 45 E5 50 8D 45 E3 50 6A FE 6A FF FF 75 9C 89 5D EC | E8 ?? ?? ?? ?? 83 C4 14",
+     (0x448AA1, "E8 FF 32 12 00", 0x56BDA5), (0x44B76A, "E8 4A 81 12 00", 0x5738B9)),
+    ("NW3", "NetworkWriteHumanStart", "WRITE_START",
+     "8B 4E 10 83 C4 40 57 51 50 | E8 ?? ?? ?? ?? 8B 4E 1C 57 51 50 E8 ?? ?? ?? ?? 8B 4E 20",
+     (0x447E9F, "E8 ED F9 FF FF", 0x447891), (0x44AB6C, "E8 C6 F9 FF FF", 0x44A537)),
+    ("NW4", "NetworkWriteAIStart", "WRITE_START",
+     "8B 4E 10 57 51 50 | E8 ?? ?? ?? ?? 8B 4E 1C 57 51 50 E8 ?? ?? ?? ?? 8B 4E 20 83 C4 40",
+     (0x447F4A, "E8 42 F9 FF FF", 0x447891), (0x44AC17, "E8 1B F9 FF FF", 0x44A537)),
+    ("NR3", "NetworkReadHumanStart", "READ_START",
+     "FF 75 F0 8D 45 E8 50 53 | E8 ?? ?? ?? ?? 83 C4 0C 3B 45 EC 0F 86 ?? ?? ?? ?? 3B 45 F0",
+     (0x44881A, "E8 7B F1 FF FF", 0x44799A), (0x44B4E3, "E8 58 F1 FF FF", 0x44A640)),
+    ("NR4", "NetworkReadAIStart", "READ_START",
+     "FF 75 F0 8D 45 CC 50 53 | E8 ?? ?? ?? ?? 83 C4 0C 3B 45 EC 0F 86 ?? ?? ?? ?? 3B 45 F0",
+     (0x448B11, "E8 84 EE FF FF", 0x44799A), (0x44B7DA, "E8 61 EE FF FF", 0x44A640)),
+
+]
+for ident, name, handler, signature, bfme, rotwk in _NETWORK_SITES:
+    PATCHES.append(Patch(
+        id=ident, name=name, default_on=True,
+        summary="LAN protocol 1: extended faction/colour/start encoding; all players need unlocker 0.5.0 or compatible",
+        hook="FU_HOOK_NETWORK_" + handler, arg_slot=1, group=2,
+        sites={key: Site(kind=KIND_CALL_HOOK, signature=signature, expect="E8 ?? ?? ?? ??",
+                         rva=row[0], original=row[1], target=row[2])
+               for key, row in (("bfme2_106", bfme), ("rotwk_201", rotwk))},
+    ))
+
+
 # --------------------------------------------------------------------------- patterns
 
 
@@ -516,11 +562,14 @@ def verify_hook(img: Image, p: Patch, s: Site, site: int, orig: bytes, ck: Check
     else:
         target = site + 5 + struct.unpack_from("<i", orig, 1)[0]
         ck.check(img.text_start <= target < img.text_end, f"{p.id}: call target outside .text")
-        print(f"    callee   : RVA 0x{target:08X} (the stub continues there)")
+        print(f"    callee   : RVA 0x{target:08X} (" +
+              ("replaced" if p.hook.startswith("FU_HOOK_NETWORK_") else "the stub continues there") + ")")
         print("    patched  : E8 <stub>")
         if is_baseline:
             ck.check(target == s.target, f"{p.id}: callee 0x{target:08X} != baseline 0x{s.target or 0:08X}")
-    if uses_this:
+    if p.hook.startswith("FU_HOOK_NETWORK_"):
+        print("    handler  : " + p.hook + "; cdecl replacement; packet size unchanged")
+    elif uses_this:
         print("    this     : ecx at entry; this+0x58 is the Side (the hook may substitute `this`)")
     else:
         print(f"    argument : dword {p.arg_slot} above the return address is the `const AsciiString &` Side")

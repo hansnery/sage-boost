@@ -4,7 +4,7 @@
 
 #include <windows.h>
 
-#define FU_VERSION_STRING "0.4.0"
+#define FU_VERSION_STRING "0.5.0"
 
 /* `self` locates the INI and log; `game` is the module to patch (the host
  * executable in production, a mapped test image in the tests). */

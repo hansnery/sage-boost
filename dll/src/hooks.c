@@ -3,6 +3,7 @@
 #include "log.h"
 #include "sides.h"
 #include "skirmish.h"
+#include "network.h"
 
 static void *volatile g_next[FU_MAX_PATCHES];
 static volatile LONG g_calls[FU_MAX_PATCHES];
@@ -36,18 +37,19 @@ __asm__(
 
 __asm__(".text\n" FU_STUB(0) FU_STUB(1) FU_STUB(2) FU_STUB(3) FU_STUB(4) FU_STUB(5) FU_STUB(6)
             FU_STUB(7) FU_STUB(8) FU_STUB(9) FU_STUB(10) FU_STUB(11) FU_STUB(12) FU_STUB(13)
-                FU_STUB(14) FU_STUB(15));
+                FU_STUB(14) FU_STUB(15) FU_STUB(16) FU_STUB(17) FU_STUB(18) FU_STUB(19));
 
 extern char fu_hook_stub0[], fu_hook_stub1[], fu_hook_stub2[], fu_hook_stub3[], fu_hook_stub4[],
     fu_hook_stub5[], fu_hook_stub6[], fu_hook_stub7[], fu_hook_stub8[], fu_hook_stub9[],
     fu_hook_stub10[], fu_hook_stub11[], fu_hook_stub12[], fu_hook_stub13[], fu_hook_stub14[],
-    fu_hook_stub15[];
+    fu_hook_stub15[], fu_hook_stub16[], fu_hook_stub17[], fu_hook_stub18[], fu_hook_stub19[];
 
 static char *const g_stubs[FU_MAX_PATCHES] = {
     fu_hook_stub0,  fu_hook_stub1,  fu_hook_stub2,  fu_hook_stub3,
     fu_hook_stub4,  fu_hook_stub5,  fu_hook_stub6,  fu_hook_stub7,
     fu_hook_stub8,  fu_hook_stub9,  fu_hook_stub10, fu_hook_stub11,
     fu_hook_stub12, fu_hook_stub13, fu_hook_stub14, fu_hook_stub15,
+    fu_hook_stub16, fu_hook_stub17, fu_hook_stub18, fu_hook_stub19,
 };
 
 void __attribute__((used, cdecl)) fu_hook_dispatch(void **kslot, void **entry_sp);
@@ -97,6 +99,11 @@ void __attribute__((used, cdecl)) fu_hook_dispatch(void **kslot, void **entry_sp
 
 void *fu_hook_stub(unsigned k)
 {
+    if (k < fu_patch_count) {
+        void *network = fu_network_stub(fu_patch_defs[k].hook);
+        if (network)
+            return network;
+    }
     return k < FU_MAX_PATCHES ? g_stubs[k] : NULL;
 }
 

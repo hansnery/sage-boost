@@ -5,6 +5,16 @@ Realms in Exile repo (hansnery/realms-nightly). Read this together with [STATUS.
 and [AGENTS.md](../AGENTS.md) (and the Realms repo's `data\AGENTS.md`).
 Strike an item through, with the date, when it's done.
 
+## Unlocker 0.5.0 LAN validation (2026-10-17)
+
+- [ ] Both PCs run the new DLL with identical Realms data and matching INIs.
+- [ ] Host and guest selections of Lindon, Shire, Mordor and Rhun agree on
+  both screens; test AI slots and all colours/start positions too.
+- [ ] Random resolves consistently; play a sustained game and an eight-slot
+  lobby/match without the reported early desync.
+- [ ] Check an older DLL cannot join the new lobby; update all launcher users
+  together. See [release notes](releases/unlocker-0.5.0.md).
+
 ## Before the handoff (the user)
 
 - [ ] **Back up the files outside any repo.** The `.bse` work in

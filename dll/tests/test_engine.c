@@ -19,6 +19,17 @@
 #include "unlocker.h"
 
 static int g_failures;
+static int g_protect_fail_after = -1;
+BOOL fu_test_protect(void *p, SIZE_T size, DWORD flags, DWORD *old)
+{
+    if (g_protect_fail_after == 0) {
+        g_protect_fail_after = -1;
+        return FALSE;
+    }
+    if (g_protect_fail_after > 0)
+        g_protect_fail_after--;
+    return VirtualProtect(p, size, flags, old);
+}
 
 #define CHECK(cond, ...)                                  \
     do {                                                  \
@@ -377,6 +388,43 @@ static void test_baseline(const char *path, const fu_baseline_game *bg)
         CHECK(img.mem[site] == 0xEB && img.mem[site + 1] == pristine[site + 1], "[D] rewritten");
     }
 
+    printf("network group: each disabled/missing member refuses the other nine\n");
+    for (unsigned member = 0; member < fu_patch_count; member++) {
+        if (fu_patch_defs[member].group != 2)
+            continue;
+        for (int missing = 0; missing < 2; missing++) {
+            memcpy(img.mem, pristine, img.size);
+            set_all(enabled, 1);
+            if (missing)
+                img.mem[g_sites[member].rva] = 0x90;
+            else
+                enabled[member] = 0;
+            fu_engine_run(&fimg, enabled, 0, r);
+            for (i = 0; i < fu_patch_count; i++) {
+                if (fu_patch_defs[i].group != 2 || i == member)
+                    continue;
+                CHECK(r[i].status == FU_ST_GROUP_REFUSED, "[%s] partially installed", fu_patch_defs[i].id);
+                CHECK(memcmp(img.mem + g_sites[i].rva, g_sites[i].original, 5) == 0,
+                      "[%s] group refusal wrote bytes", fu_patch_defs[i].id);
+            }
+        }
+    }
+    printf("network group: protection failure at every stage leaves all ten untouched\n");
+    for (int fail = 0; fail < 10; fail++) {
+        memcpy(img.mem, pristine, img.size);
+        for (i = 0; i < fu_patch_count; i++)
+            enabled[i] = fu_patch_defs[i].group == 2;
+        g_protect_fail_after = fail;
+        fu_engine_run(&fimg, enabled, 0, r);
+        for (i = 0; i < fu_patch_count; i++) {
+            if (!enabled[i]) continue;
+            CHECK(r[i].status == FU_ST_PROTECT_FAILED || r[i].status == FU_ST_GROUP_REFUSED,
+                  "[%s] partial group after protection failure", fu_patch_defs[i].id);
+            CHECK(memcmp(img.mem + g_sites[i].rva, g_sites[i].original, 5) == 0,
+                  "[%s] changed on failure", fu_patch_defs[i].id);
+        }
+    }
+
     printf("full startup with defaults (no INI)\n");
     {
         WCHAR ini[MAX_PATH], logp[MAX_PATH];
@@ -403,7 +451,7 @@ static void test_baseline(const char *path, const fu_baseline_game *bg)
               "S2/S4 not applied without [Sides]");
         CHECK(strstr(log, "skirmish: an AI whose Side has no skirmish player") != NULL,
               "skirmish fallback not logged");
-        CHECK(strstr(log, "summary: 6 applied, 0 refused, 4 off") != NULL, "wrong summary");
+        CHECK(strstr(log, "summary: 16 applied, 0 refused, 4 off") != NULL, "wrong summary");
         CHECK(memcmp(img.mem + g_sites[d].rva, g_sites[d].patched, g_sites[d].len) == 0,
               "[D] not written by fu_startup");
         for (i = 0; i < fu_patch_count; i++)
@@ -421,7 +469,7 @@ static void test_baseline(const char *path, const fu_baseline_game *bg)
         write_text(ini, "[FactionUnlocker]\r\nDryRun=1\r\n[Patches]\r\nB=1\r\nC2=1\r\n");
         fu_startup(GetModuleHandleW(NULL), (HMODULE)img.mem);
         CHECK(read_text(logp, log, sizeof log), "no log written");
-        CHECK(strstr(log, "summary: 8 located, 0 refused, 2 off") != NULL, "wrong dry-run summary");
+        CHECK(strstr(log, "summary: 18 located, 0 refused, 2 off") != NULL, "wrong dry-run summary");
         CHECK(memcmp(img.mem, pristine, img.size) == 0, "dry run via INI changed the image");
 
         printf("full startup, INI: S4=0\n");
@@ -432,7 +480,7 @@ static void test_baseline(const char *path, const fu_baseline_game *bg)
         CHECK(strstr(log, "[S2] SkirmishSlot: not installed (its partner patch is off or refused)") !=
                   NULL,
               "S2 not refused without S4");
-        CHECK(strstr(log, "summary: 4 applied, 1 refused, 5 off") != NULL, "wrong S4=0 summary");
+        CHECK(strstr(log, "summary: 14 applied, 1 refused, 5 off") != NULL, "wrong S4=0 summary");
         CHECK(memcmp(img.mem + g_sites[index_of("S2")].rva, g_sites[index_of("S2")].original,
                      g_sites[index_of("S2")].len) == 0,
               "[S2] written without S4");
@@ -452,13 +500,13 @@ static void test_baseline(const char *path, const fu_baseline_game *bg)
         CHECK(strstr(log, "[S1] SideFactionId: applied") != NULL, "S1 not applied");
         CHECK(strstr(log, "stolen bytes run from trampoline") != NULL, "trampoline not logged");
         CHECK(strstr(log, "continues at the original callee") != NULL, "callee not logged");
-        CHECK(strstr(log, "summary: 7 applied, 0 refused, 3 off") != NULL, "wrong sides summary");
+        CHECK(strstr(log, "summary: 17 applied, 0 refused, 3 off") != NULL, "wrong sides summary");
         for (i = 0; i < fu_patch_count; i++)
             if (fu_patch_defs[i].needs_sides)
                 check_hook(&img, i, NULL);
         fu_shutdown();
         CHECK(read_text(logp, log, sizeof log), "no log after shutdown");
-        CHECK(strstr(log, "summary: 7 applied") != NULL, "shutdown truncated the log");
+        CHECK(strstr(log, "summary: 17 applied") != NULL, "shutdown truncated the log");
         CHECK(strstr(log, "exit: hook activity this session") != NULL, "no exit statistics");
         CHECK(strstr(log, "[S1] SideFactionId: 0 calls, 0 with the Side replaced") != NULL &&
                   strstr(log, "[S2] SkirmishSlot: 0 calls, 0 with the Side replaced") != NULL,
@@ -528,7 +576,7 @@ static void test_aotr(const char *path, const fu_baseline_game *bg)
         CHECK(strstr(log, "sides: rejected Rohan=Men: already a Side in this game") != NULL,
               "the mod's own Rohan was aliasable");
         CHECK(strstr(log, "sides: Harad -> Mordor\r\n") != NULL, "Harad not accepted");
-        CHECK(strstr(log, "summary: 8 applied, 0 refused, 2 off") != NULL, "wrong summary");
+        CHECK(strstr(log, "summary: 18 applied, 0 refused, 2 off") != NULL, "wrong summary");
         DeleteFileW(ini);
     }
     VirtualFree(img.mem, 0, MEM_RELEASE);

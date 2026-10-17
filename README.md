@@ -31,8 +31,9 @@ the files you added puts everything back.
 What it doesn't do: it can't make a weak PC fast in huge battles. When a
 battle is too much for your PC, you see fewer frames instead of a slower
 game, and there is a limit to how much it can hide. The game isn't included:
-you need your own installed copy. The faction unlocker is for skirmish and
-single player; online play with it isn't supported.
+you need your own installed copy. The faction unlocker supports skirmish and single player. Version 0.5.0
+adds an experimental LAN faction-encoding fix; every LAN player must update.
+A two-PC game test is still required before distributing it as a verified fix.
 
 Created by **Annatar_BR**. The research is built on
 [Open-BFME-2](https://github.com/Open-BFME/Open-BFME-2), and the approach was
@@ -165,11 +166,32 @@ build. The code's default for `NoticeText` is `Catching up`.
 
 ## Multiplayer safety
 
-**Faction unlocker: single player and skirmish only.** Patch C changes INI
-parsing and patch A changes slot setup. In a network game every client would
-need the same DLL, the same INI and the same mod, and online (GameSpy-style)
-play is untested. Treat it as unsupported. Age of the Ring itself is an
-online-first mod; this scope still applies there.
+**Faction unlocker 0.5.0: experimental LAN multiplayer fix.** The original
+lobby packet encodes a faction in four bits, with two values reserved for
+Observer and Random. Higher faction indices wrap: Realms' Lindon (14)
+becomes Observer, Mordor (18) becomes Arthedain (2), and Rhun (30) becomes
+Observer again. The old arithmetic also carries into the colour bits.
+
+Patches NW1–NW4, NR1–NR4 and NS1–NS2 replace the human and AI slot codecs
+as one group. They preserve the existing two-byte colour/faction/start field
+size, using seven bits for the template instead of four. Supported template
+indices are 0–125, plus Observer/Random; colours -1–14 and starts -1–7 retain
+their original ranges. The 390-byte LAN packet is not enlarged. Legacy
+packets are rejected by the new reader; a legacy reader rejects the host's
+human slot because the encoded start byte is invalid in the old format.
+
+**Every participant must use 0.5.0 (or a compatible protocol-1 build), the
+same mod files and matching unlocker settings/Side aliases.** Updating only
+the host is insufficient. Old builds cannot join the updated LAN lobby.
+The hooks default on even with an existing INI. Do not overwrite the user's
+INI when deploying the DLL. This does not patch the GameSpy lobby protocol.
+
+Automated checks cover both executable families and AotR, actual native
+caller instructions, all supported faction/colour/start combinations, all
+65,536 possible field values, the 17 reported collisions and group failure
+handling. A live two-PC lobby/match test remains pending; this is not a claim
+that all possible multiplayer desyncs or the reported crash are fixed.
+See [the launcher release notes](docs/releases/unlocker-0.5.0.md).
 
 **Performance plugin: nothing the game logic or the sync check sees
 changes.** BFME2 counts its logic in client frames: six per 5 Hz logic step,
@@ -273,6 +295,15 @@ logged, and the game runs without it.
 | `S2` | onâ€  | Which of the map's skirmish players an AI player is set up from (`findSkirmishSide`). Hooks the function's entry. | 0x002AC4D4 prologue â†’ `jmp` stub | 0x002ACFA3 |
 | `S4` | onâ€  | Whether a computer player gets a skirmish AI at all: the Side match inline in `Player::initFromDict`. Hooks the compare call. | 0x002AFE61 `call` â†’ stub | 0x002B096A |
 
+| `NW1`, `NW2` | on | Write extended human/AI faction, colour and start bits. | 0x00447E91 / 0x00447F3F | 0x0044AB5E / 0x0044AC0C |
+| `NR1`, `NR2` | on | Read and validate extended human/AI fields. | 0x0044877C / 0x00448A73 | 0x0044B445 / 0x0044B73C |
+| `NS1`, `NS2` | on | Decode human/AI colour and faction independently. | 0x004487AA / 0x00448AA1 | 0x0044B473 / 0x0044B76A |
+| `NW3`, `NW4` | on | Consume the already-written start byte. | 0x00447E9F / 0x00447F4A | 0x0044AB6C / 0x0044AC17 |
+| `NR3`, `NR4` | on | Decode the human/AI start-position byte. | 0x0044881A / 0x00448B11 | 0x0044B4E3 / 0x0044B7DA |
+
+All ten network patches are installed together. Disabling or failing any one
+leaves the entire network group off, including on a page-protection failure.
+
 \* S1 and S3 are installed only when `[Sides]` has at least one entry (see
 *Strategy 2* below). Without it they are skipped and the game code stays as is.
 
@@ -289,8 +320,8 @@ If the mod relies on map faction restrictions, set `D=0`/`E=0` or try `DryRun=1`
 
 ### Reading the log
 
-A healthy start on vanilla 1.06 ends with `summary: 6 applied, 0 refused, 4 off`
-(S1 and S3 count as off while `[Sides]` is empty), or `8 applied, 0 refused, 2 off`
+A healthy start on vanilla 1.06 ends with `summary: 16 applied, 0 refused, 4 off`
+(S1 and S3 count as off while `[Sides]` is empty), or `18 applied, 0 refused, 2 off`
 with side aliases. Every patch gets a block like:
 
 ```
@@ -303,7 +334,7 @@ with side aliases. Every patch gets a block like:
 
 `REFUSED (...)` names the reason: the signature was not found or matched more
 than once, the original bytes differed, a branch target fell outside `.text`, or
-`VirtualProtect` failed. A refused patch never blocks the others. The `game:`
+`VirtualProtect` failed. A refused patch blocks its group partners; unrelated patches can still apply. The `game:`
 line says whether the executable is the exact build the signatures were made
 from (`the verified baseline build`) or another build of the same version. The
 `sides: the game's own Sides (n): ...` line lists the Side table as read from
@@ -457,7 +488,7 @@ one more call; DISCREPANCIES section 8).
 
 Run with the test mod above and the default INI:
 
-- [ ] `dinput8.log` shows `the verified baseline build` and `summary: 6 applied, 0 refused, 4 off`.
+- [ ] `dinput8.log` shows `the verified baseline build` and `summary: 16 applied, 0 refused, 4 off`.
 - [ ] Skirmish lobby: the faction dropdown lists `MISSING:'INI:FactionMenTest'` next to Men.
 - [ ] Selecting it keeps it in the slot panel (it doesn't jump to another faction).
 - [ ] Start the game: you play the clone (check its spell book/heroes if you changed them), with no crash on map load.
@@ -470,7 +501,7 @@ Strategy 2: copy `FactionMen` to `FactionRohanTest` with `Side = Rohan`, copy
 Men's `AIData` `SideInfo`/`SkirmishBuildList` to `Rohan`, and set `[Sides]
 Rohan=Men`:
 
-- [ ] The log shows `sides: Rohan -> Men` and `summary: 8 applied, 0 refused, 2 off`.
+- [ ] The log shows `sides: Rohan -> Men` and `summary: 18 applied, 0 refused, 2 off`.
 - [ ] The faction is in the dropdown and stays selected. You can play it on a vanilla map.
 - [ ] An AI slot set to it builds a base and attacks. The log has
       `skirmish: Rohan has no skirmish player on this map, using Men's`, and
