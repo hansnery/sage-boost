@@ -19,7 +19,12 @@ files before relying on it.
 - Full `dll/` test suite passed on 2026-10-17: site verification, engine,
   original hooks, proxy and network tests (110,592 native round trips across
   the three images plus all 65,536 field values).
-- Build is prepared locally, not installed into the game. No push or tag.
+- Source commit `882b6ab` pushed to `main` and `feat/perf-dll`.
+- Published through Realms Launcher Beta as `0.5.0-perf.0.9.10`, release
+  `3c1c2b37aedb6612cd4e`, on 2026-10-17. Only `dinput8.dll` changed; the
+  previous published ASI and both INI templates are byte-identical. Signed
+  player download ranges for all four files were verified against SHA-256.
+- Local game installation remains unchanged; no Git tag created.
 - Required user test before public rollout: two PCs, explicit high-index
   factions and Random/AI, correct colours/starts, then a sustained match.
 - The installed-build details below describe the previous deployment.
