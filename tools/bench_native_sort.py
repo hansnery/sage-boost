@@ -141,7 +141,7 @@ def main():
         if a.self_test:
             bad=subprocess.run(command+['0','1'],capture_output=True,text=True)
             assert bad.returncode==1 and 'sort screen refused' in bad.stderr,bad
-            print('Oracle rejects corrupted record assignment',flush=True)
+            print('Oracle rejects corrupted sorted record',flush=True)
     return 0
 
 

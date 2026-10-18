@@ -1,12 +1,13 @@
-/* Preserve the native sort and its exact permutation; screen replacing
- * temporary record ownership traffic with raw copies inside that sort.
- * Offline only. Exception handlers are fail-stop, not an unwind proof. */
+/* Compare the production integer sort with the exact native permutation.
+ * Only the unmodified reference executes private native code. Native
+ * exception handlers are fail-stop, not an unwind proof. */
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
 #include "bench_guard.h"
+#include "queuesort.h"
 #define REQUIRE(c) do { if(!(c)) { fprintf(stderr,"sort screen refused line %d: %s\n",__LINE__,#c); exit(1); } } while(0)
 #define COUNT 38
 #define CAPACITY 8192
@@ -16,8 +17,10 @@ typedef struct {void **vtable;unsigned refs;} Method;
 _Static_assert(sizeof(Record)==32 && offsetof(Mesh,key)==0xc4 && offsetof(Mesh,state)==0x310,"native layout");
 typedef unsigned (__cdecl *Compare)(const Record *,const Record *);
 typedef void (__cdecl *Sort)(Record *,Record *,Compare);
-static void *bodies[2][COUNT+1];
+static void *bodies[1][COUNT+1];
 static unsigned broken;
+static void *candidate_entry = (void *)pf_queue_sort_run;
+static Compare candidate_compare[2];
 #ifndef PF_NATIVE_SORT_EMBED
 static unsigned cases;
 #endif
@@ -27,14 +30,6 @@ static void __cdecl unexpected(void) { REQUIRE(0 && "native exception/terminatio
 #ifndef PF_NATIVE_SORT_EMBED
 static void __attribute__((thiscall)) delete_unexpected(void *self) { (void)self;REQUIRE(0 && "unexpected object destruction"); }
 #endif
-static void * __attribute__((thiscall)) raw_copy(void *to,const void *from)
-{
-    unsigned *out=to;const unsigned *in=from;
-    for(unsigned i=0;i<8;i++)out[i]=in[i];
-    if(broken)out[7]^=1;
-    return to;
-}
-static void __attribute__((thiscall)) raw_destroy(void *self) { (void)self; }
 
 void sort_checked(void *,Record *,Record *,Compare,unsigned);
 __asm__(
@@ -66,11 +61,11 @@ static void load(const char *path,const char *manifest)
     REQUIRE(nt->Signature==IMAGE_NT_SIGNATURE && nt->FileHeader.Machine==IMAGE_FILE_MACHINE_I386 && nt->OptionalHeader.Magic==IMAGE_NT_OPTIONAL_HDR32_MAGIC);
     unsigned image_size=nt->OptionalHeader.SizeOfImage;
     REQUIRE(image_size>=4096 && image_size<128*1024*1024);
-    unsigned char *code[2];
+    unsigned char *code[1];
     /* Preserve the target's relative function placement, instead of
      * exaggerating reference costs with one separate page per body. Only
      * the verified bodies are populated; no image is loaded or initialized. */
-    for(unsigned mode=0;mode<2;mode++) {
+    for(unsigned mode=0;mode<1;mode++) {
         code[mode]=VirtualAlloc(NULL,image_size,MEM_RESERVE|MEM_COMMIT,PAGE_READWRITE);REQUIRE(code[mode]);
     }
     IMAGE_SECTION_HEADER *sections=IMAGE_FIRST_SECTION(nt);REQUIRE((unsigned char*)(sections+nt->FileHeader.NumberOfSections)<=raw+length);
@@ -89,7 +84,7 @@ static void load(const char *path,const char *manifest)
             }
         }
         REQUIRE(matches==1 && fnv(raw+source,size)==hash);
-        for(unsigned mode=0;mode<2;mode++) {
+        for(unsigned mode=0;mode<1;mode++) {
             bodies[mode][i]=code[mode]+rva;
             memcpy(bodies[mode][i],raw+source,size);
         }
@@ -99,18 +94,32 @@ static void load(const char *path,const char *manifest)
         }
     }
     {char extra;REQUIRE(fscanf(f," %c",&extra)==EOF);}fclose(f);free(raw);
-    for(unsigned mode=0;mode<2;mode++) {
+    for(unsigned mode=0;mode<1;mode++) {
         bodies[mode][COUNT]=unexpected;
         for(unsigned j=0;j<np;j++) {
             Patch p=patches[j];unsigned char *field=(unsigned char*)bodies[mode][p.body]+p.field;
             void *target=bodies[mode][p.symbol];
-            if(mode && (p.symbol==10 || p.symbol==4))target=raw_copy;
-            if(mode && p.symbol==3)target=raw_destroy;
             *(unsigned*)field=(unsigned)target-(p.kind?0:(unsigned)(field+4));
         }
         DWORD old;REQUIRE(VirtualProtect(code[mode],image_size,PAGE_EXECUTE_READ,&old));
         REQUIRE(FlushInstructionCache(GetCurrentProcess(),code[mode],image_size));
     }
+    pf_queue_sort_configure((pf_queue_sort_fn)bodies[0][30],
+                            (pf_queue_compare_fn)bodies[0][8], (pf_queue_compare_fn)bodies[0][9]);
+    candidate_compare[0]=(Compare)bodies[0][8];candidate_compare[1]=(Compare)bodies[0][9];
+}
+
+static void __cdecl candidate_heap(void *first,void *last,unsigned unused,unsigned depth,Compare compare)
+{
+    (void)unused;
+    REQUIRE(compare==candidate_compare[0] || compare==candidate_compare[1]);
+    pf_queue_sort_raw(first,last,compare==candidate_compare[1],depth);
+}
+static void run_candidate(Record *first,Record *last,unsigned comparator,unsigned heap)
+{
+    sort_checked(heap?(void *)candidate_heap:candidate_entry,first,last,
+                 candidate_compare[comparator],heap);
+    if(broken && first!=last)first->word[7]^=1;
 }
 
 #ifdef PF_NATIVE_SORT_EMBED
@@ -121,7 +130,8 @@ void bench_sort_load(const char *image,const char *manifest)
 void bench_sort_run(void *first,void *last,unsigned optimized)
 {
     REQUIRE(optimized<2 && (unsigned)last>=(unsigned)first && !(((unsigned)last-(unsigned)first)%32));
-    sort_checked(bodies[optimized][30],first,last,(Compare)bodies[optimized][8],0);
+    if(optimized)run_candidate(first,last,0,0);
+    else sort_checked(bodies[0][30],first,last,(Compare)bodies[0][8],0);
     REQUIRE(!sort_abi_errors);
 }
 void bench_sort_copy(void *to,const void *from)
@@ -176,8 +186,7 @@ static void check(unsigned n,unsigned pattern,unsigned count,unsigned comparator
      * pass, even at depth zero. Match the native root's second phase. */
     if(heap)sort_checked(bodies[0][26],original.records,original.records+n,(Compare)bodies[0][8+comparator],0);
     REQUIRE(!sort_abi_errors);references(n);REQUIRE(hash==fnv((unsigned char*)meshes,sizeof meshes));
-    sort_checked(bodies[1][heap?29:30],candidate.records,candidate.records+n,(Compare)bodies[1][8+comparator],heap);
-    if(heap)sort_checked(bodies[1][26],candidate.records,candidate.records+n,(Compare)bodies[1][8+comparator],0);
+    run_candidate(candidate.records,candidate.records+n,comparator,heap);
     REQUIRE(!sort_abi_errors);REQUIRE(!memcmp(&original,&candidate,sizeof original));references(n);
     REQUIRE(hash==fnv((unsigned char*)meshes,sizeof meshes));
     REQUIRE(!memcmp(original.before,seed.before,sizeof seed.before) && !memcmp(original.after,seed.after,sizeof seed.after));
@@ -197,7 +206,7 @@ static void check_split(unsigned pattern,unsigned count,unsigned comparator)
         unsigned first=bounds[queue],last=bounds[queue+1];
         sort_checked(bodies[0][30],original.records+first,original.records+last,(Compare)bodies[0][8+comparator],0);
         REQUIRE(!sort_abi_errors);references(7680);
-        sort_checked(bodies[1][30],candidate.records+first,candidate.records+last,(Compare)bodies[1][8+comparator],0);
+        run_candidate(candidate.records+first,candidate.records+last,comparator,0);
         REQUIRE(!sort_abi_errors);references(7680);
         REQUIRE(!memcmp(&original,&candidate,sizeof original));
         REQUIRE(hash==fnv((unsigned char*)meshes,sizeof meshes));
@@ -225,7 +234,7 @@ static unsigned long long timed(unsigned mode,unsigned comparator)
     LARGE_INTEGER before,after;REQUIRE(QueryPerformanceCounter(&before));
     for(unsigned rep=0;rep<8;rep++) {
         memcpy(&candidate,&seed,sizeof seed);
-        Sort sort=(Sort)bodies[mode][30];Compare compare=(Compare)bodies[mode][8+comparator];
+        Sort sort=mode?(Sort)pf_queue_sort_run:(Sort)bodies[0][30];Compare compare=(Compare)bodies[0][8+comparator];
         sort(candidate.records,candidate.records+3072,compare);
         sort(candidate.records+3072,candidate.records+4608,compare);
         sort(candidate.records+4608,candidate.records+7680,compare);

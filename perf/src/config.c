@@ -81,6 +81,7 @@ void pf_config_load(pf_config *cfg, const WCHAR *ini_path)
     cfg->shadow_scrolling = read_int(L"Render", L"ShadowFullWhileScrolling", 0, ini_path) != 0;
     cfg->batching = read_int(L"Render", L"Batching", 0, ini_path) != 0;
     cfg->queue_insert = read_int(L"Render", L"QueueInsert", 1, ini_path) != 0;
+    cfg->queue_sort = read_int(L"Render", L"QueueSort", 1, ini_path) != 0;
     cfg->instancing = read_int(L"Render", L"Instancing", 0, ini_path) != 0;
     cfg->instancing_verify = read_int(L"Render", L"InstancingVerify", 1, ini_path) != 0;
     cfg->shadow_instancing = read_int(L"Render", L"ShadowInstancing", 1, ini_path) != 0;

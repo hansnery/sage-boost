@@ -836,11 +836,17 @@ def main() -> int:
     ap.add_argument("--game", type=Path, help="verify only this image (no header I/O)")
     ap.add_argument("--write", action="store_true", help="regenerate the C headers")
     ap.add_argument("--perf-queue", action="store_true", help="verify/generate only the performance queue insertion contract")
+    ap.add_argument("--perf-sort", action="store_true", help="verify/generate only the performance queue sorting contract")
     args = ap.parse_args()
-    if args.perf_queue:
+    if args.perf_queue or args.perf_sort:
         if args.game:
-            ap.error("--perf-queue verifies both configured images; omit --game")
-        from queueinsert_table import run
+            ap.error("performance contracts verify both configured images; omit --game")
+        if args.perf_queue and args.perf_sort:
+            ap.error("select one performance contract at a time")
+        if args.perf_queue:
+            from queueinsert_table import run
+        else:
+            from queuesort_table import run
         return run(args.write)
 
     failures: list[str] = []

@@ -15,7 +15,7 @@ SRCS  := src/main.c src/log.c src/rt.c src/scan.c src/sites.c src/patch.c src/st
          src/timing.c src/presentgap.c src/csvrow.c src/clock.c src/reflect.c src/config.c src/uistate.c \
          src/inst.c src/declcache.c src/fpsites.c src/fps.c src/extraprofile.c src/fpsmath.c src/btnclock.c src/passflag.c \
          src/shadowpass.c src/spsites.c src/fxguard.c src/catchup.c src/cusites.c src/notice.c \
-         src/lights.c src/ltsites.c src/queueinsert.c
+         src/lights.c src/ltsites.c src/queueinsert.c src/nativecontract.c src/queuesort.c
 OBJS  := $(SRCS:src/%.c=$(BUILD)/%.o) $(BUILD)/version.o
 
 COMMON_FLAGS := -std=gnu11 -Wall -Wextra -Werror -DWIN32_LEAN_AND_MEAN -DUNICODE -D_UNICODE
@@ -82,8 +82,10 @@ test-native-decode: $(BUILD)/bench_native_decode.exe
 bench-native-decode: $(BUILD)/bench_native_decode.exe
 	python ../tools/bench_native_decode.py "$(AOTR_DAT)" $< --self-test
 
-$(BUILD)/bench_native_sort.exe: tests/bench_native_sort.c tests/bench_guard.h | $(BUILD)
-	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $<
+CONTRACT_OBJS := $(BUILD)/nativecontract.o $(BUILD)/scan.o $(BUILD)/patch.o
+SORT_OBJS := $(BUILD)/queuesort.o $(CONTRACT_OBJS)
+$(BUILD)/bench_native_sort.exe: tests/bench_native_sort.c tests/bench_guard.h $(SORT_OBJS) | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $< $(SORT_OBJS)
 
 .PHONY: test-native-sort bench-native-sort
 test-native-sort: $(BUILD)/bench_native_sort.exe
@@ -93,7 +95,16 @@ test-native-sort: $(BUILD)/bench_native_sort.exe
 bench-native-sort: $(BUILD)/bench_native_sort.exe
 	python ../tools/bench_native_sort.py "$(AOTR_DAT)" $< --self-test
 
-QUEUE_OBJS := $(BUILD)/queueinsert.o $(BUILD)/scan.o $(BUILD)/patch.o
+$(BUILD)/test_queuesort.exe: tests/test_queuesort.c tests/bench_native_sort.c tests/bench_guard.h tests/native_contract_image.h $(SORT_OBJS) $(BUILD)/queueinsert.o | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $< $(SORT_OBJS) $(BUILD)/queueinsert.o
+
+.PHONY: test-queuesort
+test-queuesort: $(BUILD)/test_queuesort.exe
+	python ../tools/verify_sites.py --perf-sort
+	python ../tools/test_queuesort.py "$(AOTR_DAT)" $<
+	python ../tools/test_queuesort.py "$(ROTWK_DAT)" $<
+
+QUEUE_OBJS := $(BUILD)/queueinsert.o $(CONTRACT_OBJS)
 $(BUILD)/bench_native_insert.exe: tests/bench_native_insert.c tests/bench_guard.h $(QUEUE_OBJS) | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $< $(QUEUE_OBJS)
 
@@ -172,7 +183,7 @@ test: all $(BUILD)/test_row.exe $(BUILD)/test_reflect.exe $(BUILD)/test_config.e
       $(BUILD)/test_sites.exe $(BUILD)/test_hooks.exe $(BUILD)/test_fps.exe $(BUILD)/test_load.exe \
       $(BUILD)/test_inst.exe $(BUILD)/test_declcache.exe $(BUILD)/test_btn.exe $(BUILD)/test_shadowpass.exe \
       $(BUILD)/test_catchup.exe $(BUILD)/test_lights.exe $(BUILD)/test_extraprofile.exe $(BUILD)/test_presentgap.exe \
-      $(BUILD)/test_queueinsert.exe
+      $(BUILD)/test_queueinsert.exe $(BUILD)/test_queuesort.exe
 	./$(BUILD)/test_row.exe
 	./$(BUILD)/test_reflect.exe
 	./$(BUILD)/test_btn.exe
@@ -181,6 +192,10 @@ test: all $(BUILD)/test_row.exe $(BUILD)/test_reflect.exe $(BUILD)/test_config.e
 	  AOTR_DAT="$(AOTR_DAT)" ROTWK_DAT="$(ROTWK_DAT)" python ../tools/verify_sites.py --perf-queue; fi
 	@if [ -f "$(AOTR_DAT)" ]; then python ../tools/test_queueinsert.py "$(AOTR_DAT)" $(BUILD)/test_queueinsert.exe; fi
 	@if [ -f "$(ROTWK_DAT)" ]; then python ../tools/test_queueinsert.py "$(ROTWK_DAT)" $(BUILD)/test_queueinsert.exe; fi
+	@if [ -f "$(AOTR_DAT)" ] && [ -f "$(ROTWK_DAT)" ]; then \
+	  AOTR_DAT="$(AOTR_DAT)" ROTWK_DAT="$(ROTWK_DAT)" python ../tools/verify_sites.py --perf-sort; fi
+	@if [ -f "$(AOTR_DAT)" ]; then python ../tools/test_queuesort.py "$(AOTR_DAT)" $(BUILD)/test_queuesort.exe; fi
+	@if [ -f "$(ROTWK_DAT)" ]; then python ../tools/test_queuesort.py "$(ROTWK_DAT)" $(BUILD)/test_queuesort.exe; fi
 	./$(BUILD)/test_sites.exe $(SITE_TEST_ARGS)
 	./$(BUILD)/test_hooks.exe
 	./$(BUILD)/test_fps.exe
@@ -358,7 +373,7 @@ test-native-group-fallback: $(BUILD)/test_native_group_fallback.exe
 $(BUILD)/bench_native_fx_gpu.exe: tests/bench_native_fx_gpu.c tests/native_fx_image.h tests/bench_native_group_gpu.c tests/bench_native_leader.c tests/native_group_image.h tests/native_mesh_image.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
 	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
 
-$(BUILD)/native_sort_fixture.o: tests/bench_native_sort.c tests/bench_guard.h | $(BUILD)
+$(BUILD)/native_sort_fixture.o: tests/bench_native_sort.c tests/bench_guard.h src/queuesort.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -Wno-unused-function -DPF_NATIVE_SORT_EMBED -c -o $@ $<
 
 $(BUILD)/bench_native_queue_gpu.exe: tests/bench_native_queue_gpu.c tests/native_shared_arena.h tests/bench_native_fx_gpu.c tests/native_fx_image.h tests/bench_native_group_gpu.c tests/bench_native_leader.c tests/native_group_image.h tests/native_mesh_image.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/native_sort_fixture.o $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h

@@ -1,7 +1,6 @@
 #include "queueinsert.h"
 #include "queueinsert_table.h"
 #include "patch.h"
-#include <string.h>
 
 /* This path changes only the rendering-task queue. The by-value mesh holder
  * is consumed exactly once, including when the original entry is called. */
@@ -56,88 +55,13 @@ fallback:
     qi_original(queues, mesh, input);
 }
 
-static unsigned read_word(const unsigned char *p)
-{ unsigned value; memcpy(&value, p, 4); return value; }
-
-/* Require a complete range in one section of the expected role. Bounds are
- * checked before reading a body or following one of its encoded targets. */
-static int section_role(const IMAGE_NT_HEADERS32 *nt, unsigned rva, unsigned size, int code)
-{
-    unsigned image_size = nt->OptionalHeader.SizeOfImage, matches = 0;
-    if (!size || rva >= image_size || size > image_size - rva) return 0;
-    const IMAGE_SECTION_HEADER *sections = IMAGE_FIRST_SECTION(nt);
-    for (unsigned i = 0; i < nt->FileHeader.NumberOfSections; i++) {
-        const IMAGE_SECTION_HEADER *s = sections + i;
-        if (rva >= s->VirtualAddress && rva - s->VirtualAddress < s->Misc.VirtualSize &&
-            size <= s->Misc.VirtualSize - (rva - s->VirtualAddress) &&
-            (s->Characteristics & IMAGE_SCN_MEM_READ) &&
-            !!(s->Characteristics & IMAGE_SCN_MEM_EXECUTE) == code) matches++;
-    }
-    return matches == 1;
-}
-
 const char *pf_queue_insert_find(const pf_image *image, unsigned *entry)
 {
-    unsigned locations[QI_SYMBOL_COUNT] = {0};
-    unsigned char done[QI_BODY_COUNT] = {0}, normalized[QI_MAX_BODY];
+    unsigned locations[QI_SYMBOL_COUNT];
     if (entry) *entry = 0;
-    if (!image || !image->base) return "missing image";
-    const IMAGE_DOS_HEADER *dos = (const void *)image->base;
-    if (dos->e_magic != IMAGE_DOS_SIGNATURE || dos->e_lfanew < (LONG)sizeof *dos ||
-        dos->e_lfanew > 4096 - (LONG)sizeof(IMAGE_NT_HEADERS32)) return "invalid DOS header";
-    const IMAGE_NT_HEADERS32 *nt = (const void *)(image->base + dos->e_lfanew);
-    if (nt->Signature != IMAGE_NT_SIGNATURE || nt->FileHeader.Machine != IMAGE_FILE_MACHINE_I386 ||
-        nt->OptionalHeader.Magic != IMAGE_NT_OPTIONAL_HDR32_MAGIC ||
-        nt->FileHeader.SizeOfOptionalHeader != sizeof nt->OptionalHeader ||
-        !nt->FileHeader.NumberOfSections || nt->FileHeader.NumberOfSections > 32 ||
-        nt->OptionalHeader.SizeOfHeaders > 4096 ||
-        nt->OptionalHeader.SizeOfImage < nt->OptionalHeader.SizeOfHeaders ||
-        (unsigned)((const unsigned char *)(IMAGE_FIRST_SECTION(nt) + nt->FileHeader.NumberOfSections) -
-                   image->base) > nt->OptionalHeader.SizeOfHeaders) return "invalid PE header";
-    if (!section_role(nt, image->text_rva, image->text_size, 1)) return "invalid text range";
-    pf_pattern pattern;
-    if (!pf_parse_pattern(QI_SIGNATURE, &pattern)) return "invalid entry pattern";
-    unsigned matches = pf_scan(image, &pattern, &locations[0]);
-    if (matches != 1) return matches ? "ambiguous entry signature" : "entry signature missing";
-    unsigned verified = 0;
-    for (;;) {
-        unsigned before = verified;
-        for (unsigned i = 0; i < QI_BODY_COUNT; i++) {
-            if (!locations[i] || done[i]) continue;
-            const qi_body *body = qi_bodies + i;
-            unsigned rva = locations[i];
-            if (!section_role(nt, rva, body->size, 1)) return "body outside executable section";
-            memcpy(normalized, image->base + rva, body->size);
-            for (unsigned j = 0; j < body->count; j++) {
-                const qi_patch *p = qi_patches + body->first + j;
-                unsigned value = read_word(normalized + p->offset);
-                unsigned target = p->absolute ? value - (unsigned)image->base :
-                                               rva + p->offset + 4 + value;
-                if (!section_role(nt, target, 1, qi_code[p->symbol])) return "dependency section role";
-                if (locations[p->symbol] && locations[p->symbol] != target) return "dependency identity differs";
-                locations[p->symbol] = target;
-                memset(normalized + p->offset, 0, 4);
-            }
-            unsigned hash = 2166136261u;
-            for (unsigned j = 0; j < body->size; j++) hash = (hash ^ normalized[j]) * 16777619u;
-            if (hash != body->fnv || pf_crc32(normalized, body->size) != body->crc)
-                return "complete body differs";
-            done[i] = 1; verified++;
-        }
-        if (verified == QI_BODY_COUNT) break;
-        if (before == verified) return "incomplete dependency closure";
-    }
-    for (unsigned i = 0; i < QI_SYMBOL_COUNT; i++) {
-        if (!locations[i]) return "unresolved dependency";
-        for (unsigned j = i + 1; j < QI_SYMBOL_COUNT; j++) {
-            unsigned a = i < QI_BODY_COUNT ? qi_bodies[i].size : 1;
-            unsigned b = j < QI_BODY_COUNT ? qi_bodies[j].size : 1;
-            if (locations[i] < locations[j] + b && locations[j] < locations[i] + a)
-                return "overlapping dependency identities";
-        }
-    }
-    if (entry) *entry = locations[0];
-    return NULL;
+    const char *why = pf_contract_find(image, &qi_contract, locations);
+    if (!why && entry) *entry = locations[0];
+    return why;
 }
 
 static void set_original(unsigned index, void *original)

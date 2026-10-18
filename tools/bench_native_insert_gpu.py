@@ -38,7 +38,7 @@ def main():
         result=subprocess.call(command+(['3'] if args.controls_only else []))
         if result:return result
         if args.self_test:
-            for broken,label in ((1,'corrupt temporary copy'),(2,'duplicate queued mesh'),(4,'corrupt inserted method')):
+            for broken,label in ((1,'corrupt sorted record'),(2,'duplicate queued mesh'),(4,'corrupt inserted method count')):
                 outcome=subprocess.run(command+[str(broken)],capture_output=True,text=True)
                 expected='!memcmp(q_expected,q_buffer.records,sizeof q_expected)'
                 assert outcome.returncode==1 and expected in outcome.stderr,outcome

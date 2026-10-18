@@ -83,7 +83,8 @@ Files: `perf/src/main.c`, `perf/src/config.[ch]`, `perf/src/version.rc`,
 `perf/bfme2perf.ini`, `perf/Makefile`, focused tests and project status docs.
 
 - [x] Add `[Render] QueueInsert=1`, independently switchable to zero. Call
-  installation only after the master/version gates and before native code
+  installation only under the master switch, with its executable contract
+  verified, before native code
   it depends on is patched. Preserve all existing INI values on any future
   deployment; this step does not deploy.
 - [x] Bump the beta version in all three required locations. Add this module

@@ -156,6 +156,7 @@ A missing INI or key takes the default. In outline:
 | | `FrameSmoothing` | what an extra frame moves: 0 or 1 nothing, 2 units ahead, 3 units between the last two game frames; the camera is never moved (every frame shows it where the game has it) | 3 |
 | | `ExtraFrameShadows`, `ExtraFrameReflections` | redraw the shadow map or water reflection in extra frames instead of reusing the game frame's | off, off |
 | | `QueueInsert` | beta: fill available rendering-queue storage directly after verifying the native insertion code; growth and unsupported inputs use the original function | on |
+| | `QueueSort` | beta: preserve native rendering order with raw record moves for verified pure comparators; unsupported inputs use the original sort | on |
 | | `Instancing`, `InstancingVerify`, `ShadowInstancing` | draw repeated unit meshes in a few instanced draws; compare both ways every 5 s; also in the shadow map | off, on, on |
 | | `ShadowBatchIgnoreLight`, `NoStencilFlushes`, `ShadowSkipParticles` | the shadow-pass cuts (below) | 1, 1, 1 |
 | | `ShadowPassVerify` | every 10 s draw the shadow map with and without a cut and compare | off |

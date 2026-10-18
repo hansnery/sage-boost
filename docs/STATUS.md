@@ -21,6 +21,29 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Native-order sorting integrated into the runtime (2026-10-18)
+
+- Beta **0.9.11-beta.5** adds `[Render] QueueSort=1`. An integer-only C
+  sort preserves native ties while keeping queue ownership throughout raw
+  record moves. Only two verified pure comparators qualify; unsupported
+  inputs call the original. No native sort bodies are cloned at runtime.
+  See [runtime queue sorting](specs/2026-10-18-runtime-queue-sort.md).
+- Sorting and insertion share the fingerprint/dependency verifier. Both
+  images pass 936 native sort comparisons and private-image installation in
+  both orders. Per image/order: 528 entry cases plus 456 forced-heap cases,
+  including shared holders. Callback/reference traces, ten preflight guards,
+  105 sort refusals and unchanged insertion checks pass.
+- Full plugin suite, additional shared-holder checks, final build/load and
+  eight GPU cases pass; 24 corrupt-record controls fail the expected oracle.
+  Two shuffled DXVK repeats retain 7.39-7.96 ms combined savings per pair;
+  ordered input saves 6.17-6.22 ms. Preserve 126 samples and hashes.
+- Built ASI SHA256:
+  `a925172cf19dd7fa950d79d2a969bbb5aedf936572b76a671ebbc1f823cfe137`.
+  Installed ASI/INI and stable branches remain unchanged; no gameplay request.
+- Next integrate bulk rendering and remaining lifetime/device/replay guards.
+  Only insertion/sorting are now in production; combined fixture timing does
+  not establish gameplay FPS. Last gameplay remains ~30.18/s, target open.
+
 ## Queue insertion integrated into the runtime (2026-10-18)
 
 - Beta **0.9.11-beta.4** adds `[Render] QueueInsert=1`: fill available

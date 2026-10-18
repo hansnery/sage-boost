@@ -51,7 +51,11 @@ static void __attribute__((thiscall)) direct_append(Queue *queues,Mesh *mesh,con
         fast_calls++;
         if(broken) {
             unsigned which=(mesh->model[0x19]&4)?(**(unsigned char **)(mesh->model+0xbc)?1:2):0;
-            queues[which].last[-1].word[7]^=1;
+            /* Wrong but structurally valid count: the downstream sort now
+             * checks holder references, so a fabricated pointer would fault
+             * before the independent exact-record oracle can run. */
+            Record *record=queues[which].last-1;
+            record->word[1]=record->word[1]?0:1;
         }
     }
 }

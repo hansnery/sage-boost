@@ -144,6 +144,13 @@ int main(void)
     write_ini("[Render]\r\nQueueInsert=off\r\n");
     pf_config_load(&c, g_ini);
     CHECK(c.queue_insert == 1, "junk %d", c.queue_insert);
+    CHECK(c.queue_sort == 1, "sort default %d", c.queue_sort);
+    write_ini("[Render]\r\nQueueSort=0\r\n");
+    pf_config_load(&c, g_ini);
+    CHECK(c.queue_sort == 0 && c.queue_insert == 1, "sort disable %d/%d", c.queue_sort, c.queue_insert);
+    write_ini("[Render]\r\nQueueSort=off\r\n");
+    pf_config_load(&c, g_ini);
+    CHECK(c.queue_sort == 1, "sort junk %d", c.queue_sort);
     printf("instancing\n");
     DeleteFileW(g_ini);
     pf_config_load(&c, g_ini);

@@ -7,16 +7,23 @@ Strike an item through, with the date, when it's done.
 
 ## Full-rate 60 FPS investigation (2026-10-17)
 
+- [x] 2026-10-18: integrate native-order C sorting into beta.5 with a shared
+  runtime verifier, pure-comparator gate and native fallback. Both images
+  pass native/entry/forced-heap/shared-holder comparisons, callback traces,
+  guard/refusal controls, joined GPU checks and the full suite. Combined
+  savings remain 7.39-7.96 ms shuffled / 6.17-6.22 ms ordered. See
+  `specs/2026-10-18-runtime-queue-sort.md`; no installation or FPS claim.
+
 - [x] 2026-10-18: integrate queue insertion into beta.4 with a generated
   signature/hash/dependency guard, original fallback and configuration.
   Both images pass production-handler and actual private-entry comparisons,
   runtime refusals, joined GPU controls and full plugin tests. Combined
   runtime-handler savings remain 7.54-7.80 ms shuffled / ~6.13 ms ordered.
   See `specs/2026-10-18-runtime-queue-insertion.md`; no installation or FPS claim.
-- [ ] Integrate native-order sorting and the guarded bulk renderer into
-  production code, including remaining source/lifetime and device/replay
+- [ ] Integrate the guarded bulk renderer into production code, including
+  remaining source/lifetime and device/replay
   failure boundaries. Install/test the complete significant improvement;
-  the queue-only beta.4 is not the requested final candidate.
+  insertion/sorting beta.5 is not the requested final candidate.
 
 - [x] Beta.2 saved-game test captured 2026-10-17 with full-rate shadows;
   steady section still ~30 presentation calls/s, no extras. See STATUS.md.
