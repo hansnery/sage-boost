@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-18T16:21:29.486571-07:00",
+  "loaded_capture_version": "0.9.10",
+  "capture": "C:\\Users\\Hans\\AppData\\Local\\Temp\\bfme2perf-new-test-20261018-161755-746488",
+  "backup": "C:\\Users\\Hans\\AppData\\Local\\Temp\\bfme2perf-0.9.10-installed-20261018-162129-216626",
+  "restored_version": "0.9.11-beta.13",
+  "source_commit": "5e94796dc7491a9a8fc5202f68c07ee60c329a15",
+  "tested_asi_sha256": "976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd",
+  "installed_asi_sha256": "976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd",
+  "previous_ini_sha256": "79bbb612a6ce22e76f930e9334a6e650bc2c49c3d28260c6bc716c026da94c54",
+  "restored_ini_sha256": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b",
+  "existing_ini_bytes_preserved": true,
+  "restored_keys": [
+    "Render.QueueInsert=1",
+    "Render.QueueSort=1",
+    "Render.BulkRender=1"
+  ],
+  "game_launched": false,
+  "goal_achieved": false,
+  "captured_files": {
+    "bfme2perf.asi": {
+      "sha256": "db65e51d42bb7f49947631a17b9aeebc0604f3cd9e2c055d8e8a35daf65408e5",
+      "bytes": 291840,
+      "source_mtime": 1792362463.8027737
+    },
+    "bfme2perf.ini": {
+      "sha256": "79bbb612a6ce22e76f930e9334a6e650bc2c49c3d28260c6bc716c026da94c54",
+      "bytes": 6731,
+      "source_mtime": 1792362463.83125
+    },
+    "bfme2perf.log": {
+      "sha256": "15b83c7cd92e7873309081f5e5b7f8011759d0511a56d77e35d2f08d6b996f03",
+      "bytes": 93267,
+      "source_mtime": 1792365342.9429812
+    },
+    "bfme2perf_timing.csv": {
+      "sha256": "08c1e1eb7f5717e1dcf8f3bd5b31f2e697b4293569a94c4b716dd90acf6379f5",
+      "bytes": 601329,
+      "source_mtime": 1792365343.6690323
+    },
+    "bfme2perf_scopes.csv": {
+      "sha256": "8ff9ee5f07d6589df3cdece2feec0595a973378857bfc094facc6f08db9a116a",
+      "bytes": 23320,
+      "source_mtime": 1792365322.6677356
+    }
+  },
+  "user_reported_frameview_max_fps": 30,
+  "captured_presentation_counters_available": false,
+  "captured_bulk_counters_available": false,
+  "test_shortcut": "C:\\Users\\Hans\\Desktop\\Realms - sage-boost beta test.lnk",
+  "launcher_validation": {
+    "check_only": true,
+    "cases_passed": [
+      "valid installation",
+      "wrong binary rejected",
+      "wrong settings rejected",
+      "missing mod rejected"
+    ],
+    "actual_launch_tested": false
+  }
+}

@@ -23,6 +23,15 @@ Strike an item through, with the date, when it's done.
   unchanged. See `benchmarks/2026-10-18-material-chain-install.json`.
 - [ ] Collect the user's beta.13 heavy-save presentation-rate/pacing and
   method-count coverage capture. Do not infer 60 FPS from synthetic timings.
+- [x] 2026-10-18: identify the next reported 30-FPS run as 0.9.10 after
+  replacement of the installed beta and removal of its three INI keys.
+  Back up that capture and restore the identical tested beta.13 and missing
+  settings. Add a user-invoked desktop test shortcut that validates hashes
+  and starts Nightly directly; the regular launcher repairs changed binaries
+  and rewrites INIs. No game launched or launcher/release changes made.
+- [ ] Verify beta.13 in the user's recreated save through the test shortcut.
+  The 0.9.10 run has no presentation/bulk coverage counters; do not count it
+  as beta.13 gameplay evidence or compare new/old saves as a controlled A/B.
 
 - [x] 2026-10-18: beta.10 activates the qualified native group path with
   signature-verified startup installation, production accounting and group

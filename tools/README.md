@@ -48,6 +48,17 @@ transaction cleanup. All are offline; none launches the game. See
 
 ## Gameplay capture checks
 
+For a local development beta, `launch_perf_beta.ps1` provides a user-invoked
+launch path that checks the expected ASI and INI SHA-256 values before opening
+the selected mod. Pass `-GameDir`, `-ModDir`, `-ExpectedPerfSha256` and
+`-ExpectedIniSha256`; add `-CheckOnly` to validate without launching anything.
+The game and launchers must be closed. The helper starts the existing
+`lotrbfme2ep1.exe -mod ...` directly and never installs files or changes
+settings, language or launcher state. Use it after installation checks have
+passed: the regular launcher's repair step can replace a development ASI
+with its published version and recreate the INI from its release template.
+An agent must only execute CheckOnly; the user performs the actual game run.
+
 After the user closes the game, copy its log, INI and CSVs to a new capture
 folder before reading. `perf_capture.py` reads a copied timing CSV and reports
 one explicitly selected interval; it never launches or modifies the game:

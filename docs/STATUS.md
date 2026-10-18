@@ -10,21 +10,41 @@ files before relying on it.
 ## Next target: 60 visual FPS with shadows at 60 (2026-10-17)
 
 **Current installed build: 0.9.11-beta.13**, from pushed commit `5e94796`,
-installed 2026-10-18 15:17 PDT. Tested/build/installed ASI SHA256:
+restored 2026-10-18 16:21 PDT after replacement by 0.9.10.
+Tested/build/installed ASI SHA256:
 `976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd`.
-INI is byte-for-byte unchanged. Beta.11, INI and current log/CSVs are backed
-up at `%TEMP%\bfme2perf-0.9.11-beta.11-installed-20261018-151742-8274532`.
-See [installation receipt](benchmarks/2026-10-18-material-chain-install.json).
-The game was closed and was not launched. Await the user's same heavy-save
-test and a settled 60-second presentation-rate/pacing capture. The target
-is still unproven; the latest gameplay measurement remains 30.0667/s.
+The current INI had lost only the QueueInsert/QueueSort/BulkRender block.
+Restoring that block preserves every existing byte and recovers the exact
+previous preferences (SHA256 `e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b`).
+The replaced binary, INI and capture are backed up at
+`%TEMP%\bfme2perf-0.9.10-installed-20261018-162129-216626`.
+See [restoration receipt](benchmarks/2026-10-18-beta13-restoration.json) and
+the [original installation](benchmarks/2026-10-18-material-chain-install.json).
 
-The capture analyzer now reports beta.13 follower totals by method count,
-with separate regular/extra frame denominators. Its 20 checks pass and the
-copied beta.11 interval reproduces every prior metric unchanged. Current
-installed log/CSV hashes still match the pre-beta.13 deployment backup;
-there is no new gameplay capture yet. No further plugin change or install
-was made while preparing this analysis.
+The user recreated the save after a Realms update and again reported a
+FrameView maximum of 30 FPS. The copied run at
+`%TEMP%\bfme2perf-new-test-20261018-161755-746488` identifies **0.9.10**,
+with 1,078 timing rows and no presentation-gap or bulk-follower counters.
+It therefore does not measure beta.13. Do not infer presentation rate from
+`frames + extra_frames` or claim that the beta failed/passed this run.
+The last capture with presentation instrumentation remains beta.11's
+30.0667/s; the 60 FPS goal is unproven.
+
+Launcher source confirms every Play can repair a locally replaced plugin
+against its installed release state and renders INIs from cached templates.
+Use the desktop **Realms - sage-boost beta test** shortcut for the next
+local test. It invokes `tools/launch_perf_beta.ps1`, pins binary and INI
+hashes, requires the game/launchers closed, and starts the same Nightly mod
+path directly. It refuses changed files instead of repairing them. Its
+CheckOnly success, wrong-binary, wrong-settings and missing-mod cases pass;
+the actual launch remains for the user. No game was launched, and no
+launcher state, published release or stable branch was changed.
+
+The capture analyzer reports beta.13 follower totals by method count,
+with separate regular/extra frame denominators. All 20 checks pass and
+the copied beta.11 interval reproduces every prior metric unchanged.
+Await a settled 60-second beta.13 capture using the new save; results from
+the old and recreated saves are not a controlled performance comparison.
 
 - User requested committing/pushing current work, then a target of at least
   60 FPS. Clean beta history through `ace76a5` pushed to origin/codex/perf-beta.
