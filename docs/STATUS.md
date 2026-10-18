@@ -41,8 +41,15 @@ files before relying on it.
 - Native event groundwork: [four complete routine bodies](specs/2026-10-17-native-event-contract.md)
   pass full-body/import/branch checks, nine refusal controls and 80 isolated
   callback/buffer/ABI cases per local image. Active callbacks are observable
-  and require original events; the enclosing loop/SEH and ownership contract
-  still needs proof. No production event omission or installation.
+  and require original events. The separate group-loop proof below extends
+  this groundwork. No production event omission or installation.
+- The [native group-loop fixture](specs/2026-10-17-native-group-contract.md)
+  now verifies nine complete bodies and compares original/bulk control flow
+  in 5,376 cases per image. Method ownership, passes, callback fallback,
+  partial batches and normal cleanup agree; eleven verifier mutations and
+  four deliberately broken bridges are rejected. Native exception unwinding,
+  material source computation, GPU failure and engine-state reconciliation
+  remain outside that proof. No production hook or installation.
 - The same paired fixture also isolates aggregate dispatch without retained
   material state. Two guarded repeats save only 1.69-2.65 ms on DXVK, below
   the standalone screening gate. All output/state/count checks pass; the
@@ -65,8 +72,9 @@ files before relying on it.
   while game.dat, BFME's launcher or WorldBuilder is running. Live refusal
   verified; the subsequent no-game runs also pass the guard.
 - No production source/installation changes. No claim of 60 FPS or a
-  saved-game speedup. The clean fixture gain does not meet the promotion
-  gate after marker work is included; no diagnostic-only gameplay request.
+  saved-game speedup. The per-member-marker variant does not meet its gate;
+  the combined aggregate variant qualifies for further integration work,
+  with the remaining runtime obligations above. No gameplay request yet.
 - At 20:00, installation was independently observed back on **0.9.10**
   (file modified 19:57:12), ASI SHA-256
   `db65e51d42bb7f49947631a17b9aeebc0604f3cd9e2c055d8e8a35daf65408e5`.

@@ -33,12 +33,18 @@ Strike an item through, with the date, when it's done.
   samples retain mesh counts and measured work. DXVK savings ~3.0-3.5 ms
   per modeled pair; changed interval boundaries documented in
   `specs/2026-10-17-material-bulk-accounting-screen.md`.
-- [ ] Prove native debug callback/group contracts, source callbacks,
-  lifetimes and engine-state reconciliation for that combined candidate.
-  No runtime event omission or installation is yet authorized by evidence.
+- [ ] Complete source-callback, cache-lifetime, GPU-failure and engine-state
+  reconciliation proofs for the combined candidate. The native callback
+  and normal group-loop contracts below do not establish a runtime cache.
 - [x] 2026-10-17: four native event bodies pass nine refusal controls and
   80 callback/buffer/ABI cases on each image. Enclosing loop/SEH remains
   outside this proof; see `specs/2026-10-17-native-event-contract.md`.
+- [x] 2026-10-17: native group loop, method-chain helpers and event bodies
+  pass 5,376 normal-control-flow/ownership cases per image, eleven verifier
+  refusal controls and four deliberately broken-bridge controls. Partial
+  batching and callback fallback agree with stock. Exception unwinding,
+  source callbacks, GPU failures and engine-cache integration remain open;
+  see `specs/2026-10-17-native-group-contract.md`.
 - [ ] If clean measurements justify it, prove the native effect/group
   bridge, lifetimes, engine state and diagnostics before runtime promotion.
   Current persistent cache borrows fixed fixture objects only.

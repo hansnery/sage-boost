@@ -22,6 +22,8 @@ user's own installs at run time.
 | `port_sites.py` | turns a 1.06 function's first bytes into a wildcard signature that matches another image once; tests in `test_port_sites.py` |
 | `bench_ambient.py` | verifies the full ambient-light sampler against the read-only reference and runs the isolated native cost screen on synthetic data; requires `perf/build/bench_ambient.exe`. No game entry point or scene runs. See `perf/tests/RENDER_SETUP_BENCHMARK.md`. |
 | `test_fx_lifecycle.py` | verifies eight complete native FX wrapper bodies, then runs controlled ABI/call-order tests without a game entry point, scene or GPU. `make test-fx-lifecycle` builds the harness and checks both local images; `test_fx_contract.py` tests altered-code refusals with synthetic bytes. See `docs/specs/2026-10-17-native-fx-lifecycle-audit.md`. |
+| `test_event_contract.py` | verifies four native diagnostic-event bodies, CRT/data/callback contracts and isolated callback/buffer/ABI behavior. `make test-native-events` checks both local images; no game startup. |
+| `test_group_contract.py` | verifies nine native group/SEH-prologue/name/chain/event bodies and runs original-versus-bulk loop, ownership, callback and partial-consumption tests. `make test-native-group` also rejects deliberately broken bridges. Normal control flow only; no native exception-unwind or GPU claim. See `docs/specs/2026-10-17-native-group-contract.md`. |
 
 ## Maps, castles and AI bases (`.map`, `.bse`)
 
