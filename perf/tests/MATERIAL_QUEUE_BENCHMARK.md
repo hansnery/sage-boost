@@ -119,3 +119,26 @@ The first 504 recorded timing samples were excluded after a concurrent
 game process was discovered. See the
 [results and exclusion](../../docs/specs/2026-10-17-material-queue-screen.md).
 Do not present them as clean performance evidence.
+
+## Stronger lifecycle and marker controls
+
+`MATERIAL_PROTOCOL=lifecycle` (with an explicit `MATERIAL_CHURN`) retains
+real Begin/End on hits and prepares/validates inputs in extras as well.
+Changed extra inputs use the existing normal draw/capture path before any
+replay. It sends neither CommitChanges nor EndPass for a cached pass.
+
+`MATERIAL_PROTOCOL=lifecycle-markers` also retains each mesh label, modeled
+native event copies, production marker hooks and scope accounting. Markers
+cover staging and batch submission. Every regular frame verifies exactly
+7,200 scopes with no stale scope; extras keep existing counting semantics.
+
+Both modes validate individual effect End boundaries with an opposite
+entry cull state and test a material change between regular and extra draws.
+Those additional render-state reads stop before measured warmups. The
+existing frame-boundary state checks still run on both timed paths.
+
+[Clean results](../../docs/specs/2026-10-17-material-queue-clean-results.md)
+supersede performance qualification of the original screen. Retaining
+lifecycle and marker work reduces DXVK gain to roughly 0.7-1.0 ms in the
+final repeat runs. No runtime cache is promoted. Fixed-object lifetime,
+native group behavior and engine state remain unproved.

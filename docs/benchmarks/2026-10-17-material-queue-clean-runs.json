@@ -1,0 +1,68 @@
+{
+  "source_commit": "9d3599bcc23c56ace912dbdc14ca3734fece01fa",
+  "sequential_runs": [
+    {
+      "run": "material-clean-10-1",
+      "startUtc": "2026-10-18T05:07:48.8259703+00:00",
+      "endUtc": "2026-10-18T05:08:07.9772553+00:00",
+      "exit": 0,
+      "log_sha256": "0e4ba728c2d28494603d1df1d4e55864df1b30000e29eee1be53e716b3c832f7",
+      "qualification": "clean",
+      "guard": "passed before setup and before/after every paired sample"
+    },
+    {
+      "run": "material-clean-10-2",
+      "startUtc": "2026-10-18T05:08:27.3966143+00:00",
+      "endUtc": "2026-10-18T05:08:45.8980443+00:00",
+      "exit": 0,
+      "log_sha256": "ba894335b2e13eaf9af2483d6e3e3aacd659e60a46efde4d2aaf7eb0e0e3c5a0",
+      "qualification": "clean",
+      "guard": "passed before setup and before/after every paired sample"
+    },
+    {
+      "run": "material-clean-10-3",
+      "startUtc": "2026-10-18T05:08:46.0242981+00:00",
+      "endUtc": "2026-10-18T05:09:04.5115684+00:00",
+      "exit": 0,
+      "log_sha256": "a0ca8f7e1687145f7f6f84190b179d6d7ac5bcb110dfe47e648c20639ca89e1d",
+      "qualification": "clean",
+      "guard": "passed before setup and before/after every paired sample"
+    },
+    {
+      "run": "material-clean-recapture",
+      "startUtc": "2026-10-18T05:09:29.5753673+00:00",
+      "endUtc": "2026-10-18T05:09:49.4110617+00:00",
+      "exit": 0,
+      "log_sha256": "6468419f7d247574e70a0a3d2aa51f7a91b1cb6814a7512780e24c02f569ce73",
+      "qualification": "clean",
+      "guard": "passed before setup and before/after every paired sample"
+    },
+    {
+      "run": "material-clean-0",
+      "startUtc": "2026-10-18T05:09:49.5237302+00:00",
+      "endUtc": "2026-10-18T05:10:07.5891541+00:00",
+      "exit": 0,
+      "log_sha256": "19b76e05acb86efd39722ee20761e2812f8c2b37f44c5aa689cb8708e2b29033",
+      "qualification": "clean",
+      "guard": "passed before setup and before/after every paired sample"
+    },
+    {
+      "run": "material-clean-100",
+      "startUtc": "2026-10-18T05:10:07.5947086+00:00",
+      "endUtc": "2026-10-18T05:10:27.9664931+00:00",
+      "exit": 0,
+      "log_sha256": "ca6e064dcda953864ed6372b41ba63a1d7dbaf7942efbec08948f324487fe7ab",
+      "qualification": "clean",
+      "guard": "passed before setup and before/after every paired sample"
+    }
+  ],
+  "samples": 504,
+  "no_game_observed_before_after_matrix": true,
+  "note": "Synthetic workload. Lit/shadow are alternate whole workloads, not additive. No FPS claim.",
+  "sha256": {
+    "bench_material_queue.exe": "c67844f8ab446ae98f5bea8828c21817977d36e89fd143229a6f7c8088eb2561",
+    "d3d9.dll": "00bc142e98ddad1e334a4d88fa630038e092b0758b3d79e295172b181a4c772d",
+    "d3dx9_27.dll": "a70d571cd675c97c9eeb4a234dba1d667ffb54ec3bb14defb36b3e2f605ae257",
+    "Shaders.big": "353c835b0e77387b322a094b62477b35c34e8e1cea6d75f5844a20b9e36b091b"
+  }
+}

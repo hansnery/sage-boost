@@ -223,15 +223,16 @@ $(BUILD)/bench_material_queue.exe: tests/bench_material_queue.c tests/bench_reta
 
 RETAINED_MASK ?= narrow
 MATERIAL_CHURN ?=
+MATERIAL_PROTOCOL ?=
 bench-material-queue: $(BUILD)/bench_material_queue.exe
-	./$(BUILD)/bench_material_queue.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit $(RETAINED_MASK) $(MATERIAL_CHURN)
-	./$(BUILD)/bench_material_queue.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow $(RETAINED_MASK) $(MATERIAL_CHURN)
+	./$(BUILD)/bench_material_queue.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit $(RETAINED_MASK) $(MATERIAL_CHURN) $(MATERIAL_PROTOCOL)
+	./$(BUILD)/bench_material_queue.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow $(RETAINED_MASK) $(MATERIAL_CHURN) $(MATERIAL_PROTOCOL)
 	@test -f "$(DXVK_D3D9)" || { echo "error: bench-material-queue requires DXVK_D3D9"; exit 1; }
 	mkdir -p $(BUILD)/material_dxvk
 	cp $(BUILD)/bench_material_queue.exe "$(DXVK_D3D9)" $(BUILD)/material_dxvk/
 	cd $(BUILD)/material_dxvk && \
-	  DXVK_LOG_LEVEL=none ./bench_material_queue.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit $(RETAINED_MASK) $(MATERIAL_CHURN) && \
-	  DXVK_LOG_LEVEL=none ./bench_material_queue.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow $(RETAINED_MASK) $(MATERIAL_CHURN)
+	  DXVK_LOG_LEVEL=none ./bench_material_queue.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit $(RETAINED_MASK) $(MATERIAL_CHURN) $(MATERIAL_PROTOCOL) && \
+	  DXVK_LOG_LEVEL=none ./bench_material_queue.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow $(RETAINED_MASK) $(MATERIAL_CHURN) $(MATERIAL_PROTOCOL)
 
 bench-retained: $(BUILD)/bench_retained.exe
 	./$(BUILD)/bench_retained.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit $(RETAINED_MASK)

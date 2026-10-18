@@ -23,6 +23,12 @@ files before relying on it.
 
 ## Material-queue cache experiment (2026-10-17)
 
+- User closed the game/launcher; [clean recollection and stronger controls](specs/2026-10-17-material-queue-clean-results.md)
+  are complete. Original protocol saved 3.2-3.9 ms on DXVK, but retaining
+  real Begin/End, extra input checks and per-mesh markers reduces the final
+  gain to 0.66-1.04 ms per modeled pair. Individual samples regress.
+  **Not promoted**: insufficient gain for this runtime cache. No installation
+  or gameplay test. Next investigate marker-processing cost and its contract.
 - Native integration groundwork: eight complete local FX wrapper bodies
   now pass 58 offline call-order/ABI cases on both executable images;
   altered-code refusal controls pass. [Contract and remaining limits](specs/2026-10-17-native-fx-lifecycle-audit.md).
@@ -34,15 +40,15 @@ files before relying on it.
   unchanged regular-frame groups after exact input checks. Native/DXVK
   output, material invalidation, mixed fallback and state checks pass;
   full plugin tests and earlier retained-fixture comparisons pass.
-- [Results and limits](specs/2026-10-17-material-queue-screen.md). All 504
-  recorded timing samples are explicitly **excluded**: they overlapped a
+- [Original results and limits](specs/2026-10-17-material-queue-screen.md). The first 504
+  timing samples remain explicitly **excluded**: they overlapped a
   game process started outside this work. A new read-only process guard
   refuses both retained benchmark targets before setup or between samples
   while game.dat, BFME's launcher or WorldBuilder is running. Live refusal
-  verified; clean performance recollection remains pending.
-- No production source/installation changes. No claim of 60 FPS or clean
-  measured speedup. Continue the native lifecycle/state audit while waiting
-  for a quiet measurement opportunity; no diagnostic-only gameplay request.
+  verified; the subsequent no-game runs also pass the guard.
+- No production source/installation changes. No claim of 60 FPS or a
+  saved-game speedup. The clean fixture gain does not meet the promotion
+  gate after marker work is included; no diagnostic-only gameplay request.
 - At 20:00, installation was independently observed back on **0.9.10**
   (file modified 19:57:12), ASI SHA-256
   `db65e51d42bb7f49947631a17b9aeebc0604f3cd9e2c055d8e8a35daf65408e5`.

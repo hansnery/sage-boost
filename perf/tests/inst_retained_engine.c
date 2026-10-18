@@ -10,6 +10,13 @@ static IDirect3DStateBlock9 *blocks[RETAINED_GROUPS];
 static int narrow;
 static unsigned replay_draws, replay_meshes;
 static HRESULT (*record_material_mask)(IDirect3DDevice9 *);
+static void (*replay_marker_begin)(void),(*replay_marker_end)(void);
+
+void bench_retained_markers(void (*begin)(void),void (*end)(void))
+{
+    replay_marker_begin=begin;
+    replay_marker_end=end;
+}
 
 void bench_retained_material_mask(HRESULT (*record)(IDirect3DDevice9 *))
 {
@@ -147,10 +154,13 @@ int bench_replay(unsigned index, const unsigned char *first, const unsigned char
     }
     for (; first < end; first += PF_RECORD_SIZE) {
         const unsigned char *mesh = *(const unsigned char *const *)first;
-        if (!mesh || *(const void *const *)(mesh + PF_MESH_MODEL) != g.model ||
-            *(const unsigned *)(mesh + PF_MESH_BASE_VERTEX) != g.base_vertex || !stage(mesh))
-            return 0;
-        if (g.count == g.cap && !retained_draw()) return 0;
+        int valid;
+        if(replay_marker_begin) replay_marker_begin();
+        valid=mesh && *(const void *const *)(mesh + PF_MESH_MODEL)==g.model &&
+              *(const unsigned *)(mesh + PF_MESH_BASE_VERTEX)==g.base_vertex && stage(mesh);
+        if(valid && (g.count==g.cap || first+PF_RECORD_SIZE==end)) valid=retained_draw();
+        if(replay_marker_end) replay_marker_end();
+        if(!valid) return 0;
     }
     if (!retained_draw()) return 0;
     g.mode = M_IDLE;

@@ -22,10 +22,12 @@ Strike an item through, with the date, when it's done.
 - [ ] Demonstrate sustained 60 visual FPS with full-rate shadows; still open.
 - [x] 2026-10-17: larger material-queue fixture passes native/DXVK fresh
   pose, material invalidation, regular/extra image and state checks.
-- [ ] Recollect material-queue timings with no game process running. All
-  first 504 samples are excluded for concurrent game activity. The new
-  process guard correctly refuses the live game/launcher; quiet success
-  remains pending. See `specs/2026-10-17-material-queue-screen.md`.
+- [x] 2026-10-17: recollect material-queue timings with the game closed.
+  The original 504 excluded samples remain separate. Stronger lifecycle,
+  extra-input and marker controls reduce DXVK gain to 0.66-1.04 ms/pair;
+  insufficient for promotion. See `specs/2026-10-17-material-queue-clean-results.md`.
+- [ ] Investigate marker-processing overhead with preserved diagnostics
+  and the native debug contract; do not change the installed Detail setting.
 - [ ] If clean measurements justify it, prove the native effect/group
   bridge, lifetimes, engine state and diagnostics before runtime promotion.
   Current persistent cache borrows fixed fixture objects only.

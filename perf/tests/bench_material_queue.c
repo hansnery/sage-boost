@@ -10,14 +10,33 @@ extern void material_fixture_epoch(unsigned);
 extern void material_fixture_churn(unsigned);
 extern unsigned material_fixture_key(unsigned,unsigned char *,unsigned);
 extern void material_fixture_start(void);
+extern void material_fixture_open(void);
+extern void material_fixture_close(void);
+extern void material_fixture_verify_end(unsigned);
+extern void material_fixture_end_counts(unsigned *,unsigned *);
 extern HRESULT material_fixture_mask(IDirect3DDevice9 *);
 extern unsigned material_fixture_state(IDirect3DDevice9 *,unsigned *,unsigned);
 extern void bench_retained_material_mask(HRESULT (*)(IDirect3DDevice9 *));
+extern void bench_retained_markers(void (*)(void),void (*)(void));
 static unsigned char material_keys[GROUPS][8192];
 static unsigned material_sizes[GROUPS];
 static unsigned persistent_churn;
 static unsigned persistent_hits,persistent_misses;
+static unsigned preserve_lifecycle;
 static char material_runtime[MAX_PATH];
+static char replay_event[320];
+
+static void replay_marker_begin(void)
+{
+    char label[256];
+    local_mbcopy((unsigned char *)label,(const unsigned char *)"Rendering mesh\tFXShader\t");
+    local_mbcat((unsigned char *)label,(const unsigned char *)"BENCH_SYNTHETIC_UNIT_MODEL");
+    ((event_begin_fn)pf_enter_stubs[PF_EVENT_BEGIN])(replay_event,label,"MeshFXShader",0);
+}
+static void replay_marker_end(void)
+{
+    ((event_end_fn)pf_enter_stubs[PF_EVENT_END])(replay_event);
+}
 
 static void __attribute__((thiscall)) effect_render(fake_mesh *mesh, fake_method *method, int count)
 {
@@ -55,6 +74,7 @@ static void effect_setup(void)
     printf("Bound effect shader: %08X, variant %u\n",hash,g_v->ea_index);
     pf_timing_set_next(PF_INST_MESH,effect_render);
     bench_retained_material_mask(material_fixture_mask);
+    material_fixture_verify_end(preserve_lifecycle);
 }
 
 static void spread(float *pivot,unsigned mesh)
@@ -73,7 +93,12 @@ static void validate_materials(void)
     material_fixture_epoch(1);
     pair(0,&regular,&extra,&total,stock);
     /* Negative control: replay the previous material generation. */
-    pose(1); frame_draw(1,1,stale);
+    {
+        unsigned (*saved_extra)(void)=cached_extra;
+        cached_extra=NULL; /* Deliberately bypass invalidation for this control. */
+        pose(1); frame_draw(1,1,stale);
+        cached_extra=saved_extra;
+    }
     pair(1,&regular,&extra,&total,fresh);
     for(unsigned i=0;i<RT*RT;i++) {
         covered+=stock[i]!=(shadow_mode?PF_DEPTH_CLEAR:0);
@@ -100,7 +125,7 @@ static void validate_materials(void)
                 retain_now=1; frame_draw(0,0,fresh); retain_now=0;
                 for(unsigned i=0;i<RT*RT;i++)
                     REQUIRE(shadow_mode?pf_depth_diff(stock[i],fresh[i])<=PF_DEPTH_TOLERANCE:stock[i]==fresh[i]);
-                REQUIRE(persistent_hits-h+persistent_misses-m==2*GROUPS);
+                REQUIRE(persistent_hits-h+persistent_misses-m==(2+preserve_lifecycle)*GROUPS);
                 if(phase) {
                     unsigned expected_misses=changes[trial]==100?GROUPS:changes[trial]==10?30:0;
                     REQUIRE(persistent_misses-m==expected_misses);
@@ -121,6 +146,27 @@ static void validate_materials(void)
         puts("MATERIAL STATE: all recorded render/sampler/texture states restored");
     }
     material_fixture_epoch(0);
+    if(preserve_lifecycle) {
+        unsigned ends,changed;
+        unsigned refs=g_method.refs;
+        pair(1,&regular,&extra,&total,fresh);
+        unsigned hits=persistent_hits,misses=persistent_misses;
+        material_fixture_epoch(1);
+        pose(1); frame_draw(1,0,stock); frame_draw(1,1,fresh);
+        for(unsigned i=0;i<RT*RT;i++)
+            REQUIRE(shadow_mode?pf_depth_diff(stock[i],fresh[i])<=PF_DEPTH_TOLERANCE:stock[i]==fresh[i]);
+        REQUIRE(persistent_misses-misses==GROUPS && persistent_hits==hits);
+        frame_draw(1,1,fresh);
+        REQUIRE(persistent_misses-misses==GROUPS && persistent_hits-hits==GROUPS);
+        for(unsigned i=0;i<RT*RT;i++)
+            REQUIRE(shadow_mode?pf_depth_diff(stock[i],fresh[i])<=PF_DEPTH_TOLERANCE:stock[i]==fresh[i]);
+        REQUIRE(g_method.refs==refs);
+        puts("EXTRA INVALIDATION: changed inputs fall back before drawing, then warm hits match");
+        material_fixture_epoch(0);
+        material_fixture_end_counts(&ends,&changed);
+        REQUIRE(ends>1000 && changed>1000);
+        printf("EFFECT END: %u group boundaries restore entry render states; %u changed states exercised\n",ends,changed);
+    }
 }
 
 static unsigned persistent_regular(void)
@@ -132,7 +178,9 @@ static unsigned persistent_regular(void)
         REQUIRE(n && n<=sizeof key);
         current_records=records[group];
         if(n==material_sizes[group] && !memcmp(key,material_keys[group],n)) {
+            if(preserve_lifecycle) material_fixture_open();
             REQUIRE(bench_replay(group,current_records,current_records+sizeof records[0]));
+            if(preserve_lifecycle) material_fixture_close();
             hits++; persistent_hits++;
             continue;
         }
@@ -159,6 +207,7 @@ static unsigned persistent_regular(void)
 
 static void sample_epoch(unsigned round,unsigned repetition)
 {
+    material_fixture_verify_end(0); /* Correctness-only reads, outside timing. */
     material_fixture_churn(persistent_churn);
     material_fixture_epoch((round*FRAMES_PER_SAMPLE+repetition)&1);
 }
@@ -182,6 +231,17 @@ int main(int argc,char **argv)
         cached_regular=persistent_regular;
         prepare_sample=sample_epoch;
         printf("PERSISTENT material cache, %u percent selected groups alternate inputs each pair\n",persistent_churn);
+    }
+    if(argc>6) {
+        REQUIRE(argc==7 && (!strcmp(argv[6],"lifecycle") || !strcmp(argv[6],"lifecycle-markers")));
+        preserve_lifecycle=1;
+        cached_extra=persistent_regular;
+        puts("LIFECYCLE: real Begin/End on each hit; prepare and validate inputs again in extras");
+        if(!strcmp(argv[6],"lifecycle-markers")) {
+            validate_markers=1;
+            bench_retained_markers(replay_marker_begin,replay_marker_end);
+            puts("MARKERS: identical per-mesh labels, entry/exit hooks, copies and scope accounting on replay");
+        }
     }
     int result=retained_benchmark(argc,argv);
     if(cached_regular) printf("PERSISTENT hits=%u misses=%u (includes validation/warmup)\n",persistent_hits,persistent_misses);

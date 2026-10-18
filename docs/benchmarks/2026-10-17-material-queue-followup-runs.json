@@ -1,0 +1,101 @@
+{
+  "parent_commit": "9d3599bcc23c56ace912dbdc14ca3734fece01fa",
+  "runs": {
+    "material-queue-markers": [
+      {
+        "run": "material-markers-final-10-1",
+        "startUtc": "2026-10-18T05:18:43.7826033+00:00",
+        "endUtc": "2026-10-18T05:19:08.0716094+00:00",
+        "exit": 0,
+        "log_sha256": "4fb0cd0666f2c0b4a575e2d7d3c3315a173759a6f5699bf2eb722b5a9ce55c79",
+        "samples": 84,
+        "qualification": "clean",
+        "exclusion": ""
+      },
+      {
+        "run": "material-markers-final-10-2",
+        "startUtc": "2026-10-18T05:20:44.6277605+00:00",
+        "endUtc": "2026-10-18T05:21:08.2373787+00:00",
+        "exit": 0,
+        "log_sha256": "c52dfb583fadcf422fb574c49492d6b916d4bd6f0d014a413a0e5de26ddaefda",
+        "samples": 84,
+        "qualification": "clean",
+        "exclusion": ""
+      },
+      {
+        "run": "material-markers-final-10-3",
+        "startUtc": "2026-10-18T05:21:08.3598898+00:00",
+        "endUtc": "2026-10-18T05:21:29.8742142+00:00",
+        "exit": 0,
+        "log_sha256": "001378b5a3a76d6fa8665a227d4e77dca816f6c4f29bb220c5e11b5eda203e88",
+        "samples": 84,
+        "qualification": "clean",
+        "exclusion": ""
+      },
+      {
+        "run": "material-markers-final-0-1",
+        "startUtc": "2026-10-18T05:21:29.8805744+00:00",
+        "endUtc": "2026-10-18T05:21:51.0685895+00:00",
+        "exit": 0,
+        "log_sha256": "07d392db1a4747a6ad44ca9ccfe5ceeb3bff17dddccc67ce2729665bad6416ce",
+        "samples": 84,
+        "qualification": "clean",
+        "exclusion": ""
+      },
+      {
+        "run": "material-markers-final-100-1",
+        "startUtc": "2026-10-18T05:21:51.0729357+00:00",
+        "endUtc": "2026-10-18T05:22:13.2021692+00:00",
+        "exit": 0,
+        "log_sha256": "5c2c47a4253f4a821722b14752dbccb4fbbc2bba623ee6147a15f49eeb2aad20",
+        "samples": 84,
+        "qualification": "clean",
+        "exclusion": ""
+      }
+    ],
+    "material-queue-exploratory": [
+      {
+        "run": "material-lifecycle-10-1",
+        "startUtc": "2026-10-18T05:13:26.4492625+00:00",
+        "endUtc": "2026-10-18T05:13:49.2280642+00:00",
+        "exit": 0,
+        "log_sha256": "13205c425d96645f2e9a980612b6e4997c23f964b0448ad02b694ae128d67727",
+        "samples": 84,
+        "qualification": "exploratory",
+        "exclusion": "superseded_validation_protocol"
+      },
+      {
+        "run": "material-markers-10-1",
+        "startUtc": "2026-10-18T05:15:02.3130535+00:00",
+        "endUtc": "2026-10-18T05:15:25.3153170+00:00",
+        "exit": 0,
+        "log_sha256": "09ba32d72d29752dd4f2aabe6d064b12566e40252320c545682c2e84f604df7a",
+        "samples": 84,
+        "qualification": "exploratory",
+        "exclusion": "superseded_validation_protocol"
+      },
+      {
+        "run": "material-markers-10-2",
+        "startUtc": "2026-10-18T05:17:37.7535561+00:00",
+        "endUtc": "2026-10-18T05:17:47.7653414+00:00",
+        "exit": 2,
+        "log_sha256": "0cb2b1932e0f210874d6e4b5c605ffd4eee3114543b1963978a3badea8a9a706",
+        "samples": 21,
+        "qualification": "excluded",
+        "exclusion": "following_shadow_validation_control_not_exercised"
+      }
+    ]
+  },
+  "final_source_sha256": {
+    "perf/tests/bench_material_queue.c": "4b9e9e6730ef0f0d117684b2d4ecb9a95936e1192b96178a307744cfdec5baff",
+    "perf/tests/bench_retained.c": "bd3b6ee6eb4820fb85f5ae297f3dc6a486f90134079a38c283ca5698760cfbe9",
+    "perf/tests/material_fixture.c": "51bbaf9ec354b34fa9f015651f5218b3322dc0821471395f236f0e9325edfbbf",
+    "perf/tests/inst_retained_engine.c": "89d14035fda4536c47e4cb06c837934804e310121f1185f324c65aa738411c21"
+  },
+  "notes": [
+    "All timing runs passed the live-game guard; final rows require all four backend/workload cases to pass.",
+    "Final run 1 predates an additional warm-extra image assertion outside timed paths. Timing paths are unchanged.",
+    "The excluded partial run had unchanged shadow entry render state, so its restoration positive control was not exercised. The final protocol seeds an opposite valid cull mode.",
+    "Actual saved-game FPS, native integration, resource lifetime and engine state are not proved."
+  ]
+}

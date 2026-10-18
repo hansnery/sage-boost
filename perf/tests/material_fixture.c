@@ -19,6 +19,24 @@ static unsigned epoch;
 static unsigned churn=100;
 static D3DXHANDLE key_handles[64];
 static unsigned key_bytes[64],key_count,key_texture[64];
+static IDirect3DDevice9 *material_device;
+static unsigned verify_end,verified_ends,changed_end_states;
+static DWORD entry_render_states[256];
+
+void material_fixture_verify_end(unsigned enabled)
+{
+    verify_end=enabled;
+    if(enabled) {
+        /* Both fixture techniques disable culling. Seed a different valid
+         * entry state so the End check proves restoration, not a no-op. */
+        REQUIRE(rs_mask[D3DRS_CULLMODE]);
+        HR(IDirect3DDevice9_SetRenderState(material_device,D3DRS_CULLMODE,D3DCULL_CW));
+    }
+}
+void material_fixture_end_counts(unsigned *ends,unsigned *changed)
+{
+    *ends=verified_ends; *changed=changed_end_states;
+}
 
 void material_fixture_epoch(unsigned value) { epoch=value; }
 void material_fixture_churn(unsigned value) { REQUIRE(value<=100); churn=value; }
@@ -118,14 +136,38 @@ static void prepare(unsigned group)
     HR(F(SetValue,diffuse_handle,diffuse,sizeof diffuse));
     HR(F(SetTexture,texture_handle,(IDirect3DBaseTexture9 *)textures[(group+delta)&1]));
 }
-void material_fixture_start(void)
+/* A retained hit keeps the real Begin/End pair but issues its drawing
+ * directly. It never sends CommitChanges/EndPass without a BeginPass. */
+void material_fixture_open(void)
 {
     UINT passes=0;
+    if(verify_end) for(unsigned i=0;i<256;i++) if(rs_mask[i])
+        HR(IDirect3DDevice9_GetRenderState(material_device,i,&entry_render_states[i]));
     HR(F(Begin,&passes,6)); REQUIRE(passes==1);
+}
+void material_fixture_close(void)
+{
+    DWORD state;
+    if(verify_end) for(unsigned i=0;i<256;i++) if(rs_mask[i]) {
+        HR(IDirect3DDevice9_GetRenderState(material_device,i,&state));
+        changed_end_states+=state!=entry_render_states[i];
+    }
+    HR(F(End));
+    if(verify_end) {
+        for(unsigned i=0;i<256;i++) if(rs_mask[i]) {
+            HR(IDirect3DDevice9_GetRenderState(material_device,i,&state));
+            REQUIRE(state==entry_render_states[i]);
+        }
+        verified_ends++;
+    }
+}
+void material_fixture_start(void)
+{
+    material_fixture_open();
     HR(F(BeginPass,0));
 }
 void material_fixture_begin(unsigned group) { prepare(group); material_fixture_start(); }
-void material_fixture_end(void) { HR(F(EndPass)); HR(F(End)); }
+void material_fixture_end(void) { HR(F(EndPass)); material_fixture_close(); }
 void material_fixture_bones(const void *bones,unsigned bytes)
 {
     HR(F(SetRawValue,bones_handle,bones,0,bytes)); HR(F(CommitChanges));
@@ -157,6 +199,7 @@ void material_fixture_init(IDirect3DDevice9 *dev,const void *code,unsigned size,
     const float projection[16]={2.f/54,0,0,0, 0,2.f/48,0,0, 0,0,.2f,0, -1,-1,.4f,1};
     const float texcoord[4]={1,1,0,0};
     HMODULE dll=LoadLibraryA(runtime);
+    material_device=dev;
     create=(create_effect_fn)(void*)GetProcAddress(dll,"D3DXCreateEffect"); REQUIRE(create);
     HR(create(dev,code,size,NULL,NULL,0,NULL,&effect,NULL));
     technique=F(GetTechniqueByName,shadow?"_CreateShadowMap":"Default"); REQUIRE(technique);

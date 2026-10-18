@@ -22,6 +22,8 @@ static void (*material_end)(void);
 static void (*pose_adjust)(float *, unsigned);
 static void (*validate_retained)(void);
 static unsigned (*cached_regular)(void);
+static unsigned (*cached_extra)(void);
+static unsigned validate_markers;
 static void (*prepare_sample)(unsigned, unsigned);
 
 static void retained_workload(void)
@@ -72,6 +74,8 @@ static void frame_draw(int extra, int retained, unsigned *pixels)
 {
     unsigned group, draws, meshes, cached_groups=0;
     unsigned before_v[256*4], after_v[256*4], before_p[32*4], after_p[32*4];
+    pf_timing_stats before_scopes,after_scopes;
+    if(validate_markers) pf_timing_get_stats(&before_scopes);
     bench_extra_mode(extra);
     g_stock_draws = 0;
     HR(IDirect3DDevice9_SetVertexShader(g_dev, g_ea));
@@ -88,8 +92,12 @@ static void frame_draw(int extra, int retained, unsigned *pixels)
         HR(IDirect3DDevice9_GetPixelShaderConstantF(g_dev,0,(float *)before_p,32));
     }
     if (retained) {
-        for (group = 0; group < GROUPS; group++)
-            REQUIRE(bench_replay(group, records[group], records[group] + sizeof records[0]));
+        if (cached_extra) cached_groups=cached_extra();
+        else {
+            for (group = 0; group < GROUPS; group++)
+                REQUIRE(bench_replay(group, records[group], records[group] + sizeof records[0]));
+            cached_groups=GROUPS;
+        }
     } else if (!extra && retain_now && cached_regular) cached_groups=cached_regular();
     else ((void (*)(void))pf_enter_stubs[PF_DISPLAY_DRAW])();
     if (extra || cached_regular) {
@@ -100,11 +108,16 @@ static void frame_draw(int extra, int retained, unsigned *pixels)
         REQUIRE(!memcmp(before_p,after_p,sizeof before_p));
     }
     HR(IDirect3DDevice9_EndScene(g_dev));
-    REQUIRE(g_stock_draws == (retained ? 0 : GROUPS-cached_groups));
+    REQUIRE(g_stock_draws == GROUPS-cached_groups);
     bench_retained_counts(&draws,&meshes);
-    REQUIRE(draws==2*(retained?GROUPS:cached_groups) && meshes==GROUP_SIZE*(retained?GROUPS:cached_groups));
+    REQUIRE(draws==2*cached_groups && meshes==GROUP_SIZE*cached_groups);
     REQUIRE(pf_inst_active());
     check_state();
+    if(validate_markers) {
+        pf_timing_get_stats(&after_scopes);
+        REQUIRE(after_scopes.scopes-before_scopes.scopes==(extra?0:GROUPS*GROUP_SIZE));
+        REQUIRE(after_scopes.stale_scopes==before_scopes.stale_scopes);
+    }
     if (pixels) read_pixels(pixels);
     bench_extra_mode(0);
 }

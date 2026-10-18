@@ -2,6 +2,11 @@
 
 ## Status
 
+**Follow-up:** [clean recollection and stronger lifecycle/marker controls](2026-10-17-material-queue-clean-results.md)
+are complete. The final DXVK gain is only 0.66-1.04 ms/pair after restoring
+omitted work, so the cache is not promoted. The original exclusion below
+remains valid; the new samples are stored separately.
+
 The larger offline prototype now runs the local game's D3DX27 effect
 lifecycle and can reuse preparation in both regular and extra frames.
 Native D3D9 and DXVK image/state checks pass. **Performance qualification
