@@ -632,10 +632,11 @@ static void *interval_gate(unsigned k, DWORD tid)
         g_shadow_held++;
         g_stats.shadow_held++;
         run = PF_REFLECT_RUN;
-    } else if (shadow && g_shadow_fresh) {
+    } else if (shadow && g_shadow_fresh && g_shadow.interval > 1) {
         /* An extra frame since the last game frame drew it (a few ms ago, a
          * quarter step behind at most): reused, which leaves that much more
-         * time for extra frames. Counts as a redraw for the interval. */
+         * time for extra frames. Counts as a redraw for the interval.
+         * Interval=1 promises a new map on every regular frame as well. */
         pf_reflect_hold(&g_shadow, now());
         g_stats.shadow_fresh++;
         run = PF_REFLECT_SKIP;

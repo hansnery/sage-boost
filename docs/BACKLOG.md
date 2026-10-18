@@ -20,6 +20,11 @@ Strike an item through, with the date, when it's done.
   target-ABI, material, reference, state, scope and fallback proofs before
   implementing an installed fast path. Current prototype is offline only.
 - [ ] Demonstrate sustained 60 visual FPS with full-rate shadows; still open.
+- [x] 2026-10-17: screen newer effect runtime, state-save overhead and
+  terrain ambient sampling offline; insufficient savings, no install.
+- [x] 2026-10-17: beta.3 fixes ShadowInterval=1 reusing the previous extra
+  frame's map. Hook regression and full suite pass; build remains uninstalled
+  because it is a cadence correction rather than the requested speedup.
 - [ ] Ask for another gameplay test only after evidence of a significant
   improvement (user's request, 2026-10-17); no diagnostic-only build cycle.
 

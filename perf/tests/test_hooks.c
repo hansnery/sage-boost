@@ -1132,6 +1132,42 @@ int main(void)
         CHECK(s.shadow_extra == 2, "shadow maps drawn by extra frames: %u", s.shadow_extra);
         CHECK(s.shadow_fresh >= 1, "no game frame reused a map an extra frame had just drawn");
 
+        printf("full-rate shadows redraw after every extra frame\n");
+        {
+            pf_timing_stats before;
+            int draws = g_extra_draws;
+            pf_timing_set_shadow(1);
+            pf_fps_init(&fs, NULL, 60, 0, 0);
+            pf_fps_set_installed(1, 1, 1, (void *)fake_particles);
+            pf_fps_set_passes(1, 0);
+            pf_timing_get_stats(&before);
+            /* Each extra updates the saved map. Interval=1 must still draw
+             * the following regular frame's map and use its new matrix. */
+            for (i = 0; i < 3; i++) {
+                before_runs = g_shadow_runs;
+                CHECK(call_frame() == 41, "full-rate game frame");
+                CHECK(g_shadow_runs == before_runs + 1 && g_seen_matrix0 == g_frame_no,
+                      "full-rate regular frame reused a map: runs %d matrix %d want %d",
+                      g_shadow_runs - before_runs, g_seen_matrix0, g_frame_no);
+                g_xframe_start += 1000;
+                extra_wait(5);
+                CHECK(g_extra_draws == draws + (int)i + 1 && g_shadow_runs == before_runs + 2,
+                      "full-rate extra frame missed its shadow draw");
+            }
+            before_runs = g_shadow_runs;
+            CHECK(call_frame() == 41 && g_shadow_runs == before_runs + 1 &&
+                      g_seen_matrix0 == g_frame_no,
+                  "final regular frame did not redraw its shadow map");
+            pf_timing_get_stats(&s);
+            CHECK(s.shadow_fresh == before.shadow_fresh &&
+                      s.shadow_skipped == before.shadow_skipped &&
+                      s.shadow_runs == before.shadow_runs + 4 &&
+                      s.shadow_extra == before.shadow_extra + 3,
+                  "full-rate regular/extra shadow accounting");
+            pf_timing_set_shadow(2);
+            pf_fps_set_passes(0, 0);
+        }
+
         printf("extra frames hold the scene's update list\n");
         {
             pf_fps_row row;

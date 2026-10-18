@@ -229,6 +229,13 @@ been played without problems; replays and a network game between a PC
 with the plugin and one without are still in the test plan of the
 [design notes](docs/specs/2026-10-13-perf-dll-design.md).
 
+On the development beta branch, 0.9.11-beta.3 corrects full-rate shadows:
+`ExtraFrameShadows=1` together with `ShadowInterval=1` redraws the map on
+both regular and extra frames. Earlier versions could reuse an extra
+frame's map on the next regular frame even at interval 1. This correction
+is tested offline but not installed or released, and does not establish
+a performance improvement. See the [beta.3 notes](docs/releases/perf-0.9.11-beta.3.md).
+
 ## Building
 
 Both need a **32-bit** MinGW-w64 GCC (e.g. [winlibs](https://winlibs.com/) i686,

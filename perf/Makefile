@@ -191,8 +191,19 @@ DISPATCH_OBJS := $(filter-out $(BUILD)/main.o $(BUILD)/rt.o $(BUILD)/inst.o $(BU
 $(BUILD)/bench_dispatch.exe: tests/bench_dispatch.c tests/test_inst.c $(BUILD)/inst_dispatch_engine.o $(DISPATCH_OBJS) src/*.h
 	$(CC) $(TEST_CFLAGS) -O2 -static -o $@ $< $(BUILD)/inst_dispatch_engine.o $(DISPATCH_OBJS)
 
-.PHONY: bench-dispatch
+.PHONY: bench-dispatch bench-ambient
 DISPATCH_ASSETS ?= C:/Jogos/AgeoftheRing/rotwk
+
+$(BUILD)/bench_effect.exe: tests/bench_effect.c tests/shadow_fx/shadow_fx.c src/shadowfx_table.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -static -o $@ $<
+
+$(BUILD)/bench_ambient.exe: tests/bench_ambient.c | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -static -o $@ $<
+
+bench-ambient: $(BUILD)/bench_ambient.exe
+	python ../tools/bench_ambient.py "$(AOTR_DAT)"
+	python ../tools/bench_ambient.py "$(ROTWK_DAT)"
+
 bench-dispatch: $(BUILD)/bench_dispatch.exe
 	./$(BUILD)/bench_dispatch.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll"
 	./$(BUILD)/bench_dispatch.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow

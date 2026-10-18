@@ -36,6 +36,27 @@ files before relying on it.
 - Development benchmark/docs committed and pushed on `codex/perf-beta`;
   no tags, stable promotion or public release.
 
+## Further screens and beta.3 correction (2026-10-17)
+
+- [Render setup screens](specs/2026-10-17-render-setup-screening-results.md)
+  are complete: D3DX27/43 and state-save controls on native D3D9/DXVK;
+  isolated ambient sampler on both local executable images. All paired
+  measurements and reproduction tools are preserved. Runtime changes saved
+  only ~0.1-1 ms synthetically, and the entire ambient sampler ~0.05 ms.
+  Neither is promoted; three particle command comparisons also differed.
+- Found and fixed a cadence defect: a regular frame after an extra reused
+  its shadow map even at ShadowInterval=1. Beta.3 now redraws at interval 1,
+  preserving larger-interval reuse. [Build notes](releases/perf-0.9.11-beta.3.md).
+  The new regression fails before the fix; the full suite passes afterward.
+- Built 0.9.11-beta.3 but **did not install it**. This is a correctness fix
+  that can add render work, not a significant speedup. No gameplay test
+  requested. Installed beta.2 binary and INI remain unchanged.
+- Beta.2's steady captured scene had no extras, so this defect did not
+  cause its 30-FPS result. No measured busy extra cost or significant new
+  gain has been established. Full-rate 60 FPS remains an open target.
+- Development changes committed/pushed to `codex/perf-beta`; no tags,
+  stable promotion, public release, reference edits or game launch.
+
 ## Performance beta 0.9.11-beta.2 (2026-10-17)
 
 - Implements the approved diagnostic stage: separately staged extra shadow,
@@ -70,7 +91,8 @@ files before relying on it.
   investigation of group-local direct staging; stale partial comment noted.
 - Native isolated event-constructor/destructor test on AotR and game820 found
   only ~0.24-0.26 ms per 7,000 pairs. Copies alone are not a strong candidate.
-  Full group dispatch and conditional ambient-lightmap caching remain unmeasured.
+  Full group dispatch and ambient-lightmap sampling are now measured above;
+  neither provides sufficient standalone savings.
 - Installed beta.2 is unchanged. The native dispatch benchmark above did not
   justify proceeding to a runtime hook and its target-ABI proof.
 
