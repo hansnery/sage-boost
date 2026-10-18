@@ -82,6 +82,17 @@ test-native-decode: $(BUILD)/bench_native_decode.exe
 bench-native-decode: $(BUILD)/bench_native_decode.exe
 	python ../tools/bench_native_decode.py "$(AOTR_DAT)" $< --self-test
 
+$(BUILD)/bench_native_sort.exe: tests/bench_native_sort.c tests/bench_guard.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $<
+
+.PHONY: test-native-sort bench-native-sort
+test-native-sort: $(BUILD)/bench_native_sort.exe
+	python ../tools/bench_native_sort.py "$(AOTR_DAT)" $< --self-test --samples 0
+	python ../tools/bench_native_sort.py "$(ROTWK_DAT)" $< --self-test --samples 0
+
+bench-native-sort: $(BUILD)/bench_native_sort.exe
+	python ../tools/bench_native_sort.py "$(AOTR_DAT)" $< --self-test
+
 $(BUILD)/test_sites.exe: tests/test_sites.c src/scan.c src/sites.c src/uistate.c src/fpsites.c \
                          src/btnclock.c src/passflag.c src/spsites.c src/cusites.c src/ltsites.c \
                          src/*.h | $(BUILD)
@@ -239,7 +250,7 @@ test-fx-lifecycle: $(BUILD)/test_fx_lifecycle.exe
 	python ../tools/test_fx_lifecycle.py "$(ROTWK_DAT)"
 DISPATCH_ASSETS ?= C:/Jogos/AgeoftheRing/rotwk
 
-$(BUILD)/bench_effect.exe: tests/bench_effect.c tests/shadow_fx/shadow_fx.c src/shadowfx_table.h | $(BUILD)
+$(BUILD)/bench_effect.exe: tests/bench_effect.c tests/bench_guard.h tests/shadow_fx/shadow_fx.c src/shadowfx_table.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -static -o $@ $<
 
 $(BUILD)/inst_retained_engine.o: tests/inst_retained_engine.c tests/inst_dispatch_engine.c src/inst.c src/*.h | $(BUILD)

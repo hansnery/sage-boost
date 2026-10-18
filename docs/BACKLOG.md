@@ -86,9 +86,20 @@ Strike an item through, with the date, when it's done.
   comparisons plus broken/refusal controls; 504 timings retained. Warm
   savings are small and diversity can regress; no promotion. See
   `specs/2026-10-18-native-decode-screen.md`.
-- [ ] Inspect actual effect member usage and remaining shadow scene setup;
-  require meaningful savings on a credible changing-input workload before
-  implementation. Do not treat cold decoding or fixture counts as gameplay.
+- [x] 2026-10-18: audit effect member usage on both D3DX runtimes/backends.
+  A used-member control changes commands despite a false usage query;
+  reject leaf-query pruning. All 38 techniques audited; see
+  `specs/2026-10-18-effect-member-audit.md`. Visibility/setup scopes are
+  small and overlap broader scopes; whole-object reuse remains unsafe.
+- [x] 2026-10-18: screen native rendering-task sort ownership traffic.
+  Both images pass 936 comparisons and refusal/corruption controls; 756
+  final timings preserve target function spacing. One-method workloads
+  save 0.51-2.04 ms per synthetic 7,680-record workload. See
+  `specs/2026-10-18-native-sort-screen.md`; no runtime promotion.
+- [ ] Join sort/queue ownership and the native group/GPU candidate, preserving
+  exact order, commands, lifetimes and fallback. Measure combined costs;
+  isolated sort timings cannot be added or doubled into gameplay gains.
+  Qualify installed context guards and exception behavior if worthwhile.
 - [x] 2026-10-17: larger material-queue fixture passes native/DXVK fresh
   pose, material invalidation, regular/extra image and state checks.
 - [x] 2026-10-17: recollect material-queue timings with the game closed.

@@ -1,0 +1,403 @@
+{
+  "kind": "offline CPU screen, not gameplay or GPU integration",
+  "native_bodies": 38,
+  "native_bytes": 2513,
+  "controls_per_image": 936,
+  "images": 2,
+  "verifier_refusals_per_image": 4,
+  "broken_candidate_controls_per_image": 1,
+  "records": 7680,
+  "queues": [
+    3072,
+    1536,
+    3072
+  ],
+  "warmups": 4,
+  "repetitions": 8,
+  "samples_per_case": 21,
+  "final_code_layout": "relative function offsets from each local target image preserved in private RAM",
+  "excluded_logs": [
+    "perf/build/native-sort-separate-pages-1.txt",
+    "perf/build/native-sort-separate-pages-2.txt"
+  ],
+  "limits": [
+    "Synthetic key distribution and reference topology",
+    "Normal control flow only; exceptions fail-stop",
+    "No installed hook, context guards, scene/GPU integration or FPS evidence",
+    "No adding or doubling into a gameplay saving"
+  ],
+  "sha256": {
+    "perf/tests/bench_native_sort.c": "d467c9e8d48141f7417968774172118ce9a46a0c84d8e0af2b1fcd6c3c69c5a0",
+    "perf/tests/bench_guard.h": "46082a3fef62b0e26ea0f16b6294171af964e0cb952c7dd7c8ef9a509cd8adf6",
+    "tools/bench_native_sort.py": "b49b503e3c6bbe4c783185d3a1e7aa82a8b38b52b7a9563a805cbd261ec2c09f",
+    "perf/Makefile": "cee33383464613099ee1011ed1409cf20ad4a63cb644b65943e1aa9ef55ec776",
+    "perf/build/bench_native_sort.exe": "d25f2b4652b32081513e13d75946d2e57b8a7cc39d8bdad26808a7aea5b82787",
+    "perf/build/native-sort-test-final.txt": "bc11e2ad39c147d3d8dd25683327686542c9d26a9e451eced7aef9fdbb8071cb",
+    "perf\\build\\native-sort-final-1.txt": "f0233ebe06ed1d81983b53c8d6a289f50121349d29bafc9cb810d46ce42e47a5",
+    "perf\\build\\native-sort-final-2.txt": "7ca1e8223a1b4e6446ba7db4d5d447045f45d0b3d97630ae55e994d924a7093d",
+    "C:/Jogos/AgeoftheRing/rotwk/game.dat": "035da15c626af6cd1663d1886deea605464ec6776f2c5f1d24570c2be6d73e61",
+    "C:/Jogos/AgeoftheRing/rotwk/game820.dat": "bcf4c85ec72ecb9eb95a844fc0072434fdcef49a5b2c59abb77ac04af29c277e"
+  },
+  "summaries": [
+    {
+      "run": 1,
+      "pattern": "random_128",
+      "methods": 0,
+      "native_ms": 2.11805,
+      "candidate_ms": 0.69455,
+      "saved_ms": 1.42215,
+      "saved_p10_ms": 1.4159125,
+      "saved_p90_ms": 1.4588999999999999
+    },
+    {
+      "run": 1,
+      "pattern": "random_128",
+      "methods": 1,
+      "native_ms": 2.1332125,
+      "candidate_ms": 0.6948125,
+      "saved_ms": 1.4371999999999998,
+      "saved_p10_ms": 1.4292875,
+      "saved_p90_ms": 1.4481
+    },
+    {
+      "run": 1,
+      "pattern": "random_128",
+      "methods": 6,
+      "native_ms": 2.251375,
+      "candidate_ms": 0.695,
+      "saved_ms": 1.5513625,
+      "saved_p10_ms": 1.548175,
+      "saved_p90_ms": 1.5638500000000002
+    },
+    {
+      "run": 1,
+      "pattern": "ascending_ties",
+      "methods": 0,
+      "native_ms": 0.759075,
+      "candidate_ms": 0.2265375,
+      "saved_ms": 0.532075,
+      "saved_p10_ms": 0.5296875,
+      "saved_p90_ms": 0.533775
+    },
+    {
+      "run": 1,
+      "pattern": "ascending_ties",
+      "methods": 1,
+      "native_ms": 0.7539375,
+      "candidate_ms": 0.227025,
+      "saved_ms": 0.527375,
+      "saved_p10_ms": 0.5251625000000001,
+      "saved_p90_ms": 0.5317375
+    },
+    {
+      "run": 1,
+      "pattern": "ascending_ties",
+      "methods": 6,
+      "native_ms": 0.8250875,
+      "candidate_ms": 0.2264625,
+      "saved_ms": 0.598575,
+      "saved_p10_ms": 0.5959625,
+      "saved_p90_ms": 0.6101
+    },
+    {
+      "run": 1,
+      "pattern": "descending_ties",
+      "methods": 0,
+      "native_ms": 1.0178,
+      "candidate_ms": 0.2779125,
+      "saved_ms": 0.7399500000000001,
+      "saved_p10_ms": 0.7343875,
+      "saved_p90_ms": 0.75115
+    },
+    {
+      "run": 1,
+      "pattern": "descending_ties",
+      "methods": 1,
+      "native_ms": 1.0125125,
+      "candidate_ms": 0.27395,
+      "saved_ms": 0.7388249999999998,
+      "saved_p10_ms": 0.7351625,
+      "saved_p90_ms": 0.7420250000000002
+    },
+    {
+      "run": 1,
+      "pattern": "descending_ties",
+      "methods": 6,
+      "native_ms": 1.104375,
+      "candidate_ms": 0.27415,
+      "saved_ms": 0.8302625000000001,
+      "saved_p10_ms": 0.825,
+      "saved_p90_ms": 0.8342
+    },
+    {
+      "run": 1,
+      "pattern": "all_equal",
+      "methods": 0,
+      "native_ms": 2.6016875,
+      "candidate_ms": 0.547475,
+      "saved_ms": 2.051825,
+      "saved_p10_ms": 2.0473125,
+      "saved_p90_ms": 2.0639374999999998
+    },
+    {
+      "run": 1,
+      "pattern": "all_equal",
+      "methods": 1,
+      "native_ms": 2.5855875,
+      "candidate_ms": 0.5474625,
+      "saved_ms": 2.038425,
+      "saved_p10_ms": 2.03055,
+      "saved_p90_ms": 2.055075
+    },
+    {
+      "run": 1,
+      "pattern": "all_equal",
+      "methods": 6,
+      "native_ms": 2.8162,
+      "candidate_ms": 0.5478875,
+      "saved_ms": 2.26775,
+      "saved_p10_ms": 2.2612750000000004,
+      "saved_p90_ms": 2.2756875
+    },
+    {
+      "run": 1,
+      "pattern": "organ_pipe",
+      "methods": 0,
+      "native_ms": 1.1916625,
+      "candidate_ms": 0.3529875,
+      "saved_ms": 0.8382500000000002,
+      "saved_p10_ms": 0.8365750000000001,
+      "saved_p90_ms": 0.8452499999999998
+    },
+    {
+      "run": 1,
+      "pattern": "organ_pipe",
+      "methods": 1,
+      "native_ms": 1.197425,
+      "candidate_ms": 0.3532875,
+      "saved_ms": 0.8439625,
+      "saved_p10_ms": 0.8405875,
+      "saved_p90_ms": 0.8462250000000001
+    },
+    {
+      "run": 1,
+      "pattern": "organ_pipe",
+      "methods": 6,
+      "native_ms": 1.2986,
+      "candidate_ms": 0.3529375,
+      "saved_ms": 0.9454,
+      "saved_p10_ms": 0.9426375,
+      "saved_p90_ms": 0.9495125
+    },
+    {
+      "run": 1,
+      "pattern": "random_u32",
+      "methods": 0,
+      "native_ms": 2.24875,
+      "candidate_ms": 0.7687875,
+      "saved_ms": 1.4801249999999997,
+      "saved_p10_ms": 1.4712875,
+      "saved_p90_ms": 1.4868999999999999
+    },
+    {
+      "run": 1,
+      "pattern": "random_u32",
+      "methods": 1,
+      "native_ms": 2.250275,
+      "candidate_ms": 0.7681875,
+      "saved_ms": 1.4789999999999999,
+      "saved_p10_ms": 1.4708875000000001,
+      "saved_p90_ms": 1.4888624999999998
+    },
+    {
+      "run": 1,
+      "pattern": "random_u32",
+      "methods": 6,
+      "native_ms": 2.3368875,
+      "candidate_ms": 0.77105,
+      "saved_ms": 1.5620874999999999,
+      "saved_p10_ms": 1.5551875000000002,
+      "saved_p90_ms": 1.5798875000000001
+    },
+    {
+      "run": 2,
+      "pattern": "random_128",
+      "methods": 0,
+      "native_ms": 2.112175,
+      "candidate_ms": 0.6978375,
+      "saved_ms": 1.41415,
+      "saved_p10_ms": 1.4122000000000001,
+      "saved_p90_ms": 1.4287625000000002
+    },
+    {
+      "run": 2,
+      "pattern": "random_128",
+      "methods": 1,
+      "native_ms": 2.10695,
+      "candidate_ms": 0.69555,
+      "saved_ms": 1.4113875,
+      "saved_p10_ms": 1.4071,
+      "saved_p90_ms": 1.4296375000000001
+    },
+    {
+      "run": 2,
+      "pattern": "random_128",
+      "methods": 6,
+      "native_ms": 2.2278,
+      "candidate_ms": 0.6964,
+      "saved_ms": 1.5317124999999998,
+      "saved_p10_ms": 1.5234125,
+      "saved_p90_ms": 1.5389749999999998
+    },
+    {
+      "run": 2,
+      "pattern": "ascending_ties",
+      "methods": 0,
+      "native_ms": 0.7220625,
+      "candidate_ms": 0.2270375,
+      "saved_ms": 0.49495000000000006,
+      "saved_p10_ms": 0.4931500000000001,
+      "saved_p90_ms": 0.5065375000000001
+    },
+    {
+      "run": 2,
+      "pattern": "ascending_ties",
+      "methods": 1,
+      "native_ms": 0.7357375,
+      "candidate_ms": 0.2254875,
+      "saved_ms": 0.5107,
+      "saved_p10_ms": 0.5071874999999999,
+      "saved_p90_ms": 0.518725
+    },
+    {
+      "run": 2,
+      "pattern": "ascending_ties",
+      "methods": 6,
+      "native_ms": 0.7928625,
+      "candidate_ms": 0.2295125,
+      "saved_ms": 0.563425,
+      "saved_p10_ms": 0.5593125,
+      "saved_p90_ms": 0.5695250000000001
+    },
+    {
+      "run": 2,
+      "pattern": "descending_ties",
+      "methods": 0,
+      "native_ms": 0.9819125,
+      "candidate_ms": 0.27425,
+      "saved_ms": 0.70665,
+      "saved_p10_ms": 0.7038249999999999,
+      "saved_p90_ms": 0.7091375
+    },
+    {
+      "run": 2,
+      "pattern": "descending_ties",
+      "methods": 1,
+      "native_ms": 0.9914125,
+      "candidate_ms": 0.274075,
+      "saved_ms": 0.7176125,
+      "saved_p10_ms": 0.7155875,
+      "saved_p90_ms": 0.7223499999999999
+    },
+    {
+      "run": 2,
+      "pattern": "descending_ties",
+      "methods": 6,
+      "native_ms": 1.0696,
+      "candidate_ms": 0.2743,
+      "saved_ms": 0.7954625,
+      "saved_p10_ms": 0.7930375,
+      "saved_p90_ms": 0.799625
+    },
+    {
+      "run": 2,
+      "pattern": "all_equal",
+      "methods": 0,
+      "native_ms": 2.5591625,
+      "candidate_ms": 0.548375,
+      "saved_ms": 2.010175,
+      "saved_p10_ms": 2.0065875,
+      "saved_p90_ms": 2.017
+    },
+    {
+      "run": 2,
+      "pattern": "all_equal",
+      "methods": 1,
+      "native_ms": 2.5757625,
+      "candidate_ms": 0.5478875,
+      "saved_ms": 2.02765,
+      "saved_p10_ms": 2.0233875,
+      "saved_p90_ms": 2.0331125
+    },
+    {
+      "run": 2,
+      "pattern": "all_equal",
+      "methods": 6,
+      "native_ms": 2.75855,
+      "candidate_ms": 0.547725,
+      "saved_ms": 2.2093875,
+      "saved_p10_ms": 2.2016,
+      "saved_p90_ms": 2.235625
+    },
+    {
+      "run": 2,
+      "pattern": "organ_pipe",
+      "methods": 0,
+      "native_ms": 1.1427875,
+      "candidate_ms": 0.3549625,
+      "saved_ms": 0.7878875000000001,
+      "saved_p10_ms": 0.7857375000000001,
+      "saved_p90_ms": 0.8074375
+    },
+    {
+      "run": 2,
+      "pattern": "organ_pipe",
+      "methods": 1,
+      "native_ms": 1.1613625,
+      "candidate_ms": 0.354925,
+      "saved_ms": 0.805975,
+      "saved_p10_ms": 0.8005375000000001,
+      "saved_p90_ms": 0.8101750000000001
+    },
+    {
+      "run": 2,
+      "pattern": "organ_pipe",
+      "methods": 6,
+      "native_ms": 1.2432375,
+      "candidate_ms": 0.3586625,
+      "saved_ms": 0.8853375,
+      "saved_p10_ms": 0.8804375,
+      "saved_p90_ms": 0.8899874999999999
+    },
+    {
+      "run": 2,
+      "pattern": "random_u32",
+      "methods": 0,
+      "native_ms": 2.2325875,
+      "candidate_ms": 0.7953,
+      "saved_ms": 1.4375375000000001,
+      "saved_p10_ms": 1.433525,
+      "saved_p90_ms": 1.465225
+    },
+    {
+      "run": 2,
+      "pattern": "random_u32",
+      "methods": 1,
+      "native_ms": 2.2464625,
+      "candidate_ms": 0.795375,
+      "saved_ms": 1.451225,
+      "saved_p10_ms": 1.4446124999999999,
+      "saved_p90_ms": 1.4579999999999997
+    },
+    {
+      "run": 2,
+      "pattern": "random_u32",
+      "methods": 6,
+      "native_ms": 2.31765,
+      "candidate_ms": 0.7947375,
+      "saved_ms": 1.5257500000000002,
+      "saved_p10_ms": 1.5163249999999997,
+      "saved_p90_ms": 1.5465999999999998
+    }
+  ]
+}

@@ -51,6 +51,17 @@ the timed region. Report median paired differences. Lit and shadow are
 alternative workloads at the full captured group count; do not add them.
 These timings do not include the game's parameter-binding callbacks.
 
+## Nested effect-member usage
+
+The optional `--members-only` second argument to `bench_effect.exe` instead
+audits nested `IsParameterUsed` queries and runs an independently authored
+selected/spare-member command control. It records counts and hashed names
+for all local techniques on both runtimes, without timings or pixel draws.
+Run both the system backend and the DXVK copy above with that argument.
+See `docs/specs/2026-10-18-effect-member-audit.md`: a false leaf query does
+not prove that the leaf is unused. The executable now refuses a running
+game or WorldBuilder in either mode.
+
 ## Ambient-light sampling
 
 Build and run `mingw32-make bench-ambient`, or:

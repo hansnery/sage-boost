@@ -3,6 +3,7 @@
 #define main shadow_fixture_main
 #include "shadow_fx/shadow_fx.c"
 #undef main
+#include "bench_guard.h"
 
 #define REQUIRE(c) do { if (!(c)) { fprintf(stderr, "refused %s:%d: %s\n", \
     __FILE__, __LINE__, #c); exit(1); } } while (0)
@@ -218,9 +219,98 @@ static int cmp(const void *a, const void *b)
     return (x > y) - (x < y);
 }
 
+typedef struct { unsigned nodes,leaves,used_leaves,unused_leaves; } usage_counts;
+static void member_usage(ID3DXEffect *fx,D3DXHANDLE tech,D3DXHANDLE parameter,
+                         unsigned depth,usage_counts *counts)
+{
+    D3DXPARAMETER_DESC d;
+    REQUIRE(parameter && depth<16);HR(FXCALL(fx,GetParameterDesc,parameter,&d));
+    REQUIRE(++counts->nodes<65536 && d.Elements<=4096 && d.StructMembers<=256);
+    if(d.Elements) {
+        for(unsigned i=0;i<d.Elements;i++)
+            member_usage(fx,tech,FXCALL(fx,GetParameterElement,parameter,i),depth+1,counts);
+    } else if(d.StructMembers) {
+        for(unsigned i=0;i<d.StructMembers;i++)
+            member_usage(fx,tech,FXCALL(fx,GetParameter,parameter,i),depth+1,counts);
+    } else {
+        counts->leaves++;
+        if(FXCALL(fx,IsParameterUsed,parameter,tech))counts->used_leaves++;
+        else counts->unused_leaves++;
+    }
+}
+
+/* Parameter names/compiled effects stay local; the report stores counts
+ * and identities hashed from names, never an effect or shader payload. */
+static void audit_usage(ID3DXEffect *fx,unsigned runtime,const char *name)
+{
+    D3DXEFFECT_DESC desc;HR(FXCALL(fx,GetDesc,&desc));
+    for(unsigned t=0;t<desc.Techniques;t++) {
+        D3DXHANDLE tech=FXCALL(fx,GetTechnique,t);D3DXTECHNIQUE_DESC td;
+        unsigned roots=0,used_roots=0,bound=0,used_bound=0,nested_bound=0;
+        usage_counts total={0},nested={0};HR(FXCALL(fx,GetTechniqueDesc,tech,&td));
+        for(unsigned p=0;p<desc.Parameters;p++) {
+            D3DXHANDLE h=FXCALL(fx,GetParameter,NULL,p);D3DXPARAMETER_DESC d;
+            HR(FXCALL(fx,GetParameterDesc,h,&d));
+            int used=FXCALL(fx,IsParameterUsed,h,tech);
+            D3DXHANDLE annotation=FXCALL(fx,GetAnnotationByName,h,"SasBindAddress");
+            const char *address=NULL;
+            int is_bound=annotation && SUCCEEDED(FXCALL(fx,GetString,annotation,&address)) && address;
+            roots++;used_roots+=!!used;bound+=!!is_bound;used_bound+=is_bound && used;
+            member_usage(fx,tech,h,0,&total);
+            if(is_bound && used && (d.StructMembers || d.Elements)) {
+                usage_counts c={0};member_usage(fx,tech,h,0,&c);nested_bound++;
+                nested.nodes+=c.nodes;nested.leaves+=c.leaves;
+                nested.used_leaves+=c.used_leaves;nested.unused_leaves+=c.unused_leaves;
+                printf("ROOT_USAGE,%u,%08X,%08X,%08X,%u,%u,%u,%u\n",runtime,
+                    fnv1a((const unsigned char*)name,strlen(name)),fnv1a((const unsigned char*)td.Name,strlen(td.Name)),
+                    fnv1a((const unsigned char*)d.Name,strlen(d.Name)),d.Elements,d.StructMembers,c.used_leaves,c.unused_leaves);
+            }
+        }
+        printf("USAGE,%u,%08X,%08X,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",runtime,
+            fnv1a((const unsigned char*)name,strlen(name)),fnv1a((const unsigned char*)td.Name,strlen(td.Name)),
+            roots,used_roots,bound,used_bound,nested_bound,total.leaves,total.used_leaves,nested.used_leaves,nested.unused_leaves);
+    }
+}
+
+static void member_control(create_effect_fn create,unsigned runtime)
+{
+    static const char source[]=
+        "struct Pair { float4 selected; float4 spare; };"
+        "Pair values < string SasBindAddress = \"Test.Pair\"; >;"
+        "float4 pixel() : COLOR0 { return values.selected; }"
+        "technique T { pass P { PixelShader = compile ps_2_0 pixel(); } }";
+    ID3DXEffect *fx=NULL;ID3DXBuffer *errors=NULL;
+    HRESULT hr=create(device,source,sizeof source-1,NULL,NULL,0,NULL,&fx,&errors);
+    if(FAILED(hr) && errors)fprintf(stderr,"control compiler: %s\n",(char*)errors->lpVtbl->GetBufferPointer(errors));
+    if(errors)errors->lpVtbl->Release(errors);
+    HR(hr);
+    D3DXHANDLE tech=FXCALL(fx,GetTechniqueByName,"T");
+    D3DXHANDLE root=FXCALL(fx,GetParameterByName,NULL,"values");
+    D3DXHANDLE selected=FXCALL(fx,GetParameterByName,root,"selected");
+    D3DXHANDLE spare=FXCALL(fx,GetParameterByName,root,"spare");
+    REQUIRE(tech && root && selected && spare);
+    HR(FXCALL(fx,SetTechnique,tech));HR(FXCALL(fx,SetStateManager,(ID3DXEffectStateManager*)&g_rm));
+    unsigned *saved=malloc(REC_MAX*4),count=0,changed[2]={0};REQUIRE(saved);
+    for(unsigned variant=0;variant<3;variant++) {
+        float values[8];for(unsigned j=0;j<8;j++)values[j]=.25f;
+        if(variant)for(unsigned j=(variant-1)*4;j<variant*4;j++)values[j]=.75f;
+        HR(FXCALL(fx,SetValue,root,values,sizeof values));g_rec_n=0;g_rec_overflow=0;cycle(fx,6);
+        REQUIRE(g_rec_n && !g_rec_overflow);
+        if(!variant) {count=g_rec_n;memcpy(saved,g_rec,count*4);}
+        else changed[variant-1]=count!=g_rec_n || memcmp(saved,g_rec,count*4)!=0;
+    }
+    REQUIRE(changed[0] && !changed[1]);
+    printf("MEMBER_CONTROL,%u,%u,%u,%u,%u,%u\n",runtime,
+        !!FXCALL(fx,IsParameterUsed,root,tech),!!FXCALL(fx,IsParameterUsed,selected,tech),
+        !!FXCALL(fx,IsParameterUsed,spare,tech),changed[0],changed[1]);
+    free(saved);FXCALL(fx,Release);
+}
+
 int main(int argc, char **argv)
 {
+    REQUIRE(bench_no_game());
     const char *assets = argc > 1 ? argv[1] : "C:/Jogos/AgeoftheRing/rotwk";
+    int usage_only=argc>2 && !strcmp(argv[2],"--members-only");
     char path[MAX_PATH], backend[MAX_PATH];
     unsigned size, pos = 16, files, i, technique, checked = 0, differences = 0;
     unsigned char *big;
@@ -254,6 +344,7 @@ int main(int argc, char **argv)
     QueryPerformanceFrequency(&f); frequency = (double)f.QuadPart;
     g_rec = malloc(REC_MAX * 4); REQUIRE(g_rec);
     g_rm_vtbl.SetVertexShader = normalized_vs; g_rm_vtbl.SetPixelShader = normalized_ps;
+    if(usage_only)for(i=0;i<2;i++)member_control(create[i],i);
     files = be32(big + 8);
     for (i = 0; i < files; i++) {
         unsigned off, len;
@@ -271,6 +362,10 @@ int main(int argc, char **argv)
             HR(FXCALL(fx[rt], GetDesc, &desc[rt]));
         }
         REQUIRE(desc[0].Techniques == desc[1].Techniques);
+        if(usage_only) {
+            for(unsigned rt=0;rt<2;rt++) {audit_usage(fx[rt],rt,name);FXCALL(fx[rt],Release);}
+            checked+=desc[0].Techniques;continue;
+        }
         for (technique = 0; technique < desc[0].Techniques; technique++) {
             D3DXHANDLE tech[2]; D3DXTECHNIQUE_DESC td[2]; input inputs[256]; unsigned n;
             for (unsigned rt = 0; rt < 2; rt++) {
@@ -311,7 +406,8 @@ int main(int argc, char **argv)
         FXCALL(fx[0], Release); FXCALL(fx[1], Release);
     }
     REQUIRE(checked);
-    printf("%s: %u techniques, %u command comparisons (two parameter sets), %u differences\n",
+    if(usage_only)printf("MEMBER_AUDIT,%u techniques,2 runtimes\n",checked);
+    else printf("%s: %u techniques, %u command comparisons (two parameter sets), %u differences\n",
         differences ? "MISMATCH" : "OK", checked, 2 * checked, differences);
     free(g_rec); free(big);
     IDirect3DQuery9_Release(fence);
@@ -319,5 +415,6 @@ int main(int argc, char **argv)
     IDirect3D9_Release(d3d);
     DestroyWindow(wnd);
     FreeLibrary(dll[0]); FreeLibrary(dll[1]); FreeLibrary(d9);
+    REQUIRE(bench_no_game());
     return differences ? 2 : 0;
 }

@@ -21,6 +21,27 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Native sorting and effect-member screens (2026-10-18)
+
+- [Native sort screen](specs/2026-10-18-native-sort-screen.md) preserves
+  exact native order while removing temporary record-reference traffic.
+  Both local images pass 936 comparisons, ABI/ownership/guard checks,
+  four altered-code controls and a corrupt-copy control each.
+- Two final serial runs preserve 756 timings with the target's relative
+  function layout. One-method workloads save 0.51-2.04 ms per synthetic
+  7,680-record sort workload; random 128-key input saves 1.44 / 1.41 ms.
+  Earlier separate-page timings are excluded. No installed hook or FPS
+  result; do not add or double this isolated saving into a gameplay claim.
+- [Effect-member audit](specs/2026-10-18-effect-member-audit.md) rejects
+  leaf `IsParameterUsed` pruning: both runtimes/backends mark an actually
+  used member false, while changing it changes emitted commands. All 38
+  local techniques are audited; parent filtering remains necessary.
+- Next combine sorting with native queue/group rendering and the guarded
+  GPU candidate, including command/order, lifetime and fallback checks,
+  then measure combined costs. Further source computation remains open.
+- No production, installation or INI changes and no gameplay request.
+  Last gameplay remains ~30.18 presentations/s; 60 FPS is unachieved.
+
 ## Native animation decode screen (2026-10-18)
 
 - [Exact decoder reuse](specs/2026-10-18-native-decode-screen.md) loads three

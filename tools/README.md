@@ -18,6 +18,7 @@ user's own installs at run time.
 | script | what |
 |---|---|
 | `disasm.py` | disassembly, rel32 callers, abs32 references and string lookups in any supported image |
+| `bench_native_sort.py` | verifies 38 native render-task sort/ownership bodies, compares exact order/reference/ABI behavior with temporary raw copies, and screens CPU cost while preserving target code spacing. `make test-native-sort` checks both images; `make bench-native-sort` records paired timings. Normal control flow only, no installed hook or FPS claim. See `docs/specs/2026-10-18-native-sort-screen.md`. |
 | `xrefs.py` | callers/references of an address, named by the function annotations of the Open-BFME-2 source tree (read only) |
 | `port_sites.py` | turns a 1.06 function's first bytes into a wildcard signature that matches another image once; tests in `test_port_sites.py` |
 | `bench_native_decode.py` | verifies three complete native animation decoders and screens exact reuse with immutable synthetic streams, warm cursor states, aliasing and broken-cache controls. `make test-native-decode` checks both local images; `make bench-native-decode` records CPU timings. No game startup, production hook or FPS claim. See `docs/specs/2026-10-18-native-decode-screen.md`. |

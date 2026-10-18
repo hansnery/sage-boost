@@ -1,0 +1,69 @@
+{
+  "conclusion": "Reject member IsParameterUsed as a source-pruning condition",
+  "techniques": 38,
+  "runtimes": [
+    27,
+    43
+  ],
+  "backends": [
+    "native D3D9",
+    "DXVK"
+  ],
+  "controls": [
+    {
+      "backend": "native",
+      "runtime": 27,
+      "root_used": true,
+      "selected_member_used": false,
+      "spare_member_used": false,
+      "selected_changes_commands": true,
+      "spare_changes_commands": false
+    },
+    {
+      "backend": "native",
+      "runtime": 43,
+      "root_used": true,
+      "selected_member_used": false,
+      "spare_member_used": false,
+      "selected_changes_commands": true,
+      "spare_changes_commands": false
+    },
+    {
+      "backend": "dxvk",
+      "runtime": 27,
+      "root_used": true,
+      "selected_member_used": false,
+      "spare_member_used": false,
+      "selected_changes_commands": true,
+      "spare_changes_commands": false
+    },
+    {
+      "backend": "dxvk",
+      "runtime": 43,
+      "root_used": true,
+      "selected_member_used": false,
+      "spare_member_used": false,
+      "selected_changes_commands": true,
+      "spare_changes_commands": false
+    }
+  ],
+  "default_mode_regression": "Both backends still exit 2 with the previously documented three differences across 76 command comparisons; not a runtime compatibility pass",
+  "limits": [
+    "Own control shader and emitted-command comparisons, not pixels",
+    "No performance timing or production change"
+  ],
+  "sha256": {
+    "perf\\build\\effect-member-final-native.txt": "081017b88fd7f499dcb97e09742abcbdb83ad6bde594cbdf3fe053f0dbab6253",
+    "perf\\build\\effect-member-final-dxvk.txt": "9e1e88d9be3e39c42085aaf4e4994ca1f43606eeb8618de0ee00c8406ab06006",
+    "perf/tests/bench_effect.c": "d22c9c5b0248001a88979b8ee6c1d769a3724fa50bcf5b0a42aa68dc2f5fffdc",
+    "perf/tests/shadow_fx/shadow_fx.c": "efce887c586ad8245b3de68b9427548242e4a38533d89c3fd1ae526b7617809f",
+    "perf/build/bench_effect.exe": "e36352a6a8f82f0d1e2246d362236349f188f6ca878bd10ada8aafbcb6c153f3",
+    "perf/build/effect-member-default-regression-native.txt": "3b8e75fe5e5c6a3ee8e02646d8f792a60ef973b0fd113612368aa360e710e3ec",
+    "perf/build/effect-member-default-regression-dxvk.txt": "694cb9ef6d1534bd66cf1110c99865894b484d2107a4102635e91fb2134bc8e9",
+    "C:/Jogos/AgeoftheRing/rotwk/Shaders.big": "353c835b0e77387b322a094b62477b35c34e8e1cea6d75f5844a20b9e36b091b",
+    "C:/Jogos/AgeoftheRing/rotwk/d3dx9_27.dll": "a70d571cd675c97c9eeb4a234dba1d667ffb54ec3bb14defb36b3e2f605ae257",
+    "C:/Windows/SysWOW64/d3dx9_43.dll": "0b28546be22c71834501f7d7185ede5d79742457331c7ee09efc14490dd64f5f",
+    "C:/Windows/SysWOW64/d3d9.dll": "210e52314d24bdc8492e5185674626225af2c030ff51d13c01155aedb2d248ad",
+    "C:/Jogos/AgeoftheRing/rotwk/d3d9.dll": "00bc142e98ddad1e334a4d88fa630038e092b0758b3d79e295172b181a4c772d"
+  }
+}
