@@ -221,6 +221,15 @@ static void setup_dispatch(int argc, char **argv)
     sites[PF_EVENT_BEGIN].probe = sites[PF_EVENT_END].probe = 1;
     sites[PF_EVENT_BEGIN].arg_bytes = 12;
     sites[PF_INST_MESH].arg_bytes = 8;
+#ifdef PF_RUNTIME_BULK
+    /* The live installer uses a Draw entry probe and an indirect DIP call.
+     * A zero-initialized definition wraps Draw's return and substitutes a
+     * fixed DIP target instead; both hide differences in the native ABI. */
+    const unsigned native_sites[] = {PF_EVENT_BEGIN, PF_EVENT_END, PF_DRAW,
+                                     PF_INST_MESH, PF_INST_DIP};
+    for (unsigned k = 0; k < sizeof native_sites / sizeof native_sites[0]; k++)
+        sites[native_sites[k]] = pf_sites[native_sites[k]];
+#endif
     REQUIRE(pf_timing_open(sites, NULL, NULL));
     pf_timing_set_next(PF_EVENT_BEGIN, event_begin);
     pf_timing_set_next(PF_EVENT_END, event_end);

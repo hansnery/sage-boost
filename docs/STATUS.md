@@ -21,6 +21,30 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Installed-hook parity audit after beta.11 (2026-10-18)
+
+- Runtime GPU fixtures now use the actual Draw/DIP site definitions and
+  signature installer, plus `pf_bulk_install` for the group entry/loop.
+  Native callers, entry trampolines and indirect device lookup execute.
+  The earlier fixture bypassed those differences; no ASI defect is proved.
+- The failure fixture now passes its proxy through the native device slot
+  instead of overwriting the indirect-call displacement with a function
+  pointer. The latter failed under the production metadata.
+- Both-image native D3D9/DXVK checks pass: eight combined workloads, 384
+  fallback cases, 496 GPU-failure cases, 56 broken recovery controls and
+  24 broken queue controls. This closes fixture coverage, not the FPS goal.
+- The existing capture's shadow mesh accounting suggests bulk leaders
+  already run for many groups, although it is not a direct bulk counter.
+  Actual instanced shadow submission costs only 0.2014 ms/frame; the larger
+  target remains CPU rendering work around it. Zero local lights explain
+  the zero reuse counters. Do not add overlapping scopes.
+- Production source, beta.11 ASI and the installed INI are unchanged. No
+  diagnostic-only installation or gameplay request. Next workload checks
+  should include twenty-bone models seen in the live log, instead of only
+  the six-bone synthetic model. See
+  [audit](specs/2026-10-18-installed-hook-parity.md) and
+  [validation](benchmarks/2026-10-18-installed-hook-parity.json).
+
 ## Beta.11 gameplay: batching recovered, 60 FPS still failed (2026-10-18)
 
 - User's screenshot shows FrameView **29 FPS**. Game and launcher were

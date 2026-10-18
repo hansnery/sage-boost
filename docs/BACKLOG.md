@@ -30,6 +30,14 @@ Strike an item through, with the date, when it's done.
   (about 7,040 meshes/frame, zero mismatches), but only 30.0667 presentation
   calls/s over seconds 98..157 and six extra frames. The 60 FPS target
   failed again. See `benchmarks/2026-10-18-beta11-gameplay-check.json`.
+- [x] 2026-10-18: close Draw/DIP/group installer and metadata gaps in the
+  native GPU fixture. Actual entry trampolines and indirect-device calls
+  retain bulk batching and output. Fix the fault fixture's proxy plumbing.
+  See `specs/2026-10-18-installed-hook-parity.md`.
+- [ ] Extend workload realism to twenty-bone models/material diversity
+  before judging another CPU-rendering optimization. The live shadow
+  counters suggest substantial leader deferral; 0.2014 ms of instanced
+  shadow submission alone is too small to close the deficit.
 - [ ] Establish actual bulk-loop coverage separately from ordinary
   instancing, and reduce remaining regular-frame render work. Beta.11
   averages 22.457 ms per normal frame in the chosen interval. Do not lower

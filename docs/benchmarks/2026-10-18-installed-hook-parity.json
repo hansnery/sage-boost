@@ -1,0 +1,237 @@
+{
+  "kind": "Offline installed hook parity, not an optimization or gameplay FPS measurement",
+  "base_commit": "f39d85383e580006a9aa84cfc8d6a2fa80a921d0",
+  "production_changed": false,
+  "installed_changed": false,
+  "tests": [
+    {
+      "kind": "combined",
+      "image": "aotr",
+      "backends": [
+        "native D3D9",
+        "DXVK"
+      ],
+      "workloads": [
+        "lit",
+        "shadow"
+      ],
+      "log": "perf\\build\\installed-parity-combined-aotr.txt",
+      "sha256": "2b033d5076594820b791474a41d49915d4737145b5a2eae809fc77fcd7940265",
+      "counts": {
+        "installed_draw": 4,
+        "installed_group": 4,
+        "combined_controls": 4,
+        "group_controls": 4,
+        "fallback_controls": 0,
+        "recovery_controls": 0,
+        "rejected_queue_controls": 12,
+        "rejected_fallback_controls": 0
+      }
+    },
+    {
+      "kind": "fallback",
+      "image": "aotr",
+      "backends": [
+        "native D3D9",
+        "DXVK"
+      ],
+      "workloads": [
+        "lit",
+        "shadow"
+      ],
+      "log": "perf\\build\\installed-group-fallback-aotr.txt",
+      "sha256": "e97ee4915c68c4766bdfd13199dc8f133058d9e2cd02a5223e6ebf6d8bd1575a",
+      "counts": {
+        "installed_draw": 4,
+        "installed_group": 4,
+        "combined_controls": 0,
+        "group_controls": 4,
+        "fallback_controls": 4,
+        "recovery_controls": 4,
+        "rejected_queue_controls": 0,
+        "rejected_fallback_controls": 28
+      }
+    },
+    {
+      "kind": "combined",
+      "image": "rotwk",
+      "backends": [
+        "native D3D9",
+        "DXVK"
+      ],
+      "workloads": [
+        "lit",
+        "shadow"
+      ],
+      "log": "perf\\build\\installed-parity-combined-rotwk.txt",
+      "sha256": "8780494f5700a19648b723e5fbaf800915dd4ad767cbcadce6a6b09f7b751233",
+      "counts": {
+        "installed_draw": 4,
+        "installed_group": 4,
+        "combined_controls": 4,
+        "group_controls": 4,
+        "fallback_controls": 0,
+        "recovery_controls": 0,
+        "rejected_queue_controls": 12,
+        "rejected_fallback_controls": 0
+      }
+    },
+    {
+      "kind": "fallback",
+      "image": "rotwk",
+      "backends": [
+        "native D3D9",
+        "DXVK"
+      ],
+      "workloads": [
+        "lit",
+        "shadow"
+      ],
+      "log": "perf\\build\\installed-group-fallback-rotwk.txt",
+      "sha256": "bff5fd47259b6c66dfaa739985fe0d00ee63ff1d82ee9a4119c31d99d09aa9da",
+      "counts": {
+        "installed_draw": 4,
+        "installed_group": 4,
+        "combined_controls": 0,
+        "group_controls": 4,
+        "fallback_controls": 4,
+        "recovery_controls": 4,
+        "rejected_queue_controls": 0,
+        "rejected_fallback_controls": 28
+      }
+    }
+  ],
+  "test_source_sha256": {
+    "perf/tests/bench_dispatch.c": "9422cb2f9499fe9c3bee5362c1e2a6ecdcbcc2fca4b843c18de06f6c13072383",
+    "perf/tests/bench_native_leader.c": "8a2b9ea7696016e598883b270b7e02cb43b6d3e5d8d7befe8a18339fc0d2a012",
+    "perf/tests/bench_native_group_gpu.c": "6f214604520731757510b7d78a41689b55d60b60ab2f300923c86b5aa89af06e",
+    "perf/tests/test_native_gpu_faults.c": "5500ea98b96c1101e2dd1779723eb5b22781d1b7dc90907b1b1c98881e103e8a"
+  },
+  "production_source_sha256": {
+    "perf\\src\\bfme2perf.def": "8979d87a778f17a29a485700094d5d147d1d8f9a0f0ee940f93eaef1caa5fd28",
+    "perf\\src\\btnclock.c": "48f2e5727c8675d6e0f1cc30e4f7ea799e1a1a1960a79def2b824412c43f5c88",
+    "perf\\src\\btnclock.h": "227f7042b2eb8ed271cc3dfdd6be700bb830b6cd2f037b587c171729a8542a31",
+    "perf\\src\\bulk.c": "0a979e3b92e1722d09500139647e3de7bd198a8b62e7683f40ef1143888cc04a",
+    "perf\\src\\bulk.h": "0755a142893fde777a3239cc521123dae86b35eb42fefce2c0d2087d831bf2a1",
+    "perf\\src\\bulkcontract.c": "f0b8a24a60c92681145de51bba5780ced5b33e6792e0c3dc50a7efedd4b547bc",
+    "perf\\src\\bulkcontract.h": "5a73614c81686e35fc35a40f267d9a858a360a0252ea2792a99e388c48a6ab4c",
+    "perf\\src\\bulkcontract_table.h": "2e81ff3f396103e32a001a76064f33af51b02c8112fcd8733172d499ba065cb4",
+    "perf\\src\\bulkpatch.c": "64fb1ade8c6c048b8f5d0d69c621520c16a7d3c001d5f5ad044bef86ff65955c",
+    "perf\\src\\catchup.c": "6e113340d7549959a42ef6057a5cb75d65b5a5d69b84896352a5288f370a1236",
+    "perf\\src\\catchup.h": "18787d31181951ebd8bebeac0601cab9c28f3cab6a4473c46b76ced1d965c8e2",
+    "perf\\src\\clock.c": "fc7943c103f92ccd935d5fbce6caed80707a023f532ba9b203c9c1644991fa91",
+    "perf\\src\\clock.h": "6b055a4a8fe95a8b52a20145a674699aaada84af008067af23c026518cc21b02",
+    "perf\\src\\config.c": "a357ada1715e8da39432b9259ca80b208fb5230fc83c3fadbdc192035132f98f",
+    "perf\\src\\config.h": "4ba6e53109f8544f2850c0628c47aea0866736cd78cb6fe5bb655ead2293bf83",
+    "perf\\src\\csvrow.c": "98b0ed5e7087d8fbef1fb5a5734a74c946e92296541dc0ffde1a96b39568f956",
+    "perf\\src\\csvrow.h": "5c019220f13cfa4e5abb0e38683d0354f1cf888b693175a003a77cea6c85c231",
+    "perf\\src\\cusites.c": "9716c383a51234d9200297b101821fe828d7bdb001e9e3d793b7383f6fb13e87",
+    "perf\\src\\cusites.h": "56d8c4ac4d8ab4d51aadb3cf3d33d73699811f8e80eb5283413c7dec30283372",
+    "perf\\src\\d3d9vt.h": "3986e61da91f93d3617cafbeb087a3b0a644d73ded80dbaaac3350c1b25efe89",
+    "perf\\src\\declcache.c": "5181600462ca1d5ef9753c2e8521ccba983c3f7c877b6c9d77b59ec8124788e6",
+    "perf\\src\\declcache.h": "303f515772da972b5a2a909479ca62ee68d649863e4edcc1e85a9a1e7864aec4",
+    "perf\\src\\depthcmp.h": "ff40c85100b6fb3c095df011a74a203e7a19a7b6aa1f04f1187b3b008a27f090",
+    "perf\\src\\extraprofile.c": "bd17ca197e54f0620c4cc7ca604af0495cb3355fa1777be5a6363f469b378b41",
+    "perf\\src\\extraprofile.h": "9d26112a54316d3b58044a1da8d26c8fc2af97725c323d3bceae439d7c324f30",
+    "perf\\src\\fps.c": "e2c0417b35af0a18982f97a42f2b4ebb1c02723a291ca29f6154b190279ba12c",
+    "perf\\src\\fps.h": "022f422e1a5eca5d43b65f537d32511e09e3b4afb5d6f7e2fa6cacabda606bcc",
+    "perf\\src\\fpsites.c": "6dcffe972ebfe722508ef1328d4bf14f57216e071ebea005003649ba5096f6b5",
+    "perf\\src\\fpsites.h": "30b26ead06683360c8446c4cc58d03035226a0273604a8f2bc01994449cb5755",
+    "perf\\src\\fpsmath.c": "c2cf46bb09432f8d88b5fd48c1024b8dc659c7ab253f29b67e4c019dc9b47faf",
+    "perf\\src\\fpsmath.h": "2627e9adf6169f31aad388035183da39e1d7866c54401f9177ee6f5b9cdb46ad",
+    "perf\\src\\fxguard.c": "c8139e848daf50a67525fe01ed6881ad66b77050023b4c271c2a18b0254bb3e9",
+    "perf\\src\\fxguard.h": "bf0ae812e4e77eb8c21d9152f8a96e34bd3a0a344f352524f5548962d4a4c984",
+    "perf\\src\\inst.c": "9b0b79ee75c6bec6600253743e1fd7a57e2f942d1da83cbd3501c15cd16eb472",
+    "perf\\src\\inst.h": "181d185c7c540dd8f66f01c581c7a0fe16fcbdf99b509be0bd18685fe5782767",
+    "perf\\src\\inst_shaders.h": "fa55800397c77dd4b65ccd0be3881520d94281d7147218cbd85ab6a70d6e6e5a",
+    "perf\\src\\instbulk.h": "984951df6add51b36d08be78a2d754cf065de8b60969a2665b02df61b2e14cd1",
+    "perf\\src\\instsubmit.c": "419b97dd748333803acb9b90f0cea333ccc62e7caeed446bd70183615bc66423",
+    "perf\\src\\instsubmit.h": "0595f61ecb32a586e3349dae9060f9d161068e23a51f331e193e55ec23954fa6",
+    "perf\\src\\lights.c": "0ba6e303b971dadbb8dd477eace4485f02292467eb7cc9e33f2a7d7103efd795",
+    "perf\\src\\lights.h": "c1c4103f91454c2155aa3c311f84fb3163fba0a2479e5ec895bfd95180622a21",
+    "perf\\src\\log.c": "8dfcc254eece72f18fd897df29121fa0e44b3bc0896155aff64956ae64b3d00d",
+    "perf\\src\\log.h": "866c8bad842ba15ed7a67f0854838a5fa296c83a34de0f4d39558f032a404df5",
+    "perf\\src\\ltsites.c": "dc118cbdaa53cb4c51d242ad83958b14ef1ec8d4be24197789a71702b9a70924",
+    "perf\\src\\ltsites.h": "49442ed8ae8e371439f4dd16c761f28587fbe533e7b706accc0045b6e3d7caf9",
+    "perf\\src\\main.c": "3cfe56a7392d568c38b461a4ccc4bee5c84b82678b040ba35caa4f0b6c23942c",
+    "perf\\src\\nativecontract.c": "525bbfe7ead5faf89b4647a880d7bd64d8c30cd6479493f0aedc3d27950e87b0",
+    "perf\\src\\nativecontract.h": "a3773c8eb3745df31c1f849c8f88250e7e10088d02f991df227b5fb4436abe2a",
+    "perf\\src\\notice.c": "e0da2549865344f261bb5fc473a68b04e8e9f8667e50d9e98993412e0589c3d0",
+    "perf\\src\\notice.h": "0b355623a9fa7ea9e623d2bd0b1d3ab9794dd09d1446d01e13b9d4c36d2658ce",
+    "perf\\src\\passflag.c": "1403ee510a421d28ece3ce89ae1fa739da77755038d4594dbba4cd1f566bc8ba",
+    "perf\\src\\passflag.h": "14fc6e1edcc2bce1515ddee2680915b5be556e11c14789b723aa9b93d2589aeb",
+    "perf\\src\\patch.c": "04f5c6bcfec826ad9107dab045fbdcbcc177ce357e4e9aa882371cd03065f8c3",
+    "perf\\src\\patch.h": "bd0a6d0f6097ca9e1c919608341129600b10560b28265a984bc4e465b0cd5c84",
+    "perf\\src\\presentgap.c": "ea339026d82dc427b69b34a016916ed34b3f05e5d49b9c401f455846e003becb",
+    "perf\\src\\presentgap.h": "d043c26811ca5c35fb7253e724c83fc39f777da13429f2bb6d9dfb5b85291596",
+    "perf\\src\\queueinsert.c": "1822a1ca62030719d889f87b23c79c45deba6e25e9bdf81072f0a3cbe74c638b",
+    "perf\\src\\queueinsert.h": "8f69d218d43d20607fa6f57104f2e47accb46d4a6ddeb360f17af4a37595f372",
+    "perf\\src\\queueinsert_table.h": "d8b9bd3a8098b038c68919c90e490a69795eb96781b69d3b98b76e70efcae57e",
+    "perf\\src\\queuesort.c": "d2578d7d91c0c21a7bd0317f81da6f5083d9b6b711c7d9bd64e85c10792772fc",
+    "perf\\src\\queuesort.h": "e451b33e7ea3efc69ec02c9cb5973826def3b7fb7596233a4602e2c3e4ccef94",
+    "perf\\src\\queuesort_table.h": "c16bb361f9feb35cc012791e88c00c161f3c89dcfd3453e41785cb500bfd44fb",
+    "perf\\src\\reflect.c": "7bd4652b344c8db9257753194d449395617205fb06ed043441a64a1c280a9b90",
+    "perf\\src\\reflect.h": "c539ca8225e9a43e81e7209660524c4c0683c0dc8da6bb7cd5cef23b550c2895",
+    "perf\\src\\rt.c": "e2a0c495b12b37c42d1c701da2c6175c8cb5f44c01dd1337032f42b1f215496d",
+    "perf\\src\\scan.c": "0377ec8218a8547792cfb67fa758c7189ba7e58461a55fa29a295793363e266a",
+    "perf\\src\\scan.h": "f577a60dce8dd729d97f1db14462745f0e09e4c0e6f3c6ab743c34fa0485d550",
+    "perf\\src\\shadowfx_table.h": "53dfd4d0a89395411af5213827b2805e1debe1ba77118a492d30c04eecc98021",
+    "perf\\src\\shadowpass.c": "f3c331a37537fc075711714ee76ab1d5de4a55db0f139200ff26f3d5a9fa4270",
+    "perf\\src\\shadowpass.h": "290e4b4cd8df3ab5b6a0dc5b52ce1cc0a719ac7f3c1b225c36975e72139d8d48",
+    "perf\\src\\sites.c": "71937f52c7b7c2a573ad79cb5dbd90fd5285e0fb9f70f1ba9d771c340c3d0e28",
+    "perf\\src\\sites.h": "1d54993af316a3d607d25cea23e2c88108a3ffcf00973f947a050dcb88b98aae",
+    "perf\\src\\spsites.c": "d9ac2da8fd5b6afbc4604918ade70e11c3d407fa3efba756dbbce0060a49fd6e",
+    "perf\\src\\spsites.h": "75f10e89601d2c5336cdcccb5d5821214cbe6700b8904e414607356a1185b656",
+    "perf\\src\\stubs.c": "5f9eb64ed0bad6f75ca60eca013eae4ad09aeb70d577a0b5b7582a8889e63fdc",
+    "perf\\src\\stubs.h": "26f4c55f8aa6f382bc6f0d546939cd2fffc468cfc01e515a84626fbee97811b6",
+    "perf\\src\\timing.c": "10afb2c80351b2dcda427a2d7e624bdffe6a0467fddb68971a9ea3642229f80a",
+    "perf\\src\\timing.h": "0ae4b3aed9ccb3b0c34df10d107dbd5af56e84908f9bd8de90878dd24556eb65",
+    "perf\\src\\uistate.c": "b23868cdc386711fc1878eef00ddba12da6bb36ea3ab45a997f3355f65d13a93",
+    "perf\\src\\uistate.h": "71b529cadebe454f308de69096e97f68e25b0512f66490245380249c82d04e6d",
+    "perf\\src\\version.rc": "104a17a659cf5de9c32fd2009457b9d46c58f2e85397778f449aa09f5d79f53a"
+  },
+  "executables_sha256": {
+    "bench_runtime_bulk_gpu.exe": "f322cb2687abc144eb458b85832bb936706103db815dda75976e94fce8cc5f45",
+    "test_runtime_group_fallback.exe": "62786f8cb060819c6d06eaafc35982a858d7f327aa6e01763fff8a3d3bc83c4d",
+    "bfme2perf.asi": "574a085967d477a53037526c1ea7f6b6d257a559a36aab7f76573c4ca7cfe027"
+  },
+  "gameplay_counter_evidence": {
+    "capture": "C:\\Users\\Hans\\AppData\\Local\\Temp\\bfme2perf-beta11-test-20261018-094455-443892",
+    "timing_csv_sha256": "d8050c5b617d4c24d88399d8f4a29351f2d0d2f5f553acba3bf96b82d8e2b8bf",
+    "seconds": [
+      98,
+      157
+    ],
+    "frames": 1818,
+    "rounded_shadow_classifications_per_frame": {
+      "meshes": 2850.3223322332233,
+      "leaders": 141.7970297029703,
+      "small": 240.8795379537954,
+      "multipass": 0.0,
+      "game_inst": 0.0,
+      "no_shader": 4.965896589658966,
+      "disabled": 0.0,
+      "bones": 0.0,
+      "mismatch": 0.0,
+      "verify": 0.5467546754675467,
+      "off": 0.0
+    },
+    "shadow_mesh_markers_per_frame": 3110.7343234323434,
+    "classification_surplus_per_frame": 127.77722772277184,
+    "interpretation": "Consistent with deferred leaders counted in both meshes and leaders. Suggests bulk activity; not a direct coverage count or percentage. Per-row CSV rounding and marker/pass accounting differ.",
+    "overlapping_scope_averages_ms": {
+      "shadow_inst_ms": 0.2013883388338834,
+      "lt_ms_shadow": 2.611754125412541,
+      "lt_pre_ms_shadow": 0.2927172717271727,
+      "lt_env_ms_shadow": 0.11776347634763476,
+      "skel_render_ms": 1.7780346534653466
+    },
+    "unchanged_presentation_calls_per_second": 30.066666666666666
+  },
+  "limitations": [
+    "Controlled six-bone synthetic geometry and sources; not the saved game.",
+    "Runtime discovery has separate private-image tests; these GPU tests install on independently verified relocated bodies.",
+    "No new performance timings collected. Earlier combined timings are not additional gains.",
+    "20-bone models and broader material diversity remain follow-up workload coverage."
+  ]
+}

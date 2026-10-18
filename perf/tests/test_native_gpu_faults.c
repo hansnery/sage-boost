@@ -293,8 +293,14 @@ static void ff_validate(void)
 #ifdef PF_RECOVERY_CANDIDATE
     bench_recovery_watch(ff_recovery_begin,ff_recovery_end);
 #endif
-    /* Native DIP hook continues to this proxy, just like the batch's VT call. */
+    /* The installed indirect hook resolves the native device's live vtable.
+     * Keep its displacement intact and supply the same proxy to that body.
+     * Older wrapper fixtures use an explicit continuation function. */
+#ifdef PF_RUNTIME_BULK
+    nm_draw_device=&ff_proxy;
+#else
     pf_timing_set_next(PF_INST_DIP,ff_draw);
+#endif
     /* Make stream binding failure observable rather than accidentally
      * retaining the correct instance-offset buffer from an earlier case. */
     HR(IDirect3DDevice9_CreateVertexBuffer(g_dev,4096,D3DUSAGE_WRITEONLY,0,
@@ -345,7 +351,11 @@ static void ff_validate(void)
     REQUIRE(ff_fault_cases==56 && loss && leaks && unsafe);
 #endif
     bench_fault_device(NULL);
+#ifdef PF_RUNTIME_BULK
+    nm_draw_device=g_dev;
+#else
     pf_timing_set_next(PF_INST_DIP,ff_original[PF_DEV_DRAW_INDEXED]);
+#endif
     HR(IDirect3DStateBlock9_Apply(outer));
     IDirect3DVertexBuffer9_Release(ff_seed_vb); ff_seed_vb=NULL;
     bench_fault_reset();

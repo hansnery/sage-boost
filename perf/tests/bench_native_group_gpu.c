@@ -20,11 +20,7 @@ static const char *ng_manifest;
 static void *ng_symbols[34],*ng_hooked;
 static void *ng_target(unsigned optimized)
 {
-#ifdef PF_RUNTIME_BULK
-    return optimized ? (void *)pf_bulk_entry : ng_symbols[0];
-#else
     return optimized ? ng_hooked : ng_symbols[0];
-#endif
 }
 static unsigned char ng_renderer[0x40];
 static FARPROC ng_sprintf,ng_strncpy;
@@ -140,7 +136,24 @@ static void ng_setup(void)
     native_group_load(ng_symbols,nm_image,ng_manifest,ng_group_bridge,
                       &ng_hooked,&ng_group_resume,&ng_group_fallback);
 #ifdef PF_RUNTIME_BULK
-    REQUIRE(pf_bulk_bind(ng_hooked,ng_group_resume,ng_group_fallback));
+    /* Replace the fixture's prewritten bridge with the native bytes, then
+     * let the production installer apply both entry and loop hooks. This
+     * executes the same stolen-prologue trampoline as an installed ASI. */
+    DWORD old;
+    REQUIRE(VirtualProtect(ng_hooked,4096,PAGE_READWRITE,&old));
+    memcpy((unsigned char *)ng_hooked+0x14F,(unsigned char *)ng_symbols[0]+0x14F,6);
+    REQUIRE(VirtualProtect(ng_hooked,4096,PAGE_EXECUTE_READ,&old));
+    REQUIRE(FlushInstructionCache(GetCurrentProcess(),ng_hooked,4096));
+    pf_image image={(unsigned char *)ng_hooked,0,819,0};
+    pf_bulk_sites sites={
+        .group=ng_hooked,.hook=(unsigned char *)ng_hooked+0x14F,
+        .resume=ng_group_resume,.fallback=ng_group_fallback,
+        .mesh=nm_symbols[0],.triangles=nm_symbols[1],.draw=nm_symbols[2],
+        .begin_callback=&nm_begin_callback,.end_callback=&nm_end_callback
+    };
+    const char *why=NULL;
+    REQUIRE(pf_bulk_install(&image,&sites,&why));
+    puts("INSTALLED GROUP: production signature installer, entry trampoline, lifetime guard and loop bridge");
 #endif
     const unsigned begin_offsets[]={0xC2,0x1AA,0x22D},end_offsets[]={0x1D1,0x2AF,0x2FF};
     for(unsigned i=0;i<3;i++) for(unsigned j=0;j<2;j++) {

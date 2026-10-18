@@ -17,6 +17,7 @@ static unsigned nm_changed,nm_one=0x3F800000,nm_threshold=0x3DCCCCCD;
 static unsigned nm_limit,nm_draw_count,nm_api_count;
 static unsigned char nm_emissive,nm_enabled=1,nm_snapshot;
 static unsigned nm_early_draw;
+static void *nm_draw_device;
 #ifdef PF_RUNTIME_BULK
 static const unsigned char *nm_anchors[GROUPS * GROUP_SIZE];
 #endif
@@ -67,6 +68,30 @@ static void nm_patch(unsigned body,unsigned offset,void *target,int nop)
     REQUIRE(FlushInstructionCache(GetCurrentProcess(),nm_symbols[body],4096));
 }
 static void nm_validate(void);
+#ifdef PF_RUNTIME_BULK
+#include "patch.h"
+static void nm_installed_next(unsigned index, void *next)
+{
+    REQUIRE(index < 2);
+    pf_timing_set_next(index ? PF_INST_DIP : PF_DRAW, next);
+}
+static void nm_install_draw(void)
+{
+    pf_image image = {(unsigned char *)nm_symbols[2], 0, 452, 0};
+    const pf_site hooks[] = {pf_sites[PF_DRAW], pf_sites[PF_INST_DIP]};
+    const int enabled[] = {1, 1};
+    void *targets[] = {pf_enter_stubs[PF_DRAW], pf_enter_stubs[PF_INST_DIP]};
+    pf_result results[2];
+    pf_install(&image, hooks, 2, enabled, 0, targets, nm_installed_next, results);
+    for (unsigned i = 0; i < 2; i++) {
+        REQUIRE(results[i].status == PF_ST_APPLIED && results[i].matches == 1);
+        REQUIRE(results[i].rva == (i ? 0x185u : 0u));
+    }
+    REQUIRE(results[0].trampoline != nm_symbols[2]);
+    REQUIRE(results[1].trampoline == (void *)0x148);
+    puts("INSTALLED DRAW: production metadata, signature installer, entry trampoline and live indirect DIP target");
+}
+#endif
 static void nm_setup(void)
 {
 #ifdef PF_RUNTIME_BULK
@@ -83,12 +108,17 @@ static void nm_setup(void)
 #endif
     for(unsigned i=7;i<19;i++) nm_symbols[i]=nm_unexpected;
     nm_symbols[12]=nm_geometry; nm_symbols[14]=PF_NATIVE_MESH_APPLY_STATE; nm_symbols[15]=nm_statistics;
+    nm_draw_device=g_dev;
     void *data[]={&nm_changed,nm_state,&nm_one,&nm_sas_ptr,&nm_limit,&nm_emissive,
-                  &nm_enabled,&nm_snapshot,&g_dev,&nm_draw_count,&nm_api_count,&nm_threshold};
+                  &nm_enabled,&nm_snapshot,&nm_draw_device,&nm_draw_count,&nm_api_count,&nm_threshold};
     for(unsigned i=0;i<12;i++) nm_symbols[i+19]=data[i];
     native_mesh_load(nm_symbols,nm_image,nm_manifest);
+#ifdef PF_RUNTIME_BULK
+    nm_install_draw();
+#else
     nm_patch(2,0x185,pf_enter_stubs[PF_INST_DIP],1);
     nm_patch(1,0x18,pf_enter_stubs[PF_DRAW],0);
+#endif
     nm_method_vt[0]=nm_unexpected; nm_method_vt[4]=nm_dynamic;
     g_method.vt=nm_method_vt;
     *(void **)(g_model+0x94)=nm_material;
@@ -96,8 +126,10 @@ static void nm_setup(void)
     *(unsigned *)(g_model+0x24)=GRID*GRID*2;
     *(unsigned *)(g_model+0x28)=(GRID+1)*(GRID+1);
     pf_timing_set_next(PF_INST_MESH,nm_symbols[0]);
+#ifndef PF_RUNTIME_BULK
     pf_timing_set_next(PF_DRAW,nm_symbols[2]);
     pf_timing_set_next(PF_INST_DIP,PF_VT(g_dev)[PF_DEV_DRAW_INDEXED]);
+#endif
     bench_leader_native_sites(nm_symbols[0],nm_symbols[1],nm_symbols[2],
                               &nm_begin_callback,&nm_end_callback);
     dispatch_available=bench_leader_can_bulk;
