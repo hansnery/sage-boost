@@ -24,6 +24,8 @@
 #define PF_HAVE_CATCHUP 524288u  /* catch-up's sites */
 
 #include "catchup.h"
+#include "extraprofile.h"
+#include "presentgap.h"
 #include "inst.h"
 #include "lights.h"
 #include "shadowpass.h"
@@ -106,9 +108,13 @@ typedef struct {
     unsigned logic_calls;             /* GameLogic::update calls, whole row */
     pf_cu_row cu;                     /* catch-up, whole row */
     unsigned fps_blocked[4], fps_probes[3], fps_learned_us;
+    pf_ep_row extra_profile;
+    pf_present_row presentation;
     unsigned have;              /* PF_HAVE_*: columns that were measured */
 } pf_row;
 
+/* Room for all columns even when counters approach their integer limits. */
+#define PF_CSV_ROW_CAP 8192
 extern const char pf_csv_header[];
 extern const char pf_scope_header[];
 

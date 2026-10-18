@@ -6,6 +6,7 @@
 #include "fps.h"
 #include "lights.h"
 #include "patch.h"
+#include "presentgap.h"
 #include "reflect.h"
 #include "shadowpass.h"
 #include "stubs.h"
@@ -22,6 +23,7 @@ typedef struct {
     void *ret;
     LONGLONG t0;
     int presented; /* End_Scene with flip set */
+    int extra;     /* extra draw: excludes regular present/covered time */
     int covering;  /* counted in the frame's covered time */
 } wrapped_call;
 
@@ -189,7 +191,7 @@ static void write_row(unsigned time_s)
 {
     DWORD err = GetLastError();
     LONGLONG rest = g_frame - g_covered;
-    char buf[2048];
+    char buf[PF_CSV_ROW_CAP];
     unsigned i;
     pf_row r;
 
@@ -235,6 +237,7 @@ static void write_row(unsigned time_s)
         r.waits = fr.waits;
         r.extra_frames = fr.extra;
         r.extra_us = fr.extra_us;
+        r.extra_profile = fr.profile;
         r.extra_late = fr.late;
         r.extra_units = fr.units;
         r.wait_us = fr.wait_us;
@@ -272,6 +275,7 @@ static void write_row(unsigned time_s)
     g_logic_row = 0;
     pf_cu_take_row(&r.cu);
     r.have = g_have | (g_sp_verify ? PF_HAVE_SPVERIFY : 0);
+    pf_present_take(&r.presentation);
     if (g_inst_take) {
         g_inst_take(&r.inst);
         r.have |= PF_HAVE_INST;
@@ -350,6 +354,7 @@ int pf_timing_open(const pf_site *sites, const WCHAR *csv_path, const WCHAR *sco
     }
     QueryPerformanceFrequency(&f);
     g_freq = f.QuadPart;
+    pf_present_init();
     pf_reflect_init(&g_reflect, 1, g_freq / 4);
     pf_reflect_init(&g_shadow, 1, g_freq / 4);
     if (!csv_path)
@@ -750,7 +755,7 @@ void *__attribute__((used)) pf_enter(unsigned k, void **slot)
     if (k == PF_CUST && (!g_main || tid == g_main))
         pf_lt_pass_begin();
     nest = nest_of(k);
-    if (pf_fps_in_extra() || k == PF_FPS_WAIT || k == PF_FPS_AVG || k == PF_HLOD_SET ||
+    if ((pf_fps_in_extra() && k != PF_END_SCENE) || k == PF_FPS_WAIT || k == PF_FPS_AVG || k == PF_HLOD_SET ||
         k == PF_HLOD_DTOR || k == PF_VIEWS || k == PF_PARTICLES || k == PF_BUTTON_DRAW ||
         k == PF_CLOCK_SET || k == PF_CLOCK_SET_LEFT) {
         void *next = next_of(k, slot), *to;
@@ -797,7 +802,8 @@ void *__attribute__((used)) pf_enter(unsigned k, void **slot)
     c->ret = *slot;
     *slot = pf_exit_stubs[k];
     c->presented = k == PF_END_SCENE && *(const unsigned char *)(slot + 1) != 0;
-    c->covering = (k == PF_LOGIC || c->presented) && !g_cover_depth;
+    c->extra = pf_fps_in_extra();
+    c->covering = !c->extra && (k == PF_LOGIC || c->presented) && !g_cover_depth;
     if (c->covering)
         g_cover_depth++;
     g_depth[nest]++;
@@ -890,8 +896,16 @@ void *__attribute__((used)) pf_exit(unsigned k, unsigned char *esp)
         break;
     case PF_END_SCENE:
         if (c->presented) {
-            g_present += dt;
-            g_stats.presents++;
+            /* Divide first so an absolute QPC uptime cannot overflow the
+             * multiplication used for short duration conversion. */
+            unsigned long long ticks = (unsigned long long)t;
+            unsigned long long freq = (unsigned long long)g_freq;
+            pf_present_hit((ticks / freq) * 1000000ull +
+                           (ticks % freq) * 1000000ull / freq);
+            if (!c->extra) {
+                g_present += dt;
+                g_stats.presents++;
+            }
         }
         break;
     default:

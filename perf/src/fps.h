@@ -9,6 +9,7 @@
 #include <windows.h>
 
 #include "fpsites.h"
+#include "extraprofile.h"
 
 /* The extra frames of one game frame, all times in microseconds from when
  * the game's frame was shown (its first wait, just after it presented). */
@@ -66,6 +67,7 @@ typedef struct {
     unsigned blocked[4];
     unsigned probes[3]; /* attempted, timely, late */
     unsigned learned_us;
+    pf_ep_row profile;
 } pf_fps_row;
 
 /* Before installing; max_fps 30 = off. NULL sites = nothing found.

@@ -163,6 +163,7 @@ static int g_draw_skipped;
 static LONGLONG g_prev_wait, g_idle_ticks; /* summed in ticks: the gaps are sub-microsecond */
 static int g_seen_frame;
 static pf_fps_row g_row;
+static pf_ep g_extra_profile;
 static void blocked(unsigned reason)
 {
     if (!(g_block_bits & (1u << reason))) {
@@ -486,6 +487,7 @@ void pf_fps_init(const pf_fps_sites *sites, const char *why_not, unsigned max_fp
     }
     g_time = 0;
     g_client_off = -1;
+    pf_ep_init(&g_extra_profile);
     pf_fps_take_row(&g_row);
     g_extras = max_fps > 30 ? max_fps / 30 - 1 : 0;
     if (g_extras > sizeof g_plan_start / sizeof g_plan_start[0])
@@ -594,6 +596,7 @@ void pf_fps_take_row(pf_fps_row *row)
     g_row.ref_us = g_ref_n >= PF_FPS_REF_DRAWS ? g_ref_us : 0;
     g_row.idle_us = to_us(g_idle_ticks);
     g_idle_ticks = 0;
+    pf_ep_take(&g_extra_profile, &g_row.profile);
     *row = g_row;
     {
         unsigned i;
@@ -990,6 +993,7 @@ static int extra_frame(const unsigned *engine, unsigned f, unsigned *cost_us)
     if (cam)
         copy_bytes(game_cam, cam + PF_RENDOBJ_TRANSFORM, sizeof game_cam);
     g_scene_held = 0;
+    pf_ep_begin(&g_extra_profile, qpc_us());
     set_extra(1);
     units = units_ahead(f);
     ((draw_fn)S.draw)(display);
@@ -998,6 +1002,7 @@ static int extra_frame(const unsigned *engine, unsigned f, unsigned *cost_us)
     if (units && !units_back()) {
         set_extra(0);
         stop("a unit couldn't be put back");
+        pf_ep_end(&g_extra_profile, qpc_us(), 0);
         return 0;
     }
     /* The view update is held, so nothing in the draw may move the camera. */
@@ -1005,6 +1010,7 @@ static int extra_frame(const unsigned *engine, unsigned f, unsigned *cost_us)
         set_transform(cam, game_cam);
         set_extra(0);
         stop("an extra frame's draw moved the camera");
+        pf_ep_end(&g_extra_profile, qpc_us(), 0);
         return 0;
     }
     set_extra(0);
@@ -1013,22 +1019,27 @@ static int extra_frame(const unsigned *engine, unsigned f, unsigned *cost_us)
     restore(&d);
     if (*S.logic_seed != seed) {
         stop("an extra frame drew a logic random number");
+        pf_ep_end(&g_extra_profile, qpc_us(), 0);
         return 0;
     }
     for (i = 0; i < PF_ENGINE_WORDS; i++) {
         if (engine[PF_ENGINE_FROM / 4 + i] != before[i]) {
             stop("an extra frame changed the game engine's frame counters");
+            pf_ep_end(&g_extra_profile, qpc_us(), 0);
             return 0;
         }
     }
     if (have_frame && (!client_frame(&frame1) || frame1 != frame0)) {
         stop("an extra frame changed the client frame");
+        pf_ep_end(&g_extra_profile, qpc_us(), 0);
         return 0;
     }
     if (have_crc && (!crc_now(&crc1) || crc1 != crc0)) {
         stop("an extra frame changed the logic CRC (-verifyClientCRC)");
+        pf_ep_end(&g_extra_profile, qpc_us(), 0);
         return 0;
     }
+    pf_ep_end(&g_extra_profile, qpc_us(), 1);
     return 1;
 }
 
@@ -1449,6 +1460,21 @@ void *pf_fps_enter(unsigned k, void **slot, void *next, unsigned arg_bytes)
         return next;
     }
     if (g_in_extra) {
+        /* Only four pass markers are timed. Unknown per-mesh markers cost
+         * no clock read and cannot displace a tracked pass on the stack. */
+        if (k == PF_EVENT_BEGIN || k == PF_EVENT_END) {
+            if (!g_main || GetCurrentThreadId() != g_main)
+                return next;
+            if (k == PF_EVENT_BEGIN) {
+                const char *label = (const char *)slot[1];
+                if (pf_ep_label(label) >= 0)
+                    pf_ep_marker_begin(&g_extra_profile, slot[-4], label, qpc_us());
+            } else if (pf_ep_tracks(&g_extra_profile, slot[-4])) {
+                pf_ep_marker_end(&g_extra_profile, slot[-4], qpc_us());
+            }
+            return next;
+        }
+
         /* The stored shadow map and reflection are reused, and the game's
          * average frame rate counts only its own frames. The view update
          * (camera motion, follow and shake, the terrain under the camera)

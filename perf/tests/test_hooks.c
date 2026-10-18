@@ -10,6 +10,7 @@
 #include "fps.h"
 #include "lights.h"
 #include "patch.h"
+#include "presentgap.h"
 #include "shadowpass.h"
 #include "stubs.h"
 #include "timing.h"
@@ -71,6 +72,7 @@ int g_reflect_runs, g_shadow_runs, g_frame_no, g_seen_matrix0, g_sleeps, g_parti
 /* What the fake W3DDisplay::draw does after its particle update (NULL: nothing). */
 void (*g_draw_inner)(void);
 extern char fake_sleep[];
+extern char fake_present[];
 void *g_fake_import = fake_sleep;
 
 /* frame: shadow(3); logic(7); marker("RenderViews") { render(9); mesh
@@ -656,6 +658,12 @@ static DWORD WINAPI other_thread(LPVOID unused)
     return (DWORD)call_anim();
 }
 
+static DWORD WINAPI other_present_thread(LPVOID unused)
+{
+    (void)unused;
+    return (DWORD)((int (*)(int))(void *)fake_present)(1);
+}
+
 static int read_file(const WCHAR *path, char *buf, unsigned cap)
 {
     HANDLE h = CreateFileW(path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
@@ -782,6 +790,28 @@ int main(void)
     CHECK(s.scopes == 6 && s.stale_scopes == 0, "markers %u, stale %u", s.scopes, s.stale_scopes);
     CHECK(s.draws == 6, "draws %u", s.draws);
     CHECK(s.presents == 3, "presents %u", s.presents);
+    {
+        pf_present_row pr;
+        unsigned before = s.presents;
+        pf_present_take(&pr);
+        CHECK(pr.calls == 3 && pr.gaps == 2, "completed presents %u/%u", pr.calls, pr.gaps);
+        ((int (*)(int))(void *)fake_present)(0);
+        pf_present_take(&pr);
+        pf_timing_get_stats(&s);
+        CHECK(!pr.calls && !pr.gaps && s.presents == before, "flip=0 counted a present");
+        ((int (*)(int))(void *)fake_present)(1);
+        pf_present_take(&pr);
+        pf_timing_get_stats(&s);
+        CHECK(pr.calls == 1 && pr.gaps == 1 && s.presents == before + 1,
+              "flip=1 missing completed present");
+        t = CreateThread(NULL, 0, other_present_thread, NULL, 0, NULL);
+        WaitForSingleObject(t, INFINITE);
+        CloseHandle(t);
+        pf_present_take(&pr);
+        pf_timing_get_stats(&s);
+        CHECK(!pr.calls && s.presents == before + 1,
+              "wrong-thread completion polluted presentation sample");
+    }
     CHECK((unsigned)g_reflect_runs - runs_before == 2, "reflection ran %u times in 3 frames",
           (unsigned)g_reflect_runs - runs_before);
     CHECK(s.reflect_runs == 2 && s.reflect_forced == 1 && s.reflect_skipped == 1,
@@ -1048,7 +1078,19 @@ int main(void)
             /* Its wait: one extra frame (shown 5 ms into the frame, so about 13 ms later). */
             before_runs = g_shadow_runs;
             g_xframe_start += 1000;
-            extra_wait(5);
+            {
+                pf_present_row pr;
+                unsigned regular;
+                pf_timing_get_stats(&s);
+                regular = s.presents;
+                pf_present_take(&pr);
+                extra_wait(5);
+                pf_present_take(&pr);
+                pf_timing_get_stats(&s);
+                CHECK(pr.calls == 1 && pr.gaps == 1,
+                      "extra completion missing: calls %u gaps %u", pr.calls, pr.gaps);
+                CHECK(s.presents == regular, "extra present polluted regular stats");
+            }
             extra_seen = g_seen_matrix0;
             CHECK(g_extra_draws == 1 + 2 * (int)j, "extra frames drawn %d", g_extra_draws);
             if (j == 0) {

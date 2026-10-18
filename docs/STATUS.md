@@ -12,12 +12,27 @@ files before relying on it.
 - User requested committing/pushing current work, then a target of at least
   60 FPS. Clean beta history through `ace76a5` pushed to origin/codex/perf-beta.
 - Explicit preference: keep shadows at 60 too; no shadow-cadence shortcut.
-- Proposed next-stage design:
+- Approved next-stage design:
   [60 FPS with full-rate shadows](specs/2026-10-17-60fps-full-shadows-design.md).
 - Detailed timings currently exclude extra frames. Close that measurement
   gap and audit full-pass material/object setup before choosing the next
   optimization. The combined CPU budget needs roughly 8 ms of savings in
   the captured heavy scene. This is a target, not an achieved result.
+
+## Performance beta 0.9.11-beta.2 (2026-10-17)
+
+- Implements the approved diagnostic stage: separately staged extra shadow,
+  reflection, views and UI timings, with safety-failure invalidation; completed
+  flip-enabled End_Scene call counts and bounded gap percentiles/histogram.
+- Full plugin tests and all 59 shader comparisons on both native D3D9
+  and DXVK pass; final buffer-size regression checks pass. Committed locally,
+  with no new push, deployment, tag or publication.
+- No rendering/cadence/quality changes. Full-rate shadows remain the target.
+  60 FPS has not been achieved or claimed. Installed beta.1 is unchanged.
+- [Release notes and test procedure](releases/perf-0.9.11-beta.2.md),
+  [full-pass audit](specs/2026-10-17-full-pass-audit.md).
+- Next candidate: benchmark repeated per-mesh dispatch within an already
+  validated instancing group; broad merging has few candidates in this save.
 
 ## Performance beta 0.9.11-beta.1 (2026-10-17)
 

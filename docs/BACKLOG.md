@@ -5,6 +5,14 @@ Realms in Exile repo (hansnery/realms-nightly). Read this together with [STATUS.
 and [AGENTS.md](../AGENTS.md) (and the Realms repo's `data\AGENTS.md`).
 Strike an item through, with the date, when it's done.
 
+## Full-rate 60 FPS investigation (2026-10-17)
+
+- [ ] User test of beta.2 measurements in the same troop-heavy save after
+  authorized installation; preserve shadows at full cadence.
+- [ ] Benchmark group-local instancing dispatch savings and prove reference,
+  material, state, scope and fallback behavior before implementing a fast path.
+- [ ] Demonstrate sustained 60 visual FPS with full-rate shadows; still open.
+
 ## Performance beta 0.9.11-beta.1 (2026-10-17)
 
 - [x] Full plugin suite and offline shader checks (59 variants each on native
@@ -16,7 +24,8 @@ Strike an item through, with the date, when it's done.
 - [ ] Comparable SP/MP scenes, transient hitch recovery, sustained battles,
   camera/visual checks, mixed performance-plugin clients and replay test.
 - [ ] Verify launcher beta isolation/rollback before authorized publication.
-- [ ] Next rendering experiment: independently authored normalmapped shadow
+- [ ] Lower-priority coverage experiment (small contribution in this save):
+  independently authored normalmapped shadow
   variants for hashes CF3571C7/94092159; see
   [render audit](specs/2026-10-17-render-audit.md).
 

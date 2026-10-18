@@ -25,7 +25,7 @@ static void commas(char *s, unsigned n)
 
 int main(void)
 {
-    char buf[2048], expect[2048], name[64];
+    char buf[PF_CSV_ROW_CAP], expect[PF_CSV_ROW_CAP], name[64];
     unsigned n, closed = 99;
     pf_clock c;
     pf_row r;
@@ -66,7 +66,15 @@ int main(void)
                   "lt_verify_samples,lt_verify_bad,lt_stale_draws,sb_light_fixed,"
                   "sb_light_missed,lt_extra_hits,lt_extra_misses,"
                   "fps_block_cost,fps_block_catchup,fps_block_pause,fps_block_stop,"
-                  "fps_probe_attempts,fps_probe_success,fps_probe_late,fps_learned_ms\r\n"),
+                  "fps_probe_attempts,fps_probe_success,fps_probe_late,fps_learned_ms,"
+                  "extra_profile_valid,extra_profile_invalid,extra_profile_total_ms,extra_shadow_samples,"
+                  "extra_shadow_total_ms,extra_reflect_samples,extra_reflect_total_ms,extra_views_samples,"
+                  "extra_views_total_ms,extra_ui_samples,extra_ui_total_ms,present_calls,present_gaps,"
+                  "present_p50_upper_ms,present_p95_upper_ms,present_gap_le_8333us,present_gap_le_12500us,"
+                  "present_gap_le_16667us,present_gap_le_20000us,present_gap_le_25000us,"
+                  "present_gap_le_33334us,present_gap_le_50000us,present_gap_le_100000us,"
+                  "present_gap_le_200000us,present_gap_le_500000us,present_gap_le_1000000us,"
+                  "present_gap_over_1000000us\r\n"),
           "header");
     CHECK(!strcmp(pf_scope_labels[PF_SCOPE_VIEWS], "RenderViews") &&
               !strcmp(pf_scope_labels[PF_SCOPE_FX_BATCH], "RenderFXShaderBatch"),
@@ -225,7 +233,7 @@ int main(void)
     /* The speed is game frames / 30 (30 here), not the 27 logic calls. */
     strcat(expect, ",5,27,100.0,10.000,25,21.000,3.500,4,6.500,5");
     strcat(expect, ",10,2.000,1.000,0.500,20,3,40,5,0,0.000,0.000,0.000,0,0,0,0"
-                   ",30,4.000,3.000,1.000,60,10,120,20,10,30,15,5,2,8,0,0,45,0,40,3,0,0,0,0,0,0,0,0.000\r\n");
+                   ",30,4.000,3.000,1.000,60,10,120,20,10,30,15,5,2,8,0,0,45,0,40,3,0,0,0,0,0,0,0,0.000,0,0,,0,,0,,0,,0,,0,0,,,0,0,0,0,0,0,0,0,0,0,0,0\r\n");
     n = pf_format_row(&r, buf, sizeof buf);
     CHECK(n == strlen(buf) && !strcmp(buf, expect), "full row:\n%s%s", buf, expect);
     r.fps_blocked[0] = 12; r.fps_blocked[1] = 3;
@@ -233,7 +241,23 @@ int main(void)
     r.fps_probes[0] = 2; r.fps_probes[1] = 1; r.fps_probes[2] = 1;
     r.fps_learned_us = 30614;
     pf_format_row(&r, buf, sizeof buf);
-    CHECK(strstr(buf, ",12,3,4,5,2,1,1,30.614\r\n"), "recovery diagnostics: %s", buf);
+    CHECK(strstr(buf, ",12,3,4,5,2,1,1,30.614,"), "recovery diagnostics: %s", buf);
+    r.extra_profile.valid = 2;
+    r.extra_profile.invalid = 1;
+    r.extra_profile.total_us = 24000;
+    r.extra_profile.samples[0] = 2;
+    r.extra_profile.us[0] = 14000;
+    r.extra_profile.samples[2] = 2;
+    r.extra_profile.us[2] = 9000;
+    r.presentation.calls = 60;
+    r.presentation.gaps = 59;
+    r.presentation.p50_us = 16667;
+    r.presentation.p95_us = 20000;
+    r.presentation.bins[2] = 56;
+    r.presentation.bins[3] = 3;
+    pf_format_row(&r, buf, sizeof buf);
+    CHECK(strstr(buf, ",2,1,24.000,2,14.000,0,,2,9.000,0,,60,59,16.667,20.000,0,0,56,3,"),
+          "extra totals, absent reflection/UI and presentation histogram: %s", buf);
     r.extra_ref_us = 0;
     r.cu.ticks_on = 0;
     n = pf_format_row(&r, buf, sizeof buf);
@@ -251,7 +275,7 @@ int main(void)
     strcpy(expect, "7,30,10.000,12.345,,,,,,0,0,");
     commas(expect, 20);
     strcat(expect, "10.000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
-    commas(expect, 21 + 12 + 8 + 2 + 32 + 2 + 2 + 8);
+    commas(expect, 21 + 12 + 8 + 2 + 32 + 2 + 2 + 8 + 27);
     strcat(expect, "\r\n");
     CHECK(n && !strcmp(buf, expect), "frame only:\n%s%s", buf, expect);
 
@@ -262,10 +286,15 @@ int main(void)
     strcpy(expect, "7,30,10.000,12.345,,,0.000,0.000,0,0,0,");
     commas(expect, 19);
     strcat(expect, ",0.000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
-    commas(expect, 21 + 12 + 8 + 2 + 32 + 2 + 2 + 8);
+    commas(expect, 21 + 12 + 8 + 2 + 32 + 2 + 2 + 8 + 27);
     strcat(expect, "\r\n");
     CHECK(n && !strcmp(buf, expect), "no skeleton calls:\n%s%s", buf, expect);
     CHECK(pf_format_row(&r, buf, 10) == 0, "too small a buffer is refused");
+
+    /* Every counter at its width limit must still produce a complete row. */
+    memset(&r, 0xff, sizeof r);
+    r.frames = 1;
+    CHECK(pf_format_row(&r, buf, sizeof buf) != 0, "maximum-width row fits production buffer");
 
     printf("scope row\n");
     n = pf_format_scope_row(60, "RenderViews", 45, 30, 240000, buf, sizeof buf);

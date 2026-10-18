@@ -90,7 +90,15 @@ const char pf_csv_header[] =
     "lt_skipped,lt_decided,lt_reuse_hits,lt_reuse_misses,lt_fallback,lt_verify_samples,"
     "lt_verify_bad,lt_stale_draws,sb_light_fixed,sb_light_missed,lt_extra_hits,"
     "lt_extra_misses,fps_block_cost,fps_block_catchup,fps_block_pause,fps_block_stop,"
-    "fps_probe_attempts,fps_probe_success,fps_probe_late,fps_learned_ms\r\n";
+    "fps_probe_attempts,fps_probe_success,fps_probe_late,fps_learned_ms,"
+    "extra_profile_valid,extra_profile_invalid,extra_profile_total_ms,extra_shadow_samples,"
+    "extra_shadow_total_ms,extra_reflect_samples,extra_reflect_total_ms,extra_views_samples,"
+    "extra_views_total_ms,extra_ui_samples,extra_ui_total_ms,present_calls,present_gaps,"
+    "present_p50_upper_ms,present_p95_upper_ms,present_gap_le_8333us,present_gap_le_12500us,"
+    "present_gap_le_16667us,present_gap_le_20000us,present_gap_le_25000us,"
+    "present_gap_le_33334us,present_gap_le_50000us,present_gap_le_100000us,"
+    "present_gap_le_200000us,present_gap_le_500000us,present_gap_le_1000000us,"
+    "present_gap_over_1000000us\r\n";
 
 const char pf_scope_header[] = "time_s,scope,calls_per_frame,ms_per_frame\r\n";
 
@@ -487,6 +495,31 @@ unsigned pf_format_row(const pf_row *r, char *out, unsigned cap)
             if (r->have & PF_HAVE_FPS) put_u(&o, r->fps_probes[i]);
         }
         ms_field(&o, (r->have & PF_HAVE_FPS) != 0, r->fps_learned_us, 1);
+    }
+    {
+        unsigned i;
+        int fps = (r->have & PF_HAVE_FPS) != 0;
+        int present = (r->have & PF_HAVE_PRESENT) != 0;
+        sep(&o);
+        if (fps) put_u(&o, r->extra_profile.valid);
+        sep(&o);
+        if (fps) put_u(&o, r->extra_profile.invalid);
+        ms_field(&o, fps && r->extra_profile.valid, r->extra_profile.total_us, 1);
+        for (i = 0; i < PF_EP_PASSES; i++) {
+            sep(&o);
+            if (fps) put_u(&o, r->extra_profile.samples[i]);
+            ms_field(&o, fps && r->extra_profile.samples[i], r->extra_profile.us[i], 1);
+        }
+        sep(&o);
+        if (present) put_u(&o, r->presentation.calls);
+        sep(&o);
+        if (present) put_u(&o, r->presentation.gaps);
+        ms_field(&o, present && r->presentation.p50_us, r->presentation.p50_us, 1);
+        ms_field(&o, present && r->presentation.p95_us, r->presentation.p95_us, 1);
+        for (i = 0; i < PF_PRESENT_BINS; i++) {
+            sep(&o);
+            if (present) put_u(&o, r->presentation.bins[i]);
+        }
     }
     return finish(&o, cap);
 }

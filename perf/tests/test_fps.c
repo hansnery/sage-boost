@@ -138,6 +138,56 @@ static void *g_particles;
 /* What the draw's per-draw updates would have done: run (the hook returned
  * their target) or been held. */
 static int g_views_ran, g_particles_ran, g_shadow_ran, g_reflect_ran;
+static int g_profile_markers;
+static int g_profile_ids[5];
+
+static void profile_marker(unsigned kind, void *self, const char *label)
+{
+    void *stack[8] = {0};
+    void **slot = stack + 4;
+    slot[-4] = self;
+    slot[1] = (void *)label;
+    CHECK(pf_fps_enter(kind, slot, (void *)other_update, 0) == (void *)other_update,
+          "profiling changed the marker target");
+}
+
+static DWORD WINAPI profile_other_thread(void *arg)
+{
+    (void)arg;
+    /* A null slot must be rejected before either slot[1] or slot[-4] is
+     * read. This runs while the main thread has a recognized scope open. */
+    if (pf_fps_enter(PF_EVENT_BEGIN, NULL, (void *)other_update, 0) != (void *)other_update)
+        return 1;
+    if (pf_fps_enter(PF_EVENT_END, NULL, (void *)other_update, 0) != (void *)other_update)
+        return 2;
+    return 0;
+}
+
+static void profile_draw_markers(void)
+{
+    static const char *const labels[4] = {
+        "UpdateShadowMap", "UpdateWaterReflection", "RenderViews", "RenderUI"
+    };
+    unsigned i;
+    for (i = 0; i < 4; i++) {
+        profile_marker(PF_EVENT_BEGIN, &g_profile_ids[i], labels[i]);
+        profile_marker(PF_EVENT_BEGIN, &g_profile_ids[4], "RenderOneObject");
+        profile_marker(PF_EVENT_END, &g_profile_ids[4], NULL);
+        if (i == 0 && g_profile_markers == 2) {
+            DWORD result = 99;
+            HANDLE thread = CreateThread(NULL, 0, profile_other_thread, NULL, 0, NULL);
+            CHECK(thread != NULL, "create marker worker failed");
+            if (thread) {
+                CHECK(WaitForSingleObject(thread, 10000) == WAIT_OBJECT_0,
+                      "marker worker did not finish");
+                CHECK(GetExitCodeThread(thread, &result) && result == 0,
+                      "wrong-thread markers changed target: %lu", result);
+                CloseHandle(thread);
+            }
+        }
+        profile_marker(PF_EVENT_END, &g_profile_ids[i], NULL);
+    }
+}
 
 static void draw_updates(void)
 {
@@ -162,6 +212,8 @@ static void __attribute__((thiscall)) fake_draw(void *self)
     }
     g_draws++;
     draw_updates();
+    if (g_profile_markers)
+        profile_draw_markers();
     if (g_draw_spin_us)
         spin_us(g_draw_spin_us);
     g_seen_tx = g_camera_obj.m[3];
@@ -1233,6 +1285,57 @@ int main(void)
                   want[m][1]);
             CHECK(row.held == 2 && !pf_fps_stopped(), "%d: held %u, stopped %s", m, row.held,
                   pf_fps_stopped() ? pf_fps_stopped() : "no");
+        }
+    }
+
+    printf("extra pass profiling: main thread, successful draws and drained rows\n");
+    {
+        unsigned mode, i;
+        for (mode = 1; mode <= 2; mode++) {
+            start(60);
+            pf_fps_set_passes(1, 1);
+            /* Markers outside an extra frame must not enter its row. */
+            profile_draw_markers();
+            g_profile_markers = (int)mode;
+            g_frame_start = 28000 + 100 * mode;
+            wait_at(5);
+            g_profile_markers = 0;
+            pf_fps_take_row(&row);
+            CHECK(g_draws == 1 && row.profile.valid == 1 && !row.profile.invalid,
+                  "mode %u: draws %d, valid %u invalid %u", mode, g_draws,
+                  row.profile.valid, row.profile.invalid);
+            for (i = 0; i < 4; i++) {
+                CHECK(row.profile.samples[i] == 1,
+                      "mode %u pass %u: samples %u", mode, i, row.profile.samples[i]);
+                CHECK(row.profile.us[i] <= row.profile.total_us,
+                      "mode %u pass %u exceeds total", mode, i);
+            }
+            pf_fps_take_row(&row);
+            CHECK(!row.profile.valid && !row.profile.invalid && !row.profile.total_us,
+                  "completed profile was not drained");
+            for (i = 0; i < 4; i++)
+                CHECK(!row.profile.samples[i] && !row.profile.us[i], "pass %u not drained", i);
+        }
+    }
+    printf("extra pass profiling: safety failure discards completed pass samples\n");
+    {
+        static const int failures[] = {1, 2, 3, 5};
+        unsigned m, i;
+        for (m = 0; m < sizeof failures / sizeof failures[0]; m++) {
+            start(60);
+            g_profile_markers = 1;
+            g_misbehave = failures[m];
+            g_frame_start = 29000 + 100 * m;
+            wait_at(5);
+            g_profile_markers = g_misbehave = 0;
+            pf_fps_take_row(&row);
+            CHECK(g_draws == 1 && pf_fps_stopped() && !row.profile.valid &&
+                      row.profile.invalid == 1 && !row.profile.total_us,
+                  "failure %d: draws %d valid %u invalid %u", failures[m], g_draws,
+                  row.profile.valid, row.profile.invalid);
+            for (i = 0; i < 4; i++)
+                CHECK(!row.profile.samples[i] && !row.profile.us[i],
+                      "failure %d retained pass %u", failures[m], i);
         }
     }
 
