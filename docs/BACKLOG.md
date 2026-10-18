@@ -7,8 +7,12 @@ Strike an item through, with the date, when it's done.
 
 ## Full-rate 60 FPS investigation (2026-10-17)
 
-- [ ] User test of beta.2 measurements in the same troop-heavy save after
-  authorized installation; preserve shadows at full cadence.
+- [x] Beta.2 saved-game test captured 2026-10-17 with full-rate shadows;
+  steady section still ~30 presentation calls/s, no extras. See STATUS.md.
+- [ ] Resolve busy-scene extra-cost observability: no extras after the
+  transition, and the existing regular-draw reference cannot lower the
+  14.641 ms estimate into the available budget. Do not assume early-scene
+  costs apply to the busy scene or weaken multiplayer deadline margins.
 - [ ] Benchmark group-local instancing dispatch savings and prove reference,
   material, state, scope and fallback behavior before implementing a fast path.
 - [ ] Demonstrate sustained 60 visual FPS with full-rate shadows; still open.

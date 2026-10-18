@@ -43,6 +43,41 @@ files before relying on it.
 - Next candidate: benchmark repeated per-mesh dispatch within an already
   validated instancing group; broad merging has few candidates in this save.
 
+## Beta.2 saved-game test (2026-10-17)
+
+- User completed the next test. Copied INI, log and both CSVs before reading:
+  `%TEMP%/bfme2perf-beta2-test-20261017-174157`.
+- Confirmed runtime beta.2, MaxFPS=120, FrameSmoothing=3,
+  ExtraFrameShadows=1, ShadowInterval=1 and Detail=1. No settings changed.
+- Steady interval seconds 50-100 inclusive (51 rows): 1,546 game frames,
+  1,539 completed flip-enabled EndScene calls (~30.18 calls/s), zero extras,
+  zero invalid extra samples, zero extra lateness and no safety stop.
+  Seven renders were skipped by catch-up. Completion-gap histogram p50
+  upper bound 33.334 ms, p95 upper bound 50 ms (not scanout measurements).
+- Frame-weighted regular CPU wall times in that interval: frame 23.039 ms,
+  logic 3.574 ms, render 15.658 ms, shadows 7.482 ms, reflections 2.711 ms,
+  views 5.887 ms, UI 0.543 ms. Nested scopes overlap.
+- Expected extra cost stayed exactly 14.641 ms, inherited from an extra
+  draw at second 28. Available budget averaged 10.763 ms; 1,425 limiter
+  frames reported cost blocking. Learned floor was zero and no recovery
+  probes ran. The regular-draw reference averaged 18.303 ms, so the
+  existing reference-based decay could not lower the stale cost estimate.
+  Beta.1's recovery is specifically gated on a nonzero learned floor and
+  would not address this case; twice the reference would not fit either.
+- The 40 valid extras with anim_on_screen>20 all occurred at seconds 27-29,
+  with only 102-138 animated objects; subsequent rows reached hundreds.
+  Their mean total was 3.835 ms, shadow marker 1.024 ms, views 1.278 ms,
+  UI 0.666 ms. These are transition measurements, NOT the missing busy-scene
+  extra cost. No reflection samples, consistent with extra reflections off.
+- One 35.844 ms extra draw caused 22 ms lateness at second 113, after
+  anim_on_screen returned to zero; existing one-second pause engaged.
+  Do not attribute this menu/transition row to the sustained battle.
+- Result: the measurement plumbing works, but 60 FPS remains unachieved.
+  Do not infer that the busy extra draw costs 14.641 ms or that it would
+  fit from the early 3.835 ms mean. Next work must address the unobserved
+  busy-scene cost with a defensible sampling budget and/or reduce verified
+  per-group dispatch overhead; retain multiplayer deadline safety.
+
 ## Performance beta 0.9.11-beta.1 (2026-10-17)
 
 - User approved focused performance beta and larger render investigation.
