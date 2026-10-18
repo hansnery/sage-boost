@@ -12,9 +12,11 @@ Strike an item through, with the date, when it's done.
   return/unwind ownership cleanup. Both-image native/GPU checks and the full
   suite pass. Complete-path DXVK savings remain 7.40-7.92 ms shuffled and
   6.05-6.12 ms ordered. See `specs/2026-10-18-runtime-group-hook.md`.
-- [ ] Install this substantive candidate with backup and preserved INI
-  values, then collect the user's 90-second saved-game run. Actual 60 FPS
-  and gameplay material/lifetime behavior remain unverified.
+- [x] 2026-10-18: beta.10 committed/pushed as `ebe5681` and installed with
+  the previous binary, INI and capture backed up. Build/install hashes match;
+  existing ASCII/LF INI values are preserved. See STATUS.md for the backup.
+- [ ] Collect the user's 90-second saved-game run. Actual 60 FPS and
+  gameplay material/lifetime behavior remain unverified.
 - Earlier research notes below retain their version-specific limits.
   Beta.10 supplies a finite fail-disabled policy for persistent errors; it
   does not promise unchanged pixels during arbitrary driver failure or

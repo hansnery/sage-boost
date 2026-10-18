@@ -62,5 +62,7 @@ native D3D9/DXVK fixtures, GCC general-register flags.
 - [x] Run `make test`, inspect hook-object instructions, and measure serial
   regular/extra pairs through the final active production path. Preserve
   hashes and raw samples, document practical limits, commit and push.
-- [ ] Install a significant validated candidate with backup/hash checks;
+- [x] Install a significant validated candidate with backup/hash checks;
   preserve all existing INI values and request the user's saved-game test.
+  Code commit `ebe5681` is pushed and installed; STATUS.md records hashes
+  and backup. The actual gameplay capture remains pending.

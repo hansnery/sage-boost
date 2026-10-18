@@ -21,7 +21,7 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
-## Runtime group batching ready for saved-game test (2026-10-18)
+## Runtime group batching installed for saved-game test (2026-10-18)
 
 - **0.9.11-beta.10** connects verified startup discovery, native group
   entry/loop hooks, production instancing and aggregate timing. New
@@ -40,10 +40,20 @@ files before relying on it.
   preserved. This is substantial offline improvement, not gameplay FPS.
 - Built ASI SHA256:
   `b936df66dbae8cdf0197a5c4c3331328809eed1f2e238a8f8763ee0362428f5f`.
-- Ready for authorized backup/install, then the user's same troop-heavy
-  save for at least 90 seconds after loading. Verify at least 59 actual
-  presentations/s over a settled 60-second interval and report pacing.
-  Last actual gameplay remains 30.18/s; the goal remains open.
+- Committed and pushed as `ebe5681` on `codex/perf-beta`,
+  then installed at 2026-10-18T08:56:44 local time. The installed
+  ASI matches the tested build hash above. Stable branches are unchanged.
+- Previous ASI, INI, log and both CSVs backed up to
+  `C:\Users\Hans\AppData\Local\Temp\bfme2perf-0.9.10-installed-20261018-085644-035758`.
+- Every existing INI value and its ASCII/LF format is preserved. Added only
+  commented `[Render] QueueInsert=1`, `QueueSort=1`, and `BulkRender=1`.
+  Installed INI SHA256:
+  `e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b`.
+- Await the user's same troop-heavy save for at least 90 seconds after
+  loading, then close the game before reading its copied logs. Verify at
+  least 59 actual presentations/s over a settled 60-second interval and
+  report pacing. No game was launched by the agent. Last actual gameplay
+  remains 30.18/s; the goal remains open.
 
 ## Production bulk instancer built (2026-10-18)
 
