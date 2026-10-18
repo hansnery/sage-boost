@@ -57,6 +57,13 @@ python tools/perf_capture.py C:/path/to/capture/bfme2perf_timing.csv --start-s 1
 python tools/test_perf_capture.py
 ```
 
+For beta.13 captures, the report also sums raw consumed followers by method
+count, separately for regular and extra frames. Per-frame values divide the
+pooled counts by the corresponding total frame count. Absent legacy columns
+or blank instrumentation are reported as unavailable, not as zero coverage.
+These counts exclude leaders and do not establish successful draws, unique
+units, a fraction of all eligible records, or a saved-game speedup.
+
 Choose the same settled troop-heavy scene, not the fastest window. The row at
 `start + seconds` must exist; the final shutdown row can be partial. Missing
 seconds, missing counters and inconsistent histograms are refused. The report

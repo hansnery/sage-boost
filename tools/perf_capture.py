@@ -25,6 +25,8 @@ VERIFY_COLUMNS = ('verify_bad', 'shadow_verify_bad', 'spv_bad', 'lt_verify_bad')
 COUNT_COLUMNS = ('frames', 'present_calls', 'present_gaps', 'extra_frames',
                  'extra_shadows', 'extra_shadow_samples', 'extra_profile_valid',
                  'extra_profile_invalid', 'shadow_skipped') + VERIFY_COLUMNS
+BULK_COLUMNS = tuple(f'{prefix}bulk_followers_{methods}'
+                     for prefix in ('', 'extra_') for methods in range(1, 7))
 
 
 def count(row, key):
@@ -60,6 +62,49 @@ def quantile(bins, percent):
                 'upper_ms': BOUNDS_US[index] / 1000 if index < len(BOUNDS_US) else None,
             }
     raise AssertionError('unreachable percentile rank')
+
+
+def bulk_coverage(rows, totals):
+    """Pool raw follower counts; older captures and blank fields are unknown."""
+    present = [set(BULK_COLUMNS).intersection(row) for row in rows]
+    if not any(present):
+        return {'available': False, 'reason': 'columns absent in this capture'}
+    if any(len(keys) != len(BULK_COLUMNS) for keys in present):
+        raise ValueError('incomplete bulk follower columns')
+    measured = []
+    for row in rows:
+        values = [row[key] for key in BULK_COLUMNS]
+        if all(value == '' for value in values):
+            continue
+        measured.append({key: count(row, key) for key in BULK_COLUMNS})
+    report = {'available': len(measured) == len(rows),
+              'instrumented_rows': len(measured), 'selected_rows': len(rows)}
+    if not report['available']:
+        report['reason'] = 'instrumentation absent in some or all selected rows'
+        return report
+    for mode, prefix, denominator in (
+            ('regular', '', totals['frames']),
+            ('extra', 'extra_', totals['extra_frames'])):
+        counts = {str(methods): sum(row[f'{prefix}bulk_followers_{methods}']
+                                   for row in measured)
+                  for methods in range(1, 7)}
+        consumed = sum(counts.values())
+        multi = consumed - counts['1']
+        report[mode] = {
+            'consumed_followers_by_method_count': counts,
+            'consumed_followers': consumed,
+            'multi_method_followers': multi,
+            'multi_method_fraction': multi / consumed if consumed else None,
+            'frame_denominator': denominator,
+            'consumed_followers_per_frame': consumed / denominator if denominator else None,
+        }
+    report['limits'] = [
+        'Consumed follower records across render passes; not unique units or successful draws.',
+        'Deferred leaders are excluded; no total eligible-record denominator is recorded.',
+        'Regular per-frame values include updates whose render was skipped.',
+        'Method counts measure use of the path, not time saved or FPS gained.',
+    ]
+    return report
 
 
 def analyze(rows, start, seconds):
@@ -123,6 +168,7 @@ def analyze(rows, start, seconds):
             'extra_counts_match_each_row': shadow_counts_match,
         },
         'verification_failures': {key: totals[key] for key in VERIFY_COLUMNS},
+        'bulk_coverage': bulk_coverage(selected, totals),
         'limits': [
             'Completed flip-enabled EndScene calls; not measured display refresh or GPU success.',
             'Row timestamps quantize duration; reported FPS uses the nominal interval.',

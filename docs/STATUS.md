@@ -19,6 +19,13 @@ The game was closed and was not launched. Await the user's same heavy-save
 test and a settled 60-second presentation-rate/pacing capture. The target
 is still unproven; the latest gameplay measurement remains 30.0667/s.
 
+The capture analyzer now reports beta.13 follower totals by method count,
+with separate regular/extra frame denominators. Its 20 checks pass and the
+copied beta.11 interval reproduces every prior metric unchanged. Current
+installed log/CSV hashes still match the pre-beta.13 deployment backup;
+there is no new gameplay capture yet. No further plugin change or install
+was made while preparing this analysis.
+
 - User requested committing/pushing current work, then a target of at least
   60 FPS. Clean beta history through `ace76a5` pushed to origin/codex/perf-beta.
 - Explicit preference: keep shadows at 60 too; no shadow-cadence shortcut.

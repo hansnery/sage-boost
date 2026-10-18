@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from perf_capture import BIN_COLUMNS, COUNT_COLUMNS, analyze, load_rows
+from perf_capture import BIN_COLUMNS, BULK_COLUMNS, COUNT_COLUMNS, analyze, load_rows
 
 
 def capture(seconds=60):
@@ -130,6 +130,61 @@ class CaptureTests(unittest.TestCase):
         original = copy.deepcopy(rows)
         self.assertEqual(analyze(rows, 100, 60)['presentation_calls'], 3600)
         self.assertEqual(rows, original)
+
+    def test_bulk_counts_are_raw_and_normalized_by_the_matching_frames(self):
+        rows = capture(2)
+        for row in rows:
+            row.update(dict.fromkeys(BULK_COLUMNS, '0'))
+        rows[0].update(frames='10', bulk_followers_1='10', bulk_followers_2='90',
+                       extra_frames='5', extra_bulk_followers_6='50')
+        rows[1].update(frames='30', bulk_followers_2='300', extra_frames='15',
+                       extra_bulk_followers_6='350')
+        rows[-1]['bulk_followers_1'] = '99999'  # Boundary row is not included.
+        original = copy.deepcopy(rows)
+        result = analyze(rows, 100, 2)['bulk_coverage']
+        self.assertTrue(result['available'])
+        self.assertEqual(result['regular']['consumed_followers'], 400)
+        self.assertEqual(result['regular']['consumed_followers_per_frame'], 10)
+        self.assertEqual(result['regular']['multi_method_followers'], 390)
+        self.assertEqual(result['regular']['multi_method_fraction'], 0.975)
+        self.assertEqual(result['extra']['consumed_followers_per_frame'], 20)
+        self.assertEqual(result['extra']['consumed_followers_by_method_count']['6'], 400)
+        self.assertEqual(rows, original)
+
+    def test_legacy_and_blank_bulk_counters_are_unknown_not_zero(self):
+        self.assertFalse(analyze(capture(), 100, 60)['bulk_coverage']['available'])
+        rows = capture()
+        for row in rows:
+            row.update(dict.fromkeys(BULK_COLUMNS, ''))
+        for instrumented in (0, 1):
+            result = analyze(rows, 100, 60)['bulk_coverage']
+            self.assertFalse(result['available'])
+            self.assertEqual(result['instrumented_rows'], instrumented)
+            self.assertNotIn('regular', result)
+            rows[0].update(dict.fromkeys(BULK_COLUMNS, '0'))
+
+    def test_zero_bulk_count_is_distinct_from_no_extra_frames(self):
+        rows = capture()
+        for row in rows:
+            row.update(dict.fromkeys(BULK_COLUMNS, '0'))
+            row['extra_frames'] = '0'
+        result = analyze(rows, 100, 60)['bulk_coverage']
+        self.assertTrue(result['available'])
+        self.assertEqual(result['regular']['consumed_followers_per_frame'], 0)
+        self.assertIsNone(result['regular']['multi_method_fraction'])
+        self.assertIsNone(result['extra']['consumed_followers_per_frame'])
+
+    def test_incomplete_or_invalid_bulk_counts_are_rejected(self):
+        for value in (None, '', '-1', '1.5'):
+            rows = capture()
+            for row in rows:
+                row.update(dict.fromkeys(BULK_COLUMNS, '0'))
+            if value is None:
+                del rows[1]['bulk_followers_3']
+            else:
+                rows[1]['bulk_followers_3'] = value
+            with self.assertRaisesRegex(ValueError, 'bulk'):
+                analyze(rows, 100, 60)
 
     def test_truncated_and_duplicate_header_csv_rejected(self):
         with tempfile.TemporaryDirectory() as folder:
