@@ -1,0 +1,20 @@
+{
+  "installed_at": "2026-10-18T09:35:16.1931736-07:00",
+  "source_commit": "7d17e245093aae5daa984bbd83c902bf082ecae3",
+  "version": "0.9.11-beta.11",
+  "installed_path": "C:\\Jogos\\AgeoftheRing\\rotwk\\mss\\bfme2perf.asi",
+  "installed_sha256": "574a085967d477a53037526c1ea7f6b6d257a559a36aab7f76573c4ca7cfe027",
+  "previous_version": "0.9.11-beta.10",
+  "backup_directory": "C:\\Users\\Hans\\AppData\\Local\\Temp\\bfme2perf-0.9.11-beta.10-installed-20261018-093515-940132",
+  "backup_sha256": {
+    "bfme2perf.asi": "b936df66dbae8cdf0197a5c4c3331328809eed1f2e238a8f8763ee0362428f5f",
+    "bfme2perf.ini": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b",
+    "bfme2perf.log": "134b246554629f233bdc047d3e889176d28be72a10195e9652bed9185b728349",
+    "bfme2perf_timing.csv": "cd6c8cb4fad409334b656631463dc51009bce7fad1b9ad205a15bef09b1ede7b",
+    "bfme2perf_scopes.csv": "6257c53baed699405925b40db4df1f210f95385f70ace28e33c78019d334ead6"
+  },
+  "ini_sha256_before": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b",
+  "ini_sha256_after": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b",
+  "game_was_closed": true,
+  "ini_modified": false
+}

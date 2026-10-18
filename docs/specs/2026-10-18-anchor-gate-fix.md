@@ -83,3 +83,11 @@ many live meshes use each anchor case. No scheduler margin, scene quality,
 simulation, input, network, camera, FP controls or installed INI value is
 changed. Actual 60 FPS remains unproved and requires the corrected build's
 saved-game capture after installation.
+
+Beta.11 was committed/pushed as `7d17e24` and installed at
+2026-10-18T09:35:16 local time with the game closed. The installed hash
+matches the tested ASI above. Beta.10, its INI and its capture were backed
+up first; the INI stayed byte-for-byte unchanged. The
+[installation receipt](../benchmarks/2026-10-18-anchor-gate-install.json)
+records all hashes and the backup location. The next game run loads beta.11;
+no game was launched by the agent.

@@ -23,8 +23,11 @@ Strike an item through, with the date, when it's done.
   Combined DXVK savings with mixed anchors are 8.18-8.66 ms shuffled and
   6.52-7.14 ms ordered. See
   `specs/2026-10-18-anchor-gate-fix.md`.
-- [ ] Commit/push and install beta.11 with backup; verify the same saved-game
-  scenario. Sustained 60 FPS remains unproved.
+- [x] 2026-10-18: beta.11 committed/pushed as `7d17e24` and installed with
+  beta.10 and its capture backed up. Installed/tested hashes match; the
+  user's INI is byte-for-byte unchanged.
+- [ ] Verify beta.11 in the same troop-heavy saved-game scenario. Sustained
+  60 FPS remains unproved; last actual capture is beta.10 at 29.4833/s.
 - Earlier research notes below retain their version-specific limits.
   Beta.10 supplies a finite fail-disabled policy for persistent errors; it
   does not promise unchanged pixels during arbitrary driver failure or

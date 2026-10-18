@@ -40,7 +40,7 @@ the existing authorization; no new feature or scheduler policy is proposed.
   executable families, then the full suite and instruction inspection.
 - [x] Preserve the gameplay failure report and final validation hashes.
   Measure the corrected complete path serially with identity anchors.
-- [ ] Commit/push and install only the tested substantive fix with backup
+- [x] Commit/push and install only the tested substantive fix with backup
   and unchanged installed INI. Actual saved-game performance remains
   unproved and needs a new capture.
 

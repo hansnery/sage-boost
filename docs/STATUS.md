@@ -21,7 +21,7 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
-## Beta.10 gameplay failed; beta.11 anchor correction validated (2026-10-18)
+## Beta.10 gameplay failed; beta.11 anchor correction installed (2026-10-18)
 
 - User reports FrameView maximum 30 FPS in the troop-heavy save. Copied log,
   INI and CSVs to
@@ -48,8 +48,20 @@ files before relying on it.
 - Tested beta.11 ASI SHA256:
   `574a085967d477a53037526c1ea7f6b6d257a559a36aab7f76573c4ca7cfe027`.
   Evidence: `benchmarks/2026-10-18-anchor-gate-checks.json` and 126 raw
-  samples. Commit/push and backed-up installation are next; the installed
-  beta.10 binary and INI have not yet changed.
+  samples.
+- Committed/pushed as `7d17e24` on `codex/perf-beta`, then installed at
+  2026-10-18T09:35:16 local time. The installed binary matches the tested
+  hash above. Stable branches remain unchanged. The game was closed.
+- Previous beta.10 ASI, INI, log and both CSVs are backed up to
+  `C:\Users\Hans\AppData\Local\Temp\bfme2perf-0.9.11-beta.10-installed-20261018-093515-940132`.
+  The INI is byte-for-byte unchanged, SHA256
+  `e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b`.
+  See `benchmarks/2026-10-18-anchor-gate-install.json` for the receipt.
+- Await the same troop-heavy saved game for at least 90 seconds after
+  loading, then close before copying/analyzing logs. Last actual gameplay
+  remains beta.10's **29.4833 presentation calls/s**, with zero extras.
+  Require at least 59/s over a settled 60-second interval with reported
+  pacing and fresh shadows before claiming the 60 FPS objective.
 
 ## Earlier beta.10 installation and offline results (2026-10-18)
 
