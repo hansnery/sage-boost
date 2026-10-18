@@ -21,6 +21,30 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Runtime group batching ready for saved-game test (2026-10-18)
+
+- **0.9.11-beta.10** connects verified startup discovery, native group
+  entry/loop hooks, production instancing and aggregate timing. New
+  `[Render] BulkRender=1` requires Instancing and all prerequisite hooks.
+  See [runtime group hook](specs/2026-10-18-runtime-group-hook.md).
+- Group return/unwind releases captured stream ownership. Seven lifetime
+  cases include actual Windows unwind, nested/early rendering and failed
+  transactions. Incomplete/incoherent GPU failures disable optimization and
+  explicitly report the failed frame; production never terminates the game.
+- Both images pass actual private-image hook installation, native/GPU
+  fallback and failure controls, combined ordering/output checks and the
+  full plugin suite. General-register instruction checks pass.
+- Six serial DXVK runs through the production wrapper/bridge retain
+  **7.40-7.92 ms** median savings per regular/extra pair for shuffled input,
+  and **6.05-6.12 ms** for ordered input. 126 raw samples and hashes are
+  preserved. This is substantial offline improvement, not gameplay FPS.
+- Built ASI SHA256:
+  `b936df66dbae8cdf0197a5c4c3331328809eed1f2e238a8f8763ee0362428f5f`.
+- Ready for authorized backup/install, then the user's same troop-heavy
+  save for at least 90 seconds after loading. Verify at least 59 actual
+  presentations/s over a settled 60-second interval and report pacing.
+  Last actual gameplay remains 30.18/s; the goal remains open.
+
 ## Production bulk instancer built (2026-10-18)
 
 - Beta **0.9.11-beta.9** moves leader eligibility, palette capture, checked

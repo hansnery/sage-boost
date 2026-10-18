@@ -71,7 +71,7 @@ int main(int argc, char **argv)
         goto done;
     CHECK(read_file(log_path, log, sizeof log), "no log at %ls", log_path);
     printf("%s", log);
-    CHECK(strstr(log, "bfme2perf 0.9.11-beta.9\r\n") == log, "first line is not the version");
+    CHECK(strstr(log, "bfme2perf 0.9.11-beta.10\r\n") == log, "first line is not the version");
     CHECK(strstr(log, "self: ") && strstr(log, "bfme2perf-test\\bfme2perf.asi"), "no self path");
     CHECK(strstr(log, "host: ") && strstr(log, "test_load.exe"), "no host path");
     CHECK(strstr(log, "pinned=1") != NULL, "not pinned");
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
     CHECK(strstr(log, "(missing, using defaults)") != NULL, "missing INI not reported");
     CHECK(strstr(log, "settings: [Perf] Enabled=1 Log=1, [Timing] Enabled=1 Detail=1, "
                       "[Render] ReflectionInterval=1 ShadowInterval=1 ShadowFullWhileScrolling=0 "
-                      "Batching=0 QueueInsert=1 QueueSort=1 Instancing=0 InstancingVerify=1 ShadowInstancing=1 MaxFPS=30 "
+                      "Batching=0 QueueInsert=1 QueueSort=1 BulkRender=1 Instancing=0 InstancingVerify=1 ShadowInstancing=1 MaxFPS=30 "
                       "FrameSmoothing=3 "
                       "ExtraFrameShadows=0 ExtraFrameReflections=0 "
                       "ShadowBatchIgnoreLight=1 NoStencilFlushes=1 ShadowSkipParticles=1 "

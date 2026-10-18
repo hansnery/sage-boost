@@ -4,6 +4,7 @@
 #include <windows.h>
 
 #include "btnclock.h"
+#include "bulk.h"
 #include "catchup.h"
 #include "config.h"
 #include "cusites.h"
@@ -27,7 +28,7 @@
 #include "timing.h"
 #include "uistate.h"
 
-#define PERF_VERSION "0.9.11-beta.9"
+#define PERF_VERSION "0.9.11-beta.10"
 
 static WCHAR g_log_path[MAX_PATH];
 
@@ -322,6 +323,8 @@ static void install_hooks(const pf_config *cfg, const WCHAR *csv_path, const WCH
     const char *shadow_flag_why = 0, *cu_why = "off";
     pf_cu_sites cu;
     int lights;
+    pf_bulk_sites bulk;
+    const char *bulk_why = "off";
 
     if (!pf_image_open(&img, GetModuleHandleW(NULL))) {
         fu_logf("exe : no usable .text section, no hooks");
@@ -329,6 +332,9 @@ static void install_hooks(const pf_config *cfg, const WCHAR *csv_path, const WCH
     }
     fu_logf("exe : .text crc32 %08X, %u bytes, timestamp %08X",
             pf_crc32(img.base + img.text_rva, img.text_size), img.text_size, img.timestamp);
+    /* Discover before mesh, DIP and event hooks alter verified bodies. */
+    if (cfg->instancing && cfg->bulk_render)
+        bulk_why = pf_bulk_find(&img, &bulk);
     if (cfg->queue_insert) {
         const char *why;
         int applied = pf_queue_insert_install(&img, &why);
@@ -405,6 +411,12 @@ static void install_hooks(const pf_config *cfg, const WCHAR *csv_path, const WCH
                 enabled[PF_END_SCENE] = 1;
         }
     }
+    if (!bulk_why) {
+        /* These identify the render thread and preserve native scope counts,
+         * including when CSV output itself is disabled. */
+        enabled[PF_FRAME] = enabled[PF_EVENT_BEGIN] = enabled[PF_EVENT_END] =
+            enabled[PF_FX_GROUP] = 1;
+    }
     any |= enabled[PF_REFLECT] | enabled[PF_SHADOW] | enabled[PF_INST_MESH] | enabled[PF_FPS_WAIT] |
            enabled[PF_SAME_BATCH] | enabled[PF_STENCIL_OCCLUDEE] | enabled[PF_SHADOW_PARTICLES] |
            enabled[PF_CU_RENDER];
@@ -477,6 +489,16 @@ static void install_hooks(const pf_config *cfg, const WCHAR *csv_path, const WCH
         pf_timing_discard(csv_path, scopes_path);
         fu_logf("timing: no hooks installed (the frame hook is required)");
         return;
+    }
+    if (cfg->instancing && cfg->bulk_render) {
+        const pf_site_mask required = PF_BIT(PF_FRAME) | PF_BIT(PF_EVENT_BEGIN) |
+            PF_BIT(PF_EVENT_END) | PF_BIT(PF_FX_GROUP) | PF_BIT(PF_INST_MESH) | PF_BIT(PF_INST_DIP);
+        int applied = 0;
+        if (!bulk_why && !all_set(installed, required))
+            bulk_why = "required render/instancing hooks were not installed";
+        if (!bulk_why)
+            applied = pf_bulk_install(&img, &bulk, &bulk_why);
+        fu_logf("render: BulkRender=%d: %s", applied, bulk_why);
     }
     if (cfg->catchup && !cu_why)
         setup_catchup(cfg, &cu, installed, img.base);
@@ -560,8 +582,8 @@ static void install_hooks(const pf_config *cfg, const WCHAR *csv_path, const WCH
         fu_logf("render: the shadow hooks aren't installed, the game draws the shadow map every "
                 "frame");
     if (all_set(installed, PF_BIT(PF_INST_MESH) | PF_BIT(PF_INST_DIP))) {
-        fu_logf("render: instancing on for %u unit shader variants (the first mesh of each group "
-                "is drawn by the game, the rest instanced)%s",
+        fu_logf("render: instancing on for %u unit shader variants (ordinary groups retain their native "
+                "leader; BulkRender includes qualified skeletal leaders)%s",
                 pf_inst_variant_count(),
                 cfg->instancing_verify
                     ? "; verify on: every 5 s a few groups are drawn both ways off screen and "
@@ -616,14 +638,14 @@ BOOL WINAPI DllMain(HINSTANCE inst, DWORD reason, LPVOID reserved)
     fu_logf("ini : %ls (%s)", ini, cfg.ini_found ? "found" : "missing, using defaults");
     fu_logf("settings: [Perf] Enabled=%d Log=%d, [Timing] Enabled=%d Detail=%d, "
             "[Render] ReflectionInterval=%d ShadowInterval=%d ShadowFullWhileScrolling=%d "
-            "Batching=%d QueueInsert=%d QueueSort=%d Instancing=%d InstancingVerify=%d ShadowInstancing=%d MaxFPS=%d "
+            "Batching=%d QueueInsert=%d QueueSort=%d BulkRender=%d Instancing=%d InstancingVerify=%d ShadowInstancing=%d MaxFPS=%d "
             "FrameSmoothing=%d ExtraFrameShadows=%d ExtraFrameReflections=%d "
             "ShadowBatchIgnoreLight=%d NoStencilFlushes=%d ShadowSkipParticles=%d "
             "ShadowPassVerify=%d LightSkipShadow=%d LightCull=%d LightReuse=%d LightVerify=%d, "
             "[CatchUp] Enabled=%d MaxSkips=%d Notice=%d NoticeText=%s NoticeMinSkips=%d, "
             "[Skeleton] Threads=%d Verify=%d (the skeleton pre-pass is not in this build)",
             cfg.enabled, cfg.log, cfg.timing, cfg.detail, cfg.reflect_interval,
-            cfg.shadow_interval, cfg.shadow_scrolling, cfg.batching, cfg.queue_insert, cfg.queue_sort, cfg.instancing,
+            cfg.shadow_interval, cfg.shadow_scrolling, cfg.batching, cfg.queue_insert, cfg.queue_sort, cfg.bulk_render, cfg.instancing,
             cfg.instancing_verify, cfg.shadow_instancing, cfg.max_fps, cfg.frame_smoothing,
             cfg.extra_shadows, cfg.extra_reflections, cfg.shadow_batch, cfg.stencil_flushes,
             cfg.shadow_particles, cfg.shadow_verify, cfg.light_skip, cfg.light_cull,

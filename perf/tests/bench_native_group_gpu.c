@@ -9,8 +9,23 @@ extern void bench_native_group_mode(unsigned);
 extern unsigned bench_native_group_consumed(void),ng_group_abi_errors;
 extern void *ng_group_resume,*ng_group_fallback;
 extern void ng_group_bridge(void),ng_group_call(void *,void *,void *,void *);
+#ifdef PF_RUNTIME_BULK
+#include "bulk.h"
+static void runtime_group_mode(unsigned on) { REQUIRE(pf_bulk_enable(on)); }
+#define bench_native_group_mode runtime_group_mode
+#define bench_native_group_consumed pf_bulk_consumed
+#define ng_group_bridge pf_bulk_bridge
+#endif
 static const char *ng_manifest;
 static void *ng_symbols[34],*ng_hooked;
+static void *ng_target(unsigned optimized)
+{
+#ifdef PF_RUNTIME_BULK
+    return optimized ? (void *)pf_bulk_entry : ng_symbols[0];
+#else
+    return optimized ? ng_hooked : ng_symbols[0];
+#endif
+}
 static unsigned char ng_renderer[0x40];
 static FARPROC ng_sprintf,ng_strncpy;
 static const char ng_prefix[]="SceneAnalyst";
@@ -89,7 +104,7 @@ static void ng_render(unsigned group)
 {
     ng_current_group=group;
     unsigned refs=g_method.refs;
-    ng_group_call(pair_optimized?ng_hooked:ng_symbols[0],ng_renderer,
+    ng_group_call(ng_target(pair_optimized),ng_renderer,
                   records[group],records[group]+sizeof records[0]);
     REQUIRE(!ng_group_abi_errors && g_method.refs==refs);
 }
@@ -124,6 +139,9 @@ static void ng_setup(void)
     ng_symbols[32]=(void *)&nm_begin_callback; ng_symbols[33]=(void *)&nm_end_callback;
     native_group_load(ng_symbols,nm_image,ng_manifest,ng_group_bridge,
                       &ng_hooked,&ng_group_resume,&ng_group_fallback);
+#ifdef PF_RUNTIME_BULK
+    REQUIRE(pf_bulk_bind(ng_hooked,ng_group_resume,ng_group_fallback));
+#endif
     const unsigned begin_offsets[]={0xC2,0x1AA,0x22D},end_offsets[]={0x1D1,0x2AF,0x2FF};
     for(unsigned i=0;i<3;i++) for(unsigned j=0;j<2;j++) {
         void *body=j?ng_hooked:ng_symbols[0];
@@ -177,7 +195,7 @@ static NgCheck ng_one_group(unsigned extra,unsigned optimized,unsigned count,uns
         (shadow_mode?D3DCLEAR_ZBUFFER:0),shadow_mode?0xffffffffu:0,1,0));
     unsigned refs=g_method.refs;
     pf_timing_get_stats(&before);
-    ng_group_call(optimized?ng_hooked:ng_symbols[0],ng_renderer,
+    ng_group_call(ng_target(optimized),ng_renderer,
                   records[0],records[0]+count*PF_RECORD_SIZE);
     pf_timing_get_stats(&after);
     HR(IDirect3DDevice9_EndScene(g_dev)); drain(); read_pixels(pixels);

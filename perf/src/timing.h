@@ -56,6 +56,14 @@ void pf_timing_discard(const WCHAR *csv_path, const WCHAR *scopes_path);
 void pf_timing_flush(void);
 void pf_timing_get_stats(pf_timing_stats *s);
 
+/* Aggregate one qualified native mesh interval; logical counts remain per
+ * accepted record. Only the accepted render thread can begin an interval. */
+int pf_timing_render_thread(void);
+int pf_timing_bulk_begin(void);
+int pf_timing_bulk_end(unsigned accepted);
+int pf_timing_bulk_cancel(void);
+void pf_timing_bulk_abandon(void);
+
 void *pf_enter(unsigned k, void **slot);
 void *pf_exit(unsigned k, unsigned char *esp);
 

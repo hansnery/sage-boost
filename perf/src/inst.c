@@ -90,7 +90,7 @@ static group g;
  * an offline fixture does not duplicate this ownership token. */
 static void *g_stream_owner;
 static pf_inst_bulk_sites g_bulk_sites;
-static int g_bulk_on, g_bulk_capture;
+static int g_bulk_on, g_bulk_capture, g_bulk_context;
 static pf_submit g_submit;
 static pf_submit_result g_bulk_result = {S_OK, 0, 0, 0, 1, 1};
 static const void *g_bulk_model, *g_bulk_method;
@@ -231,7 +231,7 @@ static void copy_dwords(unsigned *dst, const unsigned *src, unsigned n)
 static void fail_session(const char *why, unsigned code)
 {
     if (!g_failed)
-        fu_log_event("inst: switched off for this session: %s (%08X); the game draws every mesh",
+        fu_log_event("inst: switched off for this session: %s (%08X); following meshes use the original path",
                      why, code);
     g_failed = 1;
 }
@@ -1166,7 +1166,7 @@ static void *mesh_call(void **slot, void *next)
 
 static int bulk_eligible(void)
 {
-    return g_bulk_on && g.skinned && g_bulk_sites.mesh && g_bulk_sites.triangles &&
+    return g_bulk_on && g_bulk_context && g.skinned && g_bulk_sites.mesh && g_bulk_sites.triangles &&
            g_bulk_sites.draw && g_bulk_sites.begin_callback && g_bulk_sites.end_callback &&
            !*g_bulk_sites.begin_callback && !*g_bulk_sites.end_callback &&
            (g_extra || !g_verify || !g_window_open);
@@ -1182,6 +1182,25 @@ int pf_inst_bulk_configure(const pf_inst_bulk_sites *sites, int enable)
     g_leader_mesh = g_leader_geometry = NULL;
     g_bulk_leaders = 0;
     return 1;
+}
+
+void pf_inst_bulk_context(int active) { g_bulk_context = active != 0; }
+
+void pf_inst_bulk_finish(int interrupted)
+{
+    /* Native End/EndPass has already run on normal return. Never issue a
+     * delayed draw here using material state whose lifetime has ended. */
+    if (interrupted || (g.count && g.mode != M_IDLE && g.mode != M_VERIFY) ||
+        g_submit.open || (g_bulk_capture && (!g_bulk_result.coherent || !g_bulk_result.complete))) {
+        fu_log_event("inst: group abandoned: pending=%u operation=%u coherent=%u complete=%u",
+                     g.count, g_submit.operation, g_bulk_result.coherent, g_bulk_result.complete);
+        fail_session("native group interrupted or submission incomplete", (unsigned)g_bulk_result.error);
+    }
+    g_bulk_context = 0;
+    g.count = g.verify_n = g.armed = 0;
+    g.mode = M_IDLE;
+    g_submit.open = g_submit.operation = 0;
+    release_stream_owner();
 }
 
 unsigned pf_inst_bulk_leaders(void) { return g_bulk_leaders; }

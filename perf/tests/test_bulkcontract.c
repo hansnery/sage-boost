@@ -147,6 +147,46 @@ static void controls(ContractImage *image,ContractManifest *manifest,pf_image *s
            manifest->count,BK_SYMBOL_COUNT,bodies,manifest->patch_count,addends,bk_contract.root_count,writable_sections,imports,refusals);
 }
 
+#ifdef PF_TEST_BULK_INSTALL
+#include "bulk.h"
+#include "instbulk.h"
+#include "timing.h"
+#include "stubs.h"
+#include "patch.h"
+static void installation_controls(pf_image *scan)
+{
+    pf_bulk_sites sites;const char *why=pf_bulk_find(scan,&sites);REQUIRE(!why);
+    unsigned hash=fnv(scan->base+scan->text_rva,scan->text_size);
+    pf_bulk_sites wrong=sites;wrong.hook++;
+    REQUIRE(!pf_bulk_install(scan,&wrong,&why));
+    REQUIRE(hash==fnv(scan->base+scan->text_rva,scan->text_size));
+    DWORD old;REQUIRE(VirtualProtect(sites.hook,48,PAGE_EXECUTE_READWRITE,&old));
+    unsigned char saved=sites.hook[0];sites.hook[0]^=1;
+    unsigned changed=fnv(scan->base+scan->text_rva,scan->text_size);
+    REQUIRE(!pf_bulk_install(scan,&sites,&why));
+    REQUIRE(changed==fnv(scan->base+scan->text_rva,scan->text_size));
+    sites.hook[0]=saved;DWORD unused;REQUIRE(VirtualProtect(sites.hook,48,old,&unused));
+    /* The real startup sequence installs timing/mesh hooks between contract
+     * discovery and group installation. Their targets must coexist. */
+    int enabled[PF_SITE_COUNT]={0};void *targets[PF_SITE_COUNT];pf_result results[PF_SITE_COUNT];
+    const unsigned ids[]={PF_FRAME,PF_EVENT_BEGIN,PF_EVENT_END,PF_FX_GROUP,PF_INST_MESH,PF_INST_DIP};
+    for(unsigned i=0;i<sizeof ids/sizeof ids[0];i++)enabled[ids[i]]=1;
+    for(unsigned i=0;i<PF_SITE_COUNT;i++)targets[i]=pf_enter_stubs[i];
+    REQUIRE(pf_timing_open(pf_sites,NULL,NULL));pf_inst_init(0);
+    pf_install(scan,pf_sites,PF_SITE_COUNT,enabled,PF_GROUP_FRAME,targets,pf_timing_set_next,results);
+    for(unsigned i=0;i<sizeof ids/sizeof ids[0];i++)REQUIRE(results[ids[i]].status==PF_ST_APPLIED);
+    REQUIRE(pf_bulk_install(scan,&sites,&why));
+    REQUIRE(sites.group[0]==0xe9 && sites.hook[0]==0xe9 && sites.hook[5]==0xcc);
+    REQUIRE(sites.group+5+*(int *)(sites.group+1)==(unsigned char *)pf_bulk_entry);
+    REQUIRE(sites.hook+5+*(int *)(sites.hook+1)==(unsigned char *)pf_bulk_bridge);
+    extern void *pf_bulk_original;
+    REQUIRE(*(unsigned char *)pf_bulk_original==0xb8);
+    REQUIRE(!pf_bulk_install(scan,&sites,&why));
+    REQUIRE(pf_bulk_enable(0));REQUIRE(pf_inst_bulk_configure(NULL,0));
+    puts("BULK_INSTALL,refusals,3,prerequisite_hooks,6,group_entry,1,loop_bridge,1");
+}
+#endif
+
 int main(int argc,char **argv)
 {
     REQUIRE(argc==7 && bench_no_game());region_controls();
@@ -169,6 +209,9 @@ int main(int argc,char **argv)
     REQUIRE(pf_queue_insert_install(&scan,&why));positive(&scan,expected);
     REQUIRE(pf_queue_sort_install(&scan,&why));positive(&scan,expected);
     printf("BULK_QUEUE_COEXISTENCE,insertion,1,sorting,1\n");
+#ifdef PF_TEST_BULK_INSTALL
+    installation_controls(&scan);
+#endif
     REQUIRE(VirtualFree(image.base,0,MEM_RELEASE));
     REQUIRE(FreeLibrary(crt));REQUIRE(bench_no_game());return 0;
 }

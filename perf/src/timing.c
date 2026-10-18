@@ -559,6 +559,80 @@ static void scope_end(void *self)
     g_stats.scopes++;
 }
 
+static unsigned bulk_open, bulk_depth, bulk_tracked;
+static int bulk_extra, bulk_pass, bulk_name;
+static char bulk_identity;
+
+int pf_timing_bulk_begin(void)
+{
+    if (bulk_open || !g_main || GetCurrentThreadId()!=g_main) return 0;
+    bulk_open=1;
+    bulk_depth=g_ssp;
+    bulk_extra=pf_fps_in_extra();
+    bulk_pass=g_pass;
+    bulk_name=-1;
+    bulk_tracked=0;
+    if (!bulk_extra) {
+        scope_begin(&bulk_identity,"Rendering mesh\tFXShader\tbulk");
+        bulk_tracked=g_ssp>bulk_depth;
+        if (bulk_tracked) bulk_name=g_scopes[bulk_depth].name;
+    }
+    return 1;
+}
+
+int pf_timing_bulk_end(unsigned attempted)
+{
+    if (!bulk_open || !attempted || g_ssp!=bulk_depth+bulk_tracked ||
+        g_pass!=bulk_pass || pf_fps_in_extra()!=bulk_extra) return 0;
+    if (!bulk_extra) {
+        if (bulk_tracked) scope_end(&bulk_identity);
+        /* One interval measures actual aggregate work, not count times it. */
+        g_fx.markers+=attempted-1;
+        if (bulk_pass>=0) g_meshes[bulk_pass]+=attempted-1;
+        if (bulk_tracked) {
+            g_stats.scopes+=attempted-1;
+            if (bulk_name>=0) {
+                g_names[bulk_name].calls+=attempted-1;
+                if (bulk_pass>=0 && bulk_pass<=PF_SCOPE_VIEWS)
+                    g_names[bulk_name].pass_calls[bulk_pass]+=attempted-1;
+            }
+        }
+    }
+    bulk_open=0;
+    return 1;
+}
+
+int pf_timing_bulk_cancel(void)
+{
+    if (!bulk_open || g_ssp!=bulk_depth+bulk_tracked ||
+        g_pass!=bulk_pass || pf_fps_in_extra()!=bulk_extra) return 0;
+    if (!bulk_extra) {
+        if (bulk_tracked) {
+            open_scope *o=&g_scopes[g_ssp-1];
+            if (o->self!=&bulk_identity || o->covering || o->outer_pass!=bulk_pass) return 0;
+            g_ssp--;
+        }
+        /* No logical mesh was consumed. Discard this attempted interval;
+         * the ordinary native event will account for that mesh instead. */
+        g_fx.markers--;
+        if (bulk_pass>=0) g_meshes[bulk_pass]--;
+    }
+    bulk_open=0;
+    return 1;
+}
+
+int pf_timing_render_thread(void)
+{
+    return g_main && GetCurrentThreadId() == g_main;
+}
+
+void pf_timing_bulk_abandon(void)
+{
+    if (bulk_open && bulk_tracked)
+        scope_end(&bulk_identity);
+    bulk_open = 0;
+}
+
 /* At the FX batch's per-group setup call. The stub saved the registers:
  * slot[-4] ECX = the group's first mesh, slot[-6] EBX = its first record,
  * slot[-8] EBP (the batch's frame, [EBP+8] = the group's end), slot[-9]

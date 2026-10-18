@@ -30,6 +30,7 @@ void bench_leader_mode(unsigned enabled,unsigned omit)
 {
     fixture_omit=omit;
     if(!pf_inst_bulk_configure(&fixture_bulk_sites,enabled)) ExitProcess(4);
+    pf_inst_bulk_context(enabled);
 }
 unsigned bench_leader_suppressed(void) { return pf_inst_bulk_leaders(); }
 int bench_leader_can_bulk(void) { return pf_inst_bulk_ready(); }

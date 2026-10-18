@@ -27,7 +27,7 @@ dedicated fixture; normal rendering tests compile the unmodified source.
   controls and the full suite. Preserve references, scope counts, callback
   fallback, fresh shadows, model splits and verification-window behavior.
 - [x] Record evidence, internal version and limits; commit and push.
-- [ ] Integrate actual hook installation, aggregate timing and runtime
+- [x] Integrate actual hook installation, aggregate timing and runtime
   abandonment/Reset/failure policy; measure before installation/gameplay.
 
 No game/WorldBuilder launch, reference-repo writes, installed-file changes,

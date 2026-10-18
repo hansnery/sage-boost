@@ -27,3 +27,11 @@ int bench_native_bulk_cancel(void)
     fallback_cancels++;fallback_pending+=g.count;
     return fallback_real_cancel();
 }
+#ifdef PF_RUNTIME_CANCEL_WRAP
+extern pf_submit_result __real_pf_inst_bulk_cancel(void);
+pf_submit_result __wrap_pf_inst_bulk_cancel(void)
+{
+    fallback_cancels++;fallback_pending+=g.count;
+    return __real_pf_inst_bulk_cancel();
+}
+#endif

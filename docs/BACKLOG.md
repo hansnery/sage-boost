@@ -7,12 +7,25 @@ Strike an item through, with the date, when it's done.
 
 ## Full-rate 60 FPS investigation (2026-10-17)
 
+- [x] 2026-10-18: beta.10 activates the qualified native group path with
+  signature-verified startup installation, production accounting and group
+  return/unwind ownership cleanup. Both-image native/GPU checks and the full
+  suite pass. Complete-path DXVK savings remain 7.40-7.92 ms shuffled and
+  6.05-6.12 ms ordered. See `specs/2026-10-18-runtime-group-hook.md`.
+- [ ] Install this substantive candidate with backup and preserved INI
+  values, then collect the user's 90-second saved-game run. Actual 60 FPS
+  and gameplay material/lifetime behavior remain unverified.
+- Earlier research notes below retain their version-specific limits.
+  Beta.10 supplies a finite fail-disabled policy for persistent errors; it
+  does not promise unchanged pixels during arbitrary driver failure or
+  introduce the rejected source-pruning/material-cache experiments.
+
 - [x] 2026-10-18: beta.9 puts leader qualification and the checked bulk
   record loop into production inst.c. Both-image fallback/fault checks,
   combined queue/GPU controls and the full suite pass. Normal GPU fixtures
   use unmodified production source. See
   `specs/2026-10-18-runtime-bulk-instancer.md`; runtime activation remains off.
-- [ ] Connect verified startup discovery, native group bridge and aggregate
+- [x] 2026-10-18 (beta.10): Connect verified startup discovery, native group bridge and aggregate
   accounting to these production operations; finish abandonment/Reset and
   incomplete/incoherent failure policy before installation. Measure the
   complete active hook; existing offline savings are not a gameplay result.
@@ -22,7 +35,7 @@ Strike an item through, with the date, when it's done.
   cases, both-image fallback/fault regressions and the full suite pass.
   Deliberate broken controls live outside production in the device proxy.
   See `specs/2026-10-18-checked-submission-core.md`; linked, not yet activated.
-- [ ] Connect the runtime group bridge/instancer to the shared transaction.
+- [x] 2026-10-18 (beta.10): Connect the runtime group bridge/instancer to the shared transaction.
   Require both complete submission and coherent state for recovered success;
   handle partial replay and persistent restoration explicitly. Qualify
   pre-Reset/abandonment cleanup before installation. Do not ship the offline
@@ -37,7 +50,7 @@ Strike an item through, with the date, when it's done.
   final restoration. Eleven deterministic cases and three lifetime cases
   per D3D9/DXVK backend pass; native fallback/recovery regressions pass for
   both images. See `specs/2026-10-18-instancing-stream-ownership.md`.
-- [ ] Define cleanup for interrupted groups, device Reset and native
+- [x] 2026-10-18 (beta.10): Define cleanup for interrupted groups, device Reset and native
   exceptions. Continue checked production submission/bulk integration and
   persistent/device/replay failure policy; normal buffer ownership does not
   settle these boundaries. No new performance or gameplay claim.

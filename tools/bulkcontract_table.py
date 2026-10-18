@@ -135,6 +135,12 @@ def graph(reference, target):
         mask = {off + j for off, *_ in entries[index][5] for j in range(4)}
         raw = reference.mem[root:root + length]
         signatures.append((index, ' '.join('??' if i in mask else f'{b:02X}' for i, b in enumerate(raw))))
+    root = group.BODIES[0][1]
+    mask = {off + j for off, *_ in entries[indices[root]][5] for j in range(4)}
+    loop_offset, loop_length = 0x14f, 48
+    raw = reference.mem[root + loop_offset:root + loop_offset + loop_length]
+    loop_signature = ' '.join('??' if i + loop_offset in mask else f'{b:02X}'
+                              for i, b in enumerate(raw))
     exported = {'GROUP': group.BODIES[0][1], 'MESH': mesh.BODIES[0][1],
                 'TRIANGLES': mesh.BODIES[1][1], 'DRAW': mesh.BODIES[2][1],
                 'BEGIN_CALLBACK': old_group[32], 'END_CALLBACK': old_group[33]}
@@ -152,7 +158,7 @@ def graph(reference, target):
         for other in identities[i + 1:]:
             assert new + spans[i] <= locations[other] or locations[other] + nodes[other]['size'] <= new
     return dict(entries=entries, locations=[locations[r] for r in identities], spans=spans,
-                code=codes, writable=writable, roots=signatures,
+                code=codes, writable=writable, roots=signatures, loop_signature=loop_signature,
                 exports={k: indices[v] for k, v in exported.items()},
                 imports=[(indices[r], name) for r, name in imports])
 
@@ -166,6 +172,7 @@ def render(data):
     lines += [f'#define BK_{key} {value}u' for key, value in data['exports'].items()]
     for i, (_, signature) in enumerate(data['roots']):
         lines.append(f'#define BK_ROOT_{i}_SIGNATURE "{signature}"')
+    lines.append(f'#define BK_LOOP_SIGNATURE "{data["loop_signature"]}"')
     lines.append('static const pf_contract_body bk_bodies[] = {')
     first = 0
     for _, size, _, fnv, crc, patches in entries:

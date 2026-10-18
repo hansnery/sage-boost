@@ -238,7 +238,7 @@ static FaultResult ff_case(unsigned extra,unsigned optimized,unsigned target_bat
     ff_armed=1;
     for(unsigned group=0;group<ff_groups;group++) {
         ng_current_group=group;
-        ng_group_call(optimized?ng_hooked:ng_symbols[0],ng_renderer,records[group],records[group]+sizeof records[group]);
+        ng_group_call(ng_target(optimized),ng_renderer,records[group],records[group]+sizeof records[group]);
     }
     ff_armed=0;
     pf_timing_get_stats(&after);

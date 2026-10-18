@@ -151,6 +151,13 @@ int main(void)
     write_ini("[Render]\r\nQueueSort=off\r\n");
     pf_config_load(&c, g_ini);
     CHECK(c.queue_sort == 1, "sort junk %d", c.queue_sort);
+    CHECK(c.bulk_render == 1, "bulk default %d", c.bulk_render);
+    write_ini("[Render]\r\nBulkRender=0\r\n");
+    pf_config_load(&c, g_ini);
+    CHECK(c.bulk_render == 0 && c.queue_sort == 1, "bulk disabled %d", c.bulk_render);
+    write_ini("[Render]\r\nBulkRender=off\r\n");
+    pf_config_load(&c, g_ini);
+    CHECK(c.bulk_render == 1, "bulk junk %d", c.bulk_render);
     printf("instancing\n");
     DeleteFileW(g_ini);
     pf_config_load(&c, g_ini);

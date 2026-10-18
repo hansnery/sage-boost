@@ -129,7 +129,7 @@ static void q_workload(unsigned group)
     if(q_broken==2 && q_render_on)q_buffer.records[0]=q_buffer.records[1];
     for(unsigned queue=0;queue<3;queue++) {
         unsigned refs=g_method.refs;
-        ng_group_call(q_render_on?ng_hooked:ng_symbols[0],ng_renderer,
+        ng_group_call(ng_target(q_render_on),ng_renderer,
                       q_buffer.records+q_bounds[queue],q_buffer.records+q_bounds[queue+1]);
         REQUIRE(!ng_group_abi_errors && g_method.refs==refs);
     }

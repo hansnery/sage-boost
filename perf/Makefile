@@ -15,7 +15,7 @@ SRCS  := src/main.c src/log.c src/rt.c src/scan.c src/sites.c src/patch.c src/st
          src/timing.c src/presentgap.c src/csvrow.c src/clock.c src/reflect.c src/config.c src/uistate.c \
          src/inst.c src/declcache.c src/fpsites.c src/fps.c src/extraprofile.c src/fpsmath.c src/btnclock.c src/passflag.c \
          src/shadowpass.c src/spsites.c src/fxguard.c src/catchup.c src/cusites.c src/notice.c \
-         src/lights.c src/ltsites.c src/queueinsert.c src/nativecontract.c src/queuesort.c src/instsubmit.c
+         src/lights.c src/ltsites.c src/queueinsert.c src/nativecontract.c src/queuesort.c src/instsubmit.c src/bulk.c src/bulkcontract.c src/bulkpatch.c
 OBJS  := $(SRCS:src/%.c=$(BUILD)/%.o) $(BUILD)/version.o
 
 COMMON_FLAGS := -std=gnu11 -Wall -Wextra -Werror -DWIN32_LEAN_AND_MEAN -DUNICODE -D_UNICODE
@@ -93,6 +93,13 @@ test-instsubmit: $(BUILD)/test_instsubmit.exe
 $(BUILD)/test_inst_ownership.exe: tests/test_inst_ownership.c src/inst.c src/declcache.c $(BUILD)/instsubmit.o src/*.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $< src/declcache.c $(BUILD)/instsubmit.o
 
+$(BUILD)/test_bulk_lifetime.exe: tests/test_bulk_lifetime.c tests/test_inst_ownership.c src/inst.c src/declcache.c $(BUILD)/instsubmit.o $(BUILD)/bulk.o src/*.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $< src/declcache.c $(BUILD)/instsubmit.o $(BUILD)/bulk.o
+
+.PHONY: test-bulk-lifetime
+test-bulk-lifetime: $(BUILD)/test_bulk_lifetime.exe
+	./$(BUILD)/test_bulk_lifetime.exe
+
 .PHONY: test-inst-ownership
 test-inst-ownership: $(BUILD)/test_inst_ownership.exe
 	./$(BUILD)/test_inst_ownership.exe
@@ -100,6 +107,14 @@ test-inst-ownership: $(BUILD)/test_inst_ownership.exe
 BULK_CONTRACT_OBJS := $(BUILD)/bulkcontract.o $(BUILD)/queueinsert.o $(BUILD)/queuesort.o $(CONTRACT_OBJS)
 $(BUILD)/test_bulkcontract.exe: tests/test_bulkcontract.c tests/native_contract_image.h tests/bench_guard.h $(BULK_CONTRACT_OBJS) | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $< $(BULK_CONTRACT_OBJS)
+
+$(BUILD)/test_bulk_install.exe: tests/test_bulkcontract.c tests/native_contract_image.h tests/bench_guard.h $(filter-out $(BUILD)/main.o $(BUILD)/rt.o $(BUILD)/version.o,$(OBJS))
+	$(CC) $(TEST_CFLAGS) -O2 -DPF_TEST_BULK_INSTALL -static -o $@ $< $(filter-out $(BUILD)/main.o $(BUILD)/rt.o $(BUILD)/version.o,$(OBJS))
+
+.PHONY: test-bulk-install
+test-bulk-install: $(BUILD)/test_bulk_install.exe
+	python ../tools/test_bulkcontract.py "$(AOTR_DAT)" $<
+	python ../tools/test_bulkcontract.py "$(ROTWK_DAT)" $<
 
 .PHONY: test-bulkcontract
 test-bulkcontract: $(BUILD)/test_bulkcontract.exe
@@ -203,7 +218,7 @@ $(BUILD)/test_lights.exe: tests/test_lights.c src/lights.c src/shadowpass.c src/
                           src/*.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
 
-test: all $(BUILD)/test_row.exe $(BUILD)/test_reflect.exe $(BUILD)/test_config.exe \
+test: all test-bulk-lifetime test-bulk-install $(BUILD)/test_row.exe $(BUILD)/test_reflect.exe $(BUILD)/test_config.exe \
       $(BUILD)/test_sites.exe $(BUILD)/test_hooks.exe $(BUILD)/test_fps.exe $(BUILD)/test_load.exe \
       $(BUILD)/test_inst.exe $(BUILD)/test_declcache.exe $(BUILD)/test_btn.exe $(BUILD)/test_shadowpass.exe \
       $(BUILD)/test_catchup.exe $(BUILD)/test_lights.exe $(BUILD)/test_extraprofile.exe $(BUILD)/test_presentgap.exe \
@@ -408,6 +423,23 @@ test-native-group-fallback: $(BUILD)/test_native_group_fallback.exe
 	  DXVK_LOG_LEVEL=none python ../../../tools/test_native_group_fallback.py --self-test "$(AOTR_DAT)" test_native_group_fallback.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first && \
 	  DXVK_LOG_LEVEL=none python ../../../tools/test_native_group_fallback.py --self-test "$(AOTR_DAT)" test_native_group_fallback.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 leader-bulk-first
 
+$(BUILD)/inst_runtime_fallback_engine.o: tests/inst_native_fallback_engine.c tests/inst_recovery_fault_engine.c tests/inst_recovery_engine.c tests/inst_gpu_fault_engine.c tests/inst_native_leader_engine.c tests/inst_retained_engine.c tests/inst_dispatch_engine.c $(BUILD)/inst_recovery_base.c src/*.h | $(BUILD)
+	$(CC) $(CFLAGS) -DPF_RUNTIME_CANCEL_WRAP -Isrc -Itests -Wno-unused-function -c -o $@ $<
+
+.PHONY: test-runtime-group-fallback
+$(BUILD)/test_runtime_group_fallback.exe: tests/test_native_group_fallback.c tests/test_native_gpu_faults.c tests/bench_native_fx_gpu.c tests/native_fx_image.h tests/bench_native_group_gpu.c tests/bench_native_leader.c tests/native_group_image.h tests/native_mesh_image.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_runtime_fallback_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_RUNTIME_BULK -static -o $@ $< $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_runtime_fallback_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS)) $(CHECKED_WRAP) -Wl,--wrap=pf_inst_bulk_cancel
+
+test-runtime-group-fallback: $(BUILD)/test_runtime_group_fallback.exe
+	python ../tools/test_native_group_fallback.py --self-test "$(AOTR_DAT)" $(BUILD)/test_runtime_group_fallback.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first
+	python ../tools/test_native_group_fallback.py --self-test "$(AOTR_DAT)" $(BUILD)/test_runtime_group_fallback.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 leader-bulk-first
+	@test -f "$(DXVK_D3D9)" || { echo "error: test-runtime-group-fallback requires DXVK_D3D9"; exit 1; }
+	mkdir -p $(BUILD)/runtime_group_fallback_dxvk
+	cp $(BUILD)/test_runtime_group_fallback.exe "$(DXVK_D3D9)" $(BUILD)/runtime_group_fallback_dxvk/
+	cd $(BUILD)/runtime_group_fallback_dxvk && \
+	  DXVK_LOG_LEVEL=none python ../../../tools/test_native_group_fallback.py --self-test "$(AOTR_DAT)" test_runtime_group_fallback.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first && \
+	  DXVK_LOG_LEVEL=none python ../../../tools/test_native_group_fallback.py --self-test "$(AOTR_DAT)" test_runtime_group_fallback.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 leader-bulk-first
+
 $(BUILD)/bench_native_fx_gpu.exe: tests/bench_native_fx_gpu.c tests/native_fx_image.h tests/bench_native_group_gpu.c tests/bench_native_leader.c tests/native_group_image.h tests/native_mesh_image.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
 	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS)) $(CHECKED_WRAP)
 
@@ -456,6 +488,23 @@ bench-native-insert-gpu: $(BUILD)/bench_native_insert_gpu.exe
 	cd $(BUILD)/native_insert_gpu_dxvk && \
 	  DXVK_LOG_LEVEL=none python ../../../tools/bench_native_insert_gpu.py $(INSERT_OPTIONS) --mode $(INSERT_MODE) --order $(INSERT_ORDER) "$(AOTR_DAT)" bench_native_insert_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first && \
 	  DXVK_LOG_LEVEL=none python ../../../tools/bench_native_insert_gpu.py $(INSERT_OPTIONS) --mode $(INSERT_MODE) --order $(INSERT_ORDER) "$(AOTR_DAT)" bench_native_insert_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 leader-bulk-first
+
+$(BUILD)/bench_runtime_bulk_gpu.exe: tests/bench_native_insert_gpu.c tests/bench_native_queue_gpu.c tests/native_shared_arena.h tests/bench_native_fx_gpu.c tests/native_fx_image.h tests/bench_native_group_gpu.c tests/bench_native_leader.c tests/native_group_image.h tests/native_mesh_image.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/native_insert_fixture.o $(BUILD)/native_sort_fixture.o $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_RUNTIME_BULK -static -o $@ $< $(BUILD)/native_insert_fixture.o $(BUILD)/native_sort_fixture.o $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS)) $(CHECKED_WRAP)
+
+.PHONY: test-runtime-bulk-gpu bench-runtime-bulk-gpu
+test-runtime-bulk-gpu: $(BUILD)/bench_runtime_bulk_gpu.exe
+	$(MAKE) bench-runtime-bulk-gpu INSERT_OPTIONS="--controls-only --self-test"
+
+bench-runtime-bulk-gpu: $(BUILD)/bench_runtime_bulk_gpu.exe
+	python ../tools/bench_native_insert_gpu.py $(INSERT_OPTIONS) --mode $(INSERT_MODE) --order $(INSERT_ORDER) "$(AOTR_DAT)" $< "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first
+	python ../tools/bench_native_insert_gpu.py $(INSERT_OPTIONS) --mode $(INSERT_MODE) --order $(INSERT_ORDER) "$(AOTR_DAT)" $< "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 leader-bulk-first
+	@test -f "$(DXVK_D3D9)" || { echo "error: bench-runtime-bulk-gpu requires DXVK_D3D9"; exit 1; }
+	mkdir -p $(BUILD)/runtime_bulk_gpu_dxvk
+	cp $< "$(DXVK_D3D9)" $(BUILD)/runtime_bulk_gpu_dxvk/
+	cd $(BUILD)/runtime_bulk_gpu_dxvk && \
+	  DXVK_LOG_LEVEL=none python ../../../tools/bench_native_insert_gpu.py $(INSERT_OPTIONS) --mode $(INSERT_MODE) --order $(INSERT_ORDER) "$(AOTR_DAT)" bench_runtime_bulk_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first && \
+	  DXVK_LOG_LEVEL=none python ../../../tools/bench_native_insert_gpu.py $(INSERT_OPTIONS) --mode $(INSERT_MODE) --order $(INSERT_ORDER) "$(AOTR_DAT)" bench_runtime_bulk_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 leader-bulk-first
 
 bench-native-fx-gpu: $(BUILD)/bench_native_fx_gpu.exe
 	python ../tools/bench_native_fx_gpu.py "$(AOTR_DAT)" $(BUILD)/bench_native_fx_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first

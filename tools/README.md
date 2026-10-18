@@ -36,6 +36,16 @@ renames the stage entry for controlled rejection. Link-time wrappers observe
 submission calls without substituting their algorithm. Runtime hook
 installation remains pending; see `docs/specs/2026-10-18-runtime-bulk-instancer.md`.
 
+Beta.10 connects these operations to production `bulk.c` (native group
+entry/loop bridge and unwind cleanup) and production aggregate accounting.
+`make test-runtime-bulk-gpu` runs the combined insertion/sort/native/GPU
+checks through that wrapper; `make test-runtime-group-fallback` adds stage
+refusal and injected API errors. `make test-bulk-install` verifies actual
+private-image patch installation after the prerequisite hooks, and
+`make test-bulk-lifetime` exercises return, real Windows unwind and failed
+transaction cleanup. All are offline; none launches the game. See
+`docs/specs/2026-10-18-runtime-group-hook.md`.
+
 ## Executable research
 
 | script | what |

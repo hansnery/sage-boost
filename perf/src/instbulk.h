@@ -12,6 +12,9 @@ typedef struct {
 
 /* Only between groups. A pending/failed transaction refuses reconfiguration. */
 int pf_inst_bulk_configure(const pf_inst_bulk_sites *sites, int enable);
+/* Group wrapper owns this context. finish never draws after native End. */
+void pf_inst_bulk_context(int active);
+void pf_inst_bulk_finish(int interrupted);
 int pf_inst_bulk_ready(void);
 int pf_inst_bulk_matches(const unsigned char *record, const unsigned char *end, void *method);
 /* Returns accepted queue records; the deferred leader precedes record.
