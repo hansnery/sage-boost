@@ -83,6 +83,13 @@ bench-native-decode: $(BUILD)/bench_native_decode.exe
 	python ../tools/bench_native_decode.py "$(AOTR_DAT)" $< --self-test
 
 CONTRACT_OBJS := $(BUILD)/nativecontract.o $(BUILD)/scan.o $(BUILD)/patch.o
+$(BUILD)/test_inst_ownership.exe: tests/test_inst_ownership.c src/inst.c src/declcache.c src/*.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $< src/declcache.c
+
+.PHONY: test-inst-ownership
+test-inst-ownership: $(BUILD)/test_inst_ownership.exe
+	./$(BUILD)/test_inst_ownership.exe
+
 BULK_CONTRACT_OBJS := $(BUILD)/bulkcontract.o $(BUILD)/queueinsert.o $(BUILD)/queuesort.o $(CONTRACT_OBJS)
 $(BUILD)/test_bulkcontract.exe: tests/test_bulkcontract.c tests/native_contract_image.h tests/bench_guard.h $(BULK_CONTRACT_OBJS) | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $< $(BULK_CONTRACT_OBJS)
@@ -193,7 +200,7 @@ test: all $(BUILD)/test_row.exe $(BUILD)/test_reflect.exe $(BUILD)/test_config.e
       $(BUILD)/test_sites.exe $(BUILD)/test_hooks.exe $(BUILD)/test_fps.exe $(BUILD)/test_load.exe \
       $(BUILD)/test_inst.exe $(BUILD)/test_declcache.exe $(BUILD)/test_btn.exe $(BUILD)/test_shadowpass.exe \
       $(BUILD)/test_catchup.exe $(BUILD)/test_lights.exe $(BUILD)/test_extraprofile.exe $(BUILD)/test_presentgap.exe \
-      $(BUILD)/test_queueinsert.exe $(BUILD)/test_queuesort.exe
+      $(BUILD)/test_queueinsert.exe $(BUILD)/test_queuesort.exe $(BUILD)/test_inst_ownership.exe
 	./$(BUILD)/test_row.exe
 	./$(BUILD)/test_reflect.exe
 	./$(BUILD)/test_btn.exe
@@ -214,6 +221,7 @@ test: all $(BUILD)/test_row.exe $(BUILD)/test_reflect.exe $(BUILD)/test_config.e
 	./$(BUILD)/test_extraprofile.exe
 	./$(BUILD)/test_declcache.exe
 	./$(BUILD)/test_inst.exe
+	./$(BUILD)/test_inst_ownership.exe
 	./$(BUILD)/test_shadowpass.exe
 	./$(BUILD)/test_catchup.exe
 	./$(BUILD)/test_lights.exe
@@ -262,6 +270,17 @@ $(BUILD)/inst_dispatch_engine.o: tests/inst_dispatch_engine.c src/inst.c src/*.h
 	$(CC) $(CFLAGS) -Isrc -c -o $@ $<
 
 DISPATCH_OBJS := $(filter-out $(BUILD)/main.o $(BUILD)/rt.o $(BUILD)/inst.o $(BUILD)/version.o,$(OBJS))
+$(BUILD)/test_inst_ownership_gpu.exe: tests/test_inst_ownership_gpu.c tests/test_inst.c tests/bench_guard.h $(BUILD)/inst.o $(DISPATCH_OBJS) | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -static -o $@ $< $(BUILD)/inst.o $(DISPATCH_OBJS)
+
+.PHONY: test-inst-ownership-gpu
+test-inst-ownership-gpu: $(BUILD)/test_inst_ownership_gpu.exe
+	./$(BUILD)/test_inst_ownership_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big"
+	@test -f "$(DXVK_D3D9)" || { echo "error: test-inst-ownership-gpu requires DXVK_D3D9"; exit 1; }
+	mkdir -p $(BUILD)/inst_ownership_dxvk
+	cp $(BUILD)/test_inst_ownership_gpu.exe "$(DXVK_D3D9)" $(BUILD)/inst_ownership_dxvk/
+	cd $(BUILD)/inst_ownership_dxvk && DXVK_LOG_LEVEL=none ./test_inst_ownership_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big"
+
 $(BUILD)/bench_dispatch.exe: tests/bench_dispatch.c tests/test_inst.c $(BUILD)/inst_dispatch_engine.o $(DISPATCH_OBJS) src/*.h
 	$(CC) $(TEST_CFLAGS) -O2 -static -o $@ $< $(BUILD)/inst_dispatch_engine.o $(DISPATCH_OBJS)
 

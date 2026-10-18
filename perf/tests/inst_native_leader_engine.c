@@ -70,6 +70,7 @@ int bench_native_bulk_cancel(void)
     if (!draw_batch(1)) return 0;
 #endif
     g.mode=M_STOCK;g.armed=0;g.reason=REASON(mismatch);
+    release_stream_owner();
     return 1;
 }
 

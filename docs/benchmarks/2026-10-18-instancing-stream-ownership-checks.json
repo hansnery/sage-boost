@@ -1,0 +1,70 @@
+{
+  "kind": "Captured instancing stream ownership qualification; no new performance measurement",
+  "base_commit": "c8efe39a000da2240e94f4672c4c402663b1a583",
+  "plugin_version": "0.9.11-beta.7",
+  "installed_version": "0.9.10",
+  "old_behavior_reproduced": true,
+  "old_behavior_note": "The preserved before log uses the initial compact fixture; the final fixture extends coverage.",
+  "deterministic_cases": 11,
+  "dead_object_uses": 0,
+  "real_gpu_lifetime_cases_per_backend": 3,
+  "real_gpu_backends": [
+    "native D3D9",
+    "DXVK"
+  ],
+  "native_fallback_regressions": {
+    "aotr": {
+      "backend_workloads": 4,
+      "fallback_cases": 192,
+      "single_gpu_failures": 248,
+      "negative_controls": 28
+    },
+    "rotwk": {
+      "backend_workloads": 4,
+      "fallback_cases": 192,
+      "single_gpu_failures": 248,
+      "negative_controls": 28
+    }
+  },
+  "full_plugin_suite": "passed",
+  "instruction_check": [
+    "inst.o 3086 instructions; no x87, SIMD or floating-point control instructions",
+    "inst_recovery_engine.o 5812 instructions; no x87, SIMD or floating-point control instructions"
+  ],
+  "limits": [
+    "No new timing samples or gameplay FPS evidence; last gameplay about 30.18 presentations/s",
+    "Complete/refused groups release without initialization masking leaks; deliberately unfinished GPU case uses initialization",
+    "Interrupted groups, Reset, device loss and native exceptions still require runtime cleanup policy",
+    "Checked batch/replay and bulk bridge remain offline; persistent and ordinary-replay failure policy remains open",
+    "Installed ASI and INI unchanged; no game/WorldBuilder launch"
+  ],
+  "sha256": {
+    "perf/Makefile": "6f21f4617b80109b03b2d9846f14e80827db9cde999a97b61a2cfd6bc2aadd77",
+    "perf/src/inst.c": "508a69fa6f24d9f0b45493c44da5ab5141cf975b724ae303e761b1c781fc918f",
+    "perf/src/main.c": "c6b6c359831449ce6478bb578592e5034656a98a3ff4ed6ebab43b997ab3b5c4",
+    "perf/src/version.rc": "faef570c9fe1019bd3929eb4d60be1e22671d9ef3d3c1864c8c0a2db721c524a",
+    "perf/tests/test_load.c": "0ecbfe2046442476a4aed3ab7c7efc31e9b0299650464b2153739d650e7c0c67",
+    "perf/tests/inst_dispatch_engine.c": "404d47e024ceb927ff387d518acaa94f996a4519f37be736eadb4a4f9a011648",
+    "perf/tests/inst_native_leader_engine.c": "115579827aab592c9fd336b1f5ecb323ae4f95ff62609bc06c91a788d8a18115",
+    "perf/tests/inst_recovery_engine.c": "f4032783e1d4384108c13500eac15c66e95466a4bbc18c858183ce5cf8770659",
+    "perf/tests/test_inst_ownership.c": "068087abe5ec1aeb53193d03e0a016e6b41cd968580c4e3965e0bbe516f8ebef",
+    "perf/tests/test_inst_ownership_gpu.c": "b6540a9912cdccc8af27e32ecf6df3382761872e2a447a5baf6c75d195c2bca8",
+    "perf/build/bfme2perf.asi": "53efaaa0e0018c403d66913c1b8a639d573208e643e86d3c91cfb8a4653f0f8b",
+    "perf/build/inst.o": "9e923ce516633ef4740f309b5fb87a9ca1a2cdea2859242e922ce2f5a466addd",
+    "perf/build/inst_recovery_engine.o": "8944a4368bf5e60dc49a41733fdf1f9c0ac34b63a010d16beabfb8e110bd18fa",
+    "perf/build/test_inst_ownership.exe": "8304d4fa9060db6154554b897b8fc95496ee8a028dbf456b2b136b5bad5c044f",
+    "perf/build/test_inst_ownership_gpu.exe": "e32dc970c04b9b176a5f626e923803fb98a729ff98a48ae772346f2d13406f4b",
+    "perf/build/test_native_group_fallback.exe": "6fd8bab376242aec21309b97abbcb6070a7a559842ded56be8d5ac5eaf4338d9",
+    "perf/build/inst-ownership-before.txt": "277646da5f852cc736dedb028859ad7de8795b07bbd53bc54b55c2122a3aac51",
+    "perf/build/inst-ownership-controls.txt": "41838a3e4b20bb9e55a19174f27ca5810ef2a019d8e83779c51b84e8deefcf63",
+    "perf/build/inst-ownership-gpu-final.txt": "18e761d72209031734f42a4284214d37d9b0d98ad7f8c3cfb42cae3df032ea77",
+    "perf/build/inst-ownership-native-aotr.txt": "650dd7aeaa0ecf163019891e484b95ab1e83dfa3af778119796e597ea531cd0e",
+    "perf/build/inst-ownership-native-rotwk.txt": "2df923d0bbd85b19456fd75a0864b0979621628660d663351fef9b524d6fcee5",
+    "perf/build/inst-ownership-suite.txt": "1112fbc7cebb7b82393b52c46519b6d3398d800180c4b465ab30943a6722cc50",
+    "perf/build/inst-ownership-registers.txt": "996384e4709086b87e80339e1d198310023a355919b76256ad594a475fa1dcf1",
+    "C:/Jogos/AgeoftheRing/rotwk/game.dat": "035da15c626af6cd1663d1886deea605464ec6776f2c5f1d24570c2be6d73e61",
+    "C:/Jogos/AgeoftheRing/rotwk/game820.dat": "bcf4c85ec72ecb9eb95a844fc0072434fdcef49a5b2c59abb77ac04af29c277e",
+    "C:/Jogos/AgeoftheRing/rotwk/mss/bfme2perf.asi": "db65e51d42bb7f49947631a17b9aeebc0604f3cd9e2c055d8e8a35daf65408e5",
+    "C:/Jogos/AgeoftheRing/rotwk/mss/bfme2perf.ini": "79bbb612a6ce22e76f930e9334a6e650bc2c49c3d28260c6bc716c026da94c54"
+  }
+}

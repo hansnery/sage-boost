@@ -84,6 +84,10 @@ typedef struct {
 } group;
 
 static group g;
+/* Own the successful GetStreamSource reference until the group has drawn
+ * and restored its last batch. Kept outside group: copying a snapshot in
+ * an offline fixture does not duplicate this ownership token. */
+static void *g_stream_owner;
 
 /* The kinds of "mismatch", for the log only (the CSV keeps one column). The
  * device-state ones are where capture() found the leader's draw unlike what
@@ -180,6 +184,14 @@ static void add_ref(void *obj)
         ((pf_release_fn)PF_VT(obj)[PF_UNK_ADDREF])(obj);
 }
 
+static void release_stream_owner(void)
+{
+    void *owner = g_stream_owner;
+    g_stream_owner = 0;
+    g.prev_vb = 0;
+    release(owner);
+}
+
 static unsigned fnv1a(const unsigned char *p, unsigned n)
 {
     unsigned h = 0x811C9DC5u, i;
@@ -226,6 +238,7 @@ static int use_device(void *dev)
         return g_ivb != 0;
     if (g_dev)
         fu_log_event("inst: the device changed, cached objects dropped");
+    release_stream_owner();
     g_dev = dev;
     g_vs_n = 0;
     /* Held COM references keep declarations alive across device recreation.
@@ -403,11 +416,6 @@ static void capture(void **slot)
             return;
     }
     g.mm = MM_STATE;
-    g.prev_vb = 0;
-    if (FAILED(((pf_get_stream_fn)vt[PF_DEV_GET_STREAM])(dev, g.decl->inst_stream, &g.prev_vb,
-                                                         &g.prev_off, &g.prev_stride)))
-        return;
-    release(g.prev_vb);
     if (!g_ours[g.variant]) {
         HRESULT hr = ((pf_create_obj_fn)vt[PF_DEV_CREATE_VS])(dev, v->code, &g_ours[g.variant]);
         if (FAILED(hr) || !g_ours[g.variant]) {
@@ -425,6 +433,16 @@ static void capture(void **slot)
         return;
     }
     g.cap = v->ir_count / g.stride;
+    /* Acquire last, after every other refusal gate. The device may hold
+     * the only existing reference; binding our stream would release it. */
+    release_stream_owner();
+    if (FAILED(((pf_get_stream_fn)vt[PF_DEV_GET_STREAM])(dev, g.decl->inst_stream, &g.prev_vb,
+                                                         &g.prev_off, &g.prev_stride))) {
+        release(g.prev_vb);
+        g.prev_vb = 0;
+        return;
+    }
+    g_stream_owner = g.prev_vb;
     g.capture_reason = 0;
 }
 
@@ -830,6 +848,7 @@ static unsigned *refs_of(void *method)
  * captured. 0 (g.reason set) if its model can't be instanced. */
 static int lead(const unsigned char *mesh)
 {
+    release_stream_owner();
     const unsigned char *model = *(const unsigned char *const *)(mesh + PF_MESH_MODEL);
     unsigned flags = *(const unsigned *)(model + PF_MODEL_FLAGS);
     const unsigned char *geom = *(const unsigned char *const *)(model + PF_MODEL_GEOMETRY);
@@ -891,6 +910,7 @@ static int lead(const unsigned char *mesh)
 static void begin_group(const unsigned char *mesh, void *method, unsigned count,
                         const unsigned char *frame, const unsigned char *first, void *next)
 {
+    release_stream_owner();
     unsigned n = (unsigned)(g.end - first) / PF_RECORD_SIZE;
     int passes = *(const int *)(frame + PF_FRAME_PASS_COUNT);
     int game_max = *(const int *)(frame + PF_FRAME_MAX_INSTANCES);
@@ -950,6 +970,7 @@ static void evaluate(void)
             g.mm = MM_DRAWS;
         g.reason = g.dips != 1 ? REASON(mismatch) : g.capture_reason;
         g.mode = M_STOCK;
+        release_stream_owner();
         add(g.reason, 1); /* the leader */
         return;
     }
@@ -979,6 +1000,7 @@ static void *member(const unsigned char *mesh, const unsigned char *rec, void *m
 
     if (g_failed) {
         g.count = 0;
+        release_stream_owner();
         g.mode = M_STOCK;
         g.reason = REASON(disabled);
         add(g.reason, 1);
@@ -1012,6 +1034,7 @@ static void *member(const unsigned char *mesh, const unsigned char *rec, void *m
         return next;
     }
     g.mode = M_STOCK;
+    release_stream_owner();
     g.reason = REASON(mismatch);
     g.mm = MM_MODEL;
     add(g.reason, 1);
@@ -1056,6 +1079,7 @@ static void *mesh_call(void **slot, void *next)
             verify_sample();
         g.mode = M_IDLE;
         g.armed = 0;
+        release_stream_owner();
     }
     return ret;
 }
@@ -1063,6 +1087,7 @@ static void *mesh_call(void **slot, void *next)
 void pf_inst_init(int verify)
 {
     LARGE_INTEGER f;
+    release_stream_owner();
     g_verify = verify != 0;
     g.mode = M_IDLE;
     QueryPerformanceFrequency(&f);

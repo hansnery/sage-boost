@@ -21,6 +21,27 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Captured stream buffer ownership fixed (2026-10-18)
+
+- Beta **0.9.11-beta.7** keeps the successful GetStreamSource reference
+  until the final batch restoration, then releases it on terminal group
+  transitions. The old immediate release could destroy the buffer during
+  temporary unbinding. See [stream ownership](specs/2026-10-18-instancing-stream-ownership.md).
+- The original behavior fails a deterministic lifetime assertion. The fix
+  passes eleven cases plus three real buffer lifetime cases per D3D9/DXVK
+  backend. Both executable families pass 384 native fallback cases, 496
+  single-GPU-failure cases and 56 broken controls across eight workloads.
+- The full plugin suite passes. Production instancing and the offline
+  recovery object use no x87/SIMD/FP-control instructions. Built ASI SHA256:
+  `53efaaa0e0018c403d66913c1b8a639d573208e643e86d3c91cfb8a4653f0f8b`.
+  Source/build/log hashes are preserved with the report.
+- Installed ASI/INI unchanged; no new timing or gameplay test. The latest
+  combined offline saving remains 6.17-7.96 ms per regular/extra pair; last
+  actual gameplay remains about 30.18 presentations/s.
+- Continue production checked submission/bulk integration. Interrupted
+  groups, Reset/device loss, native exceptions and ordinary-replay errors
+  still need a runtime policy; this closes normal stream ownership only.
+
 ## Bulk-render runtime discovery verified (2026-10-18)
 
 - Beta **0.9.11-beta.6** extends the shared verifier for larger bodies,
@@ -39,8 +60,8 @@ files before relying on it.
   No bulk runtime hook, installation or gameplay request. Latest performance
   evidence is unchanged; last gameplay remains about 30.18 presentations/s.
 - Continue production bulk integration, including staged/resource ownership
-  and persistent/device/replay failures. Audit the retained `g.prev_vb`
-  pointer when temporary unbinding could release the device's last reference.
+  and persistent/device/replay failures. The retained `g.prev_vb` issue is
+  addressed by beta.7 above; interrupted-render cleanup remains open.
 
 ## Native-order sorting integrated into the runtime (2026-10-18)
 

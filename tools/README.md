@@ -17,6 +17,12 @@ user's own installs at run time.
 | `test_queuesort.py` | `make test-queuesort` checks native-order C sorting through private-image entry hooks, both insertion/sort installation orders, shared holders, unknown-comparator callback observations, preflight guards and executable refusals. Forced-heap cases call the same production algorithm directly. No game startup. |
 | `bulkcontract_table.py`, `test_bulkcontract.py` | `verify_sites.py --perf-bulk [--write]` joins the native group/mesh/FX/event graph into runtime fingerprints. `make test-bulkcontract` tests the actual C finder against relocated private images, region/addend/import refusals and coexistence with queue hooks. The bulk finder is not yet linked into the ASI. No game startup or new FPS evidence. |
 
+The C-only `make test-inst-ownership` target checks captured stream reference
+ownership with deterministic COM lifetimes and is included in `make test`.
+`make test-inst-ownership-gpu` checks real buffer destruction and restoration
+on native D3D9 and DXVK using the local shaders. See
+`docs/specs/2026-10-18-instancing-stream-ownership.md`; neither starts the game.
+
 ## Executable research
 
 | script | what |

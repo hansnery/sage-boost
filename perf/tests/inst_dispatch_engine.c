@@ -31,6 +31,7 @@ unsigned bench_inst_bulk(const unsigned char *rec, const unsigned char *end,
         draw_batch(1);
         g.mode = M_IDLE;
         g.armed = 0;
+        release_stream_owner();
     }
     return n;
 }

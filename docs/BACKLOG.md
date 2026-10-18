@@ -12,10 +12,14 @@ Strike an item through, with the date, when it's done.
   roots. Both private images pass 451 no-write refusals and coexistence with
   queue hooks; see `specs/2026-10-18-runtime-bulk-contract.md`. The finder is
   not yet linked into the ASI; no new performance/install/gameplay claim.
-- [ ] Before bulk promotion, verify resource lifetimes when the device holds
-  the only buffer reference. `capture()` currently stores `g.prev_vb` after
-  releasing GetStreamSource's reference; later temporary unbinding needs a
-  live owner until restoration. Preserve pending units across failure paths.
+- [x] 2026-10-18: beta.7 retains the captured stream's COM reference through
+  final restoration. Eleven deterministic cases and three lifetime cases
+  per D3D9/DXVK backend pass; native fallback/recovery regressions pass for
+  both images. See `specs/2026-10-18-instancing-stream-ownership.md`.
+- [ ] Define cleanup for interrupted groups, device Reset and native
+  exceptions. Continue checked production submission/bulk integration and
+  persistent/device/replay failure policy; normal buffer ownership does not
+  settle these boundaries. No new performance or gameplay claim.
 
 - [x] 2026-10-18: integrate native-order C sorting into beta.5 with a shared
   runtime verifier, pure-comparator gate and native fallback. Both images
