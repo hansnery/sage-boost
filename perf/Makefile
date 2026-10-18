@@ -181,3 +181,24 @@ clean:
 
 $(BUILD)/test_presentgap.exe: tests/test_presentgap.c src/presentgap.c src/*.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
+
+# Offline dispatch experiment. Production code uses the ASI's optimization
+# and general-register flags; the GPU fixture needs floats and uses -O2.
+$(BUILD)/inst_dispatch_engine.o: tests/inst_dispatch_engine.c src/inst.c src/*.h | $(BUILD)
+	$(CC) $(CFLAGS) -Isrc -c -o $@ $<
+
+DISPATCH_OBJS := $(filter-out $(BUILD)/main.o $(BUILD)/rt.o $(BUILD)/inst.o $(BUILD)/version.o,$(OBJS))
+$(BUILD)/bench_dispatch.exe: tests/bench_dispatch.c tests/test_inst.c $(BUILD)/inst_dispatch_engine.o $(DISPATCH_OBJS) src/*.h
+	$(CC) $(TEST_CFLAGS) -O2 -static -o $@ $< $(BUILD)/inst_dispatch_engine.o $(DISPATCH_OBJS)
+
+.PHONY: bench-dispatch
+DISPATCH_ASSETS ?= C:/Jogos/AgeoftheRing/rotwk
+bench-dispatch: $(BUILD)/bench_dispatch.exe
+	./$(BUILD)/bench_dispatch.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll"
+	./$(BUILD)/bench_dispatch.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow
+	@test -f "$(DXVK_D3D9)" || { echo "error: bench-dispatch requires DXVK_D3D9"; exit 1; }
+	mkdir -p $(BUILD)/dispatch_dxvk
+	cp $(BUILD)/bench_dispatch.exe "$(DXVK_D3D9)" $(BUILD)/dispatch_dxvk/
+	cd $(BUILD)/dispatch_dxvk && \
+	  DXVK_LOG_LEVEL=none ./bench_dispatch.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" && \
+	  DXVK_LOG_LEVEL=none ./bench_dispatch.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow

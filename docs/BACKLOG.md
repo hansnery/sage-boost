@@ -13,9 +13,15 @@ Strike an item through, with the date, when it's done.
   transition, and the existing regular-draw reference cannot lower the
   14.641 ms estimate into the available budget. Do not assume early-scene
   costs apply to the busy scene or weaken multiplayer deadline margins.
-- [ ] Benchmark group-local instancing dispatch savings and prove reference,
-  material, state, scope and fallback behavior before implementing a fast path.
+- [x] 2026-10-17: benchmark group-local instancing dispatch on native D3D9
+  and DXVK; 1.4-1.7 ms optimistic submission saving is insufficient for a
+  standalone beta. Results in `specs/2026-10-17-dispatch-benchmark-results.md`.
+- [ ] If a larger combined change makes bulk dispatch worthwhile, complete
+  target-ABI, material, reference, state, scope and fallback proofs before
+  implementing an installed fast path. Current prototype is offline only.
 - [ ] Demonstrate sustained 60 visual FPS with full-rate shadows; still open.
+- [ ] Ask for another gameplay test only after evidence of a significant
+  improvement (user's request, 2026-10-17); no diagnostic-only build cycle.
 
 ## Performance beta 0.9.11-beta.1 (2026-10-17)
 

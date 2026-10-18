@@ -106,6 +106,11 @@ and `.exe` (ignored, not shipped). No EA bytes are embedded in the source.
 
 ## Next experiment
 
+Update: the [dispatch benchmark](2026-10-17-dispatch-benchmark-results.md)
+is complete. Its optimistic 1.4-1.7 ms saving falls short of the screening
+gate; no installed fast path was added. The proposal below records the
+experiment that led to that decision.
+
 Prioritize a native benchmark and target-disassembly proof of the complete
 compatible-member loop, comparing current per-member hook dispatch with
 bulk staging through existing instancing code. If the isolated saving is

@@ -15,9 +15,26 @@ files before relying on it.
 - Approved next-stage design:
   [60 FPS with full-rate shadows](specs/2026-10-17-60fps-full-shadows-design.md).
 - Beta.2 adds extra-frame timings and the full-pass setup audit is complete.
-  Capture the same save with these measurements before choosing the next
-  optimization. The combined CPU budget needs roughly 8 ms of savings in
+  The saved-game capture is complete (below). The combined budget needs
+  roughly 8 ms of savings in
   the captured heavy scene. This is a target, not an achieved result.
+- Latest user constraint: request another gameplay test only after evidence
+  of a significant improvement; no diagnostic-only install/test cycle.
+
+## Dispatch experiment completed (2026-10-17)
+
+- Added an offline benchmark and test-only bulk prototype, outside the ASI.
+  [Results](specs/2026-10-17-dispatch-benchmark-results.md) and all paired
+  samples are preserved. No production source or settings changed.
+- Final repeat runs: 1.4-1.7 ms median submission savings with Detail=1,
+  across native D3D9/DXVK and lit/shadow workloads at ~6,900 instanced meshes.
+  The optimistic path omits member markers; even this falls short of the
+  preselected ~3 ms screening threshold. Deprioritized as a standalone beta.
+- Pixel/depth comparisons, reference/count/state checks and the full plugin
+  suite pass. Installed beta.2 ASI and INI hashes remain unchanged. No new
+  installation or gameplay test requested; 60 FPS is still unachieved.
+- Development benchmark/docs committed and pushed on `codex/perf-beta`;
+  no tags, stable promotion or public release.
 
 ## Performance beta 0.9.11-beta.2 (2026-10-17)
 
@@ -40,8 +57,8 @@ files before relying on it.
   this does not request tags, stable promotion or public release.
 - [Release notes and test procedure](releases/perf-0.9.11-beta.2.md),
   [full-pass audit](specs/2026-10-17-full-pass-audit.md).
-- Next candidate: benchmark repeated per-mesh dispatch within an already
-  validated instancing group; broad merging has few candidates in this save.
+- Repeated per-mesh dispatch is now benchmarked above; the standalone
+  saving is insufficient. Broad merging has few candidates in this save.
 
 ## Updated source investigation (2026-10-17)
 
@@ -54,8 +71,8 @@ files before relying on it.
 - Native isolated event-constructor/destructor test on AotR and game820 found
   only ~0.24-0.26 ms per 7,000 pairs. Copies alone are not a strong candidate.
   Full group dispatch and conditional ambient-lightmap caching remain unmeasured.
-- Installed beta.2 is unchanged. Next step is a native benchmark plus target
-  proof of complete compatible-member dispatch before a runtime experiment.
+- Installed beta.2 is unchanged. The native dispatch benchmark above did not
+  justify proceeding to a runtime hook and its target-ABI proof.
 
 ## Beta.2 saved-game test (2026-10-17)
 
@@ -228,7 +245,7 @@ Lorinand=Elves
 
 ### Performance plugin: `mss\bfme2perf.asi` + `mss\bfme2perf.ini`
 
-- Current: 0.9.11-beta.1 from `d3bbf9e`, installed 2026-10-17; backup and
+- Current: 0.9.11-beta.2 from `cad786f`, installed 2026-10-17; backup and
   verification above. Previously 0.9.10, built from `05420da` (pushed),
   installed 2026-10-14 18:51. The
   previous build and settings are in `%TEMP%\bfme2perf-0.9.9-installed-1852`.
