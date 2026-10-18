@@ -37,6 +37,32 @@ files before relying on it.
   30 FPS. The captured log's match mode is not confirmed. Beta gameplay,
   mixed performance-plugin versions and replay validation remain pending.
 
+### First beta gameplay report (2026-10-17)
+
+- User tested a troop-heavy saved game: felt smoother, reported no FPS
+  above 30. Match/network mode and the FPS counter are not confirmed.
+- Copied log, CSVs and INI before inspection to
+  `%TEMP%/bfme2perf-beta1-test-20261017-171637`. Log confirms beta.1 and
+  existing MaxFPS=120, ExtraFrameShadows=1, Instancing=1 settings.
+- 91 CSV rows with anim_on_screen >20 and frames >=15: 2,739 game frames,
+  23 extras; no safety-stop blocks, learned floor 0 and no recovery probes.
+  Frame-weighted row averages: render 15.449 ms, shadows 7.021 ms,
+  skeleton-in-render 1.540 ms, limiter budget 11.374 ms. These scopes
+  overlap and are not additive.
+- During seconds 55-114 extra cost remained about 12.46 ms, while the
+  average available budget by 20-row group was about 7-12 ms. With margin
+  and slack it needs roughly 17.5 ms. This trace shows insufficient room,
+  not the stale learned-floor failure. Extras appear in lighter portions.
+- Latest instancing summary: 30 declarations, 0 evictions/failures,
+  0 mismatches, 54 verify samples and 0 bad. This scenario did not exercise
+  cache exhaustion. No controlled baseline capture proves the reported
+  smoothness improvement's cause.
+- Prioritize reducing shadow/extra-draw cost for this save. Skeleton work
+  is higher than in the earlier trace but is still only about 1.54 ms;
+  missing-shader counts are small (19,470 versus 8,372,353 instanced meshes
+  in the summary), so extending shader coverage alone may have little
+  effect here. Do not loosen game-frame deadlines to force extras.
+
 ## Current work: unlocker 0.5.0 LAN faction fix (2026-10-17)
 
 - User reported 17 exact faction-index wraps and an early multiplayer desync.

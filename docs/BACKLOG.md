@@ -11,6 +11,8 @@ Strike an item through, with the date, when it's done.
   D3D9 and DXVK); new cache and scheduler regression tests.
 - [x] 2026-10-17: user-authorized local deployment after backup; installed
   INI preserved and ASI hash verified.
+- [x] First beta troop-heavy saved-game test: user reports smoother but
+  <=30 FPS; capture shows insufficient extra-draw budget, no safety stop.
 - [ ] Comparable SP/MP scenes, transient hitch recovery, sustained battles,
   camera/visual checks, mixed performance-plugin clients and replay test.
 - [ ] Verify launcher beta isolation/rollback before authorized publication.
