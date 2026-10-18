@@ -48,10 +48,13 @@ Strike an item through, with the date, when it's done.
   writes through the full effect lifecycle. No duplicate binding shortcut;
   a read-before-write filter retains changed poses and saves 0.79-1.05 ms
   per modeled 850-group workload. See `specs/2026-10-18-material-source-demand.md`.
-- [ ] Qualify the numeric filter against actual typed source callbacks,
-  parameter blocks, failed setters/getters, lifetimes and the combined GPU
-  workload. Current generic-field evidence is below the standalone promotion
-  gate and does not justify an install or gameplay test.
+- [x] 2026-10-18: screen matching typed setters and recording/error controls.
+  Lit savings fall to 0.60-0.68 ms; shadow deltas straddle zero. Unguarded
+  filtering breaks block replay; getter equality alone misses conversions.
+  Reject standalone promotion; see `specs/2026-10-18-typed-write-screen.md`.
+- [ ] Only revisit this filter if a larger combined change justifies actual
+  native callback, recording-state, lifetime, arbitrary failure and joined
+  GPU qualification. Current tests do not qualify a production hook.
 - [ ] Establish actual bulk-loop coverage separately from ordinary
   instancing, and reduce remaining regular-frame render work. Beta.11
   averages 22.457 ms per normal frame in the chosen interval. Do not lower

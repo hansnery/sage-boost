@@ -1,0 +1,302 @@
+{
+  "kind": "Offline typed material-write screen; not native callback integration or gameplay",
+  "base_commit": "4a8ff49ab0e6b58b8a1374fdba37bd180df482e2",
+  "production_changed": false,
+  "installed_changed": false,
+  "groups_per_workload": 850,
+  "warmups": 4,
+  "samples_per_case": 21,
+  "workloads_per_sample": 8,
+  "bones": 20,
+  "timing_samples": 84,
+  "typed_shapes_order": [
+    "forward",
+    "int",
+    "float",
+    "vector",
+    "matrix_transpose"
+  ],
+  "typed_shapes": {
+    "Default": [
+      2,
+      3,
+      6,
+      13,
+      3
+    ],
+    "_CreateShadowMap": [
+      1,
+      1,
+      2,
+      0,
+      2
+    ]
+  },
+  "controls_per_run": {
+    "nonzero_typed_roundtrip_fields": 30,
+    "changed_pose_comparisons": 6,
+    "broken_static_skip": 6,
+    "guarded_block_recording": 4,
+    "unguarded_block_rejected": 2,
+    "invalid_handle_hresult_pairs": 8,
+    "fractional_float_GetInt_negative": 1
+  },
+  "runs": [
+    {
+      "backend": "native",
+      "exit_code": 0,
+      "log": {
+        "path": "perf/build/typed-screen-native.txt",
+        "sha256": "0106b0e1d87d5aab1379d56553d3da79a9d0ee9d972e9d904b2dbf609914a5ba"
+      },
+      "statistics_ms": {
+        "Default": {
+          "full_cpu_ms": {
+            "median": 4.033513,
+            "p10": 3.3969,
+            "p90": 5.014775
+          },
+          "filtered_cpu_ms": {
+            "median": 3.25095,
+            "p10": 2.87695,
+            "p90": 3.7887
+          },
+          "full_completed_ms": {
+            "median": 4.0386,
+            "p10": 3.403738,
+            "p90": 5.031538
+          },
+          "filtered_completed_ms": {
+            "median": 3.257888,
+            "p10": 2.884312,
+            "p90": 3.793938
+          },
+          "saved_cpu_ms": {
+            "median": 0.677062,
+            "p10": 0.194712,
+            "p90": 1.392862
+          },
+          "saved_completed_ms": {
+            "median": 0.678187,
+            "p10": 0.191725,
+            "p90": 1.390662
+          }
+        },
+        "_CreateShadowMap": {
+          "full_cpu_ms": {
+            "median": 3.307837,
+            "p10": 2.96995,
+            "p90": 3.836412
+          },
+          "filtered_cpu_ms": {
+            "median": 3.468362,
+            "p10": 3.154162,
+            "p90": 3.848825
+          },
+          "full_completed_ms": {
+            "median": 3.319075,
+            "p10": 2.977437,
+            "p90": 3.846612
+          },
+          "filtered_completed_ms": {
+            "median": 3.4763,
+            "p10": 3.161762,
+            "p90": 3.855925
+          },
+          "saved_cpu_ms": {
+            "median": -0.069787,
+            "p10": -0.7668,
+            "p90": 0.36805
+          },
+          "saved_completed_ms": {
+            "median": -0.069562,
+            "p10": -0.767488,
+            "p90": 0.370175
+          }
+        }
+      }
+    },
+    {
+      "backend": "dxvk",
+      "exit_code": 0,
+      "log": {
+        "path": "perf/build/typed-screen-dxvk.txt",
+        "sha256": "3084306c1f9e845f52d49be92aff9c4e8e6a753d42dde6d939171810df0fbef4"
+      },
+      "statistics_ms": {
+        "Default": {
+          "full_cpu_ms": {
+            "median": 2.4576,
+            "p10": 2.15495,
+            "p90": 2.741812
+          },
+          "filtered_cpu_ms": {
+            "median": 1.859238,
+            "p10": 1.724225,
+            "p90": 1.991325
+          },
+          "full_completed_ms": {
+            "median": 2.492638,
+            "p10": 2.184375,
+            "p90": 2.7746
+          },
+          "filtered_completed_ms": {
+            "median": 1.888038,
+            "p10": 1.7519,
+            "p90": 2.023438
+          },
+          "saved_cpu_ms": {
+            "median": 0.603687,
+            "p10": 0.304387,
+            "p90": 0.889462
+          },
+          "saved_completed_ms": {
+            "median": 0.6015,
+            "p10": 0.302763,
+            "p90": 0.890313
+          }
+        },
+        "_CreateShadowMap": {
+          "full_cpu_ms": {
+            "median": 2.289212,
+            "p10": 1.919825,
+            "p90": 3.163538
+          },
+          "filtered_cpu_ms": {
+            "median": 2.212925,
+            "p10": 1.860625,
+            "p90": 3.054288
+          },
+          "full_completed_ms": {
+            "median": 2.338188,
+            "p10": 1.970662,
+            "p90": 3.239738
+          },
+          "filtered_completed_ms": {
+            "median": 2.271375,
+            "p10": 1.917662,
+            "p90": 3.171912
+          },
+          "saved_cpu_ms": {
+            "median": 0.10925,
+            "p10": -0.463625,
+            "p90": 0.5531
+          },
+          "saved_completed_ms": {
+            "median": 0.088575,
+            "p10": -0.3671,
+            "p90": 0.5645
+          }
+        }
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "docs/benchmarks/2026-10-18-typed-source-writes.csv",
+      "sha256": "c28cd1b3ab39e744b8ac9dc7e88a1ea5e6b61e68cbfb793330ba1ea05f55dc31"
+    }
+  ],
+  "files": [
+    {
+      "path": "perf/build/bench_typed_effect.exe",
+      "sha256": "d39664a77f5a3d31ecffb5d542376f5bdd2d24485ebbece3421f93ae050e7153"
+    },
+    {
+      "path": "perf/build/source_demand_dxvk/bench_typed_effect.exe",
+      "sha256": "d39664a77f5a3d31ecffb5d542376f5bdd2d24485ebbece3421f93ae050e7153"
+    },
+    {
+      "path": "perf/tests/bench_typed_effect.c",
+      "sha256": "10d61e97c8fbcc3acec7bea12473b4505085562c3bf17667ec328b42677e172a"
+    },
+    {
+      "path": "perf/tests/bench_effect.c",
+      "sha256": "22c8ca0efe9754b04bb4b290731881efeda923d187b4ef4642225f9015b33207"
+    },
+    {
+      "path": "perf/tests/effect_source_audit.h",
+      "sha256": "8bc5b9e69f7de2007b956a2573537b011c16250fabe22e9a7e742555f98f16df"
+    },
+    {
+      "path": "perf/Makefile",
+      "sha256": "b536c195622bb945e58e7eef92b4b448ae88d77584f0d6df6004794535706c3d"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "C:/Jogos/AgeoftheRing/rotwk/Shaders.big",
+      "sha256": "353c835b0e77387b322a094b62477b35c34e8e1cea6d75f5844a20b9e36b091b"
+    },
+    {
+      "path": "C:/Jogos/AgeoftheRing/rotwk/d3dx9_27.dll",
+      "sha256": "a70d571cd675c97c9eeb4a234dba1d667ffb54ec3bb14defb36b3e2f605ae257"
+    },
+    {
+      "path": "C:/Windows/SysWOW64/d3d9.dll",
+      "sha256": "210e52314d24bdc8492e5185674626225af2c030ff51d13c01155aedb2d248ad"
+    },
+    {
+      "path": "perf/build/source_demand_dxvk/d3d9.dll",
+      "sha256": "00bc142e98ddad1e334a4d88fa630038e092b0758b3d79e295172b181a4c772d"
+    }
+  ],
+  "installed": [
+    {
+      "path": "C:/Jogos/AgeoftheRing/rotwk/mss/bfme2perf.asi",
+      "sha256": "574a085967d477a53037526c1ea7f6b6d257a559a36aab7f76573c4ca7cfe027"
+    },
+    {
+      "path": "C:/Jogos/AgeoftheRing/rotwk/mss/bfme2perf.ini",
+      "sha256": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b"
+    }
+  ],
+  "decision": "Reject standalone promotion: less than 0.7 ms lit median and shadow deltas straddle zero; generic SetValue result overstates benefit for typed writes",
+  "limitations": [
+    "No native source computations or function bodies; metadata-derived typed writes plus unsupported generic forwards",
+    "Descriptor qualification is outside timing, with no production cache lifetime/invalidation policy",
+    "Parameter-block state is explicitly supplied by the test, not discovered or hooked in the game",
+    "Static inputs are repeated; one bone component changes each group; no arbitrary gameplay source churn",
+    "No meshes, draws, pixels, device loss or effect/shared-pool lifetime proof",
+    "Invalid-handle HRESULT cases do not establish all getter/setter error equivalence",
+    "Lit and shadow cases each model 850 groups; do not add them or infer gameplay FPS"
+  ],
+  "regressions": [
+    {
+      "backend": "native",
+      "mode": "--sources-only",
+      "exit_code": 0,
+      "log": "perf/build/typed-regression-native-sources-only.txt",
+      "sha256": "2bdf2dcc3d738db206b516cc700cfc70689859f405c2d7a79e40813cd65c3c1e",
+      "result": "SOURCE_AUDIT,38 techniques,2 runtimes"
+    },
+    {
+      "backend": "native",
+      "mode": "--members-only",
+      "exit_code": 0,
+      "log": "perf/build/typed-regression-native-members-only.txt",
+      "sha256": "081017b88fd7f499dcb97e09742abcbdb83ad6bde594cbdf3fe053f0dbab6253",
+      "result": "MEMBER_AUDIT,38 techniques,2 runtimes"
+    },
+    {
+      "backend": "dxvk",
+      "mode": "--sources-only",
+      "exit_code": 0,
+      "log": "perf/build/typed-regression-dxvk-sources-only.txt",
+      "sha256": "986da4f12a1a4617a6de52e0617561664eefbaf6c9e964f4deced6998e9f2274",
+      "result": "SOURCE_AUDIT,38 techniques,2 runtimes"
+    },
+    {
+      "backend": "dxvk",
+      "mode": "--members-only",
+      "exit_code": 0,
+      "log": "perf/build/typed-regression-dxvk-members-only.txt",
+      "sha256": "9cbd5d00e940b09c694f40130539869bef7e6da8e75243376632e47cb3254d05",
+      "result": "MEMBER_AUDIT,38 techniques,2 runtimes"
+    }
+  ],
+  "regression_executable": {
+    "path": "perf/build/bench_effect.exe",
+    "sha256": "1fbd865aa2ce058b72b7f01390757e824fa8de18ab5e7892c2883198ea4f8a11"
+  }
+}

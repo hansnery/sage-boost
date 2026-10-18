@@ -308,7 +308,10 @@ static void member_control(create_effect_fn create,unsigned runtime)
 
 #include "effect_source_audit.h"
 
-int main(int argc, char **argv)
+#ifndef PF_EFFECT_MAIN
+#define PF_EFFECT_MAIN main
+#endif
+int PF_EFFECT_MAIN(int argc, char **argv)
 {
     REQUIRE(bench_no_game());
     const char *assets = argc > 1 ? argv[1] : "C:/Jogos/AgeoftheRing/rotwk";

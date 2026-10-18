@@ -72,6 +72,10 @@ compares shader/constants after hostile device and parameter writes;
 it is not native callback integration or a pixel/FPS benchmark. See
 `docs/specs/2026-10-18-material-source-demand.md` for modes and limitations.
 
+`bench_typed_effect.exe` follows this with matching typed numeric setters,
+changed-value and recording/error controls. The modest lit-only saving does
+not justify standalone promotion; see `docs/specs/2026-10-18-typed-write-screen.md`.
+
 ## Ambient-light sampling
 
 Build and run `mingw32-make bench-ambient`, or:

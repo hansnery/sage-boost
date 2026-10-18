@@ -21,6 +21,21 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Typed material-write screen: standalone route rejected (2026-10-18)
+
+- The follow-up uses the typed setter families rather than generic SetValue
+  for supported fields. Final native D3D9/DXVK medians save 0.60-0.68 ms in
+  the modeled lit workload; shadow deltas (-0.07 to +0.11 ms) straddle zero.
+  This does not justify native-hook integration or another standalone beta.
+- Nonzero typed round trips, asymmetric matrices, poisoned GPU constants,
+  changed poses, recording bypass and invalid-handle HRESULT controls pass.
+  The unguarded filter breaks parameter-block replay. Getter equality can
+  also hide type conversion, demonstrated with a fractional float/GetInt.
+- Preserve 84 samples and source/input hashes. Source/member audit modes
+  pass on both backends. Native source computation and full GPU integration
+  remain unqualified; installed beta.11/INI and the last 30.0667/s gameplay
+  result are unchanged. See [screen](specs/2026-10-18-typed-write-screen.md).
+
 ## Material-source write screen (2026-10-18)
 
 - Actual local effect metadata has no exact duplicate annotation/semantic
@@ -32,9 +47,9 @@ files before relying on it.
   including live getter/byte-comparison costs. Hostile constant/parameter
   controls pass and detect deliberately stale values. Preserve 126 samples.
 - This is below the standalone promotion gate, with generic field setters
-  and no geometry or native source computation. Next qualify actual typed
-  callbacks, parameter blocks, error/lifetime behavior and the joined GPU
-  workload. Do not extrapolate these timings to saved-game FPS.
+  and no geometry or native source computation. The later typed-setter
+  screen above reduces the expected benefit; full native callback/lifetime
+  and GPU qualification remain open. Do not extrapolate to saved-game FPS.
 - Member-audit regressions pass. The existing default runtime comparison
   still exits 2 with three known D3DX27/D3DX43 differences; it is not a
   runtime-replacement compatibility pass. Production/install/settings are
