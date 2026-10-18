@@ -1050,6 +1050,20 @@ static void begin_group(const unsigned char *mesh, void *method, unsigned count,
         lead(mesh);
 }
 
+/* Capture has identified the category before leader deferral. Use the
+ * same selection here and after the leader: opening a window must not
+ * disable bulk rendering for groups whose sample quota is already spent. */
+static int verify_group_selected(void)
+{
+    if (g_extra || !g_verify || !g_window_open || g_window_samples >= VERIFY_PER_WINDOW ||
+        (g.shadow && g_window_shadow >= VERIFY_SHADOW_PER_WINDOW))
+        return 0;
+    if (g.bonelist)
+        return g_bl_window[g.cat] < VERIFY_PER_CATEGORY;
+    return g_cat_window[g.cat] < VERIFY_PER_CATEGORY &&
+           (g_bl_samples >= VERIFY_BONELIST_TARGET || g_window_samples < VERIFY_PER_WINDOW / 2);
+}
+
 /* The leader was drawn: was it captured, and is the group supported? */
 static void evaluate(void)
 {
@@ -1066,19 +1080,8 @@ static void evaluate(void)
     add(REASON(groups), 1);
     add(REASON(leaders), 1);
     g.mode = M_INST;
-    if (g_extra || !g_verify || !g_window_open || g_window_samples >= VERIFY_PER_WINDOW ||
-        (g.shadow && g_window_shadow >= VERIFY_SHADOW_PER_WINDOW))
-        return;
-    if (g.bonelist) {
-        if (g_bl_window[g.cat] < VERIFY_PER_CATEGORY)
-            g.mode = M_VERIFY;
-    } else if (g_cat_window[g.cat] < VERIFY_PER_CATEGORY &&
-               (g_bl_samples >= VERIFY_BONELIST_TARGET ||
-                g_window_samples < VERIFY_PER_WINDOW / 2)) {
-        /* Until enough bone-list groups were checked, the others get at most
-         * half of each window. */
+    if (verify_group_selected())
         g.mode = M_VERIFY;
-    }
 }
 
 static void *member(const unsigned char *mesh, const unsigned char *rec, void *method, void *next)
@@ -1179,7 +1182,7 @@ static int bulk_eligible(void)
     return g_bulk_on && g_bulk_context && g.skinned && g_bulk_sites.mesh && g_bulk_sites.triangles &&
            g_bulk_sites.draw && g_bulk_sites.begin_callback && g_bulk_sites.end_callback &&
            !*g_bulk_sites.begin_callback && !*g_bulk_sites.end_callback &&
-           (g_extra || !g_verify || !g_window_open);
+           !verify_group_selected();
 }
 
 int pf_inst_bulk_configure(const pf_inst_bulk_sites *sites, int enable)

@@ -1,0 +1,487 @@
+{
+  "version": "0.9.11-beta.12",
+  "base_commit": "35ac82b4a950512f30ed0ef6e0ebe0c8a5226aaf",
+  "old_inst_source_sha256": "9b0b79ee75c6bec6600253743e1fd7a57e2f942d1da83cbd3501c15cd16eb472",
+  "change": "Use the unchanged sample-selection predicate for both evaluation and bulk admission.",
+  "policy_test": {
+    "cases": 23040,
+    "selected_unchanged": 1056,
+    "unsampled_open_regular": 2784,
+    "negative_control": "Pre-fix source fails bulk_eligible()==!expected.",
+    "counter_and_other_gate_checks": "passed"
+  },
+  "full_suite": {
+    "exit_code": 0,
+    "log": "perf\\build\\window-full-suite.txt",
+    "sha256": "e2295ce82341d594129378d94765fc557cba5f0af890067d67b407358ffed137"
+  },
+  "instruction_audit": [
+    {
+      "object": "perf/build/bulk.o",
+      "instructions": 439,
+      "executable_bytes": 1584,
+      "sha256": "8c5873c4aeadf0954768ac48c346046f274b3268bc0381296bd8775718a280d3",
+      "result": "No x87, SIMD or FP-control instructions"
+    },
+    {
+      "object": "perf/build/bulkpatch.o",
+      "instructions": 170,
+      "executable_bytes": 640,
+      "sha256": "124d45b6f31e1f34919cfc7d983c4d91b70d466c4c2e842807d9767ee8d7430f",
+      "result": "No x87, SIMD or FP-control instructions"
+    },
+    {
+      "object": "perf/build/bulkcontract.o",
+      "instructions": 140,
+      "executable_bytes": 576,
+      "sha256": "d11dc7f6f2ccc1bd39316ba3a341a5b9389c1932957e2da6cbf621b7ca1c69b0",
+      "result": "No x87, SIMD or FP-control instructions"
+    },
+    {
+      "object": "perf/build/inst.o",
+      "instructions": 3991,
+      "executable_bytes": 17792,
+      "sha256": "fe66a717712e4310a33b87c159350928e7e08dffd15b87a40566964c8a676cfe",
+      "result": "No x87, SIMD or FP-control instructions"
+    },
+    {
+      "object": "perf/build/instsubmit.o",
+      "instructions": 1023,
+      "executable_bytes": 4192,
+      "sha256": "f90f195f108e703c2611dc175395f1e03378e667d096290b064e92a13927b5da",
+      "result": "No x87, SIMD or FP-control instructions"
+    },
+    {
+      "object": "perf/build/timing.o",
+      "instructions": 2652,
+      "executable_bytes": 11328,
+      "sha256": "69ca9a17210e705277e1d39f85ec7caadde6d87046782cbd77f314182965a88b",
+      "result": "No x87, SIMD or FP-control instructions"
+    },
+    {
+      "object": "perf/build/inst_recovery_engine.o",
+      "instructions": 5624,
+      "executable_bytes": 24352,
+      "sha256": "2af25977b8590860bf60d0fd98284b6e7a91e8ee9c47c0435a02b4305199fe50",
+      "result": "No x87, SIMD or FP-control instructions"
+    }
+  ],
+  "initial_suite_failure": "test_load.c expected beta.11; updated assertion to beta.12, reran full suite.",
+  "native_gpu_controls": [
+    {
+      "label": "new-native-game.dat-lit",
+      "exit_code": 0,
+      "log": "perf\\build\\window-control-new-native-game.dat-lit.txt",
+      "sha256": "7fd7f674e7e7da942d942ec9e1cb6b3d1e9bd53ec6b1de714091a37686ede39a"
+    },
+    {
+      "label": "new-native-game.dat-shadow",
+      "exit_code": 0,
+      "log": "perf\\build\\window-control-new-native-game.dat-shadow.txt",
+      "sha256": "613b7116fdf24bb72cc3192aa41d36dbf2156692f29739af15bbc11ce765aed5"
+    },
+    {
+      "label": "new-native-game820.dat-lit",
+      "exit_code": 0,
+      "log": "perf\\build\\window-control-new-native-game820.dat-lit.txt",
+      "sha256": "7fd7f674e7e7da942d942ec9e1cb6b3d1e9bd53ec6b1de714091a37686ede39a"
+    },
+    {
+      "label": "new-native-game820.dat-shadow",
+      "exit_code": 0,
+      "log": "perf\\build\\window-control-new-native-game820.dat-shadow.txt",
+      "sha256": "613b7116fdf24bb72cc3192aa41d36dbf2156692f29739af15bbc11ce765aed5"
+    },
+    {
+      "label": "new-dxvk-game.dat-lit",
+      "exit_code": 0,
+      "log": "perf\\build\\window-control-new-dxvk-game.dat-lit.txt",
+      "sha256": "165279938cf29b4f45744fed540c70f9fd6ca9a4e3d34b0e464e5ebb431a6c06"
+    },
+    {
+      "label": "new-dxvk-game.dat-shadow",
+      "exit_code": 0,
+      "log": "perf\\build\\window-control-new-dxvk-game.dat-shadow.txt",
+      "sha256": "af356dcfff4701e9da23f7c7e869befb3fa76d3838e99c95fa9af1d13c665b53"
+    },
+    {
+      "label": "new-dxvk-game820.dat-lit",
+      "exit_code": 0,
+      "log": "perf\\build\\window-control-new-dxvk-game820.dat-lit.txt",
+      "sha256": "165279938cf29b4f45744fed540c70f9fd6ca9a4e3d34b0e464e5ebb431a6c06"
+    },
+    {
+      "label": "new-dxvk-game820.dat-shadow",
+      "exit_code": 0,
+      "log": "perf\\build\\window-control-new-dxvk-game820.dat-shadow.txt",
+      "sha256": "af356dcfff4701e9da23f7c7e869befb3fa76d3838e99c95fa9af1d13c665b53"
+    },
+    {
+      "label": "old-native-game.dat-lit",
+      "exit_code": 0,
+      "log": "perf\\build\\window-control-old-native-game.dat-lit.txt",
+      "sha256": "7fd7f674e7e7da942d942ec9e1cb6b3d1e9bd53ec6b1de714091a37686ede39a"
+    },
+    {
+      "label": "old-native-game.dat-shadow",
+      "exit_code": 0,
+      "log": "perf\\build\\window-control-old-native-game.dat-shadow.txt",
+      "sha256": "613b7116fdf24bb72cc3192aa41d36dbf2156692f29739af15bbc11ce765aed5"
+    },
+    {
+      "label": "old-dxvk-game.dat-lit",
+      "exit_code": 0,
+      "log": "perf\\build\\window-control-old-dxvk-game.dat-lit.txt",
+      "sha256": "165279938cf29b4f45744fed540c70f9fd6ca9a4e3d34b0e464e5ebb431a6c06"
+    },
+    {
+      "label": "old-dxvk-game.dat-shadow",
+      "exit_code": 0,
+      "log": "perf\\build\\window-control-old-dxvk-game.dat-shadow.txt",
+      "sha256": "af356dcfff4701e9da23f7c7e869befb3fa76d3838e99c95fa9af1d13c665b53"
+    }
+  ],
+  "control_input_hashes": {
+    "perf/src/inst.c": "10c0c0542b9fc73f9328f415caa68d82197841cedd35417a3a34de00614f3b0a",
+    "perf/tests/inst_recovery_engine.c": "102891a5a3550c1528e421bad966f90d60c03cf813d937a7c786ab5ba798f8e1",
+    "perf/tests/bench_native_group_gpu.c": "896b6d98eaa6cd01cd5fb78c53368fcb18b4c71e3d3e6314b293194ba2826cd6",
+    "perf/tests/bench_native_queue_gpu.c": "86c5bf5ff81ffac08f9dfbf44685e53867f3c448287373ee905ac1930c623963",
+    "perf/tests/bench_verify_window_gpu.c": "51896f07220260d61d33cb247fd00d6dd9ed3df1298d9d41cc1e7eb319442fc2",
+    "perf/build/inst_verify_old.c": "9b0b79ee75c6bec6600253743e1fd7a57e2f942d1da83cbd3501c15cd16eb472",
+    "perf/build/bench_verify_window_gpu.exe": "7c2ad0ea285c37ff47deb075bdc4474a92d1dc8d68e50d339319489ef0b9b6ef",
+    "perf/build/bench_verify_window_old_gpu.exe": "35ea9ac1f77e9e61f1b4ee77c127e21b4573bdef199e3e029665914870b77bfd"
+  },
+  "timing_input_hashes": {
+    "perf/build/bench_verify_window_gpu.exe": "7c2ad0ea285c37ff47deb075bdc4474a92d1dc8d68e50d339319489ef0b9b6ef",
+    "perf/build/verify_window_dxvk/bench_verify_window_gpu.exe": "7c2ad0ea285c37ff47deb075bdc4474a92d1dc8d68e50d339319489ef0b9b6ef",
+    "perf/build/bench_verify_window_old_gpu.exe": "35ea9ac1f77e9e61f1b4ee77c127e21b4573bdef199e3e029665914870b77bfd",
+    "perf/build/verify_window_dxvk/bench_verify_window_old_gpu.exe": "35ea9ac1f77e9e61f1b4ee77c127e21b4573bdef199e3e029665914870b77bfd",
+    "perf/build/bench_verify_window_20_gpu.exe": "2da2aa311e537f02bbcd31d58601d3fb08d1c065d83b731005099d2cbbeb75dc",
+    "perf/build/verify_window_dxvk/bench_verify_window_20_gpu.exe": "2da2aa311e537f02bbcd31d58601d3fb08d1c065d83b731005099d2cbbeb75dc",
+    "perf/build/bench_verify_window_old_20_gpu.exe": "e5124cb08ee51ff59557a23044b1ead35048a394d4d63e8142388d707dac13d0",
+    "perf/build/verify_window_dxvk/bench_verify_window_old_20_gpu.exe": "e5124cb08ee51ff59557a23044b1ead35048a394d4d63e8142388d707dac13d0",
+    "perf/src/inst.c": "10c0c0542b9fc73f9328f415caa68d82197841cedd35417a3a34de00614f3b0a",
+    "perf/tests/inst_recovery_engine.c": "102891a5a3550c1528e421bad966f90d60c03cf813d937a7c786ab5ba798f8e1",
+    "perf/tests/bench_native_group_gpu.c": "896b6d98eaa6cd01cd5fb78c53368fcb18b4c71e3d3e6314b293194ba2826cd6",
+    "perf/tests/bench_native_queue_gpu.c": "86c5bf5ff81ffac08f9dfbf44685e53867f3c448287373ee905ac1930c623963",
+    "perf/tests/bench_verify_window_gpu.c": "51896f07220260d61d33cb247fd00d6dd9ed3df1298d9d41cc1e7eb319442fc2",
+    "perf/build/inst_verify_old.c": "9b0b79ee75c6bec6600253743e1fd7a57e2f942d1da83cbd3501c15cd16eb472"
+  },
+  "timing_runs": [
+    {
+      "label": "old-dxvk-6-lit",
+      "bones": 6,
+      "kind": "lit",
+      "old": true,
+      "exit_code": 0,
+      "log": "perf\\build\\window-timing-old-dxvk-6-lit.txt",
+      "sha256": "687c0acc882ee96518684cfc83e80cd14011e6a5aa5bbf7b2c4bd16e10390c8f",
+      "optimized_medians_ms": {
+        "retained_regular_ms": 8.5182,
+        "retained_extra_ms": 6.4784,
+        "retained_pair_ms": 15.917,
+        "retained_complete_ms": 16.6063
+      },
+      "optimized_pair_p10_p90_ms": [
+        13.8505,
+        17.6058
+      ]
+    },
+    {
+      "label": "new-dxvk-6-lit",
+      "bones": 6,
+      "kind": "lit",
+      "old": false,
+      "exit_code": 0,
+      "log": "perf\\build\\window-timing-new-dxvk-6-lit.txt",
+      "sha256": "4a478c72fbc2ab2fb4324c72be13d0f17adbaa53a0c114f348a78e587a62f84b",
+      "optimized_medians_ms": {
+        "retained_regular_ms": 4.9045,
+        "retained_extra_ms": 4.7599,
+        "retained_pair_ms": 10.0993,
+        "retained_complete_ms": 10.7584
+      },
+      "optimized_pair_p10_p90_ms": [
+        8.5756,
+        12.0266
+      ]
+    },
+    {
+      "label": "old-dxvk-6-shadow",
+      "bones": 6,
+      "kind": "shadow",
+      "old": true,
+      "exit_code": 0,
+      "log": "perf\\build\\window-timing-old-dxvk-6-shadow.txt",
+      "sha256": "858cda749a7e9c6a846870b6f5238246d22ed991de5d6ca79c6a4c205e2dd9f9",
+      "optimized_medians_ms": {
+        "retained_regular_ms": 7.0596,
+        "retained_extra_ms": 4.9648,
+        "retained_pair_ms": 12.5438,
+        "retained_complete_ms": 13.4867
+      },
+      "optimized_pair_p10_p90_ms": [
+        10.258,
+        19.131
+      ]
+    },
+    {
+      "label": "new-dxvk-6-shadow",
+      "bones": 6,
+      "kind": "shadow",
+      "old": false,
+      "exit_code": 0,
+      "log": "perf\\build\\window-timing-new-dxvk-6-shadow.txt",
+      "sha256": "525b48ea36ecb4dc99965be8c6ffb0fed1413eb71ee96b54fa82d6286e0cd11e",
+      "optimized_medians_ms": {
+        "retained_regular_ms": 4.2942,
+        "retained_extra_ms": 4.0134,
+        "retained_pair_ms": 8.7029,
+        "retained_complete_ms": 9.5982
+      },
+      "optimized_pair_p10_p90_ms": [
+        7.5943,
+        12.685
+      ]
+    },
+    {
+      "label": "old-dxvk-20-lit",
+      "bones": 20,
+      "kind": "lit",
+      "old": true,
+      "exit_code": 0,
+      "log": "perf\\build\\window-timing-old-dxvk-20-lit.txt",
+      "sha256": "90133b8146bfe52e62c8aeba1f98b3bf5568a6e298ea64963892c8cd93f1469c",
+      "optimized_medians_ms": {
+        "retained_regular_ms": 13.6167,
+        "retained_extra_ms": 12.2663,
+        "retained_pair_ms": 28.2523,
+        "retained_complete_ms": 29.1907
+      },
+      "optimized_pair_p10_p90_ms": [
+        23.5565,
+        38.8545
+      ]
+    },
+    {
+      "label": "new-dxvk-20-lit",
+      "bones": 20,
+      "kind": "lit",
+      "old": false,
+      "exit_code": 0,
+      "log": "perf\\build\\window-timing-new-dxvk-20-lit.txt",
+      "sha256": "6ad43a2826202aaa839f1abf1811cd3d63d2f1ebb9b69edefb7288baa865db05",
+      "optimized_medians_ms": {
+        "retained_regular_ms": 8.9816,
+        "retained_extra_ms": 8.7949,
+        "retained_pair_ms": 19.1394,
+        "retained_complete_ms": 19.9699
+      },
+      "optimized_pair_p10_p90_ms": [
+        17.7982,
+        22.3968
+      ]
+    },
+    {
+      "label": "old-dxvk-20-shadow",
+      "bones": 20,
+      "kind": "shadow",
+      "old": true,
+      "exit_code": 0,
+      "log": "perf\\build\\window-timing-old-dxvk-20-shadow.txt",
+      "sha256": "d1c477adcfb6dd45ca9d193c91a247f79ad0e74d4b5c3ec6b4555236e48b06e9",
+      "optimized_medians_ms": {
+        "retained_regular_ms": 10.2927,
+        "retained_extra_ms": 8.269,
+        "retained_pair_ms": 20.1724,
+        "retained_complete_ms": 20.9189
+      },
+      "optimized_pair_p10_p90_ms": [
+        16.8871,
+        23.4719
+      ]
+    },
+    {
+      "label": "new-dxvk-20-shadow",
+      "bones": 20,
+      "kind": "shadow",
+      "old": false,
+      "exit_code": 0,
+      "log": "perf\\build\\window-timing-new-dxvk-20-shadow.txt",
+      "sha256": "dc4062cc8a985b3b6e8a24462a762538a294042628380e7de7e86b2f8cd90e99",
+      "optimized_medians_ms": {
+        "retained_regular_ms": 8.8232,
+        "retained_extra_ms": 8.7748,
+        "retained_pair_ms": 19.2885,
+        "retained_complete_ms": 20.2433
+      },
+      "optimized_pair_p10_p90_ms": [
+        17.2102,
+        21.7881
+      ]
+    }
+  ],
+  "comparisons": [
+    {
+      "bones": 6,
+      "kind": "lit",
+      "method": "difference of independent-run medians; old first",
+      "old_minus_new_ms": {
+        "retained_regular_ms": 3.6137000000000006,
+        "retained_extra_ms": 1.7184999999999997,
+        "retained_pair_ms": 5.8177,
+        "retained_complete_ms": 5.847900000000001
+      }
+    },
+    {
+      "bones": 6,
+      "kind": "shadow",
+      "method": "difference of independent-run medians; old first",
+      "old_minus_new_ms": {
+        "retained_regular_ms": 2.7653999999999996,
+        "retained_extra_ms": 0.9514000000000005,
+        "retained_pair_ms": 3.8408999999999995,
+        "retained_complete_ms": 3.8885000000000005
+      }
+    },
+    {
+      "bones": 20,
+      "kind": "lit",
+      "method": "difference of independent-run medians; old first",
+      "old_minus_new_ms": {
+        "retained_regular_ms": 4.6350999999999996,
+        "retained_extra_ms": 3.471399999999999,
+        "retained_pair_ms": 9.112900000000003,
+        "retained_complete_ms": 9.2208
+      }
+    },
+    {
+      "bones": 20,
+      "kind": "shadow",
+      "method": "difference of independent-run medians; old first",
+      "old_minus_new_ms": {
+        "retained_regular_ms": 1.4695,
+        "retained_extra_ms": -0.5058000000000007,
+        "retained_pair_ms": 0.8839000000000006,
+        "retained_complete_ms": 0.6755999999999993
+      }
+    }
+  ],
+  "samples": {
+    "count": 168,
+    "path": "docs/benchmarks/2026-10-18-verification-window-samples.csv",
+    "sha256": "d7f6a1dd49e8ee84adb7a4ca3e7f3058bd553fd4d65694ddb8bc683e22f0f682"
+  },
+  "source_build_hashes": {
+    "perf/Makefile": "e6d9cb2854e598c781c7f3ab05cac6fc624e7b46becd2951fc8209b251580df2",
+    "perf/src/inst.c": "10c0c0542b9fc73f9328f415caa68d82197841cedd35417a3a34de00614f3b0a",
+    "perf/src/main.c": "b7fe36011474e66282876ae2f87a3b14ae341eaaf90ec5d9876fda1dae06297c",
+    "perf/src/version.rc": "b3db1da9e4a22e421a6116c8923227c22904acd2fd62af57ba5bc83f4db82f7c",
+    "perf/tests/test_load.c": "41457913e45395129a1f5797939816611c19119703ecfd5b871c71522abb709b",
+    "perf/tests/test_inst_verify_policy.c": "009e82d52dbe8304fa0c885c9817d3bd60f7a97d1399fc20a86252f711f10062",
+    "perf/tests/bench_verify_window_gpu.c": "51896f07220260d61d33cb247fd00d6dd9ed3df1298d9d41cc1e7eb319442fc2",
+    "perf/tests/inst_verify_old_engine.c": "e905f623f14511e0a73d02d75bb95f7139422fc50913117160ab1e501cd20070",
+    "perf/tests/inst_recovery_engine.c": "102891a5a3550c1528e421bad966f90d60c03cf813d937a7c786ab5ba798f8e1",
+    "perf/tests/bench_native_group_gpu.c": "896b6d98eaa6cd01cd5fb78c53368fcb18b4c71e3d3e6314b293194ba2826cd6",
+    "perf/tests/bench_native_queue_gpu.c": "86c5bf5ff81ffac08f9dfbf44685e53867f3c448287373ee905ac1930c623963",
+    "perf/build/bfme2perf.asi": "f05f6bdfc47f1d13a75360acb8426467464fd335dcfdd7f36ac169472bb2e0dd",
+    "perf/build/inst.o": "fe66a717712e4310a33b87c159350928e7e08dffd15b87a40566964c8a676cfe",
+    "perf/build/test_inst_verify_policy.exe": "3a2ac40634bce84b6b5930c465114087b27cbc62d380e0302a5c6ba406559acf"
+  },
+  "gameplay_evidence": {
+    "source": "2026-10-18-beta11-gameplay-check.json",
+    "timing_csv_sha256": "d8050c5b617d4c24d88399d8f4a29351f2d0d2f5f553acba3bf96b82d8e2b8bf",
+    "interval": [
+      98,
+      158
+    ],
+    "verification_rows": [
+      {
+        "time_s": 102,
+        "samples": 6,
+        "shadow_samples": 1
+      },
+      {
+        "time_s": 107,
+        "samples": 6,
+        "shadow_samples": 3
+      },
+      {
+        "time_s": 112,
+        "samples": 6,
+        "shadow_samples": 3
+      },
+      {
+        "time_s": 117,
+        "samples": 6,
+        "shadow_samples": 0
+      },
+      {
+        "time_s": 122,
+        "samples": 6,
+        "shadow_samples": 1
+      },
+      {
+        "time_s": 127,
+        "samples": 6,
+        "shadow_samples": 2
+      },
+      {
+        "time_s": 132,
+        "samples": 6,
+        "shadow_samples": 3
+      },
+      {
+        "time_s": 137,
+        "samples": 6,
+        "shadow_samples": 0
+      },
+      {
+        "time_s": 142,
+        "samples": 6,
+        "shadow_samples": 0
+      },
+      {
+        "time_s": 147,
+        "samples": 6,
+        "shadow_samples": 3
+      },
+      {
+        "time_s": 152,
+        "samples": 6,
+        "shadow_samples": 0
+      },
+      {
+        "time_s": 157,
+        "samples": 6,
+        "shadow_samples": 3
+      }
+    ],
+    "frame_weighted_shadow_metrics": {
+      "shadow_inst_split": 1899.6826182618263,
+      "shadow_inst_small": 240.8795379537954,
+      "shadow_inst_multipass": 0.0,
+      "shadow_inst_game_inst": 0.0,
+      "shadow_inst_no_shader": 4.965896589658966,
+      "shadow_inst_bones": 0.0,
+      "fx_groups_shadow": 343.31958195819584,
+      "shadow_inst_groups": 141.7970297029703,
+      "shadow_inst_meshes": 2850.3223322332233
+    },
+    "limit": "Each window reaches six samples in one reporting row; exact window duration is unknown. The forced benchmark is not its observed duty cycle."
+  },
+  "installed": {
+    "version": "0.9.11-beta.11",
+    "binary_sha256": "574a085967d477a53037526c1ea7f6b6d257a559a36aab7f76573c4ca7cfe027",
+    "ini_sha256": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b",
+    "changed": false
+  },
+  "promotion": "Commit/push development fix. No installation or further gameplay request: substantial saved-game benefit is unproved.",
+  "limits": [
+    "All timed frames force a still-open window with this category quota exhausted. No timed verification samples run.",
+    "Each run alternates native-baseline and optimized queue frames; reported SUMMARY savings are not the incremental fix.",
+    "Old/new optimized medians come from separate sequential runs and may include drift; no paired old/new claim.",
+    "The fixture uses generated geometry and test-only observers, with native bodies private in RAM. No saved-game FPS prediction.",
+    "Shadow split counters do not identify the split reason; opacity fragmentation is a hypothesis, not a demonstrated optimization."
+  ]
+}

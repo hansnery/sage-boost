@@ -21,6 +21,23 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Beta.12 verification-window fix: development only (2026-10-18)
+
+- Share the existing sample-selection predicate between evaluation and bulk
+  admission. Selected groups remain native; unsampled groups no longer lose
+  bulk solely because a verification window is open. Quotas/timing are intact.
+- The policy regression and both-image native D3D9/DXVK lit/shadow controls
+  pass, along with the full suite. Preserve old-source controls and timing
+  samples; separate old/new runs show drift in unchanged extra-frame work.
+- The real capture fills all six samples within one reporting row per
+  window, so the forced-window benchmark does not establish a substantial
+  saved-game gain. Keep beta.11 installed, with its INI unchanged; no new
+  gameplay test request. The last real result remains 30.0667/s.
+- Shadow fragmentation remains a lead. The public reference identifies a
+  three-factor mesh opacity product, not a single alpha load; no opacity
+  merging or new runtime signature has been implemented. See
+  [scope, evidence and limits](specs/2026-10-18-verification-window-bulk.md).
+
 ## Typed material-write screen: standalone route rejected (2026-10-18)
 
 - The follow-up uses the typed setter families rather than generic SetValue

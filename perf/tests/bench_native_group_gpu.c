@@ -198,6 +198,12 @@ static NgCheck ng_one_group(unsigned extra,unsigned optimized,unsigned count,uns
     ng_callbacks_begin=ng_callbacks_end=0; ng_callbacks_hash=2166136261u;
     pair_optimized=optimized; ng_current_group=0;
     pose(extra); pf_inst_init(verify?2:0); bench_extra_mode(extra);
+#ifdef PF_RUNTIME_BULK
+    if(verify==2) {
+        extern void bench_verify_window(unsigned);
+        bench_verify_window(2);
+    }
+#endif
     ng_frame_mode(optimized); g_stock_draws=0;
     HR(IDirect3DDevice9_SetVertexShader(g_dev,g_ea));
     HR(IDirect3DDevice9_SetVertexDeclaration(g_dev,g_decl));
@@ -224,13 +230,16 @@ static NgCheck ng_one_group(unsigned extra,unsigned optimized,unsigned count,uns
     unsigned events=fail?batches:count+batches;
     REQUIRE(result.begin==((callbacks&1)?events:0) && result.end==((callbacks&2)?events:0));
     REQUIRE(result.scopes==(extra?0:events));
-    if(callbacks || early || verify || fail || count<3) {
+    if(callbacks || early || verify==1 || fail || count<3) {
         REQUIRE(!result.suppressed && !result.bulk);
     } else {
-        unsigned leaders=split?2:1;
-        REQUIRE(result.stock==leaders && result.suppressed==(optimized?leaders:0));
-        REQUIRE(result.bulk==(optimized?count-leaders:0));
-        if(!extra) REQUIRE(result.counts.meshes==count-(optimized?0:leaders));
+        unsigned leaders=split?2:1,expect_bulk=optimized;
+#ifdef PF_VERIFY_WINDOW_OLD
+        if(verify==2 && !extra)expect_bulk=0;
+#endif
+        REQUIRE(result.stock==leaders && result.suppressed==(expect_bulk?leaders:0));
+        REQUIRE(result.bulk==(expect_bulk?count-leaders:0));
+        if(!extra) REQUIRE(result.counts.meshes==count-(expect_bulk?0:leaders));
     }
     if(fail) REQUIRE(!result.stock && !result.counts.meshes);
     if(early) REQUIRE(result.stock==2*count);
@@ -265,6 +274,16 @@ static void ng_validate(void)
     ng_one_group(0,0,25,0,0,0,0,0,a);
     NgCheck verified=ng_one_group(0,1,25,0,0,0,0,1,b); nm_compare(a,b);
     REQUIRE(verified.counts.verify && verified.counts.verify_samples && !verified.counts.verify_bad);
+#ifdef PF_RUNTIME_BULK
+    for(unsigned extra=0;extra<2;extra++) {
+        NgCheck unsampled_stock=ng_one_group(extra,0,25,0,0,0,0,2,a);
+        NgCheck unsampled_fast=ng_one_group(extra,1,25,0,0,0,0,2,b);nm_compare(a,b);
+        REQUIRE(!unsampled_stock.counts.verify && !unsampled_fast.counts.verify &&
+                !unsampled_stock.counts.verify_samples && !unsampled_fast.counts.verify_samples);
+        REQUIRE(unsampled_stock.scopes==unsampled_fast.scopes);
+    }
+    puts("VERIFY WINDOW: selected sample remains native; exhausted category stays unsampled, with regular/extra image and accounting equality");
+#endif
     REQUIRE(ng_prepares==ng_finishes+ng_failed_begins && ng_begins==ng_ends+ng_failed_begins &&
             ng_passes==ng_pass_ends);
     printf("NATIVE GROUP CONTROLS: %u original/candidate pairs, actual callback sequence/draw observations, empty/small groups, native and partial model splits, earlier DIP, Begin failure, verification and ABI pass\n",cases);

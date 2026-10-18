@@ -59,6 +59,14 @@ Strike an item through, with the date, when it's done.
   instancing, and reduce remaining regular-frame render work. Beta.11
   averages 22.457 ms per normal frame in the chosen interval. Do not lower
   pacing/deadline guards or request another diagnostic-only gameplay test.
+- [x] 2026-10-18: beta.12 preserves bulk for unsampled verification-window
+  groups without changing sample selection or quotas. Policy/native/GPU
+  checks and the full suite pass. Retain as a development fix; the capture
+  does not establish sufficient duty cycle for a standalone installation.
+- [ ] Identify remaining shadow group-split causes before mixed-opacity
+  batching. The public mesh getter multiplies three factors; installed
+  dispatch, rounding, material/preshader alpha and fallback need proof.
+  See `specs/2026-10-18-verification-window-bulk.md`.
 - Earlier research notes below retain their version-specific limits.
   Beta.10 supplies a finite fail-disabled policy for persistent errors; it
   does not promise unchanged pixels during arbitrary driver failure or

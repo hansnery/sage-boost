@@ -33,6 +33,16 @@ void bench_leader_mode(unsigned enabled,unsigned omit)
     pf_inst_bulk_context(enabled);
 }
 unsigned bench_leader_suppressed(void) { return pf_inst_bulk_leaders(); }
+/* Controlled verification state for the offline native/GPU fixture. Mode 2
+ * represents a still-open window with this category's two samples spent. */
+void bench_verify_window(unsigned mode)
+{
+    if(mode!=2)ExitProcess(4);
+    g_verify=g_started=g_window_open=1;
+    g_verify_close=GetTickCount()+VERIFY_WINDOW_MS;
+    g_window_samples=4;g_window_shadow=2;
+    for(unsigned i=0;i<PF_INST_CATS;i++)g_cat_window[i]=g_bl_window[i]=VERIFY_PER_CATEGORY;
+}
 int bench_leader_can_bulk(void) { return pf_inst_bulk_ready(); }
 int bench_native_bulk_matches(const unsigned char *rec,const unsigned char *end,void *method)
 { return pf_inst_bulk_matches(rec,end,method); }

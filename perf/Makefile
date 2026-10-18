@@ -93,6 +93,9 @@ test-instsubmit: $(BUILD)/test_instsubmit.exe
 $(BUILD)/test_inst_ownership.exe: tests/test_inst_ownership.c src/inst.c src/declcache.c $(BUILD)/instsubmit.o src/*.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $< src/declcache.c $(BUILD)/instsubmit.o
 
+$(BUILD)/test_inst_verify_policy.exe: tests/test_inst_verify_policy.c tests/test_inst_ownership.c src/inst.c src/declcache.c $(BUILD)/instsubmit.o src/*.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $< src/declcache.c $(BUILD)/instsubmit.o
+
 $(BUILD)/test_bulk_lifetime.exe: tests/test_bulk_lifetime.c tests/test_inst_ownership.c src/inst.c src/declcache.c $(BUILD)/instsubmit.o $(BUILD)/bulk.o src/*.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $< src/declcache.c $(BUILD)/instsubmit.o $(BUILD)/bulk.o
 
@@ -222,7 +225,8 @@ test: all test-bulk-lifetime test-bulk-install $(BUILD)/test_row.exe $(BUILD)/te
       $(BUILD)/test_sites.exe $(BUILD)/test_hooks.exe $(BUILD)/test_fps.exe $(BUILD)/test_load.exe \
       $(BUILD)/test_inst.exe $(BUILD)/test_declcache.exe $(BUILD)/test_btn.exe $(BUILD)/test_shadowpass.exe \
       $(BUILD)/test_catchup.exe $(BUILD)/test_lights.exe $(BUILD)/test_extraprofile.exe $(BUILD)/test_presentgap.exe \
-      $(BUILD)/test_queueinsert.exe $(BUILD)/test_queuesort.exe $(BUILD)/test_inst_ownership.exe $(BUILD)/test_instsubmit.exe
+      $(BUILD)/test_queueinsert.exe $(BUILD)/test_queuesort.exe $(BUILD)/test_inst_ownership.exe $(BUILD)/test_instsubmit.exe \
+      $(BUILD)/test_inst_verify_policy.exe
 	./$(BUILD)/test_row.exe
 	./$(BUILD)/test_reflect.exe
 	./$(BUILD)/test_btn.exe
@@ -245,6 +249,7 @@ test: all test-bulk-lifetime test-bulk-install $(BUILD)/test_row.exe $(BUILD)/te
 	./$(BUILD)/test_inst.exe
 	./$(BUILD)/test_inst_ownership.exe
 	./$(BUILD)/test_instsubmit.exe
+	./$(BUILD)/test_inst_verify_policy.exe
 	./$(BUILD)/test_shadowpass.exe
 	./$(BUILD)/test_catchup.exe
 	./$(BUILD)/test_lights.exe
@@ -504,6 +509,25 @@ $(BUILD)/bench_runtime_bulk_gpu.exe: tests/bench_native_insert_gpu.c tests/bench
 
 $(BUILD)/bench_runtime_bulk_20_gpu.exe: tests/bench_native_insert_gpu.c $(BUILD)/bench_runtime_bulk_gpu.exe
 	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_RUNTIME_BULK -DPF_FIXTURE_BONES=20 -static -o $@ $< $(BUILD)/native_insert_fixture.o $(BUILD)/native_sort_fixture.o $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS)) $(CHECKED_WRAP)
+
+$(BUILD)/inst_verify_old.c: | $(BUILD)
+	git show 35ac82b:perf/src/inst.c > $@
+
+$(BUILD)/inst_verify_old_engine.o: tests/inst_verify_old_engine.c tests/inst_recovery_engine.c $(BUILD)/inst_verify_old.c src/*.h
+	$(CC) $(CFLAGS) -Isrc -c -o $@ $<
+
+VERIFY_GPU_OBJS = $(BUILD)/native_insert_fixture.o $(BUILD)/native_sort_fixture.o $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
+$(BUILD)/bench_verify_window_gpu.exe: tests/bench_verify_window_gpu.c $(BUILD)/bench_runtime_bulk_gpu.exe
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_RUNTIME_BULK -static -o $@ $< $(BUILD)/inst_recovery_engine.o $(VERIFY_GPU_OBJS) $(CHECKED_WRAP)
+
+$(BUILD)/bench_verify_window_old_gpu.exe: tests/bench_verify_window_gpu.c $(BUILD)/bench_runtime_bulk_gpu.exe $(BUILD)/inst_verify_old_engine.o
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_RUNTIME_BULK -DPF_VERIFY_WINDOW_OLD -static -o $@ $< $(BUILD)/inst_verify_old_engine.o $(VERIFY_GPU_OBJS) $(CHECKED_WRAP)
+
+$(BUILD)/bench_verify_window_20_gpu.exe: tests/bench_verify_window_gpu.c $(BUILD)/bench_runtime_bulk_gpu.exe
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_RUNTIME_BULK -DPF_FIXTURE_BONES=20 -static -o $@ $< $(BUILD)/inst_recovery_engine.o $(VERIFY_GPU_OBJS) $(CHECKED_WRAP)
+
+$(BUILD)/bench_verify_window_old_20_gpu.exe: tests/bench_verify_window_gpu.c $(BUILD)/bench_runtime_bulk_gpu.exe $(BUILD)/inst_verify_old_engine.o
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_RUNTIME_BULK -DPF_VERIFY_WINDOW_OLD -DPF_FIXTURE_BONES=20 -static -o $@ $< $(BUILD)/inst_verify_old_engine.o $(VERIFY_GPU_OBJS) $(CHECKED_WRAP)
 
 .PHONY: test-runtime-bulk-gpu bench-runtime-bulk-gpu
 test-runtime-bulk-gpu: $(BUILD)/bench_runtime_bulk_gpu.exe

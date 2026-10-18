@@ -145,10 +145,17 @@ static void q_frame_mode(int optimized)
 #endif
     q_sort_calls=q_group_calls=0;q_order_hash=2166136261u;
     nx_frame_mode(q_render_on);
+#ifdef PF_VERIFY_WINDOW_BENCH
+    if(!q_oracle)bench_verify_window(2);
+#endif
 }
 static void q_frame_check(int extra)
 {
-    int saved=pair_optimized;pair_optimized=q_render_on;nx_frame_check(extra);pair_optimized=saved;
+    int saved=pair_optimized;pair_optimized=q_render_on;
+#ifdef PF_VERIFY_WINDOW_OLD
+    if(!q_oracle && !extra)pair_optimized=0;
+#endif
+    nx_frame_check(extra);pair_optimized=saved;
     if(q_owned || q_sort_calls!=3 || q_group_calls!=GROUPS || g_method.refs!=5)
         fprintf(stderr,"queue frame: owned=%u sorts=%u groups=%u refs=%u extra=%d\n",q_owned,q_sort_calls,q_group_calls,g_method.refs,extra);
     REQUIRE(!q_owned && q_sort_calls==3 && q_group_calls==GROUPS && g_method.refs==5);
