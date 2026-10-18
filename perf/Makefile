@@ -517,11 +517,18 @@ $(BUILD)/bulk_chain_screen.o: $(BUILD)/bulk_chain_screen.c src/*.h
 	$(CC) $(CFLAGS) -Isrc -c -o $@ $<
 
 CHAIN_SCREEN_OBJS = $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(BUILD)/bulk_chain_screen.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o $(BUILD)/bulk.o,$(DISPATCH_OBJS))
-$(BUILD)/bench_chain_screen.exe: tests/bench_chain_screen.c $(BUILD)/bench_runtime_bulk_gpu.exe $(BUILD)/bulk_chain_screen.o
+$(BUILD)/bench_chain_screen.exe: tests/bench_chain_screen.c tests/native_chain_fixture.h $(BUILD)/bench_runtime_bulk_gpu.exe $(BUILD)/bulk_chain_screen.o
 	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_RUNTIME_BULK -static -o $@ $< $(CHAIN_SCREEN_OBJS) $(CHECKED_WRAP)
 
-$(BUILD)/bench_chain_screen_20.exe: tests/bench_chain_screen.c $(BUILD)/bench_runtime_bulk_gpu.exe $(BUILD)/bulk_chain_screen.o
+$(BUILD)/bench_chain_screen_20.exe: tests/bench_chain_screen.c tests/native_chain_fixture.h $(BUILD)/bench_runtime_bulk_gpu.exe $(BUILD)/bulk_chain_screen.o
 	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_RUNTIME_BULK -DPF_FIXTURE_BONES=20 -static -o $@ $< $(CHAIN_SCREEN_OBJS) $(CHECKED_WRAP)
+
+CHAIN_RECOVERY_OBJS = $(filter-out $(BUILD)/inst_recovery_engine.o,$(CHAIN_SCREEN_OBJS)) $(BUILD)/inst_runtime_fallback_engine.o
+$(BUILD)/test_chain_recovery.exe: tests/test_chain_recovery.c tests/native_chain_fixture.h $(BUILD)/test_runtime_group_fallback.exe $(BUILD)/bulk_chain_screen.o
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_RUNTIME_BULK -static -o $@ $< $(CHAIN_RECOVERY_OBJS) $(CHECKED_WRAP) -Wl,--wrap=pf_inst_bulk_cancel
+
+$(BUILD)/test_chain_recovery_20.exe: tests/test_chain_recovery.c tests/native_chain_fixture.h $(BUILD)/test_runtime_group_fallback.exe $(BUILD)/bulk_chain_screen.o
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_RUNTIME_BULK -DPF_FIXTURE_BONES=20 -static -o $@ $< $(CHAIN_RECOVERY_OBJS) $(CHECKED_WRAP) -Wl,--wrap=pf_inst_bulk_cancel
 
 $(BUILD)/inst_verify_old.c: | $(BUILD)
 	git show 35ac82b:perf/src/inst.c > $@

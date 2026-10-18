@@ -5,7 +5,9 @@ static void fallback_controls(void);
 #define PF_NATIVE_FX_MAIN group_gpu_main
 #define PF_NATIVE_GPU_GROUP_SOURCE "bench_native_fx_gpu.c"
 #define PF_FAULT_ARGUMENTS 11
+#ifndef PF_FAULT_EXTRA_STATE
 #define PF_FAULT_EXTRA_STATE nx_snapshot
+#endif
 #define PF_FAULT_STOCK_REFERENCE
 #define PF_FAULT_ADDITIONAL_CONTROLS fallback_controls
 #include "test_native_gpu_faults.c"

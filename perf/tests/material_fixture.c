@@ -222,6 +222,33 @@ void material_fixture_bones(const void *bones,unsigned bytes)
 void material_fixture_bone_values(const void *bones,unsigned bytes)
 { HR(F(SetRawValue,bones_handle,bones,0,bytes)); }
 
+/* Observable child-method state for the offline chain recovery fixture. */
+void material_fixture_child_state(unsigned state[7],int restore)
+{
+    D3DXHANDLE ambient=F(GetParameterByName,NULL,"ColorAmbient");REQUIRE(ambient);
+    if(restore) {
+        HR(F(SetValue,diffuse_handle,state,12));
+        HR(F(SetValue,ambient,state+3,12));
+        HR(F(SetValue,opacity_handle,state+6,4));
+    } else {
+        HR(F(GetValue,diffuse_handle,state,12));
+        HR(F(GetValue,ambient,state+3,12));
+        HR(F(GetValue,opacity_handle,state+6,4));
+    }
+}
+void material_fixture_child_apply(unsigned index,unsigned broken)
+{
+    D3DXHANDLE ambient=F(GetParameterByName,NULL,"ColorAmbient");REQUIRE(ambient);
+    float diffuse[3]={0.15f+index*0.1f,0.25f+index*0.05f,0.9f-index*0.1f};
+    /* Keep opaque texels above every alpha-test threshold. Ambient color
+     * remains observable even when this controlled scene has no sun light. */
+    float opacity=1;
+    if(broken)opacity=0;
+    HR(F(SetValue,diffuse_handle,diffuse,sizeof diffuse));
+    HR(F(SetValue,ambient,diffuse,sizeof diffuse));
+    HR(F(SetFloat,opacity_handle,opacity));
+}
+
 static unsigned read_key(unsigned char *out,unsigned capacity)
 {
     unsigned n=0;

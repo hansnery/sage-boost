@@ -1,0 +1,649 @@
+{
+  "date": "2026-10-18",
+  "parent_commit": "abb6e47f6de8c0cfb2ddd6a77c5a77c8427eebe9",
+  "normal_runs": 16,
+  "negative_runs": 22,
+  "chain_lengths": [
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "normal_case_counts": {
+    "batch_faults": 4480,
+    "capture_failures": 160,
+    "null_stream_failures": 320,
+    "partial_fallback_cases": 3840,
+    "failed_begin_pairs": 80
+  },
+  "minimum_covered_pixels_required_per_case": 101,
+  "sources_and_binaries": {
+    "perf/tests/test_chain_recovery.c": "c0e14888fa4cbaa0b264fbc612f30f7b2c4ccf39d91f031ae58596518bb65d3b",
+    "perf/tests/native_chain_fixture.h": "6e593e4dd1f7bd92c65ca32d243a8afbab244b56a5beecb41fef9afe6fe0226d",
+    "perf/tests/test_native_gpu_faults.c": "79519217b494aeae8d688f65551028922b7edd97cb325fb51427d3a140b299bd",
+    "perf/tests/test_native_group_fallback.c": "aa2cdcf6cd4b80d07996f7539db44d9a0acbe29b2a380f9653a5d2f66c4d7700",
+    "perf/tests/material_fixture.c": "2256d31dbed14712c8be4f69f44e29a01243ff3f374315295eabcbf8cdbb68db",
+    "tools/test_chain_recovery.py": "ae791ae3f8bbb57bcb526373f86f1a725da32c83cf34616081f944012bc04377",
+    "perf/src/bulk.c": "0a979e3b92e1722d09500139647e3de7bd198a8b62e7683f40ef1143888cc04a",
+    "perf/Makefile": "3d2242cee3bd76b9f8870aefd94caec5ad416b50897ba057926d4e8db848f8dc",
+    "perf/build/bulk_chain_screen.c": "43b1de162c26ca31d8c99d405d28f054bab0dd4604035b10a7f83ae2a592a148",
+    "perf/build/test_chain_recovery.exe": "0c4d444d9789953a68b4e164763845fe784697b1c3b47e53b0d497e32e9d5e34",
+    "perf/build/test_chain_recovery_20.exe": "90c51cdb64eba6ceda4998883c474eadaa81b8cd7f1fe49c46a1c602a3f36bbc",
+    "perf/build/chain_recovery_dxvk/d3d9.dll": "00bc142e98ddad1e334a4d88fa630038e092b0758b3d79e295172b181a4c772d"
+  },
+  "installed_unchanged": {
+    "bfme2perf.asi": "574a085967d477a53037526c1ea7f6b6d257a559a36aab7f76573c4ca7cfe027",
+    "bfme2perf.ini": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b"
+  },
+  "runs": [
+    {
+      "label": "20-native-game.dat-lit-fault0-gate0-child1",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "lit",
+      "fault": 0,
+      "gate": 0,
+      "child": 1,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-native-game.dat-lit-fault0-gate0-child1.txt",
+      "sha256": "b38cf7f122b62ccf0007d4c9b30f1b424580eb6948428ae8fdd0d60d15d2f6c6",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:267: !ff_state_bad && result.active==expected_active && result.instances+result.native==25*ff_groups && (ff_allow_fallback || result.native==expected_ordinary) && !result.pixels"
+      ]
+    },
+    {
+      "label": "20-native-game.dat-lit-fault0-gate0-child2",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "lit",
+      "fault": 0,
+      "gate": 0,
+      "child": 2,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-native-game.dat-lit-fault0-gate0-child2.txt",
+      "sha256": "5ff3ee41bc5dce182a24e458532e7af4b36437a5840c22c7eb6222cff6444681",
+      "refusal": [
+        "benchmark refused: tests/test_chain_recovery.c:137: !memcmp(state,cq_reference,n*4)"
+      ]
+    },
+    {
+      "label": "20-native-game.dat-shadow-fault1-gate0-child0",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 1,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-native-game.dat-shadow-fault1-gate0-child0.txt",
+      "sha256": "f805a821b9fe368a1e712e61619f8436ae28bce09a9d9f1b15fe983cd0d2a5b2",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:267: !ff_state_bad && result.active==expected_active && result.instances+result.native==25*ff_groups && (ff_allow_fallback || result.native==expected_ordinary) && !result.pixels"
+      ]
+    },
+    {
+      "label": "20-native-game.dat-shadow-fault2-gate0-child0",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 2,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-native-game.dat-shadow-fault2-gate0-child0.txt",
+      "sha256": "84f436c92ebc0c52de34a670f9cc7943ab4d99444145d0daa069ec232b5a84a7",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:332: !r.pixels && !r.state && !r.active && r.instances+r.native==25"
+      ]
+    },
+    {
+      "label": "20-native-game.dat-shadow-fault3-gate0-child0",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 3,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-native-game.dat-shadow-fault3-gate0-child0.txt",
+      "sha256": "7e3e96e3cefca5fd984b0b9f752cf52384da258c391713244b3a7d093fb7161a",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:332: !r.pixels && !r.state && !r.active && r.instances+r.native==25"
+      ]
+    },
+    {
+      "label": "20-native-game.dat-shadow-fault4-gate0-child0",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 4,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-native-game.dat-shadow-fault4-gate0-child0.txt",
+      "sha256": "816a7ae0b987dd6b7edd11891d37d892f3cc7c88cd74fdf7ae6839253a8e08ed",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:267: !ff_state_bad && result.active==expected_active && result.instances+result.native==25*ff_groups && (ff_allow_fallback || result.native==expected_ordinary) && !result.pixels"
+      ]
+    },
+    {
+      "label": "20-native-game.dat-shadow-fault5-gate0-child0",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 5,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-native-game.dat-shadow-fault5-gate0-child0.txt",
+      "sha256": "d4c4d51a0462cefd3a8abf2f2914de537f9830b186b998654f57ed0e69ce09a8",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:267: !ff_state_bad && result.active==expected_active && result.instances+result.native==25*ff_groups && (ff_allow_fallback || result.native==expected_ordinary) && !result.pixels"
+      ]
+    },
+    {
+      "label": "20-native-game.dat-shadow-fault6-gate0-child0",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 6,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-native-game.dat-shadow-fault6-gate0-child0.txt",
+      "sha256": "bda2dfd34252ca6f1d78421eac3b86e8827164881610913793e8183b031ccc8e",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:267: !ff_state_bad && result.active==expected_active && result.instances+result.native==25*ff_groups && (ff_allow_fallback || result.native==expected_ordinary) && !result.pixels"
+      ]
+    },
+    {
+      "label": "20-native-game.dat-shadow-fault7-gate0-child0",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 7,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-native-game.dat-shadow-fault7-gate0-child0.txt",
+      "sha256": "5ec7a66355c795b338b7218318dd827197e00b330ecbb333994339000c28ae91",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:267: !ff_state_bad && result.active==expected_active && result.instances+result.native==25*ff_groups && (ff_allow_fallback || result.native==expected_ordinary) && !result.pixels"
+      ]
+    },
+    {
+      "label": "20-native-game.dat-shadow-fault0-gate2-child0",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "gate": 2,
+      "child": 0,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-native-game.dat-shadow-fault0-gate2-child0.txt",
+      "sha256": "df33c0aeaf202e00f6926e8e2bfc42916c858676b31dd766e69b167d516955d2",
+      "refusal": [
+        "benchmark refused: tests/native_chain_fixture.h:33: chain_children[i].refs==5"
+      ]
+    },
+    {
+      "label": "20-native-game.dat-shadow-fault0-gate3-child0",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "gate": 3,
+      "child": 0,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-native-game.dat-shadow-fault0-gate3-child0.txt",
+      "sha256": "799d00e2433932278c9ca463b58f2c68a080b8614a0e4a43e80cb1dfaafc24fb",
+      "refusal": [
+        "benchmark refused: tests/test_chain_recovery.c:139: bench_native_group_consumed()==ff_groups*(GROUP_SIZE-1)"
+      ]
+    },
+    {
+      "label": "20-dxvk-game.dat-lit-fault0-gate0-child1",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "lit",
+      "fault": 0,
+      "gate": 0,
+      "child": 1,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-dxvk-game.dat-lit-fault0-gate0-child1.txt",
+      "sha256": "8020eb5d03db3ce966aaee6b6e8f14ac7749aa45aad3607e04f6755b579cacb5",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:267: !ff_state_bad && result.active==expected_active && result.instances+result.native==25*ff_groups && (ff_allow_fallback || result.native==expected_ordinary) && !result.pixels"
+      ]
+    },
+    {
+      "label": "20-dxvk-game.dat-lit-fault0-gate0-child2",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "lit",
+      "fault": 0,
+      "gate": 0,
+      "child": 2,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-dxvk-game.dat-lit-fault0-gate0-child2.txt",
+      "sha256": "d169b9251a4a98ed34410245ed6b0ef1d59f6762bf87e902a9117e7b7fa75668",
+      "refusal": [
+        "benchmark refused: tests/test_chain_recovery.c:137: !memcmp(state,cq_reference,n*4)"
+      ]
+    },
+    {
+      "label": "20-dxvk-game.dat-shadow-fault1-gate0-child0",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 1,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-dxvk-game.dat-shadow-fault1-gate0-child0.txt",
+      "sha256": "d3aae2d0264841937fbe58fdec85e329690f8ae60638e11b66e7369f40831195",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:267: !ff_state_bad && result.active==expected_active && result.instances+result.native==25*ff_groups && (ff_allow_fallback || result.native==expected_ordinary) && !result.pixels"
+      ]
+    },
+    {
+      "label": "20-dxvk-game.dat-shadow-fault2-gate0-child0",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 2,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-dxvk-game.dat-shadow-fault2-gate0-child0.txt",
+      "sha256": "d613a3b49bdbbe728d6622ce0e98c6c3f608991b0433a4e8d1161268e44d1eb1",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:332: !r.pixels && !r.state && !r.active && r.instances+r.native==25"
+      ]
+    },
+    {
+      "label": "20-dxvk-game.dat-shadow-fault3-gate0-child0",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 3,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-dxvk-game.dat-shadow-fault3-gate0-child0.txt",
+      "sha256": "d4291f8c1538dc15d0391f3c07c3b8d6aca3cdc955383d6438624292649a226d",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:332: !r.pixels && !r.state && !r.active && r.instances+r.native==25"
+      ]
+    },
+    {
+      "label": "20-dxvk-game.dat-shadow-fault4-gate0-child0",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 4,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-dxvk-game.dat-shadow-fault4-gate0-child0.txt",
+      "sha256": "08f0ea0336cb531c64d9425ad7c641ed0d17e5aaf2fde167591a6858d77121f3",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:250: ff_injected==(target_step!=0)"
+      ]
+    },
+    {
+      "label": "20-dxvk-game.dat-shadow-fault5-gate0-child0",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 5,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-dxvk-game.dat-shadow-fault5-gate0-child0.txt",
+      "sha256": "2efc0b6d601c23806e531b01c900b592fcf6d25d8bc1bc42af82f9d184585d4b",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:267: !ff_state_bad && result.active==expected_active && result.instances+result.native==25*ff_groups && (ff_allow_fallback || result.native==expected_ordinary) && !result.pixels"
+      ]
+    },
+    {
+      "label": "20-dxvk-game.dat-shadow-fault6-gate0-child0",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 6,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-dxvk-game.dat-shadow-fault6-gate0-child0.txt",
+      "sha256": "5f92a51cd86bd3781d60cada7ea0f058cab067f0660a2adeb026400f1d575beb",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:267: !ff_state_bad && result.active==expected_active && result.instances+result.native==25*ff_groups && (ff_allow_fallback || result.native==expected_ordinary) && !result.pixels"
+      ]
+    },
+    {
+      "label": "20-dxvk-game.dat-shadow-fault7-gate0-child0",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 7,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-dxvk-game.dat-shadow-fault7-gate0-child0.txt",
+      "sha256": "033d4e05feb26c166f25a5d901c3ec2950bf226b72f6404b20745cbc018243ac",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:267: !ff_state_bad && result.active==expected_active && result.instances+result.native==25*ff_groups && (ff_allow_fallback || result.native==expected_ordinary) && !result.pixels"
+      ]
+    },
+    {
+      "label": "20-dxvk-game.dat-shadow-fault0-gate2-child0",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "gate": 2,
+      "child": 0,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-dxvk-game.dat-shadow-fault0-gate2-child0.txt",
+      "sha256": "7f3bf3aed396ab810822cdaa9c496374c7707655d0b2d31dc2d976d02e565faa",
+      "refusal": [
+        "benchmark refused: tests/native_chain_fixture.h:33: chain_children[i].refs==5"
+      ]
+    },
+    {
+      "label": "20-dxvk-game.dat-shadow-fault0-gate3-child0",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "gate": 3,
+      "child": 0,
+      "exit_code": 1,
+      "log": "perf/build/chain-recovery-20-dxvk-game.dat-shadow-fault0-gate3-child0.txt",
+      "sha256": "838f484dd92042524453c5a6eac4d5b8b16e26f3e50e30010906911a050c0be0",
+      "refusal": [
+        "benchmark refused: tests/test_chain_recovery.c:139: bench_native_group_consumed()==ff_groups*(GROUP_SIZE-1)"
+      ]
+    },
+    {
+      "label": "6-native-game.dat-lit-fault0-gate0-child0",
+      "bones": 6,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "lit",
+      "fault": 0,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-recovery-6-native-game.dat-lit-fault0-gate0-child0.txt",
+      "sha256": "e694bb3eebabb2460dc3ee0736913e4f041e37c6e9ede9c2e8cee862af66a907",
+      "refusal": []
+    },
+    {
+      "label": "6-native-game.dat-shadow-fault0-gate0-child0",
+      "bones": 6,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-recovery-6-native-game.dat-shadow-fault0-gate0-child0.txt",
+      "sha256": "0e23e0cda9f6ff011c63c26ba94b8270e51149ded5d9e49bcca8211a13183841",
+      "refusal": []
+    },
+    {
+      "label": "6-native-game820.dat-lit-fault0-gate0-child0",
+      "bones": 6,
+      "backend": "native",
+      "image": "game820.dat",
+      "kind": "lit",
+      "fault": 0,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-recovery-6-native-game820.dat-lit-fault0-gate0-child0.txt",
+      "sha256": "e694bb3eebabb2460dc3ee0736913e4f041e37c6e9ede9c2e8cee862af66a907",
+      "refusal": []
+    },
+    {
+      "label": "6-native-game820.dat-shadow-fault0-gate0-child0",
+      "bones": 6,
+      "backend": "native",
+      "image": "game820.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-recovery-6-native-game820.dat-shadow-fault0-gate0-child0.txt",
+      "sha256": "0e23e0cda9f6ff011c63c26ba94b8270e51149ded5d9e49bcca8211a13183841",
+      "refusal": []
+    },
+    {
+      "label": "6-dxvk-game.dat-lit-fault0-gate0-child0",
+      "bones": 6,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "lit",
+      "fault": 0,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-recovery-6-dxvk-game.dat-lit-fault0-gate0-child0.txt",
+      "sha256": "9c7d012689bf1267a7b2b7b37c841f38d33479264081cc7360964df4b52eb4a4",
+      "refusal": []
+    },
+    {
+      "label": "6-dxvk-game.dat-shadow-fault0-gate0-child0",
+      "bones": 6,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-recovery-6-dxvk-game.dat-shadow-fault0-gate0-child0.txt",
+      "sha256": "af74787d9e685cf8b424ad3d79ebd648f2351a67a687593855a91fed2bb7990a",
+      "refusal": []
+    },
+    {
+      "label": "6-dxvk-game820.dat-lit-fault0-gate0-child0",
+      "bones": 6,
+      "backend": "dxvk",
+      "image": "game820.dat",
+      "kind": "lit",
+      "fault": 0,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-recovery-6-dxvk-game820.dat-lit-fault0-gate0-child0.txt",
+      "sha256": "9c7d012689bf1267a7b2b7b37c841f38d33479264081cc7360964df4b52eb4a4",
+      "refusal": []
+    },
+    {
+      "label": "6-dxvk-game820.dat-shadow-fault0-gate0-child0",
+      "bones": 6,
+      "backend": "dxvk",
+      "image": "game820.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-recovery-6-dxvk-game820.dat-shadow-fault0-gate0-child0.txt",
+      "sha256": "af74787d9e685cf8b424ad3d79ebd648f2351a67a687593855a91fed2bb7990a",
+      "refusal": []
+    },
+    {
+      "label": "20-native-game.dat-lit-fault0-gate0-child0",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "lit",
+      "fault": 0,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-recovery-20-native-game.dat-lit-fault0-gate0-child0.txt",
+      "sha256": "3ea471d94b19d0b8a682200957b5fda1bf6f0d0edcbe4230b5edfc46c95ae6de",
+      "refusal": []
+    },
+    {
+      "label": "20-native-game.dat-shadow-fault0-gate0-child0",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-recovery-20-native-game.dat-shadow-fault0-gate0-child0.txt",
+      "sha256": "f220017c88de8aecfe0d0df07f3d9abda8837e904d7a2b49b77f746daaeeeb29",
+      "refusal": []
+    },
+    {
+      "label": "20-native-game820.dat-lit-fault0-gate0-child0",
+      "bones": 20,
+      "backend": "native",
+      "image": "game820.dat",
+      "kind": "lit",
+      "fault": 0,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-recovery-20-native-game820.dat-lit-fault0-gate0-child0.txt",
+      "sha256": "3ea471d94b19d0b8a682200957b5fda1bf6f0d0edcbe4230b5edfc46c95ae6de",
+      "refusal": []
+    },
+    {
+      "label": "20-native-game820.dat-shadow-fault0-gate0-child0",
+      "bones": 20,
+      "backend": "native",
+      "image": "game820.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-recovery-20-native-game820.dat-shadow-fault0-gate0-child0.txt",
+      "sha256": "f220017c88de8aecfe0d0df07f3d9abda8837e904d7a2b49b77f746daaeeeb29",
+      "refusal": []
+    },
+    {
+      "label": "20-dxvk-game.dat-lit-fault0-gate0-child0",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "lit",
+      "fault": 0,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-recovery-20-dxvk-game.dat-lit-fault0-gate0-child0.txt",
+      "sha256": "d136e600dfefb324f9a8e8fed7906d52728d5a6fab1bbc7e0b90d7010bc7432b",
+      "refusal": []
+    },
+    {
+      "label": "20-dxvk-game.dat-shadow-fault0-gate0-child0",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-recovery-20-dxvk-game.dat-shadow-fault0-gate0-child0.txt",
+      "sha256": "8eff4985c15af2c9ec166e9556e25d943c7e839912ede51b96ca27751508081d",
+      "refusal": []
+    },
+    {
+      "label": "20-dxvk-game820.dat-lit-fault0-gate0-child0",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game820.dat",
+      "kind": "lit",
+      "fault": 0,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-recovery-20-dxvk-game820.dat-lit-fault0-gate0-child0.txt",
+      "sha256": "d136e600dfefb324f9a8e8fed7906d52728d5a6fab1bbc7e0b90d7010bc7432b",
+      "refusal": []
+    },
+    {
+      "label": "20-dxvk-game820.dat-shadow-fault0-gate0-child0",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game820.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "gate": 0,
+      "child": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-recovery-20-dxvk-game820.dat-shadow-fault0-gate0-child0.txt",
+      "sha256": "8eff4985c15af2c9ec166e9556e25d943c7e839912ede51b96ca27751508081d",
+      "refusal": []
+    }
+  ],
+  "limits": [
+    "Controlled child subclasses and material sources; native group/chain/mesh/FX bodies execute.",
+    "Original versus optimized final palettes can differ by the existing instancing contract; immediate batch/replay snapshots include the full palette.",
+    "No native child exception injection in this fixture; unchanged wrapper has separate Windows-unwind tests.",
+    "No live method-count coverage or new saved-game FPS measurement."
+  ],
+  "discarded_development_attempts": [
+    "Misordered negative-control argument caused file-open refusals; corrected launcher and rerun.",
+    "Early masks excluded alpha and allowed empty comparisons; final coverage oracle and observable shader corruption supersede those runs."
+  ],
+  "shared_fixture_regression": [
+    {
+      "backend": "native",
+      "log_sha256": "a5aecdbaec3f202a0e5c6c28a5084776b7f4a8cb63b3b3e62e5c67a6b4d411ab",
+      "exe_sha256": "e42294963c0d005ee9abad008e98261445cbd05649cd0e69aa60dbe5b516e55b",
+      "image": "game820.dat",
+      "bones": 6,
+      "kind": "shadow",
+      "native_group_pairs": 136,
+      "chain_pairs": 22
+    },
+    {
+      "backend": "dxvk",
+      "log_sha256": "c7ae333ea9156751e9582d7da07778b21bd264884c59d92af51a5996477e89d2",
+      "exe_sha256": "389490452ceb07d763e3f5ecbd159911733a11f392f98ed3cd90a4f0a8e34c29",
+      "image": "game.dat",
+      "bones": 20,
+      "kind": "lit",
+      "native_group_pairs": 136,
+      "chain_pairs": 22
+    }
+  ]
+}

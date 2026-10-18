@@ -207,6 +207,9 @@ static FaultResult ff_case(unsigned extra,unsigned optimized,unsigned target_bat
                             const unsigned *reference,unsigned *out)
 {
     FaultResult result={0};
+#ifdef PF_FAULT_CASE_BEGIN
+    PF_FAULT_CASE_BEGIN(extra,optimized,target_step);
+#endif
     bench_fault_reset(); bench_extra_mode(extra); ng_frame_mode(optimized);
 #ifdef PF_FAULT_STOCK_REFERENCE
     if(!optimized) bench_fault_stock(1);
@@ -263,13 +266,20 @@ static FaultResult ff_case(unsigned extra,unsigned optimized,unsigned target_bat
                 optimized,ff_state_bad,result.active,result.instances,result.native,result.pixels);
     if(!target_step) REQUIRE(!ff_state_bad && result.active==expected_active && result.instances+result.native==25*ff_groups &&
                             (ff_allow_fallback || result.native==expected_ordinary) && !result.pixels);
+#ifdef PF_FAULT_CASE_END
+    PF_FAULT_CASE_END(extra,optimized,target_step,out);
+#endif
     bench_extra_mode(0); bench_fault_reset();
     return result;
 }
 
 static void ff_validate(void)
 {
+#ifdef PF_FAULT_BASE_CONTROLS
+    PF_FAULT_BASE_CONTROLS();
+#else
     ng_validate();
+#endif
     ff_original=*(void ***)g_dev;
     /* Do not replace a driver object's vptr: implementations can have
      * private virtual slots beyond the public COM interface. This separate

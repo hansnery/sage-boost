@@ -109,3 +109,8 @@ resolved before treating this as an installable significant improvement.
 The actual saved-game result remains 30.0667 presentation calls/s. Keep
 beta.11 and its INI installed while evaluating the candidate. No new
 gameplay test is requested by this screen.
+
+Follow-up: [material-chain recovery qualification](2026-10-18-material-chain-recovery.md)
+now covers controlled child shader/state behavior, nonempty output,
+partial staging, GPU replay and failed-Begin/next-group links. The runtime
+guard remains unchanged until the separate production promotion checks.

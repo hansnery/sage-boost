@@ -7,6 +7,16 @@ Strike an item through, with the date, when it's done.
 
 ## Full-rate 60 FPS investigation (2026-10-17)
 
+- [x] 2026-10-18: qualify multi-method bulk dispatch through native group/
+  mesh/FX and real GPU with controlled child shader/state behavior. Sixteen
+  normal runs pass; 22 deliberate corruptions are rejected. Nonempty pixel
+  references close a false-pass gap discovered during development. See
+  `specs/2026-10-18-material-chain-recovery.md`.
+- [ ] Promote the qualified count-1..6 guard, report actual consumed
+  followers per method count, validate the linked production code and
+  refresh paired timings before installing a substantive beta.13. Keep
+  beta.11 installed until then; saved-game result is still 30.0667/s.
+
 - [x] 2026-10-18: beta.10 activates the qualified native group path with
   signature-verified startup installation, production accounting and group
   return/unwind ownership cleanup. Both-image native/GPU checks and the full
