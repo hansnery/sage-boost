@@ -21,6 +21,23 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Native animation decode screen (2026-10-18)
+
+- [Exact decoder reuse](specs/2026-10-18-native-decode-screen.md) loads three
+  verified native bodies into private RAM and tests immutable synthetic
+  streams. Both images pass 8,909 direct and 294,912 workload comparisons,
+  ABI/guard checks, six altered-code controls and three broken-cache controls.
+- Two serial runs preserve 504 timings. Favorable warm cases save only
+  0.154-0.367 ms per synthetic 24,576-call workload; diverse phases can
+  regress. Large cold-decode savings do not represent steady playback.
+  No runtime promotion or additional gameplay saving is established.
+- Native AddBinding already tests selected-technique usage, but sometimes
+  tests a parent parameter. Next inspect actual effect member usage and
+  shadow scene setup before choosing another optimization. General unused
+  input filtering alone is redundant; member-level opportunities are open.
+- No production, installation or INI changes. Last gameplay remains ~30.18
+  presentations/s; the 60 FPS goal is unchanged and unachieved.
+
 ## Native FX/state GPU integration (2026-10-18)
 
 - [Native material lifecycle and state](specs/2026-10-18-native-fx-gpu-integration.md)

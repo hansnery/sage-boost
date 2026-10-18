@@ -70,6 +70,18 @@ $(BUILD)/bfme2perf.asi: $(OBJS) src/bfme2perf.def
 $(BUILD)/test_load.exe: tests/test_load.c | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -static -o $@ $<
 
+# Offline CPU screen only; native bodies are read from local images at run time.
+$(BUILD)/bench_native_decode.exe: tests/bench_native_decode.c tests/bench_guard.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $<
+
+.PHONY: test-native-decode bench-native-decode
+test-native-decode: $(BUILD)/bench_native_decode.exe
+	python ../tools/bench_native_decode.py "$(AOTR_DAT)" $< --self-test --samples 0
+	python ../tools/bench_native_decode.py "$(ROTWK_DAT)" $< --self-test --samples 0
+
+bench-native-decode: $(BUILD)/bench_native_decode.exe
+	python ../tools/bench_native_decode.py "$(AOTR_DAT)" $< --self-test
+
 $(BUILD)/test_sites.exe: tests/test_sites.c src/scan.c src/sites.c src/uistate.c src/fpsites.c \
                          src/btnclock.c src/passflag.c src/spsites.c src/cusites.c src/ltsites.c \
                          src/*.h | $(BUILD)

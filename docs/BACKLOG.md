@@ -78,6 +78,17 @@ Strike an item through, with the date, when it's done.
 - [ ] Replace controlled source computations and qualify side effects and
   lifetimes. Investigate avoidable source evaluation for inputs unused by
   the selected technique; require output/state and meaningful timing proof.
+- [x] 2026-10-18: AddBinding full-body audit confirms existing selected-
+  technique usage filtering in both local images. A parsing parent can be
+  tested instead of the leaf; actual member/array usage remains to inspect.
+- [x] 2026-10-18: screen exact sharing of native encoding-1 animation
+  decoding, including warm caller caches. Both images pass 303,821 output
+  comparisons plus broken/refusal controls; 504 timings retained. Warm
+  savings are small and diversity can regress; no promotion. See
+  `specs/2026-10-18-native-decode-screen.md`.
+- [ ] Inspect actual effect member usage and remaining shadow scene setup;
+  require meaningful savings on a credible changing-input workload before
+  implementation. Do not treat cold decoding or fixture counts as gameplay.
 - [x] 2026-10-17: larger material-queue fixture passes native/DXVK fresh
   pose, material invalidation, regular/extra image and state checks.
 - [x] 2026-10-17: recollect material-queue timings with the game closed.

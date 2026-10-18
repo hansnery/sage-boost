@@ -1,0 +1,328 @@
+{
+  "description": "Synthetic encoding-1 decoder CPU screen, not gameplay or FPS. Native bodies only in private RAM. No production hook.",
+  "parent_commit": "b1ed8650f890569b1b46c3d8d13d5bd650acbf06",
+  "candidate": {
+    "entries": 1024,
+    "entry_bytes": 60,
+    "reset_each_repetition": true,
+    "key": "channel identity, input frame, requested frame, all input-state words",
+    "immutable_channels_and_streams": true,
+    "generated_filter_table": true
+  },
+  "runs": [
+    {
+      "run": 1,
+      "log": "perf/build/native-decode-final-1.txt",
+      "sha256": "ddfd0d8a630b60292f4658fae51a76185752dd0507243db2e05453023166d13e",
+      "executable_sha256": "a694dcbee328312a5c2ccb2723accc3365c64e9c2ca2be433dbf1732212980e8",
+      "samples": 252
+    },
+    {
+      "run": 2,
+      "log": "perf/build/native-decode-final-2.txt",
+      "sha256": "21c7da3db132768762324abea7835369ac69020d2fca4ac3b23dc605b0395d3e",
+      "executable_sha256": "a694dcbee328312a5c2ccb2723accc3365c64e9c2ca2be433dbf1732212980e8",
+      "samples": 252
+    }
+  ],
+  "summary": [
+    {
+      "run": 1,
+      "distance": 0,
+      "phases": 1,
+      "native_ms": 0.431025,
+      "candidate_ms": 0.274175,
+      "saving_ms": 0.155575,
+      "saving_p10_ms": 0.15065,
+      "saving_p90_ms": 0.161,
+      "hit_fraction": 0.9564615885416666
+    },
+    {
+      "run": 1,
+      "distance": 0,
+      "phases": 8,
+      "native_ms": 0.426875,
+      "candidate_ms": 0.45155,
+      "saving_ms": -0.024375,
+      "saving_p10_ms": -0.0275,
+      "saving_p90_ms": -0.020075,
+      "hit_fraction": 0.7152099609375
+    },
+    {
+      "run": 1,
+      "distance": 0,
+      "phases": 64,
+      "native_ms": 0.43295,
+      "candidate_ms": 0.700575,
+      "saving_ms": -0.26715,
+      "saving_p10_ms": -0.2711,
+      "saving_p90_ms": -0.26505,
+      "hit_fraction": 0.049560546875
+    },
+    {
+      "run": 1,
+      "distance": 1,
+      "phases": 1,
+      "native_ms": 0.6164,
+      "candidate_ms": 0.251225,
+      "saving_ms": 0.36495,
+      "saving_p10_ms": 0.361825,
+      "saving_p90_ms": 0.3666,
+      "hit_fraction": 0.998046875
+    },
+    {
+      "run": 1,
+      "distance": 1,
+      "phases": 8,
+      "native_ms": 0.616075,
+      "candidate_ms": 0.44775,
+      "saving_ms": 0.168125,
+      "saving_p10_ms": 0.1662,
+      "saving_p90_ms": 0.17435,
+      "hit_fraction": 0.7664794921875
+    },
+    {
+      "run": 1,
+      "distance": 1,
+      "phases": 64,
+      "native_ms": 0.61925,
+      "candidate_ms": 0.841025,
+      "saving_ms": -0.2217,
+      "saving_p10_ms": -0.22555,
+      "saving_p90_ms": -0.213525,
+      "hit_fraction": 0.035888671875
+    },
+    {
+      "run": 1,
+      "distance": 8,
+      "phases": 1,
+      "native_ms": 1.69125,
+      "candidate_ms": 0.369225,
+      "saving_ms": 1.322025,
+      "saving_p10_ms": 1.31865,
+      "saving_p90_ms": 1.32355,
+      "hit_fraction": 0.9564615885416666
+    },
+    {
+      "run": 1,
+      "distance": 8,
+      "phases": 8,
+      "native_ms": 1.705525,
+      "candidate_ms": 0.9334,
+      "saving_ms": 0.773225,
+      "saving_p10_ms": 0.762875,
+      "saving_p90_ms": 0.779975,
+      "hit_fraction": 0.6434326171875
+    },
+    {
+      "run": 1,
+      "distance": 8,
+      "phases": 64,
+      "native_ms": 1.69995,
+      "candidate_ms": 1.94035,
+      "saving_ms": -0.240575,
+      "saving_p10_ms": -0.24615,
+      "saving_p90_ms": -0.230925,
+      "hit_fraction": 0.0435791015625
+    },
+    {
+      "run": 1,
+      "distance": 64,
+      "phases": 1,
+      "native_ms": 11.5676,
+      "candidate_ms": 0.274575,
+      "saving_ms": 11.2921,
+      "saving_p10_ms": 11.2789,
+      "saving_p90_ms": 11.365775,
+      "hit_fraction": 0.998046875
+    },
+    {
+      "run": 1,
+      "distance": 64,
+      "phases": 8,
+      "native_ms": 12.11595,
+      "candidate_ms": 4.67175,
+      "saving_ms": 7.43785,
+      "saving_p10_ms": 7.423925,
+      "saving_p90_ms": 7.490275,
+      "hit_fraction": 0.6639404296875
+    },
+    {
+      "run": 1,
+      "distance": 64,
+      "phases": 64,
+      "native_ms": 17.02115,
+      "candidate_ms": 16.557625,
+      "saving_ms": 0.46725,
+      "saving_p10_ms": 0.430075,
+      "saving_p90_ms": 0.47485,
+      "hit_fraction": 0.045003255208333336
+    },
+    {
+      "run": 2,
+      "distance": 0,
+      "phases": 1,
+      "native_ms": 0.432625,
+      "candidate_ms": 0.275325,
+      "saving_ms": 0.153925,
+      "saving_p10_ms": 0.13665,
+      "saving_p90_ms": 0.2195,
+      "hit_fraction": 0.9564615885416666
+    },
+    {
+      "run": 2,
+      "distance": 0,
+      "phases": 8,
+      "native_ms": 0.4315,
+      "candidate_ms": 0.4499,
+      "saving_ms": -0.017925,
+      "saving_p10_ms": -0.02095,
+      "saving_p90_ms": -0.0104,
+      "hit_fraction": 0.7152099609375
+    },
+    {
+      "run": 2,
+      "distance": 0,
+      "phases": 64,
+      "native_ms": 0.435925,
+      "candidate_ms": 0.69335,
+      "saving_ms": -0.257225,
+      "saving_p10_ms": -0.2665,
+      "saving_p90_ms": -0.253375,
+      "hit_fraction": 0.049560546875
+    },
+    {
+      "run": 2,
+      "distance": 1,
+      "phases": 1,
+      "native_ms": 0.620525,
+      "candidate_ms": 0.2527,
+      "saving_ms": 0.3669,
+      "saving_p10_ms": 0.35185,
+      "saving_p90_ms": 0.381725,
+      "hit_fraction": 0.998046875
+    },
+    {
+      "run": 2,
+      "distance": 1,
+      "phases": 8,
+      "native_ms": 0.615525,
+      "candidate_ms": 0.449625,
+      "saving_ms": 0.166125,
+      "saving_p10_ms": 0.162375,
+      "saving_p90_ms": 0.17415,
+      "hit_fraction": 0.7664794921875
+    },
+    {
+      "run": 2,
+      "distance": 1,
+      "phases": 64,
+      "native_ms": 0.62005,
+      "candidate_ms": 0.8392,
+      "saving_ms": -0.217625,
+      "saving_p10_ms": -0.240775,
+      "saving_p90_ms": -0.1972,
+      "hit_fraction": 0.035888671875
+    },
+    {
+      "run": 2,
+      "distance": 8,
+      "phases": 1,
+      "native_ms": 1.695225,
+      "candidate_ms": 0.3694,
+      "saving_ms": 1.32545,
+      "saving_p10_ms": 1.318,
+      "saving_p90_ms": 1.359175,
+      "hit_fraction": 0.9564615885416666
+    },
+    {
+      "run": 2,
+      "distance": 8,
+      "phases": 8,
+      "native_ms": 1.7148,
+      "candidate_ms": 0.93465,
+      "saving_ms": 0.78015,
+      "saving_p10_ms": 0.771775,
+      "saving_p90_ms": 0.791025,
+      "hit_fraction": 0.6434326171875
+    },
+    {
+      "run": 2,
+      "distance": 8,
+      "phases": 64,
+      "native_ms": 1.701225,
+      "candidate_ms": 1.947375,
+      "saving_ms": -0.245625,
+      "saving_p10_ms": -0.25615,
+      "saving_p90_ms": -0.241475,
+      "hit_fraction": 0.0435791015625
+    },
+    {
+      "run": 2,
+      "distance": 64,
+      "phases": 1,
+      "native_ms": 11.5642,
+      "candidate_ms": 0.274525,
+      "saving_ms": 11.2865,
+      "saving_p10_ms": 11.2745,
+      "saving_p90_ms": 11.593275,
+      "hit_fraction": 0.998046875
+    },
+    {
+      "run": 2,
+      "distance": 64,
+      "phases": 8,
+      "native_ms": 12.1651,
+      "candidate_ms": 4.7017,
+      "saving_ms": 7.460525,
+      "saving_p10_ms": 7.421675,
+      "saving_p90_ms": 7.922525,
+      "hit_fraction": 0.6639404296875
+    },
+    {
+      "run": 2,
+      "distance": 64,
+      "phases": 64,
+      "native_ms": 17.027275,
+      "candidate_ms": 16.555075,
+      "saving_ms": 0.477525,
+      "saving_p10_ms": 0.45095,
+      "saving_p90_ms": 0.493975,
+      "hit_fraction": 0.045003255208333336
+    }
+  ],
+  "controls": {
+    "per_image_direct": 8909,
+    "per_image_workload_pairs": 294912,
+    "abi_errors": 0,
+    "altered_code_controls": 6,
+    "broken_cache_controls": 3,
+    "images": [
+      "game.dat",
+      "game820.dat"
+    ]
+  },
+  "files": {
+    "tools/bench_native_decode.py": "17d5dcf392052eeffde53b67ca0cd3c33900a66bfa97014bc147b5bc04a666b7",
+    "perf/tests/bench_native_decode.c": "c0b98089bd85b4ed8b4ea797823dd164925a2fc62c1514cfd3f2eefceafa3fc1",
+    "perf/tests/bench_guard.h": "46082a3fef62b0e26ea0f16b6294171af964e0cb952c7dd7c8ef9a509cd8adf6",
+    "perf/Makefile": "c70bba0b388d491cc14d223b2c73e79535326770e7c21c2d243b39030d795d07",
+    "perf/build/bench_native_decode.exe": "a694dcbee328312a5c2ccb2723accc3365c64e9c2ca2be433dbf1732212980e8",
+    "perf/build/native-decode-tests.txt": "59008839f63bd6b170c2896eeb44968c54c44efb515fc93ee1b41743d5d5c601"
+  },
+  "installed": {
+    "C:\\repositories\\sage-boost\\perf\\build\\bfme2perf.asi": "abb5e35d40e52abcc4190d264cb0d4cdb39173e073456608c7e14fa209426540",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\mss\\bfme2perf.asi": "db65e51d42bb7f49947631a17b9aeebc0604f3cd9e2c055d8e8a35daf65408e5",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\mss\\bfme2perf.ini": "79bbb612a6ce22e76f930e9334a6e650bc2c49c3d28260c6bc716c026da94c54"
+  },
+  "excluded": [
+    "native-decode-screen-1.txt: earlier library-copy candidate, timing used separate state/output; superseded by final word-copy and aliasing workload"
+  ],
+  "source_filter_audit": {
+    "reference_rva": "0x153aca",
+    "target_rva": "0x153459",
+    "size": 207,
+    "target_sha256": "87ac971df345ef8553d666cef19b7a9bcd1fe8301f0888ba809d1e206724ffc2",
+    "result": "Both target images have one complete wildcarded match; native slot 0xF8 and zero-result branch gate channel insertion. Selected-technique unused-input filtering already exists."
+  }
+}
