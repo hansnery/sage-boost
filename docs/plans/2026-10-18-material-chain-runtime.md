@@ -16,30 +16,30 @@ Stable branches and installed INI values stay unchanged. A saved-game
 
 ## Runtime and reporting
 
-- [ ] Require the completed material-chain qualification commit first.
-- [ ] In `perf/src/bulk.c`, replace the count `!= 1` admission condition
+- [x] Require the completed material-chain qualification commit first.
+- [x] In `perf/src/bulk.c`, replace the count `!= 1` admission condition
   with `(*(const unsigned *)(first + 4) - 1u) > 5u`, rejecting zero and
   out-of-range counts while accepting the six valid native slots.
-- [ ] Extend `pf_inst_counts` with `unsigned bulk_followers[2][6]`.
+- [x] Extend `pf_inst_counts` with `unsigned bulk_followers[2][6]`.
   Save the starting record in `pf_inst_bulk_advance`; after consumption,
   increment that method count's regular/extra bucket in take and totals.
   These mean consumed records, not necessarily successful submissions.
-- [ ] Append twelve `bulk_followers_1..6` / `extra_bulk_followers_1..6`
+- [x] Append twelve `bulk_followers_1..6` / `extra_bulk_followers_1..6`
   raw per-row CSV columns. Test values, absent instrumentation and maximum
   row width. Add screen assertions for exact method/extra attribution.
-- [ ] Teach `prepare_chain_screen.py` to recognize exactly one supported
+- [x] Teach `prepare_chain_screen.py` to recognize exactly one supported
   old/new guard, preserving its same-process old-gate comparison.
-- [ ] Add recovery targets that link the actual production `bulk.o`, not
+- [x] Add recovery targets that link the actual production `bulk.o`, not
   the generated switchable gate. Run normal both-image/backend/lit/shadow
   controls with six/twenty bones; deliberate disabled-gate mutations apply
   only to the switchable screen, not production objects.
-- [ ] Bump main/resource/load-test version to `0.9.11-beta.13`, run the full
+- [x] Bump main/resource/load-test version to `0.9.11-beta.13`, run the full
   suite and general-register instruction audit, then refresh paired DXVK
   timing on lit and fresh-shadow twenty-bone/six-method workloads.
 
 ## Delivery
 
-- [ ] Record concrete results, hashes, limitations and live-coverage
+- [x] Record concrete results, hashes, limitations and live-coverage
   uncertainty in STATUS, BACKLOG and beta.13 release notes.
 - [ ] Commit explicit paths with the existing co-author trailer and push
   the authorized beta branch. Keep main, stable branch and tags intact.

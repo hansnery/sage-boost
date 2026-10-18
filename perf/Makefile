@@ -530,6 +530,13 @@ $(BUILD)/test_chain_recovery.exe: tests/test_chain_recovery.c tests/native_chain
 $(BUILD)/test_chain_recovery_20.exe: tests/test_chain_recovery.c tests/native_chain_fixture.h $(BUILD)/test_runtime_group_fallback.exe $(BUILD)/bulk_chain_screen.o
 	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_RUNTIME_BULK -DPF_FIXTURE_BONES=20 -static -o $@ $< $(CHAIN_RECOVERY_OBJS) $(CHECKED_WRAP) -Wl,--wrap=pf_inst_bulk_cancel
 
+CHAIN_RUNTIME_OBJS = $(filter-out $(BUILD)/bulk_chain_screen.o,$(CHAIN_RECOVERY_OBJS)) $(BUILD)/bulk.o
+$(BUILD)/test_chain_runtime.exe: tests/test_chain_recovery.c tests/native_chain_fixture.h $(BUILD)/test_runtime_group_fallback.exe
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_RUNTIME_BULK -static -o $@ $< $(CHAIN_RUNTIME_OBJS) $(CHECKED_WRAP) -Wl,--wrap=pf_inst_bulk_cancel
+
+$(BUILD)/test_chain_runtime_20.exe: tests/test_chain_recovery.c tests/native_chain_fixture.h $(BUILD)/test_runtime_group_fallback.exe
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_RUNTIME_BULK -DPF_FIXTURE_BONES=20 -static -o $@ $< $(CHAIN_RUNTIME_OBJS) $(CHECKED_WRAP) -Wl,--wrap=pf_inst_bulk_cancel
+
 $(BUILD)/inst_verify_old.c: | $(BUILD)
 	git show 35ac82b:perf/src/inst.c > $@
 

@@ -23,16 +23,26 @@ files before relying on it.
 
 ## Material-chain dispatch screen (2026-10-18)
 
+- Beta.13 now promotes the bounded 1..6-method follower guard and appends
+  normal/extra consumed-follower counters by method count. Full-suite,
+  instruction and all sixteen production-linked GPU recovery runs pass;
+  six selected replay corruptions are rejected. Fresh paired completion
+  savings are 3.4243 ms lit and 2.6242 ms shadow per synthetic normal/extra
+  pair. See [runtime decision and limits](specs/2026-10-18-material-chain-runtime.md).
+- The candidate is qualified for installation after commit/push and a
+  versioned backup. Until the installation receipt is recorded, beta.11
+  remains the installed build. Live chain coverage and saved-game FPS are
+  still unmeasured for beta.13; no 60 FPS claim follows from the fixture.
+
 - Recovery qualification now passes sixteen normal runs and rejects 22
   deliberate corruptions. The final checks require nonempty images and
   observable child shader/state behavior, native owning links, partial
   fallback, GPU replay and a successful group after failed Begin. Earlier
   empty-target and misordered-argument runs were discarded. See
   [qualification](specs/2026-10-18-material-chain-recovery.md).
-- This is still developer-only. Production source remains beta.12 and the
-  installed ASI remains beta.11; INI bytes match. Next, link the actual
-  production gate, report consumed followers by method count, and require
-  full-suite/instruction/GPU and timing evidence before installation.
+- The recovery qualification was developer-only; the subsequent runtime
+  promotion above supersedes that checkpoint. The installed ASI/INI hashes
+  still matched beta.11 when the final validation report was generated.
 
 - The copied log's cumulative shadow-state summary leaves zero comparator
   splits after merging 6,119. This does not identify every live group, but

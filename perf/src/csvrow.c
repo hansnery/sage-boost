@@ -98,7 +98,10 @@ const char pf_csv_header[] =
     "present_gap_le_16667us,present_gap_le_20000us,present_gap_le_25000us,"
     "present_gap_le_33334us,present_gap_le_50000us,present_gap_le_100000us,"
     "present_gap_le_200000us,present_gap_le_500000us,present_gap_le_1000000us,"
-    "present_gap_over_1000000us\r\n";
+    "present_gap_over_1000000us,bulk_followers_1,bulk_followers_2,bulk_followers_3,"
+    "bulk_followers_4,bulk_followers_5,bulk_followers_6,extra_bulk_followers_1,"
+    "extra_bulk_followers_2,extra_bulk_followers_3,extra_bulk_followers_4,"
+    "extra_bulk_followers_5,extra_bulk_followers_6\r\n";
 
 const char pf_scope_header[] = "time_s,scope,calls_per_frame,ms_per_frame\r\n";
 
@@ -519,6 +522,13 @@ unsigned pf_format_row(const pf_row *r, char *out, unsigned cap)
         for (i = 0; i < PF_PRESENT_BINS; i++) {
             sep(&o);
             if (present) put_u(&o, r->presentation.bins[i]);
+        }
+    }
+    {
+        unsigned extra, method;
+        for (extra = 0; extra < 2; extra++) for (method = 0; method < 6; method++) {
+            sep(&o);
+            if (r->have & PF_HAVE_INST) put_u(&o, r->inst.bulk_followers[extra][method]);
         }
     }
     return finish(&o, cap);

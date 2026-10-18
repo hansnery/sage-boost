@@ -74,7 +74,10 @@ int main(void)
                   "present_gap_le_16667us,present_gap_le_20000us,present_gap_le_25000us,"
                   "present_gap_le_33334us,present_gap_le_50000us,present_gap_le_100000us,"
                   "present_gap_le_200000us,present_gap_le_500000us,present_gap_le_1000000us,"
-                  "present_gap_over_1000000us\r\n"),
+                  "present_gap_over_1000000us,bulk_followers_1,bulk_followers_2,bulk_followers_3,"
+                  "bulk_followers_4,bulk_followers_5,bulk_followers_6,extra_bulk_followers_1,"
+                  "extra_bulk_followers_2,extra_bulk_followers_3,extra_bulk_followers_4,"
+                  "extra_bulk_followers_5,extra_bulk_followers_6\r\n"),
           "header");
     CHECK(!strcmp(pf_scope_labels[PF_SCOPE_VIEWS], "RenderViews") &&
               !strcmp(pf_scope_labels[PF_SCOPE_FX_BATCH], "RenderFXShaderBatch"),
@@ -233,9 +236,14 @@ int main(void)
     /* The speed is game frames / 30 (30 here), not the 27 logic calls. */
     strcat(expect, ",5,27,100.0,10.000,25,21.000,3.500,4,6.500,5");
     strcat(expect, ",10,2.000,1.000,0.500,20,3,40,5,0,0.000,0.000,0.000,0,0,0,0"
-                   ",30,4.000,3.000,1.000,60,10,120,20,10,30,15,5,2,8,0,0,45,0,40,3,0,0,0,0,0,0,0,0.000,0,0,,0,,0,,0,,0,,0,0,,,0,0,0,0,0,0,0,0,0,0,0,0\r\n");
+                   ",30,4.000,3.000,1.000,60,10,120,20,10,30,15,5,2,8,0,0,45,0,40,3,0,0,0,0,0,0,0,0.000,0,0,,0,,0,,0,,0,,0,0,,,0,0,0,0,0,0,0,0,0,0,0,0"
+                   ",0,0,0,0,0,0,0,0,0,0,0,0\r\n");
     n = pf_format_row(&r, buf, sizeof buf);
     CHECK(n == strlen(buf) && !strcmp(buf, expect), "full row:\n%s%s", buf, expect);
+    for(unsigned e=0;e<2;e++)for(unsigned m=0;m<6;m++)r.inst.bulk_followers[e][m]=e*6+m+1;
+    n=pf_format_row(&r,buf,sizeof buf);
+    CHECK(n && strstr(buf,",1,2,3,4,5,6,7,8,9,10,11,12\r\n"),
+          "raw consumed followers retain method and regular/extra order: %s",buf);
     r.fps_blocked[0] = 12; r.fps_blocked[1] = 3;
     r.fps_blocked[2] = 4; r.fps_blocked[3] = 5;
     r.fps_probes[0] = 2; r.fps_probes[1] = 1; r.fps_probes[2] = 1;
@@ -275,7 +283,7 @@ int main(void)
     strcpy(expect, "7,30,10.000,12.345,,,,,,0,0,");
     commas(expect, 20);
     strcat(expect, "10.000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
-    commas(expect, 21 + 12 + 8 + 2 + 32 + 2 + 2 + 8 + 27);
+    commas(expect, 21 + 12 + 8 + 2 + 32 + 2 + 2 + 8 + 27 + 12);
     strcat(expect, "\r\n");
     CHECK(n && !strcmp(buf, expect), "frame only:\n%s%s", buf, expect);
 
@@ -286,7 +294,7 @@ int main(void)
     strcpy(expect, "7,30,10.000,12.345,,,0.000,0.000,0,0,0,");
     commas(expect, 19);
     strcat(expect, ",0.000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
-    commas(expect, 21 + 12 + 8 + 2 + 32 + 2 + 2 + 8 + 27);
+    commas(expect, 21 + 12 + 8 + 2 + 32 + 2 + 2 + 8 + 27 + 12);
     strcat(expect, "\r\n");
     CHECK(n && !strcmp(buf, expect), "no skeleton calls:\n%s%s", buf, expect);
     CHECK(pf_format_row(&r, buf, 10) == 0, "too small a buffer is refused");

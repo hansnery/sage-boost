@@ -17,6 +17,9 @@ static void chain_check(int extra)
     unsigned bulk=chain_allow || chain_count==1;
     REQUIRE(bench_leader_suppressed()==GROUPS);
     REQUIRE(bench_native_group_consumed()==(bulk?GROUPS*(GROUP_SIZE-1):0));
+    for(unsigned e=0;e<2;e++)for(unsigned m=0;m<6;m++)
+        REQUIRE(counts.bulk_followers[e][m]==
+            (bulk && e==(unsigned)extra && m==chain_count-1?GROUPS*(GROUP_SIZE-1):0));
     if(!extra)REQUIRE(counts.meshes==GROUPS*GROUP_SIZE && counts.draws==fixture_batches(GROUP_SIZE)*GROUPS);
     REQUIRE(nx_static_calls==GROUPS && nx_bone_calls==GROUPS*2 && nx_dynamic_calls==GROUPS && nx_begins==GROUPS);
     REQUIRE(chain_begins==GROUPS && chain_sets==2*chain_count*GROUPS);

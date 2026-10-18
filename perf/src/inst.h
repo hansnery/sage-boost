@@ -34,6 +34,9 @@ typedef struct {
      * their own group says; counted to size a merge across groups). */
     unsigned shadow_split;
     unsigned shadow_inst_us; /* time in the shadow pass's instanced draws */
+    /* Consumed followers by method count 1..6, regular then extra frames.
+     * Leaders are excluded; consumption is not proof of successful drawing. */
+    unsigned bulk_followers[2][6];
 } pf_inst_counts;
 
 /* Game structure offsets (AotR / ROTWK 2.01; read by the plugin, never written). */
@@ -75,7 +78,8 @@ void pf_inst_set_sites(unsigned mesh_site, unsigned dip_site);
 void pf_inst_set_shadow(const volatile unsigned char *flag, int instancing);
 void *pf_inst_enter(unsigned k, void **slot, void *next);
 /* 1 while the plugin draws an extra frame (fps.c): groups are still drawn
- * instanced, but nothing is counted and no verify sample is taken. */
+ * instanced, but only bulk-consumption coverage is counted and no verify
+ * sample is taken. */
 void pf_inst_set_extra(int on);
 void pf_inst_take(pf_inst_counts *c);
 void pf_inst_totals(pf_inst_counts *c);

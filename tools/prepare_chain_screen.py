@@ -10,8 +10,11 @@ def main():
     parser.add_argument('output', type=Path)
     args = parser.parse_args()
     source = args.source.read_text()
-    guard = '*(const unsigned *)(first + 4) != 1'
-    assert source.count(guard) == 1, 'bulk method-count guard changed'
+    guards = ('*(const unsigned *)(first + 4) != 1',
+              '(*(const unsigned *)(first + 4) - 1u) > 5u')
+    found = [guard for guard in guards if source.count(guard) == 1]
+    assert len(found) == 1, 'bulk method-count guard changed'
+    guard = found[0]
     assert source.startswith('#include "bulk.h"\n')
     result = source.replace(guard, '!bench_chain_gate(*(const unsigned *)(first + 4))')
     result = result.replace('#include "bulk.h"\n',

@@ -98,6 +98,13 @@ short/incomplete intervals, counter corruption and absent/mismatched shadows.
 | `prepare_chain_screen.py` | generates an ignored copy of our bulk dispatcher with only its one-method gate made switchable. Optional `build/bench_chain_screen.exe` and `_20.exe` targets compare installed/candidate gates in one process through native group/mesh/FX and GPU paths. Native chain walkers use controlled owning children; complete method-array boundaries remain intact. No production change, arbitrary native-child/failure qualification or FPS claim. See `docs/specs/2026-10-18-material-chain-bulk.md`. |
 | `test_chain_recovery.py` | runs the optional `build/test_chain_recovery.exe` / `_20.exe` fixtures with verified native manifests; `--fault 1..7` selects deliberate replay/state corruption. Chains of two through six methods preserve nonempty output, references, lifecycle, effect/device state and following groups under GPU errors and partial staging. Child callbacks are controlled and the gate remains developer-only. See `docs/specs/2026-10-18-material-chain-recovery.md`. |
 
+Beta.13's `build/test_chain_runtime.exe` and `build/test_chain_runtime_20.exe`
+use the same recovery launcher but link the actual production dispatcher.
+The switchable `bench_chain_screen_20.exe` retains old/new gate comparisons
+and verifies the twelve consumed-follower CSV counters' attribution. See
+`docs/specs/2026-10-18-material-chain-runtime.md` for production checks and
+fresh paired measurements; the installed INI does not need modification.
+
 ## Maps, castles and AI bases (`.map`, `.bse`)
 
 A `.bse` (castle or AI base under the game's `bases\`) is a WorldBuilder map:

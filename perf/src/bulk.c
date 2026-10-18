@@ -100,7 +100,7 @@ int pf_bulk_dispatch(unsigned *regs)
     void *method = (void *)regs[1];
     if (current <= first || current >= end || frame[-1] != 1 || frame[-9] != 1 ||
         frame[-11] != 1 || regs[6] != 1 || frame[-7] != (unsigned)(current + PF_RECORD_SIZE) ||
-        *(const unsigned *)(first + 4) != 1 || !pf_inst_bulk_matches(current, end, method))
+        (*(const unsigned *)(first + 4) - 1u) > 5u || !pf_inst_bulk_matches(current, end, method))
         return 0;
     if (!pf_timing_bulk_begin()) {
         pf_submit_result result = pf_inst_bulk_cancel();

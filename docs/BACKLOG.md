@@ -12,10 +12,14 @@ Strike an item through, with the date, when it's done.
   normal runs pass; 22 deliberate corruptions are rejected. Nonempty pixel
   references close a false-pass gap discovered during development. See
   `specs/2026-10-18-material-chain-recovery.md`.
-- [ ] Promote the qualified count-1..6 guard, report actual consumed
+- [x] 2026-10-18: promote the qualified count-1..6 guard, report actual consumed
   followers per method count, validate the linked production code and
   refresh paired timings before installing a substantive beta.13. Keep
-  beta.11 installed until then; saved-game result is still 30.0667/s.
+  beta.11 installed until the deployment receipt; saved-game result is still
+  30.0667/s. Full suite, production GPU matrix, instruction checks and fresh
+  paired timings pass; completion savings are 2.62-3.42 ms per synthetic pair.
+- [ ] Install the tested beta.13 after backup and hash verification, then
+  collect the user's next heavy-save presentation-rate/pacing capture.
 
 - [x] 2026-10-18: beta.10 activates the qualified native group path with
   signature-verified startup installation, production accounting and group

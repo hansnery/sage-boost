@@ -1,0 +1,494 @@
+{
+  "date": "2026-10-18",
+  "version": "0.9.11-beta.13",
+  "parent_commit": "4b04aea9a736b4277be744d12020e75813d4ce65",
+  "normal_runs": 16,
+  "negative_runs": 6,
+  "timing_runs": 2,
+  "sources_and_binaries": {
+    "perf/src/bulk.c": "4d98d69e0d6d53e362298395ac559f9c974d25833cffc9d008474fe4850594ef",
+    "perf/src/inst.c": "6e46306917ce2d036afe3d6aa25326233b327b8e3b95ec3f3c1ece7fbaecda2a",
+    "perf/src/inst.h": "2076a17673ffdfe2edbf491de20df6563f4c4a4aafc5d002a5ebfe2c30f3d6cb",
+    "perf/src/csvrow.c": "a95749b532c5de7370ff85ac318d5e9fe67fc5bc9455497315e6be8dd08b0182",
+    "perf/src/version.rc": "ba15ee93d2b88b9454eba37fd6bd1308d9b3467f807d47c7c6d9e98f3448ec8b",
+    "perf/src/main.c": "7a872b1636d318d0bfe8eb7769d076f1cc7bfac750112030006a488e05ac2264",
+    "perf/tests/test_chain_recovery.c": "c0e14888fa4cbaa0b264fbc612f30f7b2c4ccf39d91f031ae58596518bb65d3b",
+    "perf/tests/native_chain_fixture.h": "6e593e4dd1f7bd92c65ca32d243a8afbab244b56a5beecb41fef9afe6fe0226d",
+    "perf/tests/test_native_gpu_faults.c": "79519217b494aeae8d688f65551028922b7edd97cb325fb51427d3a140b299bd",
+    "perf/tests/test_native_group_fallback.c": "aa2cdcf6cd4b80d07996f7539db44d9a0acbe29b2a380f9653a5d2f66c4d7700",
+    "perf/tests/material_fixture.c": "2256d31dbed14712c8be4f69f44e29a01243ff3f374315295eabcbf8cdbb68db",
+    "tools/test_chain_recovery.py": "ae791ae3f8bbb57bcb526373f86f1a725da32c83cf34616081f944012bc04377",
+    "perf/tests/bench_chain_screen.c": "8f774941ca7f20d6300421869b6aa10bc4e7bf4359752dd0a03f8d14231254f2",
+    "tools/prepare_chain_screen.py": "eca039a8f6151e3659f06fe45eed76c154e2f9005aaed8238a3e10e218ada4fc",
+    "perf/Makefile": "1b4bf19bfc631e8c78b429e8a7820a7f074ef15456024c00093888c6a8a0e9c2",
+    "perf/build/bulk.o": "c3daa5e6a651daf507bd9b572146b2c5a7388939cb36d401b7a6d8b7a6b1d66c",
+    "perf/build/inst.o": "5e02fd0dd9933cc911ccb30e605eba6468c687676ca7dcf753070a8006868018",
+    "perf/build/bfme2perf.asi": "976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd",
+    "perf/build/test_chain_runtime.exe": "9218d0e2f75970f5f98f8300afb43bba12920a7d0d4d4e94c23e3463d37c6039",
+    "perf/build/test_chain_runtime_20.exe": "817eb1960c11054708db235eb8e002277e824f876792bf5fe71f426c1a256019",
+    "perf/build/bench_chain_screen_20.exe": "a79592b4738940efc5b2f75c2452f391f838f81926101141a23499d0932a72d3",
+    "perf/build/bulk_chain_screen.c": "43b1de162c26ca31d8c99d405d28f054bab0dd4604035b10a7f83ae2a592a148",
+    "perf/build/chain_runtime_dxvk/d3d9.dll": "00bc142e98ddad1e334a4d88fa630038e092b0758b3d79e295172b181a4c772d"
+  },
+  "runs": [
+    {
+      "label": "control-6-native-game.dat-lit-fault0",
+      "bones": 6,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "lit",
+      "fault": 0,
+      "timing": false,
+      "exit_code": 0,
+      "log": "perf/build/chain-runtime-control-6-native-game.dat-lit-fault0.txt",
+      "sha256": "e694bb3eebabb2460dc3ee0736913e4f041e37c6e9ede9c2e8cee862af66a907",
+      "refusal": []
+    },
+    {
+      "label": "control-6-native-game.dat-shadow-fault0",
+      "bones": 6,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "timing": false,
+      "exit_code": 0,
+      "log": "perf/build/chain-runtime-control-6-native-game.dat-shadow-fault0.txt",
+      "sha256": "0e23e0cda9f6ff011c63c26ba94b8270e51149ded5d9e49bcca8211a13183841",
+      "refusal": []
+    },
+    {
+      "label": "control-6-native-game820.dat-lit-fault0",
+      "bones": 6,
+      "backend": "native",
+      "image": "game820.dat",
+      "kind": "lit",
+      "fault": 0,
+      "timing": false,
+      "exit_code": 0,
+      "log": "perf/build/chain-runtime-control-6-native-game820.dat-lit-fault0.txt",
+      "sha256": "e694bb3eebabb2460dc3ee0736913e4f041e37c6e9ede9c2e8cee862af66a907",
+      "refusal": []
+    },
+    {
+      "label": "control-6-native-game820.dat-shadow-fault0",
+      "bones": 6,
+      "backend": "native",
+      "image": "game820.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "timing": false,
+      "exit_code": 0,
+      "log": "perf/build/chain-runtime-control-6-native-game820.dat-shadow-fault0.txt",
+      "sha256": "0e23e0cda9f6ff011c63c26ba94b8270e51149ded5d9e49bcca8211a13183841",
+      "refusal": []
+    },
+    {
+      "label": "control-6-dxvk-game.dat-lit-fault0",
+      "bones": 6,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "lit",
+      "fault": 0,
+      "timing": false,
+      "exit_code": 0,
+      "log": "perf/build/chain-runtime-control-6-dxvk-game.dat-lit-fault0.txt",
+      "sha256": "1bceb7ab1ce2d790fdfbb0d2e6cd948573068c6b1c26cb800aad6edec205a79c",
+      "refusal": []
+    },
+    {
+      "label": "control-6-dxvk-game.dat-shadow-fault0",
+      "bones": 6,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "timing": false,
+      "exit_code": 0,
+      "log": "perf/build/chain-runtime-control-6-dxvk-game.dat-shadow-fault0.txt",
+      "sha256": "b5d3c204c5db97cde026e0176f5e37ee925335128798c3c19801acea9516465c",
+      "refusal": []
+    },
+    {
+      "label": "control-6-dxvk-game820.dat-lit-fault0",
+      "bones": 6,
+      "backend": "dxvk",
+      "image": "game820.dat",
+      "kind": "lit",
+      "fault": 0,
+      "timing": false,
+      "exit_code": 0,
+      "log": "perf/build/chain-runtime-control-6-dxvk-game820.dat-lit-fault0.txt",
+      "sha256": "1bceb7ab1ce2d790fdfbb0d2e6cd948573068c6b1c26cb800aad6edec205a79c",
+      "refusal": []
+    },
+    {
+      "label": "control-6-dxvk-game820.dat-shadow-fault0",
+      "bones": 6,
+      "backend": "dxvk",
+      "image": "game820.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "timing": false,
+      "exit_code": 0,
+      "log": "perf/build/chain-runtime-control-6-dxvk-game820.dat-shadow-fault0.txt",
+      "sha256": "b5d3c204c5db97cde026e0176f5e37ee925335128798c3c19801acea9516465c",
+      "refusal": []
+    },
+    {
+      "label": "control-20-native-game.dat-lit-fault0",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "lit",
+      "fault": 0,
+      "timing": false,
+      "exit_code": 0,
+      "log": "perf/build/chain-runtime-control-20-native-game.dat-lit-fault0.txt",
+      "sha256": "3ea471d94b19d0b8a682200957b5fda1bf6f0d0edcbe4230b5edfc46c95ae6de",
+      "refusal": []
+    },
+    {
+      "label": "control-20-native-game.dat-shadow-fault0",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "timing": false,
+      "exit_code": 0,
+      "log": "perf/build/chain-runtime-control-20-native-game.dat-shadow-fault0.txt",
+      "sha256": "f220017c88de8aecfe0d0df07f3d9abda8837e904d7a2b49b77f746daaeeeb29",
+      "refusal": []
+    },
+    {
+      "label": "control-20-native-game820.dat-lit-fault0",
+      "bones": 20,
+      "backend": "native",
+      "image": "game820.dat",
+      "kind": "lit",
+      "fault": 0,
+      "timing": false,
+      "exit_code": 0,
+      "log": "perf/build/chain-runtime-control-20-native-game820.dat-lit-fault0.txt",
+      "sha256": "3ea471d94b19d0b8a682200957b5fda1bf6f0d0edcbe4230b5edfc46c95ae6de",
+      "refusal": []
+    },
+    {
+      "label": "control-20-native-game820.dat-shadow-fault0",
+      "bones": 20,
+      "backend": "native",
+      "image": "game820.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "timing": false,
+      "exit_code": 0,
+      "log": "perf/build/chain-runtime-control-20-native-game820.dat-shadow-fault0.txt",
+      "sha256": "f220017c88de8aecfe0d0df07f3d9abda8837e904d7a2b49b77f746daaeeeb29",
+      "refusal": []
+    },
+    {
+      "label": "control-20-dxvk-game.dat-lit-fault0",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "lit",
+      "fault": 0,
+      "timing": false,
+      "exit_code": 0,
+      "log": "perf/build/chain-runtime-control-20-dxvk-game.dat-lit-fault0.txt",
+      "sha256": "e7a90f35ad13aa34456d081750d81fa8a732b8f14cbead03cb337db9450b0497",
+      "refusal": []
+    },
+    {
+      "label": "control-20-dxvk-game.dat-shadow-fault0",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "timing": false,
+      "exit_code": 0,
+      "log": "perf/build/chain-runtime-control-20-dxvk-game.dat-shadow-fault0.txt",
+      "sha256": "37c8857d73a5ed0c25c3b39c5b1160127c5f27b0e52ddf61d9d7c87f39e6e56e",
+      "refusal": []
+    },
+    {
+      "label": "control-20-dxvk-game820.dat-lit-fault0",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game820.dat",
+      "kind": "lit",
+      "fault": 0,
+      "timing": false,
+      "exit_code": 0,
+      "log": "perf/build/chain-runtime-control-20-dxvk-game820.dat-lit-fault0.txt",
+      "sha256": "e7a90f35ad13aa34456d081750d81fa8a732b8f14cbead03cb337db9450b0497",
+      "refusal": []
+    },
+    {
+      "label": "control-20-dxvk-game820.dat-shadow-fault0",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game820.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "timing": false,
+      "exit_code": 0,
+      "log": "perf/build/chain-runtime-control-20-dxvk-game820.dat-shadow-fault0.txt",
+      "sha256": "37c8857d73a5ed0c25c3b39c5b1160127c5f27b0e52ddf61d9d7c87f39e6e56e",
+      "refusal": []
+    },
+    {
+      "label": "control-20-native-game.dat-shadow-fault2",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 2,
+      "timing": false,
+      "exit_code": 1,
+      "log": "perf/build/chain-runtime-control-20-native-game.dat-shadow-fault2.txt",
+      "sha256": "84f436c92ebc0c52de34a670f9cc7943ab4d99444145d0daa069ec232b5a84a7",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:332: !r.pixels && !r.state && !r.active && r.instances+r.native==25"
+      ]
+    },
+    {
+      "label": "control-20-native-game.dat-shadow-fault5",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 5,
+      "timing": false,
+      "exit_code": 1,
+      "log": "perf/build/chain-runtime-control-20-native-game.dat-shadow-fault5.txt",
+      "sha256": "d4c4d51a0462cefd3a8abf2f2914de537f9830b186b998654f57ed0e69ce09a8",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:267: !ff_state_bad && result.active==expected_active && result.instances+result.native==25*ff_groups && (ff_allow_fallback || result.native==expected_ordinary) && !result.pixels"
+      ]
+    },
+    {
+      "label": "control-20-native-game.dat-shadow-fault7",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 7,
+      "timing": false,
+      "exit_code": 1,
+      "log": "perf/build/chain-runtime-control-20-native-game.dat-shadow-fault7.txt",
+      "sha256": "5ec7a66355c795b338b7218318dd827197e00b330ecbb333994339000c28ae91",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:267: !ff_state_bad && result.active==expected_active && result.instances+result.native==25*ff_groups && (ff_allow_fallback || result.native==expected_ordinary) && !result.pixels"
+      ]
+    },
+    {
+      "label": "control-20-dxvk-game.dat-shadow-fault2",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 2,
+      "timing": false,
+      "exit_code": 1,
+      "log": "perf/build/chain-runtime-control-20-dxvk-game.dat-shadow-fault2.txt",
+      "sha256": "9c88bd8f819c3150c1e77e27065d2482f0ebd304469c17ec4658f30db3851bf5",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:332: !r.pixels && !r.state && !r.active && r.instances+r.native==25"
+      ]
+    },
+    {
+      "label": "control-20-dxvk-game.dat-shadow-fault5",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 5,
+      "timing": false,
+      "exit_code": 1,
+      "log": "perf/build/chain-runtime-control-20-dxvk-game.dat-shadow-fault5.txt",
+      "sha256": "34a064c61086f21c4eb9b2632f5822b68fda6aacdbb963a623b75ad92ffc0c96",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:267: !ff_state_bad && result.active==expected_active && result.instances+result.native==25*ff_groups && (ff_allow_fallback || result.native==expected_ordinary) && !result.pixels"
+      ]
+    },
+    {
+      "label": "control-20-dxvk-game.dat-shadow-fault7",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 7,
+      "timing": false,
+      "exit_code": 1,
+      "log": "perf/build/chain-runtime-control-20-dxvk-game.dat-shadow-fault7.txt",
+      "sha256": "9989ccb4c86eb0aeb835c499112e24a46bc0340bcc00348cdf67a1f0de0d5a74",
+      "refusal": [
+        "benchmark refused: tests/test_native_gpu_faults.c:267: !ff_state_bad && result.active==expected_active && result.instances+result.native==25*ff_groups && (ff_allow_fallback || result.native==expected_ordinary) && !result.pixels"
+      ]
+    },
+    {
+      "label": "timing-20-dxvk-game.dat-lit-fault0",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "lit",
+      "fault": 0,
+      "timing": true,
+      "exit_code": 0,
+      "log": "perf/build/chain-runtime-timing-20-dxvk-game.dat-lit-fault0.txt",
+      "sha256": "2f21f4756a1dd5a7a160ec832128d79a12dbe4edcdd1cc7dc8078ac20286bc5d",
+      "refusal": []
+    },
+    {
+      "label": "timing-20-dxvk-game.dat-shadow-fault0",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "fault": 0,
+      "timing": true,
+      "exit_code": 0,
+      "log": "perf/build/chain-runtime-timing-20-dxvk-game.dat-shadow-fault0.txt",
+      "sha256": "e0335cf55698c21b7a9670c1bbe25667c03b53b452f41a976d59eb18448286a6",
+      "refusal": []
+    }
+  ],
+  "full_suite": {
+    "command": "mingw32-make test",
+    "exit_code": 0,
+    "log_sha256": "88c94fe481a3a03f235d4bec0fe0f8677e01a489e65ba4cf4de9fe3ed888e03a"
+  },
+  "instruction_audit": [
+    {
+      "object": "perf/build/bulk.o",
+      "instructions": 439,
+      "executable_bytes": 1600,
+      "sha256": "c3daa5e6a651daf507bd9b572146b2c5a7388939cb36d401b7a6d8b7a6b1d66c",
+      "result": "No x87, SIMD or FP-control instructions"
+    },
+    {
+      "object": "perf/build/bulkpatch.o",
+      "instructions": 170,
+      "executable_bytes": 640,
+      "sha256": "124d45b6f31e1f34919cfc7d983c4d91b70d466c4c2e842807d9767ee8d7430f",
+      "result": "No x87, SIMD or FP-control instructions"
+    },
+    {
+      "object": "perf/build/bulkcontract.o",
+      "instructions": 140,
+      "executable_bytes": 576,
+      "sha256": "d11dc7f6f2ccc1bd39316ba3a341a5b9389c1932957e2da6cbf621b7ca1c69b0",
+      "result": "No x87, SIMD or FP-control instructions"
+    },
+    {
+      "object": "perf/build/inst.o",
+      "instructions": 4022,
+      "executable_bytes": 17952,
+      "sha256": "5e02fd0dd9933cc911ccb30e605eba6468c687676ca7dcf753070a8006868018",
+      "result": "No x87, SIMD or FP-control instructions"
+    },
+    {
+      "object": "perf/build/instsubmit.o",
+      "instructions": 1023,
+      "executable_bytes": 4192,
+      "sha256": "f90f195f108e703c2611dc175395f1e03378e667d096290b064e92a13927b5da",
+      "result": "No x87, SIMD or FP-control instructions"
+    },
+    {
+      "object": "perf/build/timing.o",
+      "instructions": 2652,
+      "executable_bytes": 11328,
+      "sha256": "dff900a7788d821baa2bcbd92f9ca4bbd43f4174aa0d09f845e84a1df2d4f472",
+      "result": "No x87, SIMD or FP-control instructions"
+    },
+    {
+      "object": "perf/build/csvrow.o",
+      "instructions": 9992,
+      "executable_bytes": 38016,
+      "sha256": "964f8854733f75a8fe2c761fd0fea524e3c757fc0c28bd510a46f748d2742046",
+      "result": "No x87, SIMD or FP-control instructions"
+    },
+    {
+      "object": "perf/build/bulk_chain_screen.o",
+      "instructions": 445,
+      "executable_bytes": 1616,
+      "sha256": "dbafab7582fd69bdb5acb8199ba9b118fa4cc827e198bed8b7ded034adab6e8f",
+      "result": "No x87, SIMD or FP-control instructions"
+    },
+    {
+      "object": "perf/build/inst_recovery_engine.o",
+      "instructions": 5672,
+      "executable_bytes": 24544,
+      "sha256": "ae330ae4dafc54e9c3557908bc026a84d4dc0ab7b6d371bd274c5a775a457ee5",
+      "result": "No x87, SIMD or FP-control instructions"
+    },
+    {
+      "object": "perf/build/inst_runtime_fallback_engine.o",
+      "instructions": 5861,
+      "executable_bytes": 25312,
+      "sha256": "1d8990f61b9d8661918babb9b314053d4ff6a821dd2c3c6e16d8462b70ab4e1a",
+      "result": "No x87, SIMD or FP-control instructions"
+    }
+  ],
+  "timings": [
+    {
+      "run": "timing-20-dxvk-game.dat-lit-fault0",
+      "kind": "lit",
+      "median_ms": {
+        "baseline_regular_ms": 8.0235,
+        "retained_regular_ms": 6.1627,
+        "baseline_extra_ms": 7.2442,
+        "retained_extra_ms": 5.8515,
+        "baseline_pair_ms": 16.4395,
+        "retained_pair_ms": 12.8839,
+        "saved_pair_ms": 3.4398,
+        "baseline_complete_ms": 16.9013,
+        "retained_complete_ms": 13.5825,
+        "saved_complete_ms": 3.4243
+      },
+      "paired_saving_p10_p90_ms": [
+        2.5119,
+        3.9509
+      ]
+    },
+    {
+      "run": "timing-20-dxvk-game.dat-shadow-fault0",
+      "kind": "shadow",
+      "median_ms": {
+        "baseline_regular_ms": 7.595,
+        "retained_regular_ms": 5.86,
+        "baseline_extra_ms": 6.8473,
+        "retained_extra_ms": 5.5003,
+        "baseline_pair_ms": 15.5992,
+        "retained_pair_ms": 12.3975,
+        "saved_pair_ms": 2.9999,
+        "baseline_complete_ms": 15.9642,
+        "retained_complete_ms": 12.8235,
+        "saved_complete_ms": 2.6242
+      },
+      "paired_saving_p10_p90_ms": [
+        2.2231,
+        4.3541
+      ]
+    }
+  ],
+  "samples": {
+    "count": 42,
+    "path": "docs/benchmarks/2026-10-18-material-chain-runtime-samples.csv",
+    "sha256": "5d09706093aa7e92f1a56a988bd6700cdd9c98fb9ef5a4fef932ea5047c64e38"
+  },
+  "installed_before_deployment": {
+    "bfme2perf.asi": "574a085967d477a53037526c1ea7f6b6d257a559a36aab7f76573c4ca7cfe027",
+    "bfme2perf.ini": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b"
+  },
+  "limits": [
+    "GPU recovery uses actual production bulk.o and production instancing with only stage-refusal injection; child methods and source computations remain controlled.",
+    "Timing compares the one-method and count-1..6 gates in one process; the generated screen changes only the guard callback. Both include the new coverage counters.",
+    "The 7200-mesh synthetic workload has six methods in every group; live coverage remains unknown.",
+    "Counters report consumed followers, not successful submissions, and exclude deferred leaders.",
+    "No game launch or new saved-game FPS result; the last settled capture remains 30.0667 presentation calls/s."
+  ]
+}

@@ -1239,6 +1239,7 @@ int pf_inst_bulk_matches(const unsigned char *rec, const unsigned char *end, voi
 unsigned pf_inst_bulk_advance(const unsigned char *rec, const unsigned char *end, void *method,
                               pf_submit_result *outcome)
 {
+    const unsigned char *first = rec;
     unsigned n = 0;
     if (!pf_inst_bulk_matches(rec, end, method))
         goto done;
@@ -1263,6 +1264,14 @@ unsigned pf_inst_bulk_advance(const unsigned char *rec, const unsigned char *end
         release_stream_owner();
     }
 done:
+    if (n) {
+        unsigned methods = *(const unsigned *)(first + 4);
+        if (methods >= 1 && methods <= 6) {
+            unsigned extra = g_extra != 0;
+            g_take.bulk_followers[extra][methods - 1] += n;
+            g_total.bulk_followers[extra][methods - 1] += n;
+        }
+    }
     if (outcome)
         *outcome = g_bulk_result;
     return n;
