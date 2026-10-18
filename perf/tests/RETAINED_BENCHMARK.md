@@ -64,3 +64,7 @@ query wait. Neither is pure GPU time; there is no presentation/vsync.
 Readback and initial shader compilation are outside timing.
 
 Results: [retained-batch screen](../../docs/specs/2026-10-17-retained-batch-screen.md).
+
+The [material-queue extension](MATERIAL_QUEUE_BENCHMARK.md) adds the real
+local effect lifecycle and a persistent-cache experiment. The original
+`bench-retained` target keeps its optional fixture callbacks disabled.

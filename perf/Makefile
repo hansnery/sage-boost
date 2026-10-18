@@ -191,7 +191,7 @@ DISPATCH_OBJS := $(filter-out $(BUILD)/main.o $(BUILD)/rt.o $(BUILD)/inst.o $(BU
 $(BUILD)/bench_dispatch.exe: tests/bench_dispatch.c tests/test_inst.c $(BUILD)/inst_dispatch_engine.o $(DISPATCH_OBJS) src/*.h
 	$(CC) $(TEST_CFLAGS) -O2 -static -o $@ $< $(BUILD)/inst_dispatch_engine.o $(DISPATCH_OBJS)
 
-.PHONY: bench-dispatch bench-ambient bench-retained
+.PHONY: bench-dispatch bench-ambient bench-retained bench-material-queue
 DISPATCH_ASSETS ?= C:/Jogos/AgeoftheRing/rotwk
 
 $(BUILD)/bench_effect.exe: tests/bench_effect.c tests/shadow_fx/shadow_fx.c src/shadowfx_table.h | $(BUILD)
@@ -203,10 +203,27 @@ $(BUILD)/inst_retained_engine.o: tests/inst_retained_engine.c tests/inst_dispatc
 $(BUILD)/fps_extra_bench.o: tests/fps_extra_bench.c src/fps.c src/*.h | $(BUILD)
 	$(CC) $(CFLAGS) -Isrc -c -o $@ $<
 
-$(BUILD)/bench_retained.exe: tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(DISPATCH_OBJS) src/*.h
+$(BUILD)/bench_retained.exe: tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(DISPATCH_OBJS) src/*.h
 	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(filter-out $(BUILD)/fps.o,$(DISPATCH_OBJS))
 
+$(BUILD)/material_fixture.o: tests/material_fixture.c tests/shadow_fx/shadow_fx.c src/shadowfx_table.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -c -o $@ $<
+
+$(BUILD)/bench_material_queue.exe: tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/material_fixture.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(DISPATCH_OBJS) src/*.h
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/material_fixture.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(filter-out $(BUILD)/fps.o,$(DISPATCH_OBJS))
+
 RETAINED_MASK ?= narrow
+MATERIAL_CHURN ?=
+bench-material-queue: $(BUILD)/bench_material_queue.exe
+	./$(BUILD)/bench_material_queue.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit $(RETAINED_MASK) $(MATERIAL_CHURN)
+	./$(BUILD)/bench_material_queue.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow $(RETAINED_MASK) $(MATERIAL_CHURN)
+	@test -f "$(DXVK_D3D9)" || { echo "error: bench-material-queue requires DXVK_D3D9"; exit 1; }
+	mkdir -p $(BUILD)/material_dxvk
+	cp $(BUILD)/bench_material_queue.exe "$(DXVK_D3D9)" $(BUILD)/material_dxvk/
+	cd $(BUILD)/material_dxvk && \
+	  DXVK_LOG_LEVEL=none ./bench_material_queue.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit $(RETAINED_MASK) $(MATERIAL_CHURN) && \
+	  DXVK_LOG_LEVEL=none ./bench_material_queue.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow $(RETAINED_MASK) $(MATERIAL_CHURN)
+
 bench-retained: $(BUILD)/bench_retained.exe
 	./$(BUILD)/bench_retained.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit $(RETAINED_MASK)
 	./$(BUILD)/bench_retained.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow $(RETAINED_MASK)

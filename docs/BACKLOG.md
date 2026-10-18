@@ -20,6 +20,17 @@ Strike an item through, with the date, when it's done.
   target-ABI, material, reference, state, scope and fallback proofs before
   implementing an installed fast path. Current prototype is offline only.
 - [ ] Demonstrate sustained 60 visual FPS with full-rate shadows; still open.
+- [x] 2026-10-17: larger material-queue fixture passes native/DXVK fresh
+  pose, material invalidation, regular/extra image and state checks.
+- [ ] Recollect material-queue timings with no game process running. All
+  first 504 samples are excluded for concurrent game activity. The new
+  process guard correctly refuses the live game/launcher; quiet success
+  remains pending. See `specs/2026-10-17-material-queue-screen.md`.
+- [ ] If clean measurements justify it, prove the native effect/group
+  bridge, lifetimes, engine state and diagnostics before runtime promotion.
+  Current persistent cache borrows fixed fixture objects only.
+- [ ] Account for the externally observed return to installed 0.9.10 before
+  the next deployment/test. This work did not replace the ASI; INI unchanged.
 - [x] 2026-10-17: prototype retained GPU batches with fresh bone palettes,
   per-regular-frame capture cost, native/DXVK output/state checks and paired
   timings. Narrow replay passes but DXVK completion saves only ~0.2-0.4 ms;

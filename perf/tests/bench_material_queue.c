@@ -1,0 +1,189 @@
+/* Full-effect retained queue screen, never linked into the plugin. */
+#define PF_RETAINED_EMBED
+#include "bench_retained.c"
+
+extern void material_fixture_init(IDirect3DDevice9 *, const void *, unsigned, int, const char *);
+extern void material_fixture_begin(unsigned);
+extern void material_fixture_end(void);
+extern void material_fixture_bones(const void *, unsigned);
+extern void material_fixture_epoch(unsigned);
+extern void material_fixture_churn(unsigned);
+extern unsigned material_fixture_key(unsigned,unsigned char *,unsigned);
+extern void material_fixture_start(void);
+extern HRESULT material_fixture_mask(IDirect3DDevice9 *);
+extern unsigned material_fixture_state(IDirect3DDevice9 *,unsigned *,unsigned);
+extern void bench_retained_material_mask(HRESULT (*)(IDirect3DDevice9 *));
+static unsigned char material_keys[GROUPS][8192];
+static unsigned material_sizes[GROUPS];
+static unsigned persistent_churn;
+static unsigned persistent_hits,persistent_misses;
+static char material_runtime[MAX_PATH];
+
+static void __attribute__((thiscall)) effect_render(fake_mesh *mesh, fake_method *method, int count)
+{
+    unsigned bones[BONES*8];
+    fake_container *c=*(fake_container **)(mesh->b+PF_MESH_CONTAINER);
+    const unsigned char *piv=*(unsigned char **)((unsigned char *)c->htree+0x14);
+    (void)count;
+    for(unsigned j=0;j<BONES;j++) {
+        memcpy(bones+8*j,piv+g_bonemap[j]*0x58+0x30,28);
+        bones[8*j+7]=0;
+    }
+    material_fixture_bones(bones,sizeof bones);
+    site_draw(GRID*GRID*2);
+    method->refs--;
+}
+
+static void effect_setup(void)
+{
+    unsigned char code[32768];
+    unsigned n=sizeof code, hash=2166136261u, found=0;
+    IDirect3DVertexShader9 *vs=NULL;
+    material_fixture_init(g_dev,g_fx,g_fx_size,shadow_mode,material_runtime);
+    material_fixture_begin(0);
+    HR(IDirect3DDevice9_GetVertexShader(g_dev,&vs)); REQUIRE(vs);
+    HR(IDirect3DVertexShader9_GetFunction(vs,NULL,&n)); REQUIRE(n<=sizeof code);
+    HR(IDirect3DVertexShader9_GetFunction(vs,code,&n));
+    for(unsigned i=0;i<n;i++) hash=(hash^code[i])*16777619u;
+    for(unsigned i=0;i<PF_INST_VARIANTS;i++)
+        if(pf_inst_variants[i].ea_hash==hash && pf_inst_variants[i].ea_size==n) {
+            g_v=&pf_inst_variants[i]; found++;
+        }
+    REQUIRE(found==1);
+    g_ea=vs;
+    material_fixture_end();
+    printf("Bound effect shader: %08X, variant %u\n",hash,g_v->ea_index);
+    pf_timing_set_next(PF_INST_MESH,effect_render);
+    bench_retained_material_mask(material_fixture_mask);
+}
+
+static void spread(float *pivot,unsigned mesh)
+{
+    unsigned group=mesh/GROUP_SIZE;
+    pivot[4]+=3.f*(group%18);
+    pivot[5]+=3.f*(group/18);
+}
+
+static void validate_materials(void)
+{
+    static unsigned old[RT*RT], stock[RT*RT], fresh[RT*RT], stale[RT*RT];
+    double regular,extra,total;
+    unsigned changed=0,wrong=0,covered=0;
+    pair(1,&regular,&extra,&total,old);
+    material_fixture_epoch(1);
+    pair(0,&regular,&extra,&total,stock);
+    /* Negative control: replay the previous material generation. */
+    pose(1); frame_draw(1,1,stale);
+    pair(1,&regular,&extra,&total,fresh);
+    for(unsigned i=0;i<RT*RT;i++) {
+        covered+=stock[i]!=(shadow_mode?PF_DEPTH_CLEAR:0);
+        changed+=stock[i]!=old[i]; wrong+=stock[i]!=stale[i];
+        REQUIRE(shadow_mode?pf_depth_diff(stock[i],fresh[i])<=PF_DEPTH_TOLERANCE:stock[i]==fresh[i]);
+        if(shadow_mode) REQUIRE(stock[i]<=PF_DEPTH_CLEAR && fresh[i]<=PF_DEPTH_CLEAR);
+    }
+    REQUIRE(covered>1000 && changed>100 && wrong>100);
+    printf("MATERIAL INVALIDATION: covered=%u changed=%u stale=%u; recapture matches\n",covered,changed,wrong);
+    if(cached_regular) {
+        static const unsigned changes[]={0,10,100};
+        for(unsigned trial=0;trial<3;trial++) {
+            material_fixture_churn(changes[trial]);
+            for(unsigned phase=0;phase<3;phase++) {
+                unsigned h=persistent_hits,m=persistent_misses;
+                material_fixture_epoch(phase&1);
+                pair(0,&regular,&extra,&total,stock);
+                pair(1,&regular,&extra,&total,fresh);
+                for(unsigned i=0;i<RT*RT;i++)
+                    REQUIRE(shadow_mode?pf_depth_diff(stock[i],fresh[i])<=PF_DEPTH_TOLERANCE:stock[i]==fresh[i]);
+                /* Also compare regular images, so a valid extra cannot
+                 * hide a bad mixed hit/miss regular frame. */
+                pose(0); retain_now=0; frame_draw(0,0,stock);
+                retain_now=1; frame_draw(0,0,fresh); retain_now=0;
+                for(unsigned i=0;i<RT*RT;i++)
+                    REQUIRE(shadow_mode?pf_depth_diff(stock[i],fresh[i])<=PF_DEPTH_TOLERANCE:stock[i]==fresh[i]);
+                REQUIRE(persistent_hits-h+persistent_misses-m==2*GROUPS);
+                if(phase) {
+                    unsigned expected_misses=changes[trial]==100?GROUPS:changes[trial]==10?30:0;
+                    REQUIRE(persistent_misses-m==expected_misses);
+                }
+            }
+        }
+        puts("PERSISTENT OUTPUT: regular and extra match at zero, partial and complete invalidation; hit/miss counts match");
+        material_fixture_churn(100);
+    }
+    {
+        unsigned before[512],after[512],n=material_fixture_state(g_dev,before,512);
+        pose(1); frame_draw(1,1,NULL);
+        REQUIRE(material_fixture_state(g_dev,after,512)==n && !memcmp(before,after,n*4));
+        if(cached_regular) {
+            pose(0); retain_now=1; frame_draw(0,0,NULL); retain_now=0;
+            REQUIRE(material_fixture_state(g_dev,after,512)==n && !memcmp(before,after,n*4));
+        }
+        puts("MATERIAL STATE: all recorded render/sampler/texture states restored");
+    }
+    material_fixture_epoch(0);
+}
+
+static unsigned persistent_regular(void)
+{
+    unsigned hits=0;
+    for(unsigned group=0;group<GROUPS;group++) {
+        unsigned char key[8192];
+        unsigned n=material_fixture_key(group,key,sizeof key);
+        REQUIRE(n && n<=sizeof key);
+        current_records=records[group];
+        if(n==material_sizes[group] && !memcmp(key,material_keys[group],n)) {
+            REQUIRE(bench_replay(group,current_records,current_records+sizeof records[0]));
+            hits++; persistent_hits++;
+            continue;
+        }
+        persistent_misses++;
+        /* Replay owns its region and leaves instanced geometry bound. A
+         * fallback boundary must reconcile it before a stock leader. */
+        HR(IDirect3DDevice9_SetVertexDeclaration(g_dev,g_decl));
+        HR(IDirect3DDevice9_SetStreamSourceFreq(g_dev,0,1));
+        HR(IDirect3DDevice9_SetStreamSourceFreq(g_dev,1,1));
+        HR(IDirect3DDevice9_SetStreamSource(g_dev,0,g_vb,0,40));
+        HR(IDirect3DDevice9_SetStreamSource(g_dev,1,NULL,0,0));
+        HR(IDirect3DDevice9_SetIndices(g_dev,g_ib));
+        material_fixture_start();
+        *(unsigned char **)(frame_ptr+PF_FRAME_GROUP_END)=current_records+sizeof records[0];
+        for(unsigned i=0;i<GROUP_SIZE;i++) {
+            one_member(i);
+            if(!i) REQUIRE(bench_retain(group));
+        }
+        material_fixture_end();
+        memcpy(material_keys[group],key,n); material_sizes[group]=n;
+    }
+    return hits;
+}
+
+static void sample_epoch(unsigned round,unsigned repetition)
+{
+    material_fixture_churn(persistent_churn);
+    material_fixture_epoch((round*FRAMES_PER_SAMPLE+repetition)&1);
+}
+
+int main(int argc,char **argv)
+{
+    const char *crt=argc>2?argv[2]:"C:/Jogos/AgeoftheRing/rotwk/msvcr71.dll";
+    const char *slash=strrchr(crt,'/'),*backslash=strrchr(crt,'\\');
+    if(backslash && (!slash || backslash>slash)) slash=backslash;
+    REQUIRE(slash && (unsigned)(slash-crt)+1+sizeof "d3dx9_27.dll"<=sizeof material_runtime);
+    memcpy(material_runtime,crt,(size_t)(slash-crt)+1);
+    strcpy(material_runtime+(slash-crt)+1,"d3dx9_27.dll");
+    material_setup=effect_setup;
+    material_begin=material_fixture_begin;
+    material_end=material_fixture_end;
+    pose_adjust=spread;
+    validate_retained=validate_materials;
+    if(argc>5) {
+        REQUIRE(!strcmp(argv[5],"0") || !strcmp(argv[5],"10") || !strcmp(argv[5],"100"));
+        persistent_churn=(unsigned)atoi(argv[5]);
+        cached_regular=persistent_regular;
+        prepare_sample=sample_epoch;
+        printf("PERSISTENT material cache, %u percent selected groups alternate inputs each pair\n",persistent_churn);
+    }
+    int result=retained_benchmark(argc,argv);
+    if(cached_regular) printf("PERSISTENT hits=%u misses=%u (includes validation/warmup)\n",persistent_hits,persistent_misses);
+    return result;
+}

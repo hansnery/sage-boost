@@ -9,6 +9,12 @@ static group retained[RETAINED_GROUPS];
 static IDirect3DStateBlock9 *blocks[RETAINED_GROUPS];
 static int narrow;
 static unsigned replay_draws, replay_meshes;
+static HRESULT (*record_material_mask)(IDirect3DDevice9 *);
+
+void bench_retained_material_mask(HRESULT (*record)(IDirect3DDevice9 *))
+{
+    record_material_mask = record;
+}
 
 void bench_retained_kind(int value) { narrow = value; }
 void bench_retained_counts(unsigned *draws, unsigned *meshes)
@@ -71,6 +77,7 @@ static HRESULT create_narrow(IDirect3DDevice9 *dev, IDirect3DStateBlock9 **out)
     }
     for(i=0;i<sizeof states/sizeof states[0];i++)
         SET(IDirect3DDevice9_SetRenderState(dev,states[i],values[i]));
+    if(record_material_mask) SET(record_material_mask(dev));
     SET(IDirect3DDevice9_EndStateBlock(dev,out));
 done:
     if(vs) IDirect3DVertexShader9_Release(vs);

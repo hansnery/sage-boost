@@ -2,6 +2,7 @@
  * Reuse the dispatch fixture's actual shaders, instancing and hook path. */
 #define PF_DISPATCH_EMBED
 #include "bench_dispatch.c"
+#include "bench_guard.h"
 
 extern int bench_retain(unsigned);
 extern int bench_replay(unsigned, const unsigned char *, const unsigned char *);
@@ -13,6 +14,15 @@ extern void bench_extra_mode(int);
 static int retain_now;
 static IDirect3DStateBlock9 *outer;
 static double pair_completed_ms;
+/* Optional full-effect fixture; the original setup-only benchmark keeps
+ * these NULL. Callbacks execute inside the measured regular/extra paths. */
+static void (*material_setup)(void);
+static void (*material_begin)(unsigned);
+static void (*material_end)(void);
+static void (*pose_adjust)(float *, unsigned);
+static void (*validate_retained)(void);
+static unsigned (*cached_regular)(void);
+static void (*prepare_sample)(unsigned, unsigned);
 
 static void retained_workload(void)
 {
@@ -21,19 +31,22 @@ static void retained_workload(void)
         /* Distinct synthetic opacity for each group, shared by both paths.
          * A full state block must restore this as well as geometry/buffers. */
         float opacity[4] = {0.5f + (group % 8) / 16.0f, 0, 0, 0};
-        HR(IDirect3DDevice9_SetVertexShaderConstantF(g_dev, g_v->roles[PF_ROLE_OPAC], opacity, 1));
+        if (material_begin) material_begin(group);
+        else HR(IDirect3DDevice9_SetVertexShaderConstantF(g_dev, g_v->roles[PF_ROLE_OPAC], opacity, 1));
         current_records = records[group];
         *(unsigned char **)(frame_ptr + PF_FRAME_GROUP_END) = current_records + sizeof records[0];
         for (i = 0; i < GROUP_SIZE; i++) {
             one_member(i);
             if (!i && retain_now) REQUIRE(bench_retain(group));
         }
+        if (material_end) material_end();
     }
 }
 
 static void setup(int argc, char **argv)
 {
     setup_dispatch(argc, argv);
+    if (material_setup) material_setup();
     pf_timing_set_next(PF_DISPLAY_DRAW, retained_workload);
     HR(IDirect3DDevice9_CreateStateBlock(g_dev, D3DSBT_ALL, &outer));
 }
@@ -50,13 +63,14 @@ static void pose(unsigned phase)
             dst[4] = base[4] + (phase ? 0.06f : 0);
             dst[5] = base[5] + (phase ? 0.04f : 0);
             dst[6] = base[6] + (phase ? 0.02f : 0);
+            if (pose_adjust) pose_adjust(dst,i);
         }
     }
 }
 
 static void frame_draw(int extra, int retained, unsigned *pixels)
 {
-    unsigned group, draws, meshes;
+    unsigned group, draws, meshes, cached_groups=0;
     unsigned before_v[256*4], after_v[256*4], before_p[32*4], after_p[32*4];
     bench_extra_mode(extra);
     g_stock_draws = 0;
@@ -68,7 +82,7 @@ static void frame_draw(int extra, int retained, unsigned *pixels)
     HR(IDirect3DDevice9_Clear(g_dev, 0, NULL, D3DCLEAR_TARGET |
         (shadow_mode ? D3DCLEAR_ZBUFFER : 0), shadow_mode ? 0xffffffffu : 0, 1, 0));
     bench_retained_counts(&draws,&meshes);
-    if (extra) {
+    if (extra || cached_regular) {
         HR(IDirect3DStateBlock9_Capture(outer));
         HR(IDirect3DDevice9_GetVertexShaderConstantF(g_dev,0,(float *)before_v,256));
         HR(IDirect3DDevice9_GetPixelShaderConstantF(g_dev,0,(float *)before_p,32));
@@ -76,8 +90,9 @@ static void frame_draw(int extra, int retained, unsigned *pixels)
     if (retained) {
         for (group = 0; group < GROUPS; group++)
             REQUIRE(bench_replay(group, records[group], records[group] + sizeof records[0]));
-    } else ((void (*)(void))pf_enter_stubs[PF_DISPLAY_DRAW])();
-    if (extra) {
+    } else if (!extra && retain_now && cached_regular) cached_groups=cached_regular();
+    else ((void (*)(void))pf_enter_stubs[PF_DISPLAY_DRAW])();
+    if (extra || cached_regular) {
         HR(IDirect3DStateBlock9_Apply(outer));
         HR(IDirect3DDevice9_GetVertexShaderConstantF(g_dev,0,(float *)after_v,256));
         HR(IDirect3DDevice9_GetPixelShaderConstantF(g_dev,0,(float *)after_p,32));
@@ -85,9 +100,9 @@ static void frame_draw(int extra, int retained, unsigned *pixels)
         REQUIRE(!memcmp(before_p,after_p,sizeof before_p));
     }
     HR(IDirect3DDevice9_EndScene(g_dev));
-    REQUIRE(g_stock_draws == (retained ? 0 : GROUPS));
+    REQUIRE(g_stock_draws == (retained ? 0 : GROUPS-cached_groups));
     bench_retained_counts(&draws,&meshes);
-    REQUIRE(draws==(retained ? 2*GROUPS : 0) && meshes==(retained ? GROUPS*GROUP_SIZE : 0));
+    REQUIRE(draws==2*(retained?GROUPS:cached_groups) && meshes==GROUP_SIZE*(retained?GROUPS:cached_groups));
     REQUIRE(pf_inst_active());
     check_state();
     if (pixels) read_pixels(pixels);
@@ -119,11 +134,12 @@ static void pair(int retained, double *regular, double *extra, double *total,
     if (pixels) read_pixels(pixels);
 }
 
-int main(int argc, char **argv)
+static int retained_benchmark(int argc, char **argv)
 {
     static unsigned a[RT*RT], b[RT*RT], old[RT*RT];
     double regular[2], extra[2], total[2], completed[2], saved[ROUNDS], saved_complete[ROUNDS];
     unsigned r, m, i, covered = 0, moved = 0;
+    REQUIRE(bench_no_game());
     setup(argc, argv);
     REQUIRE(!bench_replay(288,records[0],records[0]+sizeof records[0]));
     REQUIRE(!bench_replay(0,records[0],records[0]+sizeof records[0]));
@@ -159,18 +175,22 @@ int main(int argc, char **argv)
         moved += old[i] != a[i];
     }
     REQUIRE(covered > 100 && moved > 100);
+    if (validate_retained) validate_retained();
     printf("RETAINED %s: %u groups/%u meshes, %u covered, %u changed by fresh pose; pixels/depth within tolerance\n",
            shadow_mode?"shadow":"lit", GROUPS, GROUPS*GROUP_SIZE, covered, moved);
     puts("round,baseline_regular_ms,retained_regular_ms,baseline_extra_ms,retained_extra_ms,baseline_pair_ms,retained_pair_ms,saved_pair_ms,baseline_complete_ms,retained_complete_ms,saved_complete_ms");
     for(r=0; r<ROUNDS+WARMUP; r++) {
+        REQUIRE(bench_no_game());
         for(i=0; i<2; i++) {
             m=i^(r&1); regular[m]=extra[m]=total[m]=completed[m]=0;
             for(unsigned rep=0; rep<FRAMES_PER_SAMPLE; rep++) {
+                if(prepare_sample) prepare_sample(r,rep);
                 double x,y,z; pair(m,&x,&y,&z,NULL);
                 regular[m]+=x/FRAMES_PER_SAMPLE; extra[m]+=y/FRAMES_PER_SAMPLE; total[m]+=z/FRAMES_PER_SAMPLE;
                 completed[m]+=pair_completed_ms/FRAMES_PER_SAMPLE;
             }
         }
+        REQUIRE(bench_no_game());
         if(r<WARMUP) continue;
         saved[r-WARMUP]=total[0]-total[1];
         saved_complete[r-WARMUP]=completed[0]-completed[1];
@@ -188,3 +208,7 @@ int main(int argc, char **argv)
     IDirect3DQuery9_Release(fence);
     return 0;
 }
+
+#ifndef PF_RETAINED_EMBED
+int main(int argc, char **argv) { return retained_benchmark(argc, argv); }
+#endif
