@@ -1,6 +1,7 @@
 # bfme2perf 0.9.11-beta.1
 
-Local opt-in beta, based on 0.9.10. Not installed or published. The faction
+Local opt-in beta, based on 0.9.10. Installed locally at the user's request
+on 2026-10-17; not published. The faction
 unlocker and its multiplayer protocol are unchanged.
 
 ## Changes

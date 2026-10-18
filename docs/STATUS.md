@@ -19,8 +19,14 @@ files before relying on it.
   cache test covers 600 identities, hot reuse, negative caching and COM
   reference balance. Recovery tests cover a transient, repeated expensive
   probes, interrupted eligibility and millisecond-clock wraparound.
-- Local build/package only: no installed files changed, no publication,
-  push of beta commits or tag. The stable branches remain at the baseline.
+- Installed 0.9.11-beta.1 at the user's request on 2026-10-17. Only
+  `rotwk/mss/bfme2perf.asi` replaced; SHA-256 matches the tested build
+  `4dc932daa1bc9924a49d47b95ea6025620332cfb674476bbcf624abfb76928f1`.
+  Installed INI hash unchanged. Previous 0.9.10 binary, INI, log and both
+  CSVs backed up to
+  `%TEMP%/bfme2perf-0.9.10-installed-20261017-171107`.
+  No game launched; gameplay test pending. No publication, beta push or tag.
+  Stable branches remain at the baseline.
 - [Release notes](releases/perf-0.9.11-beta.1.md),
   [approved design](specs/2026-10-17-perf-beta-design.md),
   [next render audit](specs/2026-10-17-render-audit.md).
@@ -110,7 +116,9 @@ Lorinand=Elves
 
 ### Performance plugin: `mss\bfme2perf.asi` + `mss\bfme2perf.ini`
 
-- 0.9.10, built from `05420da` (pushed), installed 2026-10-14 18:51. The
+- Current: 0.9.11-beta.1 from `d3bbf9e`, installed 2026-10-17; backup and
+  verification above. Previously 0.9.10, built from `05420da` (pushed),
+  installed 2026-10-14 18:51. The
   previous build and settings are in `%TEMP%\bfme2perf-0.9.9-installed-1852`.
 - `bfme2perf.ini` (LF line endings) differs from the shipped
   `perf/bfme2perf.ini`. Keep the user's values; when a build adds a key,

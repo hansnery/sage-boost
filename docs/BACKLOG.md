@@ -9,7 +9,8 @@ Strike an item through, with the date, when it's done.
 
 - [x] Full plugin suite and offline shader checks (59 variants each on native
   D3D9 and DXVK); new cache and scheduler regression tests.
-- [ ] User-authorized local deployment after backup; preserve installed INI.
+- [x] 2026-10-17: user-authorized local deployment after backup; installed
+  INI preserved and ASI hash verified.
 - [ ] Comparable SP/MP scenes, transient hitch recovery, sustained battles,
   camera/visual checks, mixed performance-plugin clients and replay test.
 - [ ] Verify launcher beta isolation/rollback before authorized publication.
