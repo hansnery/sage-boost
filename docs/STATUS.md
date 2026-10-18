@@ -21,6 +21,29 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Native FX/state GPU integration (2026-10-18)
+
+- [Native material lifecycle and state](specs/2026-10-18-native-fx-gpu-integration.md)
+  adds nine verified bodies to the joined group/mesh path. Real D3DX calls,
+  source selection and dirty vertex/index binding now run through native
+  code; the complete fixture has 25 verified bodies in private RAM.
+- Stronger snapshots found a legacy unbound-stream offset leak. The checked
+  candidate restores offset/stride before unbinding. The failure reference
+  now draws all meshes natively; no state mismatch is masked as acceptable.
+- All 248 single-rejection cases pass pixels, counts, immediate GPU state,
+  effect parameters and fixture engine fields. Sixteen broken controls are
+  rejected, including omission of the new offset restoration. Both local
+  images pass the full-body verifier and five altered-state controls each.
+- Two final serial timing repeats save 2.68-2.93 ms/pair on DXVK; preserve
+  168 timings, 240 batch-fault rows, eight capture cases and hashes. This is
+  the existing candidate under stronger tests, not another additive gain.
+- Full plugin suite and prior GPU recovery regression pass. Native source
+  computation, lifetimes, unsupported failure/rigid/exception paths and the
+  larger performance gap remain open. Next inspect source computation and
+  expensive render work for additional savings before requesting gameplay.
+- No production/installed/INI/stable changes. Last gameplay remains ~30.18
+  presentations/s; sustained full-rate 60 FPS is still unproved.
+
 ## Offline skeletal GPU recovery (2026-10-18)
 
 - [Checked batch recovery](specs/2026-10-18-native-gpu-recovery.md) now

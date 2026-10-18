@@ -6,6 +6,7 @@
 #include PF_FAULT_ENGINE_SOURCE
 static void *fault_device;
 void bench_fault_device(void *device) { fault_device=device; }
+void bench_fault_stock(unsigned enabled) { g_failed=enabled!=0; }
 
 void *pf_inst_enter(unsigned k,void **slot,void *next)
 {

@@ -153,13 +153,11 @@ unsigned material_fixture_state(IDirect3DDevice9 *dev,unsigned *out,unsigned cap
     return n;
 }
 
-static void prepare(unsigned group)
+void material_fixture_sources(unsigned group)
 {
     unsigned delta=group%100<churn?epoch:0;
     float opacity=0.55f+((group+delta)%8)/20.f;
     float diffuse[3]={0.35f+((group+delta)%4)*0.15f,0.8f,0.6f};
-    HR(F(SetTechnique,technique));
-    HR(F(ApplyParameterBlock,material_block));
     /* Re-evaluate the fixed source values every group. This includes
      * their SetValue cost, but not the game's source-callback computation. */
     for(unsigned i=0;i<input_count;i++) HR(F(SetValue,inputs[i],input_values[i],input_bytes[i]));
@@ -167,6 +165,17 @@ static void prepare(unsigned group)
     HR(F(SetValue,diffuse_handle,diffuse,sizeof diffuse));
     HR(F(SetTexture,texture_handle,(IDirect3DBaseTexture9 *)textures[(group+delta)&1]));
     if(clock_override) HR(F(SetFloat,clock_handle,clock_value));
+}
+static void prepare(unsigned group)
+{
+    HR(F(SetTechnique,technique));
+    HR(F(ApplyParameterBlock,material_block));
+    material_fixture_sources(group);
+}
+/* Opaque live handles for the offline native lifecycle bridge only. */
+void material_fixture_native(void **fx,unsigned *tech,unsigned *block)
+{
+    *fx=effect; *tech=(unsigned)technique; *block=(unsigned)material_block;
 }
 /* A retained hit keeps the real Begin/End pair but issues its drawing
  * directly. It never sends CommitChanges/EndPass without a BeginPass. */
@@ -210,6 +219,8 @@ void material_fixture_bones(const void *bones,unsigned bytes)
 {
     HR(F(SetRawValue,bones_handle,bones,0,bytes)); HR(F(CommitChanges));
 }
+void material_fixture_bone_values(const void *bones,unsigned bytes)
+{ HR(F(SetRawValue,bones_handle,bones,0,bytes)); }
 
 static unsigned read_key(unsigned char *out,unsigned capacity)
 {
@@ -225,6 +236,17 @@ static unsigned read_key(unsigned char *out,unsigned capacity)
         n+=key_bytes[i];
     }
     return n;
+}
+
+/* Read-only parameter oracle for native recovery tests. Include dynamic
+ * bones as well as the fixed fixture's complete material key. */
+unsigned material_fixture_live_state(unsigned *out,unsigned capacity)
+{
+    unsigned bytes=read_key((unsigned char *)out,capacity*4);
+    D3DXPARAMETER_DESC desc;HR(F(GetParameterDesc,bones_handle,&desc));
+    REQUIRE(!(bytes&3) && !(desc.Bytes&3) && desc.Bytes<=capacity*4-bytes);
+    HR(F(GetValue,bones_handle,(unsigned char *)out+bytes,desc.Bytes));
+    return (bytes+desc.Bytes)/4;
 }
 
 unsigned material_fixture_key(unsigned group,unsigned char *out,unsigned capacity)

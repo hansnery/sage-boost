@@ -1,0 +1,437 @@
+{
+  "parent_commit": "db1c41d",
+  "runs": [
+    {
+      "log": "native-fx-gpu-qualified-1.txt",
+      "sha256": "25af42e790e36816c246caf58504b0c18eaa1bf3cf5d0a582a3f98a0c54a7bb9",
+      "samples": 84
+    },
+    {
+      "log": "native-fx-gpu-qualified-2.txt",
+      "sha256": "34f0336149fd8972c86308ca547f0ea3a780890758ed8664bdb3d7006a7ab925",
+      "samples": 84
+    }
+  ],
+  "summaries": [
+    {
+      "run": 1,
+      "backend": "Native D3D9",
+      "workload": "lit",
+      "completion_saving_median_ms": 2.5021,
+      "p10_ms": 2.2922,
+      "p90_ms": 2.8737
+    },
+    {
+      "run": 1,
+      "backend": "Native D3D9",
+      "workload": "shadow",
+      "completion_saving_median_ms": 2.6304,
+      "p10_ms": 2.3498,
+      "p90_ms": 2.8185
+    },
+    {
+      "run": 1,
+      "backend": "DXVK",
+      "workload": "lit",
+      "completion_saving_median_ms": 2.6804,
+      "p10_ms": 2.5198,
+      "p90_ms": 2.9677
+    },
+    {
+      "run": 1,
+      "backend": "DXVK",
+      "workload": "shadow",
+      "completion_saving_median_ms": 2.932,
+      "p10_ms": 2.692,
+      "p90_ms": 4.2031
+    },
+    {
+      "run": 2,
+      "backend": "Native D3D9",
+      "workload": "lit",
+      "completion_saving_median_ms": 2.6693,
+      "p10_ms": 2.3563,
+      "p90_ms": 2.9256
+    },
+    {
+      "run": 2,
+      "backend": "Native D3D9",
+      "workload": "shadow",
+      "completion_saving_median_ms": 2.4298,
+      "p10_ms": 2.3676,
+      "p90_ms": 2.5895
+    },
+    {
+      "run": 2,
+      "backend": "DXVK",
+      "workload": "lit",
+      "completion_saving_median_ms": 2.7384,
+      "p10_ms": 2.6115,
+      "p90_ms": 2.885
+    },
+    {
+      "run": 2,
+      "backend": "DXVK",
+      "workload": "shadow",
+      "completion_saving_median_ms": 2.7949,
+      "p10_ms": 2.6125,
+      "p90_ms": 3.1239
+    }
+  ],
+  "fault_log": "native-fx-gpu-recovery-qualified.txt",
+  "fault_log_sha256": "35c5b7045fb42de83578b3ac5c8af76ce7c5d0b6b6c36e5b9b94c4e45973a0b0",
+  "fault_batch_rows": 240,
+  "capture_rows": [
+    [
+      "Native D3D9",
+      "lit",
+      0,
+      0,
+      0,
+      0,
+      0,
+      25
+    ],
+    [
+      "Native D3D9",
+      "lit",
+      1,
+      0,
+      0,
+      0,
+      0,
+      25
+    ],
+    [
+      "Native D3D9",
+      "shadow",
+      0,
+      0,
+      0,
+      0,
+      0,
+      25
+    ],
+    [
+      "Native D3D9",
+      "shadow",
+      1,
+      0,
+      0,
+      0,
+      0,
+      25
+    ],
+    [
+      "DXVK",
+      "lit",
+      0,
+      0,
+      0,
+      0,
+      0,
+      25
+    ],
+    [
+      "DXVK",
+      "lit",
+      1,
+      0,
+      0,
+      0,
+      0,
+      25
+    ],
+    [
+      "DXVK",
+      "shadow",
+      0,
+      0,
+      0,
+      0,
+      0,
+      25
+    ],
+    [
+      "DXVK",
+      "shadow",
+      1,
+      0,
+      0,
+      0,
+      0,
+      25
+    ]
+  ],
+  "capture_columns": [
+    "backend",
+    "workload",
+    "extra",
+    "bad_pixels",
+    "state_words",
+    "active",
+    "instances",
+    "ordinary"
+  ],
+  "null_restore_rows": [
+    [
+      "Native D3D9",
+      "lit",
+      0,
+      1,
+      0,
+      0,
+      0,
+      15,
+      10
+    ],
+    [
+      "Native D3D9",
+      "lit",
+      0,
+      2,
+      0,
+      0,
+      0,
+      25,
+      0
+    ],
+    [
+      "Native D3D9",
+      "lit",
+      1,
+      1,
+      0,
+      0,
+      0,
+      15,
+      10
+    ],
+    [
+      "Native D3D9",
+      "lit",
+      1,
+      2,
+      0,
+      0,
+      0,
+      25,
+      0
+    ],
+    [
+      "Native D3D9",
+      "shadow",
+      0,
+      1,
+      0,
+      0,
+      0,
+      15,
+      10
+    ],
+    [
+      "Native D3D9",
+      "shadow",
+      0,
+      2,
+      0,
+      0,
+      0,
+      25,
+      0
+    ],
+    [
+      "Native D3D9",
+      "shadow",
+      1,
+      1,
+      0,
+      0,
+      0,
+      15,
+      10
+    ],
+    [
+      "Native D3D9",
+      "shadow",
+      1,
+      2,
+      0,
+      0,
+      0,
+      25,
+      0
+    ],
+    [
+      "DXVK",
+      "lit",
+      0,
+      1,
+      0,
+      0,
+      0,
+      15,
+      10
+    ],
+    [
+      "DXVK",
+      "lit",
+      0,
+      2,
+      0,
+      0,
+      0,
+      25,
+      0
+    ],
+    [
+      "DXVK",
+      "lit",
+      1,
+      1,
+      0,
+      0,
+      0,
+      15,
+      10
+    ],
+    [
+      "DXVK",
+      "lit",
+      1,
+      2,
+      0,
+      0,
+      0,
+      25,
+      0
+    ],
+    [
+      "DXVK",
+      "shadow",
+      0,
+      1,
+      0,
+      0,
+      0,
+      15,
+      10
+    ],
+    [
+      "DXVK",
+      "shadow",
+      0,
+      2,
+      0,
+      0,
+      0,
+      25,
+      0
+    ],
+    [
+      "DXVK",
+      "shadow",
+      1,
+      1,
+      0,
+      0,
+      0,
+      15,
+      10
+    ],
+    [
+      "DXVK",
+      "shadow",
+      1,
+      2,
+      0,
+      0,
+      0,
+      25,
+      0
+    ]
+  ],
+  "null_restore_columns": [
+    "backend",
+    "workload",
+    "extra",
+    "batch",
+    "bad_pixels",
+    "state_words",
+    "active",
+    "instances",
+    "ordinary"
+  ],
+  "sources": {
+    "perf/tests/test_native_gpu_faults.c": "63de0eddf3765edc638cf3583bffd38859ee7bcd6bdabb709c180dd500b124a0",
+    "perf/tests/inst_gpu_fault_engine.c": "e18b0532a4b2eec8e673a2167c9a3dd4daad5a45eb95cdcde8c3178529c59127",
+    "perf/tests/inst_native_leader_engine.c": "08a182b4184f694e212ce9b417919fb8b8a1cce783990412deecbd8dd3e398c0",
+    "perf/tests/bench_native_group_gpu.c": "f1bbc2364a6284dd7f3a2ca4391db7a5020e8cbf7eee9490343e52014e3e1547",
+    "perf/tests/bench_native_leader.c": "12a481e31926e14febd3277e44e1743823373737d5334f9f64cc9599c305dcae",
+    "perf/tests/bench_retained.c": "b454bfb7532e6083364ce7b7fd1c38627b66b1581369ea66f04d1c980b18ee59",
+    "perf/tests/bench_material_queue.c": "2e15d112b0bdab3e6187fefb9f8e06d9060ea629b2f7329f1c25e28d2011df60",
+    "perf/tests/native_group_gpu_bridge.c": "790ab62645818378775cd28b7d4824f807076d76614af004b77554f19a94b3be",
+    "perf/tests/native_group_image.h": "2f804504e6244bc202dd96b4f88df71f7fbd65d343798fb6dbf312744924c881",
+    "perf/tests/native_mesh_image.h": "a4d587f4318913da1f0fe67e70e8cf4c3ff4308f16eba3052fa3cd5da551b6f8",
+    "perf/tests/material_fixture.c": "5b851ac1d863e585212103054319db6c41ab14a7860beac7dca66c0a35ecd3d6",
+    "perf/tests/timing_bulk_bench.c": "b2651023195165c67dc6b807e00ea45bc2fc7be08bfdfb30133417b19a39eda3",
+    "perf/tests/inst_dispatch_engine.c": "c660c852d46f7a70cc002dc6a462922058df1378f0dbdc1abc8c08dcb8d245eb",
+    "perf/tests/inst_retained_engine.c": "b1d3d466ca49a621626607ec32c0223d18bd6b6fa0cadce6fb2b9bea36481135",
+    "perf/src/inst.c": "cf48d58e4b1185cf8269fbb52cdd2a401ae39c6a90dbb0f5409922937b1e8d69",
+    "perf/src/timing.c": "a5bddd8f6c7afdf03e345a557f2a75a2b30cb17bfd6e836764b221f081a23596",
+    "perf/src/stubs.c": "5f9eb64ed0bad6f75ca60eca013eae4ad09aeb70d577a0b5b7582a8889e63fdc",
+    "perf/Makefile": "cab57072d4ef16d9a22a1d4eca9f740a62862f523407c180fa0ef63f94b9e595",
+    "tools/test_native_gpu_faults.py": "6cfcb4782db72d5dfdda0ab15423d30fed0205060653bb43eac146e49e5a8e77",
+    "tools/test_group_contract.py": "83d296949d492571a63c825f8c7a7f4de0ba933485c4daacd4afb54e02f9e359",
+    "tools/test_mesh_draw_contract.py": "0d5d51695ff904a05a38001a5cf70ceaafd0fb8902e1833aba4db593348878af",
+    "perf/tests/inst_recovery_engine.c": "04da1efac9325a99826bef08f82ff3c22b40a82a8a1db14829ef797d2c86279f",
+    "perf/tests/inst_recovery_fault_engine.c": "84cea455bc694403ff846e2a608848d2a80e226e9afdc7562a83f73179d0a19d",
+    "perf/tests/test_native_gpu_recovery.c": "34e0d3b5dff56969ff7cb376327d43a376da98311d109ff2757e7a6bcaa1df28",
+    "tools/make_inst_recovery_source.py": "4b0939267fafc27d08a0ed17c73f8dabb0c8cef6c999637ddd4e44476f999254",
+    "tools/bench_native_group_gpu.py": "7ec90e390cc97316a7a8f4585e63e98076b63d99bc1302993f2e527b69ea3d9f",
+    "perf/tests/bench_native_fx_gpu.c": "a47f6b3aa08d661673c1a5a10bacaf5f307038d7520d18c961cf26061fb75b75",
+    "perf/tests/native_fx_image.h": "6f8a543d889c3eead13aded841fe3ee273269f717bc9aa77375f72af3dff93f9",
+    "perf/tests/test_native_fx_recovery.c": "b174a01a32364f6d5673a1f5c2bcf99913887560069b259cb384e06528967b1e",
+    "tools/bench_native_fx_gpu.py": "ef2303454a010066eafef559d452a5a203a82af1d4e7e3375366f083579a25b0",
+    "tools/native_fx_state_contract.py": "a9c843993aad69089b27fbbf98be9af321ee0cbdae202f317aa4dc3e74574701"
+  },
+  "executables": {
+    "bench_native_fx_gpu.exe": "89737319f0c01f06aab782b566c4a8431744dded99274918e2c857165f4a0762",
+    "test_native_fx_recovery.exe": "f1291ef2ffca2fd68a24a93ded65520c58f2238b6c1d38bb5d3b689ce7d23a4c"
+  },
+  "verification": {
+    "native-fx-state-contract.txt": "687eb2f421cb0ebcee95b74f2a880671b91f10f723003ce989912009d274f106",
+    "native-fx-gpu-suite.txt": "058b0a0b0de7e9f8c968f1fdf74ab69bacf06e758fbbc35aff59886ba6fefefd",
+    "native-fx-gpu-recovery-regression.txt": "52a99e6849cf724e5f7b241212e317b9fb24f59bf8f7f43ab23658ee92360111"
+  },
+  "counterexample": {
+    "log": "native-fx-gpu-state-debug.txt",
+    "sha256": "ee02eefeabf97e15be6322d6d92d5a78f1081e25ba57e63e44ad655572de340b",
+    "backend": "Native D3D9",
+    "workload": "lit",
+    "batch": 1,
+    "stream": 1,
+    "buffer": null,
+    "offset_before": 0,
+    "offset_after": 3080,
+    "bad_pixels": 0,
+    "state_word_differences": 1
+  },
+  "artifacts": {
+    "C:\\repositories\\sage-boost\\perf\\build\\bfme2perf.asi": "abb5e35d40e52abcc4190d264cb0d4cdb39173e073456608c7e14fa209426540",
+    "C:/Jogos/AgeoftheRing/rotwk/mss/bfme2perf.asi": "db65e51d42bb7f49947631a17b9aeebc0604f3cd9e2c055d8e8a35daf65408e5",
+    "C:/Jogos/AgeoftheRing/rotwk/mss/bfme2perf.ini": "79bbb612a6ce22e76f930e9334a6e650bc2c49c3d28260c6bc716c026da94c54"
+  },
+  "notes": [
+    "Nine native FX/pending-state bodies (1316 bytes) join the previous sixteen (4332 bytes), entirely in private memory. Complete normalized bodies and dependency/global roles verified on both local images; five altered-state controls rejected on each.",
+    "Actual native getter/Begin/Pass/Dynamic/End/binder/walker use a live D3DX27 effect. Dirty vertex/index buffer application uses actual native state code and COM calls, with wrong-binding controls and exact masks/counters in both skip modes.",
+    "Material/source computation, ready asset, texture-holder-empty list, geometry/state objects and lifetimes remain controlled. Fixed-function material/light/texture/shader paths are not exercised by these GPU cases.",
+    "Fault reference draws all 25 native meshes without plugin instancing. The unchanged baseline instancer was observed to leak the null-stream offset, so it cannot be the exact-state recovery reference.",
+    "240 rejected batch operations (14 original positions plus null-stream pre-unbind restore) and eight leader capture failures pass output/state/count/ABI/ownership checks. Immediate state includes native render/SAS/method fields and actual effect parameter values including bones.",
+    "Sixteen broken controls rejected: corrupt count, omitted replay, duplicate committed replay, missing null-stream offset restore. Ordinary replay remains direct GPU submission and never mutates D3DX source values.",
+    "Two serial guarded timing repeats, 21 alternating-order samples after four warmups, each eight fenced regular/extra pairs. Includes native lifecycle/state and final offset restoration. Lit/shadow alternative full workloads, never additive.",
+    "Exploratory initial/debug runs stopped before timing due to a history-dependent synthetic early DIP; restored its explicit palette commit. controls-1 exploratory timing precedes the offset fix and is excluded.",
+    "recovery-final log is excluded because a fourth negative launcher case was added while the old executable was in use; qualified log reruns all four controls on rebuilt code.",
+    "No production source/install/INI/stable branch changes, no game startup or gameplay FPS claim. Persistent/multiple/device-loss, nondeferred/rigid/verification recovery, source computations/lifetimes and native exceptions remain unqualified."
+  ]
+}

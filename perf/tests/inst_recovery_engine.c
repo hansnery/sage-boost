@@ -88,6 +88,10 @@ restore:
         hr=(expr); if (FAILED(hr)) coherent=0; } } while(0)
     for (unsigned s=0;s<=inst;s++) if (g.decl->streams>>s&1 || s==inst)
         RESTORE(s==inst?10:9,freq(dev,s,1));
+    /* Native D3D9 retains offset/stride when unbinding a null stream. Set
+     * the original values through a live buffer first, then unbind it. */
+    if (!g.prev_vb && recovery_break!=4)
+        RESTORE(19,stream(dev,inst,g_ivb,g.prev_off,g.prev_stride));
     RESTORE(11,stream(dev,inst,g.prev_vb,g.prev_off,g.prev_stride));
     RESTORE(12,decl(dev,g.decl->game));
     RESTORE(13,shader(dev,g.ea_vs));

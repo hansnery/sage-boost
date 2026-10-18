@@ -2,10 +2,14 @@
  * rejected API operation before forwarding it, on this fixture's device
  * only. Actual rendering/state reads use the original local D3D9 backend. */
 #define PF_NATIVE_GROUP_MAIN group_gpu_main
-#include "bench_native_group_gpu.c"
+#ifndef PF_NATIVE_GPU_GROUP_SOURCE
+#define PF_NATIVE_GPU_GROUP_SOURCE "bench_native_group_gpu.c"
+#endif
+#include PF_NATIVE_GPU_GROUP_SOURCE
 extern int bench_fault_batch_get(unsigned,unsigned);
 extern void bench_fault_reset(void);
 extern void bench_fault_device(void *);
+extern void bench_fault_stock(unsigned);
 #ifdef PF_RECOVERY_CANDIDATE
 extern void bench_recovery_watch(void (*)(void),void (*)(void));
 extern unsigned bench_recovery_operation(void),bench_recovery_open(void);
@@ -23,6 +27,9 @@ static unsigned ff_negative;
 static IDirect3DVertexBuffer9 *ff_seed_vb;
 typedef struct {
     unsigned vs,decl,vb[2],offset[2],stride[2],frequency[2],constants[256*4];
+#ifdef PF_FAULT_EXTRA_STATE
+    unsigned extra[4096];
+#endif
 } FaultState;
 static FaultState ff_before;
 
@@ -43,6 +50,10 @@ static void ff_snapshot(FaultState *out)
         HR(((pf_get_freq_fn)ff_original[PF_DEV_GET_STREAM_FREQ])(g_dev,s,&out->frequency[s]));
     }
     HR(((pf_const_f_fn)ff_original[PF_DEV_GET_VS_CONST_F])(g_dev,0,out->constants,256));
+#ifdef PF_FAULT_EXTRA_STATE
+    memset(out->extra,0,sizeof out->extra);
+    out->extra[0]=PF_FAULT_EXTRA_STATE(out->extra+1,4095);
+#endif
 }
 
 static int ff_reject(unsigned operation)
@@ -64,10 +75,11 @@ static int ff_reject(unsigned operation)
 #ifdef PF_RECOVERY_CANDIDATE
     if(bench_recovery_open()) {
         ff_step=bench_recovery_operation();
-        if(ff_step>14) return 0; /* Individually replayed draws, separately counted. */
+        if(ff_step==19) REQUIRE(operation==PF_DEV_SET_STREAM);
+        else if(ff_step>14) return 0; /* Individually replayed draws, separately counted. */
     }
 #endif
-    REQUIRE(ff_step<sizeof order/sizeof order[0] && operation==order[ff_step]);
+    if(ff_step!=19) REQUIRE(ff_step<sizeof order/sizeof order[0] && operation==order[ff_step]);
     if(ff_batch==ff_target_batch && ff_step==ff_target_step && !ff_injected) {
         ff_injected=1; return 1;
     }
@@ -78,7 +90,12 @@ static void ff_close_batch(void)
     FaultState after={0}; ff_snapshot(&after);
     unsigned changed=0;
     const unsigned *a=(const unsigned *)&ff_before,*b=(const unsigned *)&after;
-    for(unsigned i=0;i<sizeof after/sizeof(unsigned);i++) changed+=a[i]!=b[i];
+    for(unsigned i=0;i<sizeof after/sizeof(unsigned);i++) if(a[i]!=b[i]) {
+#ifdef PF_FAULT_EXTRA_STATE
+        if(changed<8) fprintf(stderr,"state difference batch=%u word=%u old=%08x new=%08x\n",ff_batch,i,a[i],b[i]);
+#endif
+        changed++;
+    }
     ff_state_bad+=changed;
     if(ff_batch==ff_target_batch) ff_bad_at_target=changed;
     ff_open=0; ff_batches++;
@@ -164,6 +181,9 @@ static FaultResult ff_case(unsigned extra,unsigned optimized,unsigned target_bat
 {
     FaultResult result={0};
     bench_fault_reset(); bench_extra_mode(extra); ng_frame_mode(optimized);
+#ifdef PF_FAULT_STOCK_REFERENCE
+    if(!optimized) bench_fault_stock(1);
+#endif
     pose(extra);
     /* Give every member its own screen region. Repeated source poses cannot
      * hide a lost follower in these fault controls. */
@@ -203,8 +223,16 @@ static FaultResult ff_case(unsigned extra,unsigned optimized,unsigned target_bat
         unsigned delta=shadow_mode?pf_depth_diff(reference[i],out[i]):reference[i]!=out[i];
         result.pixels+=delta>(shadow_mode?PF_DEPTH_TOLERANCE:0);
     }
-    if(!target_step) REQUIRE(!ff_state_bad && result.active && result.instances+result.native==25 &&
-                            result.native==(optimized?0u:1u) && !result.pixels);
+    unsigned expected_active=1,expected_ordinary=optimized?0:1;
+#ifdef PF_FAULT_STOCK_REFERENCE
+    if(!optimized) { expected_active=0;expected_ordinary=25; }
+#endif
+    if(!target_step && (ff_state_bad || result.active!=expected_active || result.instances+result.native!=25 ||
+                       result.native!=expected_ordinary || result.pixels))
+        fprintf(stderr,"clean fault control: optimized=%u state=%u active=%u instances=%u ordinary=%u pixels=%u\n",
+                optimized,ff_state_bad,result.active,result.instances,result.native,result.pixels);
+    if(!target_step) REQUIRE(!ff_state_bad && result.active==expected_active && result.instances+result.native==25 &&
+                            result.native==expected_ordinary && !result.pixels);
     bench_extra_mode(0); bench_fault_reset();
     return result;
 }
@@ -268,6 +296,13 @@ static void ff_validate(void)
         FaultResult r=ff_case(extra,1,1,15,reference,out);
         printf("RECOVERY_CAPTURE,%u,%u,%u,%u,%u,%u\n",extra,r.pixels,r.state,r.active,r.instances,r.native);
         REQUIRE(!r.pixels && !r.state && !r.active && !r.instances && r.native==25 && !r.suppressed);
+#ifdef PF_FAULT_STOCK_REFERENCE
+        for(unsigned batch=1;batch<=2;batch++) {
+            r=ff_case(extra,1,batch,19,reference,out);
+            printf("RECOVERY_NULL,%u,%u,%u,%u,%u,%u,%u\n",extra,batch,r.pixels,r.state,r.active,r.instances,r.native);
+            REQUIRE(!r.pixels && !r.state && !r.active && r.instances+r.native==25);
+        }
+#endif
 #endif
     }
 #ifdef PF_RECOVERY_CANDIDATE
@@ -296,8 +331,11 @@ static void ff_setup(void)
 int main(int argc,char **argv)
 {
     setvbuf(stdout,NULL,_IONBF,0);
-    if(argc==11) {
-        unsigned mode=(unsigned)atoi(argv[10]);
+#ifndef PF_FAULT_ARGUMENTS
+#define PF_FAULT_ARGUMENTS 10
+#endif
+    if(argc==PF_FAULT_ARGUMENTS+1) {
+        unsigned mode=(unsigned)atoi(argv[PF_FAULT_ARGUMENTS]);
         ff_negative=mode==1;
 #ifdef PF_RECOVERY_CANDIDATE
         bench_recovery_break(mode);

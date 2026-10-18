@@ -222,6 +222,10 @@ static void ng_validate(void)
         unsigned early=scenario==3,fail=scenario==4;
         NgCheck stock=ng_one_group(extra,0,count,split,callbacks,early,fail,0,a);
         NgCheck fast=ng_one_group(extra,1,count,split,callbacks,early,fail,0,b);
+        for(unsigned i=0;i<RT*RT;i++) if(shadow_mode?pf_depth_diff(a[i],b[i])>PF_DEPTH_TOLERANCE:a[i]!=b[i]) {
+            fprintf(stderr,"group image mismatch: extra=%u callbacks=%u count=%u scenario=%u pixel=%u\n",
+                    extra,callbacks,count,scenario,i);break;
+        }
         nm_compare(a,b);
         REQUIRE(stock.begin==fast.begin && stock.end==fast.end && stock.hash==fast.hash &&
                 stock.stock==fast.stock && stock.scopes==fast.scopes);

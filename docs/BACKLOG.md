@@ -70,6 +70,14 @@ Strike an item through, with the date, when it's done.
   for staged replay, remaining rigid/persistent/device-loss/exception paths,
   and the bridge's zero-consumption fallback. The single-rejection fixture
   does not close the broader runtime-recovery item or the 60 FPS deficit.
+- [x] 2026-10-18: add native FX lifecycle/source walker and pending-state
+  application to the GPU fixture. Fix the discovered null-stream offset
+  leak in the offline candidate; 248 single failures preserve device,
+  effect-value and fixture-engine state. Two final repeats save 2.68-2.93
+  ms/pair on DXVK; see `specs/2026-10-18-native-fx-gpu-integration.md`.
+- [ ] Replace controlled source computations and qualify side effects and
+  lifetimes. Investigate avoidable source evaluation for inputs unused by
+  the selected technique; require output/state and meaningful timing proof.
 - [x] 2026-10-17: larger material-queue fixture passes native/DXVK fresh
   pose, material invalidation, regular/extra image and state checks.
 - [x] 2026-10-17: recollect material-queue timings with the game closed.

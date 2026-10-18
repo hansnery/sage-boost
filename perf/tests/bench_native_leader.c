@@ -45,6 +45,9 @@ static void __attribute__((thiscall)) nm_geometry(void *self,unsigned base)
     /* Shared fixed geometry is bound by frame_draw before either path. */
 }
 static void nm_apply_state(void) { /* Real effect owns fixture GPU state. */ }
+#ifndef PF_NATIVE_MESH_APPLY_STATE
+#define PF_NATIVE_MESH_APPLY_STATE nm_apply_state
+#endif
 static void nm_statistics(unsigned polys,unsigned vertices,void *state)
 {
     REQUIRE(state==nm_state && polys==GRID*GRID*2 && vertices==(GRID+1)*(GRID+1));
@@ -64,7 +67,7 @@ static void nm_validate(void);
 static void nm_setup(void)
 {
     for(unsigned i=7;i<19;i++) nm_symbols[i]=nm_unexpected;
-    nm_symbols[12]=nm_geometry; nm_symbols[14]=nm_apply_state; nm_symbols[15]=nm_statistics;
+    nm_symbols[12]=nm_geometry; nm_symbols[14]=PF_NATIVE_MESH_APPLY_STATE; nm_symbols[15]=nm_statistics;
     void *data[]={&nm_changed,nm_state,&nm_one,&nm_sas_ptr,&nm_limit,&nm_emissive,
                   &nm_enabled,&nm_snapshot,&g_dev,&nm_draw_count,&nm_api_count,&nm_threshold};
     for(unsigned i=0;i<12;i++) nm_symbols[i+19]=data[i];

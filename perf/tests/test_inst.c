@@ -75,8 +75,11 @@ static fake_mesh g_mesh[MESHES];
 typedef struct {
     void *vt;
     unsigned refs;
+#ifdef PF_NATIVE_FX_METHOD
+    unsigned native_fields[11]; /* Native FX setup through byte 0x33. */
+#endif
 } fake_method;
-static fake_method g_method = { 0, 5 };
+static fake_method g_method = { .refs=5 };
 static void *g_cont_vt[0xE8 / 4 + 1];
 static unsigned g_stock_draws;
 
