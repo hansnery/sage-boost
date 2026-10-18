@@ -7,6 +7,18 @@ repo, backlog) is in the Realms repo's `data\AGENTS.md`; what the docs can't
 settle is in [BACKLOG.md](BACKLOG.md). Re-check anything below against the
 files before relying on it.
 
+## Next target: 60 visual FPS with shadows at 60 (2026-10-17)
+
+- User requested committing/pushing current work, then a target of at least
+  60 FPS. Clean beta history through `ace76a5` pushed to origin/codex/perf-beta.
+- Explicit preference: keep shadows at 60 too; no shadow-cadence shortcut.
+- Proposed next-stage design:
+  [60 FPS with full-rate shadows](specs/2026-10-17-60fps-full-shadows-design.md).
+- Detailed timings currently exclude extra frames. Close that measurement
+  gap and audit full-pass material/object setup before choosing the next
+  optimization. The combined CPU budget needs roughly 8 ms of savings in
+  the captured heavy scene. This is a target, not an achieved result.
+
 ## Performance beta 0.9.11-beta.1 (2026-10-17)
 
 - User approved focused performance beta and larger render investigation.
@@ -25,7 +37,8 @@ files before relying on it.
   Installed INI hash unchanged. Previous 0.9.10 binary, INI, log and both
   CSVs backed up to
   `%TEMP%/bfme2perf-0.9.10-installed-20261017-171107`.
-  No game launched; gameplay test pending. No publication, beta push or tag.
+  The user performed the saved-game test recorded below. Beta commits
+  through `ace76a5` pushed on 2026-10-17; no publication or tag.
   Stable branches remain at the baseline.
 - [Release notes](releases/perf-0.9.11-beta.1.md),
   [approved design](specs/2026-10-17-perf-beta-design.md),
