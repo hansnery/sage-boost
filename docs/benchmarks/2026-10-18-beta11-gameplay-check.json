@@ -1,0 +1,135 @@
+{
+  "window": {
+    "start_s": 98,
+    "end_s_exclusive": 158,
+    "nominal_seconds": 60,
+    "at_least_60_seconds": true
+  },
+  "presentation_calls": 1804,
+  "presentation_calls_per_nominal_second": 30.066666666666666,
+  "nominal_rate_at_least_59": false,
+  "rate_bounds_from_timestamp_quantization": {
+    "lower": 29.57377049180328,
+    "upper": 30.576271186440678
+  },
+  "per_row_calls": {
+    "min": 22,
+    "max": 34
+  },
+  "regular_frame_updates": 1818,
+  "extra_frames": 6,
+  "pacing": {
+    "gaps": 1804,
+    "histogram_counts": {
+      "present_gap_le_8333us": 0,
+      "present_gap_le_12500us": 4,
+      "present_gap_le_16667us": 12,
+      "present_gap_le_20000us": 17,
+      "present_gap_le_25000us": 61,
+      "present_gap_le_33334us": 816,
+      "present_gap_le_50000us": 858,
+      "present_gap_le_100000us": 35,
+      "present_gap_le_200000us": 1,
+      "present_gap_le_500000us": 0,
+      "present_gap_le_1000000us": 0,
+      "present_gap_over_1000000us": 0
+    },
+    "p50": {
+      "lower_exclusive_ms": 25.0,
+      "upper_ms": 33.334
+    },
+    "p95": {
+      "lower_exclusive_ms": 33.334,
+      "upper_ms": 50.0
+    },
+    "fraction_over_25_ms": 0.9478935698447893,
+    "fraction_over_50_ms": 0.019955654101995565
+  },
+  "shadows": {
+    "extra_draw_calls": 6,
+    "extra_completed_pass_samples": 6,
+    "valid_extra_profiles": 6,
+    "invalid_extra_profiles": 0,
+    "regular_shadow_skips": 0,
+    "extra_counts_match_each_row": true
+  },
+  "verification_failures": {
+    "verify_bad": 0,
+    "shadow_verify_bad": 0,
+    "spv_bad": 0,
+    "lt_verify_bad": 0
+  },
+  "limits": [
+    "Completed flip-enabled EndScene calls; not measured display refresh or GPU success.",
+    "Row timestamps quantize duration; reported FPS uses the nominal interval.",
+    "Percentiles are pooled histogram bounds, not exact gaps or averaged row percentiles.",
+    "The first gap may begin before the selected interval.",
+    "Matching shadow counts do not prove correct pixels or per-frame correspondence.",
+    "Confirm the saved-game scene, loaded version/settings, visual output and runtime log.",
+    "Simulation/network/input/camera invariants require separate evidence."
+  ],
+  "frame_weighted_metrics": {
+    "frame_avg_ms": 22.457078,
+    "logic_ms": 3.898295,
+    "render_ms": 14.145564,
+    "shadow_ms": 7.162196,
+    "reflect_ms": 2.311748,
+    "views_ms": 5.140407,
+    "ui_ms": 0.598238,
+    "terrain_ms": 0.268401,
+    "fx_batch_ms": 7.41685,
+    "fx_mesh_ms": 3.688686,
+    "draws": 1225.621012,
+    "inst_meshes": 7039.907591,
+    "inst_mismatch": 0.0,
+    "inst_groups": 354.973597,
+    "fx_groups": 846.764576,
+    "idle_ms": 11.083364,
+    "extra_cost_ms": 10.519,
+    "extra_ref_ms": 17.100833,
+    "skel_render_ms": 1.778035,
+    "skel_other_ms": 0.000982,
+    "lt_ms_shadow": 2.611754,
+    "lt_ms_views": 0.609227,
+    "present_ms": 0.009764,
+    "rest_ms": 3.336362
+  },
+  "blockers": {
+    "fps_block_cost": 1134,
+    "fps_block_catchup": 134,
+    "fps_block_pause": 0,
+    "fps_block_stop": 0,
+    "fps_probe_attempts": 0,
+    "skipped_draws": 20
+  },
+  "loaded_version": "bfme2perf 0.9.11-beta.11",
+  "activation": [
+    "render: QueueInsert=1: applied",
+    "render: QueueSort=1: applied",
+    "render: BulkRender=1: guarded native group batching enabled"
+  ],
+  "screenshot_observation": "FrameView overlay reads FPS 29 in the supplied troop-heavy scene.",
+  "screenshot_sha256": "a4d9dba43a67018d89032517d983393e32929800fe5d168e7a63d7333491dc70",
+  "selection": "Seconds 98..157 are the complete 60-second interval after the last loading gap and before the next gap, with boundary row 158 present; early empty-scene rows and later shutdown excluded.",
+  "scene_limit": "Unit count, camera, pose and scene cost vary during this interval and between beta.10 and beta.11. Do not treat cross-run cost differences as a controlled speedup measurement.",
+  "interpretation": {
+    "instancing": "Native identity-anchor correction restored admission; mismatch count is zero, with about 7040 instanced meshes per frame.",
+    "goal": "Failed sustained-60 target. Pooled p95 gap is in (33.334, 50] ms.",
+    "scheduler": "The observed regular-frame work and remaining idle budget explain refusal of most extra frames under the unchanged pacing and deadline guards.",
+    "bulk_limit": "Startup confirms installation but this build does not log bulk leaders or consumed records separately. Ordinary instancing totals cannot prove bulk fast-path coverage.",
+    "cost_limit": "Scopes overlap and must not be added. Six extra frames at seconds 100/101 do not represent the later heavier scene."
+  },
+  "source_capture": "C:\\Users\\Hans\\AppData\\Local\\Temp\\bfme2perf-beta11-test-20261018-094455-443892",
+  "source_sha256": {
+    "captured_at": "2026-10-18T09:44:56.1647078-07:00",
+    "directory": "C:\\Users\\Hans\\AppData\\Local\\Temp\\bfme2perf-beta11-test-20261018-094455-443892",
+    "copied_sha256": {
+      "bfme2perf.log": "6e74233c7fafefe1e3eba74c381dfec07ea9b64a9469ec8bbb380a2bdfb39501",
+      "bfme2perf_timing.csv": "d8050c5b617d4c24d88399d8f4a29351f2d0d2f5f553acba3bf96b82d8e2b8bf",
+      "bfme2perf_scopes.csv": "faa2febae9a73323804adac09e15920bd4e20c61419820209b95d3e9d9e93d23",
+      "bfme2perf.ini": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b"
+    },
+    "running_processes": [],
+    "installed_sha256": "574a085967d477a53037526c1ea7f6b6d257a559a36aab7f76573c4ca7cfe027"
+  }
+}

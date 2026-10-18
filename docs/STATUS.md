@@ -21,7 +21,36 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
-## Beta.10 gameplay failed; beta.11 anchor correction installed (2026-10-18)
+## Beta.11 gameplay: batching recovered, 60 FPS still failed (2026-10-18)
+
+- User's screenshot shows FrameView **29 FPS**. Game and launcher were
+  already closed. Copied the latest log, INI and CSVs before reading to
+  `%TEMP%/bfme2perf-beta11-test-20261018-094455-443892`.
+- Beta.11 loaded with QueueInsert, QueueSort and BulkRender activated.
+  Installed binary and unchanged INI hashes still match the install receipt.
+- Seconds 98..157 contain **1,804 presentation calls / 60 seconds =
+  30.0667/s**, six extra frames, and six completed extra shadow samples.
+  Pooled median gap is `(25, 33.334] ms`, p95 `(33.334, 50] ms`; all four
+  logged visual-verification failure counters are zero. Boundary row 158
+  exists. Earlier empty-scene/menu rows and gaps are excluded.
+- The anchor fix restored instancing: about **7,040 meshes/frame**, zero
+  mismatches. Normal frames average **22.457 ms**, render **14.146 ms**,
+  shadow **7.162 ms**, FX batch **7.417 ms** and FX mesh **3.689 ms**.
+  Scopes overlap; do not add them. Available idle averages **11.083 ms**.
+  Cost blocks 1,134 opportunities; catch-up blocks 134. No recovery probes
+  ran. The six extra samples at seconds 100/101 do not characterize the
+  later heavier scene.
+- Scene/camera/pose vary, so these costs are not a controlled before/after
+  speedup measurement. The same run exceeds 30 in early near-empty scenes;
+  it is not evidence of a universal 30 FPS presentation cap.
+- Startup activation and ordinary instancing counts do **not** establish
+  bulk-loop coverage: beta.11 does not report its separate leader/consumed
+  counters. Audit that coverage and remaining regular-frame CPU work next;
+  preserve deadline margins, fresh shadows and all gameplay invariants.
+  No further binary/settings change or new test request from this capture.
+  Evidence: `benchmarks/2026-10-18-beta11-gameplay-check.json`.
+
+## Earlier beta.10 failure and beta.11 installation (2026-10-18)
 
 - User reports FrameView maximum 30 FPS in the troop-heavy save. Copied log,
   INI and CSVs to
@@ -57,11 +86,9 @@ files before relying on it.
   The INI is byte-for-byte unchanged, SHA256
   `e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b`.
   See `benchmarks/2026-10-18-anchor-gate-install.json` for the receipt.
-- Await the same troop-heavy saved game for at least 90 seconds after
-  loading, then close before copying/analyzing logs. Last actual gameplay
-  remains beta.10's **29.4833 presentation calls/s**, with zero extras.
-  Require at least 59/s over a settled 60-second interval with reported
-  pacing and fresh shadows before claiming the 60 FPS objective.
+- The subsequent beta.11 saved-game result above is **30.0667/s** and does
+  not meet the objective. Require at least 59/s over a settled 60-second
+  interval with reported pacing and fresh shadows before claiming 60 FPS.
 
 ## Earlier beta.10 installation and offline results (2026-10-18)
 

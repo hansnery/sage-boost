@@ -26,8 +26,14 @@ Strike an item through, with the date, when it's done.
 - [x] 2026-10-18: beta.11 committed/pushed as `7d17e24` and installed with
   beta.10 and its capture backed up. Installed/tested hashes match; the
   user's INI is byte-for-byte unchanged.
-- [ ] Verify beta.11 in the same troop-heavy saved-game scenario. Sustained
-  60 FPS remains unproved; last actual capture is beta.10 at 29.4833/s.
+- [x] 2026-10-18: beta.11 saved-game capture confirms restored instancing
+  (about 7,040 meshes/frame, zero mismatches), but only 30.0667 presentation
+  calls/s over seconds 98..157 and six extra frames. The 60 FPS target
+  failed again. See `benchmarks/2026-10-18-beta11-gameplay-check.json`.
+- [ ] Establish actual bulk-loop coverage separately from ordinary
+  instancing, and reduce remaining regular-frame render work. Beta.11
+  averages 22.457 ms per normal frame in the chosen interval. Do not lower
+  pacing/deadline guards or request another diagnostic-only gameplay test.
 - Earlier research notes below retain their version-specific limits.
   Beta.10 supplies a finite fail-disabled policy for persistent errors; it
   does not promise unchanged pixels during arbitrary driver failure or
