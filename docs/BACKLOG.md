@@ -7,6 +7,16 @@ Strike an item through, with the date, when it's done.
 
 ## Full-rate 60 FPS investigation (2026-10-17)
 
+- [x] 2026-10-18: beta.9 puts leader qualification and the checked bulk
+  record loop into production inst.c. Both-image fallback/fault checks,
+  combined queue/GPU controls and the full suite pass. Normal GPU fixtures
+  use unmodified production source. See
+  `specs/2026-10-18-runtime-bulk-instancer.md`; runtime activation remains off.
+- [ ] Connect verified startup discovery, native group bridge and aggregate
+  accounting to these production operations; finish abandonment/Reset and
+  incomplete/incoherent failure policy before installation. Measure the
+  complete active hook; existing offline savings are not a gameplay result.
+
 - [x] 2026-10-18: beta.8 introduces one production checked submission object
   shared by the ASI and native/GPU adapter. Nineteen direct result-contract
   cases, both-image fallback/fault regressions and the full suite pass.

@@ -1,0 +1,87 @@
+{
+  "kind": "Production bulk instancer operations; native runtime group activation pending",
+  "base_commit": "78990c333e9062a5e483794efb94c250c34b8353",
+  "plugin_version": "0.9.11-beta.9",
+  "bulk_operations_linked_into_asi": true,
+  "bulk_operations_active_in_game": false,
+  "normal_native_gpu_fixture_uses_unmodified_production_inst_c": true,
+  "ownership_cases": 12,
+  "result_contract_cases": 19,
+  "native_gpu_regressions": {
+    "aotr": {
+      "backend_workloads": 4,
+      "fallback_cases": 192,
+      "single_gpu_failures": 248,
+      "broken_device_effect_controls": 28
+    },
+    "rotwk": {
+      "backend_workloads": 4,
+      "fallback_cases": 192,
+      "single_gpu_failures": 248,
+      "broken_device_effect_controls": 28
+    }
+  },
+  "combined_queue_gpu_regressions": {
+    "aotr": {
+      "backend_workloads": 4,
+      "input_orders": 4,
+      "owned_ranges": 3,
+      "broken_record_controls": 12
+    },
+    "rotwk": {
+      "backend_workloads": 4,
+      "input_orders": 4,
+      "owned_ranges": 3,
+      "broken_record_controls": 12
+    }
+  },
+  "full_plugin_suite": "passed; exit 0",
+  "instruction_check": [
+    "inst.o 3875 instructions; no x87/SIMD/FP-control instructions",
+    "inst_recovery_engine.o 5483 instructions; no x87/SIMD/FP-control instructions",
+    "inst_native_fallback_engine.o 5644 instructions; no x87/SIMD/FP-control instructions",
+    "instsubmit.o 1023 instructions; no x87/SIMD/FP-control instructions"
+  ],
+  "limits": [
+    "No new performance measurement; historical combined saving is 6.17-7.96 ms per regular/extra pair, not gameplay FPS",
+    "Last actual gameplay about 30.18 presentations/s; 60 FPS remains unproved",
+    "Runtime discovery, native group hook, aggregate timing and abandonment/Reset/failure policy remain to be connected",
+    "Production operations require the accepted render thread and verified native group/frame context",
+    "Transaction result describes latest submission, not aggregate group units; both coherent and complete must hold",
+    "Stage-refusal fixture alone uses a renamed stage entry; observation and corruption remain outside production",
+    "Controlled source/material lifetimes do not establish all dynamic gameplay lifetimes",
+    "Installed ASI and INI unchanged; no game or WorldBuilder launched"
+  ],
+  "sha256": {
+    "perf/Makefile": "b6ad5f767b2496cfe64d810a7590a151be64d6c50ce9e61d24a8efdd1a1309d0",
+    "perf/src/inst.c": "ecd1bbc8ee1c6bd4b649ec33c249ff28a8955f04fbecb873ea384b131d4e242a",
+    "perf/src/instbulk.h": "36e9b3f3727ca3001c9e64e248f9c3881518700ccc98507325108c215ef158a3",
+    "perf/src/instsubmit.c": "419b97dd748333803acb9b90f0cea333ccc62e7caeed446bd70183615bc66423",
+    "perf/src/instsubmit.h": "0595f61ecb32a586e3349dae9060f9d161068e23a51f331e193e55ec23954fa6",
+    "perf/src/main.c": "7ab794461536b67176c4eff9be515dbbe21bb81db2fb732ab5cf7f68bb046da5",
+    "perf/src/version.rc": "8640c7277f78d8a8efb7fb6da830fa1f7919a0f8042abfd347bb4b13514cac48",
+    "perf/tests/inst_recovery_engine.c": "25cdc178ff9e346674f1a59bfa18cee25e56fa35c226c8e42b86bfbde1b3bf6c",
+    "perf/tests/inst_native_fallback_engine.c": "6e6eef9ec2b56872935fe8a90321122c81cea1f315897be648d4bc09519522e6",
+    "perf/tests/test_inst_ownership.c": "43a85719e978f12454137743c959d09d4bee49abb928aa268fc7ee3f33082a44",
+    "perf/tests/test_load.c": "d994127b770192a5c93397385f4613ddacd0b483e00a92a9781d3a51856a753c",
+    "tools/make_inst_recovery_source.py": "a5d667f526d9cb0ad0e9a30a5c7f5eee6b456baa4bce388e4bff498830bd5d34",
+    "perf/build/bfme2perf.asi": "e70deacb549d4b74e9db63853c02aa0987419e3025ad5bcea6af977753bb9c3a",
+    "perf/build/inst.o": "909a622a351479454876ce497efa5fd8912dc14025ae355d10487cb5c50943ee",
+    "perf/build/instsubmit.o": "f90f195f108e703c2611dc175395f1e03378e667d096290b064e92a13927b5da",
+    "perf/build/inst_recovery_engine.o": "21ba4c228155fc752f3e8411db5f7f08a1789f2ad3f47cc2cc1f6393b2f711ef",
+    "perf/build/inst_native_fallback_engine.o": "7f80014fd7dc478d6f2c7b4ecc7263d275260f73b90f41c3ba5dd3fa723ac0f7",
+    "perf/build/test_native_group_fallback.exe": "100568cc58813d5d42bf014aad57c9beb500f67e639dde80846235ba7bb43d63",
+    "perf/build/bench_native_insert_gpu.exe": "3379341b643135cb26ef0c84fbed7e49345892b0d5ebf16a6b5507186263f76b",
+    "perf/build/runtime-bulk-inst-build.txt": "7e1302dafefac9296ca8adbee08443eef6cf510caaa5636e2685bff7ca6ffb36",
+    "perf/build/runtime-bulk-inst-native-aotr-first.txt": "9977f3d5cfc71bbf996286658cf675c3bdbcd79d9ac18901fcd0b0214f2298d0",
+    "perf/build/runtime-bulk-inst-native-rotwk.txt": "2df923d0bbd85b19456fd75a0864b0979621628660d663351fef9b524d6fcee5",
+    "perf/build/runtime-bulk-inst-insert-aotr.txt": "70de87ada81f66f4e262c835bf3760949a18c86171372b3a19f03606f13e1d05",
+    "perf/build/runtime-bulk-inst-insert-rotwk.txt": "d1c72f6828e3a9f29140745a482a7d6305d6d4b5867e90b28ddd3878c67c84e4",
+    "perf/build/runtime-bulk-inst-suite.txt": "c6cf62da728a376da0d4187a492858def34543b786dc7ceded292e14f429692e",
+    "perf/build/runtime-bulk-inst-registers.txt": "2e3374eea2cca0899b60bcadad31f97b855c5d55932dd249a54199ac00c94ae6",
+    "C:/Jogos/AgeoftheRing/rotwk/game.dat": "035da15c626af6cd1663d1886deea605464ec6776f2c5f1d24570c2be6d73e61",
+    "C:/Jogos/AgeoftheRing/rotwk/game820.dat": "bcf4c85ec72ecb9eb95a844fc0072434fdcef49a5b2c59abb77ac04af29c277e",
+    "C:/Jogos/AgeoftheRing/rotwk/mss/bfme2perf.asi": "db65e51d42bb7f49947631a17b9aeebc0604f3cd9e2c055d8e8a35daf65408e5",
+    "C:/Jogos/AgeoftheRing/rotwk/mss/bfme2perf.ini": "79bbb612a6ce22e76f930e9334a6e650bc2c49c3d28260c6bc716c026da94c54"
+  }
+}

@@ -17,6 +17,7 @@ static unsigned offset=12,stride=16;
 
 void fu_log_event(const char *format,...) { (void)format; }
 void *pf_skip_thunk(unsigned bytes) { return (void *)(bytes+1); }
+void *const pf_exit_stubs[PF_SITE_COUNT]={0};
 
 static ULONG WINAPI obj_add(void *self)
 {
@@ -77,6 +78,7 @@ static void reset_case(int null_stream)
     native_decl=(Object){object_vt,2,0};our_decl=(Object){object_vt,1,0};
     native_vb=(Object){object_vt,null_stream?0u:1u,(unsigned)null_stream};
     instance_vb=(Object){object_vt,1,0};
+    g_bulk_on=0;
     bound_vs=&native_vs;bound_decl=&native_decl;bound_vb=null_stream?NULL:&native_vb;
     offset=12;stride=16;dead_uses=draws=sets=get_calls=reject_stream=reject_shader=0;
     device_vt[PF_DEV_GET_VS]=(void *)get_vs;device_vt[PF_DEV_GET_DECL]=(void *)get_decl;
@@ -181,6 +183,13 @@ int main(void)
     slot[1]=method;slot[2]=(void *)1;
     REQUIRE(mesh_call(slot,(void *)1)==pf_skip_thunk(8));
     REQUIRE(g.mode==M_IDLE && draws==1 && method[1]==2);finished();cases++;
+
+    /* A refused per-mesh state must also refuse the ordinary member path;
+     * returning from the bulk bridge alone cannot cancel a deferred leader. */
+    reset_case(0);capture_leader();game_context();g.mode=M_INST;g.count=2;g_bulk_on=1;
+    *(void **)(mesh+0x310)=(void *)1;
+    REQUIRE(member(mesh,g.end-3*PF_RECORD_SIZE,method,(void *)1)==(void *)1);
+    REQUIRE(draws==1 && g.mode==M_STOCK && method[1]==3);finished();cases++;
 
     reset_case(1);capture_leader();REQUIRE(!g.capture_reason && !g_stream_owner);
     g.count=2;REQUIRE(draw_batch(0));pf_inst_init(0);

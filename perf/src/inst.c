@@ -6,6 +6,7 @@
 #include "declcache.h"
 #include "depthcmp.h"
 #include "inst_shaders.h"
+#include "instbulk.h"
 #include "log.h"
 #include "stubs.h"
 
@@ -88,6 +89,14 @@ static group g;
  * and restored its last batch. Kept outside group: copying a snapshot in
  * an offline fixture does not duplicate this ownership token. */
 static void *g_stream_owner;
+static pf_inst_bulk_sites g_bulk_sites;
+static int g_bulk_on, g_bulk_capture;
+static pf_submit g_submit;
+static pf_submit_result g_bulk_result = {S_OK, 0, 0, 0, 1, 1};
+static const void *g_bulk_model, *g_bulk_method;
+static const unsigned char *g_leader_mesh, *g_leader_geometry;
+static void **g_leader_slot;
+static unsigned g_bulk_leaders;
 
 /* The kinds of "mismatch", for the log only (the CSV keeps one column). The
  * device-state ones are where capture() found the leader's draw unlike what
@@ -189,6 +198,8 @@ static void release_stream_owner(void)
     void *owner = g_stream_owner;
     g_stream_owner = 0;
     g.prev_vb = 0;
+    g_bulk_capture = 0;
+    g_submit.valid = 0;
     release(owner);
 }
 
@@ -448,7 +459,7 @@ static void capture(void **slot)
 
 /* Draws the staged instances with our shader, then puts back exactly what
  * the game had bound. counted: 0 for a verify sample's off-screen copy. */
-static int draw_batch(int counted)
+static int legacy_draw_batch(int counted)
 {
     void *dev = g.dev;
     void **vt;
@@ -505,6 +516,39 @@ static int draw_batch(int counted)
     return 1;
 }
 
+static int bulk_capture_matches(void)
+{
+    return g_bulk_capture && g.skinned && g.model == g_bulk_model &&
+           g.method == g_bulk_method && g.dev == g_submit.draw.dev &&
+           g.ea_vs == g_submit.draw.game_vs;
+}
+
+static int draw_batch(int counted)
+{
+    if (!bulk_capture_matches())
+        return legacy_draw_batch(counted);
+    unsigned n = g.count;
+    if (!n)
+        return g_bulk_result.coherent && g_bulk_result.complete;
+    int timed = counted && g.shadow && !g_extra;
+    LONGLONG t0 = timed ? qpc() : 0;
+    g.count = 0;
+    g_bulk_result = pf_submit_batch(&g_submit, g_stage, n);
+    if (FAILED(g_bulk_result.error) || !g_bulk_result.coherent || !g_bulk_result.complete)
+        fail_session("checked batch rejected an operation", (unsigned)g_bulk_result.error);
+    if (g_bulk_result.committed && counted) {
+        add(REASON(meshes), g_bulk_result.committed);
+        add(REASON(draws), 1);
+        if (g.bonelist)
+            add(REASON(bonelist), g_bulk_result.committed);
+        if (!g_extra)
+            g_cat_meshes[g.cat] += g_bulk_result.committed;
+    }
+    if (timed)
+        g_shadow_ticks += qpc() - t0;
+    return g_bulk_result.coherent && g_bulk_result.complete;
+}
+
 /* Copies one mesh's bones (or world matrix) into the next instance slot. */
 static int stage(const unsigned char *mesh)
 {
@@ -537,6 +581,37 @@ static int stage(const unsigned char *mesh)
         copy_dwords(dst, (const unsigned *)(mesh + PF_MESH_TRANSFORM), 12);
     }
     g.count++;
+    return 1;
+}
+
+/* The native final-DIP gate calls this before suppressing the leader. */
+static int capture_bulk_palette(void)
+{
+    const pf_inst_variant *v = &pf_inst_variants[g.variant];
+    if (v->roles[PF_ROLE_BONES] < 0 || !g_can_read_consts || !g.skinned ||
+        g.stride != g.nbones * 2 || g.stride > MAX_REGS)
+        return 0;
+    pf_submit_desc d = {
+        .dev = g.dev, .game_vs = g.ea_vs, .our_vs = g_ours[g.variant],
+        .game_decl = g.decl->game, .our_decl = g.decl->ours,
+        .instance_vb = g_ivb, .previous_vb = g.prev_vb,
+        .instance_stream = g.decl->inst_stream, .input_streams = g.decl->streams,
+        .instance_offset = g_ivb_off[g.stride] * 4,
+        .previous_offset = g.prev_off, .previous_stride = g.prev_stride,
+        .instance_register = v->ir_reg, .instance_registers = v->ir_count,
+        .bone_register = (unsigned)v->roles[PF_ROLE_BONES], .bone_registers = g.stride
+    };
+    for (unsigned i = 0; i < 6; i++)
+        d.dip[i] = g.dip[i];
+    HRESULT hr = pf_submit_capture(&g_submit, &d);
+    if (FAILED(hr)) {
+        fail_session("recovery palette capture failed", (unsigned)hr);
+        return 0;
+    }
+    g_bulk_model = g.model;
+    g_bulk_method = g.method;
+    g_bulk_capture = 1;
+    g_bulk_result = (pf_submit_result){S_OK, 0, 0, 0, 1, 1};
     return 1;
 }
 
@@ -855,6 +930,10 @@ static int lead(const unsigned char *mesh)
 
     g.reason = REASON(mismatch);
     g.mm = MM_GEOMETRY;
+    if (g_bulk_on && *(const void *const *)(mesh + 0x310)) {
+        g.mm = MM_MODEL;
+        return 0;
+    }
     g.model = model;
     g.base_vertex = *(const unsigned *)(mesh + PF_MESH_BASE_VERTEX);
     g.skinned = (flags & PF_MODEL_SKIN) != 0;
@@ -996,7 +1075,8 @@ static void *member(const unsigned char *mesh, const unsigned char *rec, void *m
 {
     int same = *(const unsigned char *const *)(mesh + PF_MESH_MODEL) == g.model &&
                *(const unsigned *)(mesh + PF_MESH_BASE_VERTEX) == g.base_vertex &&
-               method == g.method && *refs_of(method) >= 2;
+               method == g.method && *refs_of(method) >= 2 &&
+               (!g_bulk_on || !*(const void *const *)(mesh + 0x310));
 
     if (g_failed) {
         g.count = 0;
@@ -1084,12 +1164,109 @@ static void *mesh_call(void **slot, void *next)
     return ret;
 }
 
+static int bulk_eligible(void)
+{
+    return g_bulk_on && g.skinned && g_bulk_sites.mesh && g_bulk_sites.triangles &&
+           g_bulk_sites.draw && g_bulk_sites.begin_callback && g_bulk_sites.end_callback &&
+           !*g_bulk_sites.begin_callback && !*g_bulk_sites.end_callback &&
+           (g_extra || !g_verify || !g_window_open);
+}
+
+int pf_inst_bulk_configure(const pf_inst_bulk_sites *sites, int enable)
+{
+    if (g.count || !g_bulk_result.coherent || !g_bulk_result.complete || g_submit.open)
+        return 0;
+    g_bulk_sites = sites ? *sites : (pf_inst_bulk_sites){0};
+    g_bulk_on = enable != 0 && sites != NULL;
+    g_leader_slot = NULL;
+    g_leader_mesh = g_leader_geometry = NULL;
+    g_bulk_leaders = 0;
+    return 1;
+}
+
+unsigned pf_inst_bulk_leaders(void) { return g_bulk_leaders; }
+
+int pf_inst_bulk_ready(void)
+{
+    return bulk_eligible() && bulk_capture_matches() && g_submit.valid && !g_failed &&
+           (g.mode == M_INST || (g.mode == M_LEADER && g.dips == 1 && !g.capture_reason));
+}
+
+int pf_inst_bulk_matches(const unsigned char *rec, const unsigned char *end, void *method)
+{
+    if (!pf_inst_bulk_ready() || !rec || rec >= end || end != g.end ||
+        (unsigned)(end - rec) % PF_RECORD_SIZE || method != g.method ||
+        !method || *refs_of(method) < 1)
+        return 0;
+    const unsigned char *mesh = *(const void *const *)rec;
+    return mesh && *(const void *const *)(mesh + PF_MESH_MODEL) == g.model &&
+           *(const unsigned *)(mesh + PF_MESH_BASE_VERTEX) == g.base_vertex &&
+           !*(const void *const *)(mesh + 0x310);
+}
+
+unsigned pf_inst_bulk_advance(const unsigned char *rec, const unsigned char *end, void *method,
+                              pf_submit_result *outcome)
+{
+    unsigned n = 0;
+    if (!pf_inst_bulk_matches(rec, end, method))
+        goto done;
+    if (g.mode == M_LEADER)
+        evaluate();
+    if (g.mode != M_INST)
+        goto done;
+    while (rec < end && !g_failed) {
+        const unsigned char *mesh = *(const void *const *)rec;
+        if (!mesh || *(const void *const *)(mesh + PF_MESH_MODEL) != g.model ||
+            *(const unsigned *)(mesh + PF_MESH_BASE_VERTEX) != g.base_vertex ||
+            *(const void *const *)(mesh + 0x310) || !stage(mesh))
+            break;
+        n++;
+        rec += PF_RECORD_SIZE;
+        if (g.count == g.cap && !draw_batch(1))
+            break;
+    }
+    if (rec == end && draw_batch(1)) {
+        g.mode = M_IDLE;
+        g.armed = 0;
+        release_stream_owner();
+    }
+done:
+    if (outcome)
+        *outcome = g_bulk_result;
+    return n;
+}
+
+pf_submit_result pf_inst_bulk_cancel(void)
+{
+    if (!g_bulk_result.coherent || !g_bulk_result.complete)
+        return g_bulk_result;
+    if (g.count) {
+        if (!bulk_capture_matches())
+            return (pf_submit_result){E_UNEXPECTED, 0, 0, 0, 1, 0};
+        unsigned n = g.count;
+        g.count = 0;
+        g_bulk_result = pf_submit_pending(&g_submit, g_stage, n);
+        if (FAILED(g_bulk_result.error) || !g_bulk_result.coherent || !g_bulk_result.complete)
+            fail_session("pending ordinary replay failed", (unsigned)g_bulk_result.error);
+    }
+    if (g_bulk_result.coherent && g_bulk_result.complete) {
+        g.mode = M_STOCK;
+        g.armed = 0;
+        g.reason = REASON(mismatch);
+        release_stream_owner();
+    }
+    return g_bulk_result;
+}
+
 void pf_inst_init(int verify)
 {
     LARGE_INTEGER f;
     release_stream_owner();
     g_verify = verify != 0;
     g.mode = M_IDLE;
+    g.count = 0;
+    g.armed = 0;
+    g_bulk_result = (pf_submit_result){S_OK, 0, 0, 0, 1, 1};
     QueryPerformanceFrequency(&f);
     g_qpf = f.QuadPart;
     if (verify == 2) {
@@ -1111,6 +1288,41 @@ void pf_inst_set_shadow(const volatile unsigned char *flag, int instancing)
     g_shadow_inst = instancing != 0;
 }
 
+static HRESULT WINAPI bulk_leader_skip(void *dev, unsigned type, int base,
+                                       unsigned first, unsigned vertices,
+                                       unsigned start, unsigned primitives)
+{
+    (void)dev; (void)type; (void)base; (void)first; (void)vertices;
+    (void)start; (void)primitives;
+    return S_OK;
+}
+
+static int bulk_defer_leader(void **slot)
+{
+    if (!g_bulk_on || !g.armed || g_failed || g.mode != M_LEADER ||
+        g.dips != 1 || g.capture_reason || g.count || g.cap < 2)
+        return 0;
+    /* Verify frame identity before reading any deeper return addresses.
+     * These offsets belong to the complete verified native body contract. */
+    if ((UINT_PTR)slot + 392 != (UINT_PTR)g_leader_slot || !bulk_eligible() ||
+        slot[0] != g_bulk_sites.draw + 0x18A || slot[22] != g_bulk_sites.mesh + 0x92F ||
+        (slot[15] != g_bulk_sites.triangles + 0x1D && slot[15] != pf_exit_stubs[PF_DRAW]) ||
+        !g_leader_mesh || *refs_of(g.method) < 2 ||
+        *(const void *const *)(g_leader_mesh + PF_MESH_MODEL) != g.model ||
+        *(const unsigned *)(g_leader_mesh + PF_MESH_BASE_VERTEX) != g.base_vertex ||
+        *(const void *const *)(g.model + PF_MODEL_GEOMETRY) != g_leader_geometry ||
+        !g_leader_geometry || g_leader_geometry[0] ||
+        *(const void *const *)(g_leader_mesh + 0x310) ||
+        *(const void *const *)(g_leader_geometry + PF_GEOM_BONES_BEGIN) != g.bonemap ||
+        *(const short *const *)(g_leader_geometry + PF_GEOM_BONES_END) != g.bonemap + g.nbones ||
+        *(const unsigned *)(g_leader_geometry + PF_GEOM_JOINTS) != g.joints)
+        return 0;
+    if (!capture_bulk_palette() || !stage(g_leader_mesh))
+        return 0;
+    g_bulk_leaders++;
+    return 1;
+}
+
 void *pf_inst_enter(unsigned k, void **slot, void *next)
 {
     DWORD tid;
@@ -1125,10 +1337,18 @@ void *pf_inst_enter(unsigned k, void **slot, void *next)
         return next;
     if (k == g_dip_site) {
         capture(slot);
-        return next;
+        return bulk_defer_leader(slot) ? (void *)bulk_leader_skip : next;
     }
-    if (k == g_mesh_site)
+    if (k == g_mesh_site) {
+        if (g_bulk_on) {
+            g_leader_slot = slot;
+            g_leader_mesh = slot[-4];
+            const unsigned char *model = g_leader_mesh ?
+                *(const void *const *)(g_leader_mesh + PF_MESH_MODEL) : NULL;
+            g_leader_geometry = model ? *(const void *const *)(model + PF_MODEL_GEOMETRY) : NULL;
+        }
         return mesh_call(slot, next);
+    }
     return next;
 }
 

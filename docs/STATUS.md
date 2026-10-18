@@ -21,6 +21,25 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Production bulk instancer built (2026-10-18)
+
+- Beta **0.9.11-beta.9** moves leader eligibility, palette capture, checked
+  submission and the bulk record loop into production `inst.c`. Normal
+  combined GPU tests execute that unmodified source; the adapter delegates
+  to it. See [bulk instancer](specs/2026-10-18-runtime-bulk-instancer.md).
+- Both images pass 384 native fallback cases, 496 single-GPU-failure cases
+  and 56 broken device-effect controls. Eight combined queue/GPU workloads
+  preserve native ordering, output and ownership; 24 broken-record controls
+  are rejected. Twelve ownership cases, 19 submission cases and the full
+  plugin suite pass. General-register instruction checks pass.
+- Built ASI SHA256:
+  `e70deacb549d4b74e9db63853c02aa0987419e3025ad5bcea6af977753bb9c3a`.
+  Source/build/log hashes and test scope are preserved with the report.
+- The implementation is linked but remains disabled: integrate startup
+  discovery, the actual native group hook, aggregate timing and explicit
+  abandonment/Reset/incomplete-replay failure policy next. No installation
+  or fresh performance measurement; last gameplay remains 30.18/s.
+
 ## Shared checked submission module built (2026-10-18)
 
 - Beta **0.9.11-beta.8** moves skeletal batch setup/restoration and ordinary

@@ -90,8 +90,8 @@ $(BUILD)/test_instsubmit.exe: tests/test_instsubmit.c $(BUILD)/instsubmit.o src/
 test-instsubmit: $(BUILD)/test_instsubmit.exe
 	./$(BUILD)/test_instsubmit.exe
 
-$(BUILD)/test_inst_ownership.exe: tests/test_inst_ownership.c src/inst.c src/declcache.c src/*.h | $(BUILD)
-	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $< src/declcache.c
+$(BUILD)/test_inst_ownership.exe: tests/test_inst_ownership.c src/inst.c src/declcache.c $(BUILD)/instsubmit.o src/*.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $< src/declcache.c $(BUILD)/instsubmit.o
 
 .PHONY: test-inst-ownership
 test-inst-ownership: $(BUILD)/test_inst_ownership.exe
@@ -182,7 +182,7 @@ $(BUILD)/test_extraprofile.exe: tests/test_extraprofile.c src/extraprofile.c src
 $(BUILD)/test_declcache.exe: tests/test_declcache.c src/declcache.c src/*.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
 
-$(BUILD)/test_inst.exe: tests/test_inst.c src/inst.c src/declcache.c src/log.c src/scan.c src/patch.c src/stubs.c \
+$(BUILD)/test_inst.exe: tests/test_inst.c src/inst.c src/instsubmit.c src/declcache.c src/log.c src/scan.c src/patch.c src/stubs.c \
                         src/timing.c src/presentgap.c src/csvrow.c src/clock.c src/reflect.c src/uistate.c \
                         src/fps.c src/extraprofile.c src/fpsmath.c src/btnclock.c src/shadowpass.c src/catchup.c \
                         src/notice.c src/lights.c src/*.h | $(BUILD)
@@ -277,6 +277,7 @@ $(BUILD)/test_presentgap.exe: tests/test_presentgap.c src/presentgap.c src/*.h |
 $(BUILD)/inst_dispatch_engine.o: tests/inst_dispatch_engine.c src/inst.c src/*.h | $(BUILD)
 	$(CC) $(CFLAGS) -Isrc -c -o $@ $<
 
+CHECKED_WRAP := -Wl,--wrap=pf_submit_batch -Wl,--wrap=pf_submit_pending
 DISPATCH_OBJS := $(filter-out $(BUILD)/main.o $(BUILD)/rt.o $(BUILD)/inst.o $(BUILD)/version.o,$(OBJS))
 $(BUILD)/test_inst_ownership_gpu.exe: tests/test_inst_ownership_gpu.c tests/test_inst.c tests/bench_guard.h $(BUILD)/inst.o $(DISPATCH_OBJS) | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -static -o $@ $< $(BUILD)/inst.o $(DISPATCH_OBJS)
@@ -378,7 +379,7 @@ test-native-fx-state:
 	python ../tools/native_fx_state_contract.py "$(ROTWK_DAT)" --self-test
 
 $(BUILD)/test_native_fx_recovery.exe: tests/test_native_fx_recovery.c tests/test_native_gpu_faults.c tests/bench_native_fx_gpu.c tests/native_fx_image.h tests/bench_native_group_gpu.c tests/bench_native_leader.c tests/native_group_image.h tests/native_mesh_image.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_fault_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
-	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_fault_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_fault_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS)) $(CHECKED_WRAP)
 
 test-native-fx-recovery: $(BUILD)/test_native_fx_recovery.exe
 	python ../tools/bench_native_fx_gpu.py --self-test "$(AOTR_DAT)" $(BUILD)/test_native_fx_recovery.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first
@@ -395,7 +396,7 @@ $(BUILD)/inst_native_fallback_engine.o: tests/inst_native_fallback_engine.c test
 
 .PHONY: test-native-group-fallback
 $(BUILD)/test_native_group_fallback.exe: tests/test_native_group_fallback.c tests/test_native_gpu_faults.c tests/bench_native_fx_gpu.c tests/native_fx_image.h tests/bench_native_group_gpu.c tests/bench_native_leader.c tests/native_group_image.h tests/native_mesh_image.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_native_fallback_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
-	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_native_fallback_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_native_fallback_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS)) $(CHECKED_WRAP)
 
 test-native-group-fallback: $(BUILD)/test_native_group_fallback.exe
 	python ../tools/test_native_group_fallback.py --self-test "$(AOTR_DAT)" $(BUILD)/test_native_group_fallback.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first
@@ -408,13 +409,13 @@ test-native-group-fallback: $(BUILD)/test_native_group_fallback.exe
 	  DXVK_LOG_LEVEL=none python ../../../tools/test_native_group_fallback.py --self-test "$(AOTR_DAT)" test_native_group_fallback.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 leader-bulk-first
 
 $(BUILD)/bench_native_fx_gpu.exe: tests/bench_native_fx_gpu.c tests/native_fx_image.h tests/bench_native_group_gpu.c tests/bench_native_leader.c tests/native_group_image.h tests/native_mesh_image.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
-	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS)) $(CHECKED_WRAP)
 
 $(BUILD)/native_sort_fixture.o: tests/bench_native_sort.c tests/bench_guard.h src/queuesort.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -Wno-unused-function -DPF_NATIVE_SORT_EMBED -c -o $@ $<
 
 $(BUILD)/bench_native_queue_gpu.exe: tests/bench_native_queue_gpu.c tests/native_shared_arena.h tests/bench_native_fx_gpu.c tests/native_fx_image.h tests/bench_native_group_gpu.c tests/bench_native_leader.c tests/native_group_image.h tests/native_mesh_image.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/native_sort_fixture.o $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
-	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/native_sort_fixture.o $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/native_sort_fixture.o $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS)) $(CHECKED_WRAP)
 
 QUEUE_MODE ?= combined
 QUEUE_ORDER ?= random
@@ -437,7 +438,7 @@ $(BUILD)/native_insert_fixture.o: tests/bench_native_insert.c tests/bench_guard.
 	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -Wno-unused-function -DPF_NATIVE_INSERT_EMBED -c -o $@ $<
 
 $(BUILD)/bench_native_insert_gpu.exe: tests/bench_native_insert_gpu.c tests/bench_native_queue_gpu.c tests/native_shared_arena.h tests/bench_native_fx_gpu.c tests/native_fx_image.h tests/bench_native_group_gpu.c tests/bench_native_leader.c tests/native_group_image.h tests/native_mesh_image.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/native_insert_fixture.o $(BUILD)/native_sort_fixture.o $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
-	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/native_insert_fixture.o $(BUILD)/native_sort_fixture.o $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/native_insert_fixture.o $(BUILD)/native_sort_fixture.o $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS)) $(CHECKED_WRAP)
 
 INSERT_MODE ?= combined
 INSERT_ORDER ?= random
@@ -469,14 +470,14 @@ bench-native-fx-gpu: $(BUILD)/bench_native_fx_gpu.exe
 $(BUILD)/inst_recovery_base.c: src/inst.c ../tools/make_inst_recovery_source.py | $(BUILD)
 	python ../tools/make_inst_recovery_source.py
 
-$(BUILD)/inst_recovery_engine.o: tests/inst_recovery_engine.c tests/inst_native_leader_engine.c tests/inst_retained_engine.c tests/inst_dispatch_engine.c $(BUILD)/inst_recovery_base.c src/*.h | $(BUILD)
+$(BUILD)/inst_recovery_engine.o: tests/inst_recovery_engine.c tests/inst_native_leader_engine.c tests/inst_retained_engine.c tests/inst_dispatch_engine.c src/inst.c src/*.h | $(BUILD)
 	$(CC) $(CFLAGS) -Isrc -c -o $@ $<
 
-$(BUILD)/inst_recovery_fault_engine.o: tests/inst_recovery_fault_engine.c tests/inst_recovery_engine.c tests/inst_gpu_fault_engine.c tests/inst_native_leader_engine.c tests/inst_retained_engine.c tests/inst_dispatch_engine.c $(BUILD)/inst_recovery_base.c src/*.h | $(BUILD)
+$(BUILD)/inst_recovery_fault_engine.o: tests/inst_recovery_fault_engine.c tests/inst_recovery_engine.c tests/inst_gpu_fault_engine.c tests/inst_native_leader_engine.c tests/inst_retained_engine.c tests/inst_dispatch_engine.c src/inst.c src/*.h | $(BUILD)
 	$(CC) $(CFLAGS) -Isrc -c -o $@ $<
 
 $(BUILD)/test_native_gpu_recovery.exe: tests/test_native_gpu_recovery.c tests/test_native_gpu_faults.c tests/bench_native_group_gpu.c tests/bench_native_leader.c tests/native_group_image.h tests/native_mesh_image.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_fault_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
-	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_fault_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_fault_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS)) $(CHECKED_WRAP)
 
 test-native-gpu-recovery: $(BUILD)/test_native_gpu_recovery.exe
 	python ../tools/test_native_gpu_faults.py --self-test --recovery "$(AOTR_DAT)" $(BUILD)/test_native_gpu_recovery.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first
@@ -489,7 +490,7 @@ test-native-gpu-recovery: $(BUILD)/test_native_gpu_recovery.exe
 	  DXVK_LOG_LEVEL=none python ../../../tools/test_native_gpu_faults.py --self-test --recovery "$(AOTR_DAT)" test_native_gpu_recovery.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 leader-bulk-first
 
 $(BUILD)/bench_native_gpu_recovery.exe: tests/bench_native_group_gpu.c tests/bench_native_leader.c tests/native_group_image.h tests/native_mesh_image.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
-	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS)) $(CHECKED_WRAP)
 
 bench-native-gpu-recovery: $(BUILD)/bench_native_gpu_recovery.exe
 	python ../tools/bench_native_group_gpu.py "$(AOTR_DAT)" $(BUILD)/bench_native_gpu_recovery.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first
