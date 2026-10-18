@@ -41,11 +41,11 @@ Stable branches and installed INI values stay unchanged. A saved-game
 
 - [x] Record concrete results, hashes, limitations and live-coverage
   uncertainty in STATUS, BACKLOG and beta.13 release notes.
-- [ ] Commit explicit paths with the existing co-author trailer and push
+- [x] Commit explicit paths with the existing co-author trailer and push
   the authorized beta branch. Keep main, stable branch and tags intact.
-- [ ] If the tested change remains substantial, back up installed beta.11,
+- [x] If the tested change remains substantial, back up installed beta.11,
   INI and logs/CSVs to a fresh timestamped TEMP directory, copy only the
   tested ASI, verify build/install hashes and unchanged INI bytes, and record
   the installation receipt. Do not launch the game.
-- [ ] Only then request the user's same heavy-save test. Keep the 60 FPS
+- [x] Only then request the user's same heavy-save test. Keep the 60 FPS
   goal active until a settled capture demonstrates it.

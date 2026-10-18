@@ -9,6 +9,16 @@ files before relying on it.
 
 ## Next target: 60 visual FPS with shadows at 60 (2026-10-17)
 
+**Current installed build: 0.9.11-beta.13**, from pushed commit `5e94796`,
+installed 2026-10-18 15:17 PDT. Tested/build/installed ASI SHA256:
+`976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd`.
+INI is byte-for-byte unchanged. Beta.11, INI and current log/CSVs are backed
+up at `%TEMP%\bfme2perf-0.9.11-beta.11-installed-20261018-151742-8274532`.
+See [installation receipt](benchmarks/2026-10-18-material-chain-install.json).
+The game was closed and was not launched. Await the user's same heavy-save
+test and a settled 60-second presentation-rate/pacing capture. The target
+is still unproven; the latest gameplay measurement remains 30.0667/s.
+
 - User requested committing/pushing current work, then a target of at least
   60 FPS. Clean beta history through `ace76a5` pushed to origin/codex/perf-beta.
 - Explicit preference: keep shadows at 60 too; no shadow-cadence shortcut.
@@ -29,10 +39,9 @@ files before relying on it.
   six selected replay corruptions are rejected. Fresh paired completion
   savings are 3.4243 ms lit and 2.6242 ms shadow per synthetic normal/extra
   pair. See [runtime decision and limits](specs/2026-10-18-material-chain-runtime.md).
-- The candidate is qualified for installation after commit/push and a
-  versioned backup. Until the installation receipt is recorded, beta.11
-  remains the installed build. Live chain coverage and saved-game FPS are
-  still unmeasured for beta.13; no 60 FPS claim follows from the fixture.
+- Beta.13 is committed, pushed and installed with the receipt above. Live
+  chain coverage and saved-game FPS remain unmeasured for beta.13; no 60 FPS
+  claim follows from the fixture.
 
 - Recovery qualification now passes sixteen normal runs and rejects 22
   deliberate corruptions. The final checks require nonempty images and

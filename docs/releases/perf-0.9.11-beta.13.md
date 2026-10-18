@@ -21,3 +21,8 @@ and CSV can establish actual presentation rate, pacing and chain coverage.
 Keep the existing shadow and INI settings.
 
 See [implementation, measurements and limits](../specs/2026-10-18-material-chain-runtime.md).
+
+Installed on the development machine from pushed commit `5e94796` on
+2026-10-18, with the prior beta.11 and its INI/logs/CSVs backed up. Tested
+and installed hashes match, and INI bytes are unchanged. The game was not
+launched. [Installation receipt](../benchmarks/2026-10-18-material-chain-install.json).

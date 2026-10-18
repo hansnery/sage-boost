@@ -1,0 +1,45 @@
+{
+    "date":  "2026-10-18T15:17:43.1036704-07:00",
+    "version":  "0.9.11-beta.13",
+    "source_commit":  "5e94796dc7491a9a8fc5202f68c07ee60c329a15",
+    "backup":  "C:\\Users\\Hans\\AppData\\Local\\Temp\\bfme2perf-0.9.11-beta.11-installed-20261018-151742-8274532",
+    "backed_up_files":  [
+                            {
+                                "name":  "bfme2perf.asi",
+                                "bytes":  337920,
+                                "sha256":  "574a085967d477a53037526c1ea7f6b6d257a559a36aab7f76573c4ca7cfe027"
+                            },
+                            {
+                                "name":  "bfme2perf.ini",
+                                "bytes":  7080,
+                                "sha256":  "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b"
+                            },
+                            {
+                                "name":  "bfme2perf.log",
+                                "bytes":  14974,
+                                "sha256":  "aa613a22dfea83aa158ffbd6cd8575c8efd118c724d78ffb5ed42d61d431e3f7"
+                            },
+                            {
+                                "name":  "bfme2perf_scopes.csv",
+                                "bytes":  2396,
+                                "sha256":  "aa7061f334794b9393b16b327c871d2b4981668fb592ae2516de7fc2f0bbd6eb"
+                            },
+                            {
+                                "name":  "bfme2perf_timing.csv",
+                                "bytes":  24110,
+                                "sha256":  "0717c14e72799b520c256d459e59517deb007641af2137782d02e16944cfac50"
+                            }
+                        ],
+    "previous_asi_sha256":  "574a085967d477a53037526c1ea7f6b6d257a559a36aab7f76573c4ca7cfe027",
+    "tested_asi_sha256":  "976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd",
+    "installed_asi_sha256":  "976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd",
+    "ini_sha256":  "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b",
+    "ini_unchanged":  true,
+    "game_was_running":  false,
+    "game_launched":  false,
+    "full_suite_exit_code":  0,
+    "normal_gpu_runs":  16,
+    "negative_gpu_runs":  6,
+    "goal_achieved":  false,
+    "last_gameplay_presentations_per_second":  30.0667
+}

@@ -18,8 +18,11 @@ Strike an item through, with the date, when it's done.
   beta.11 installed until the deployment receipt; saved-game result is still
   30.0667/s. Full suite, production GPU matrix, instruction checks and fresh
   paired timings pass; completion savings are 2.62-3.42 ms per synthetic pair.
-- [ ] Install the tested beta.13 after backup and hash verification, then
-  collect the user's next heavy-save presentation-rate/pacing capture.
+- [x] 2026-10-18: install tested beta.13 from pushed `5e94796` after backing
+  up beta.11, INI and logs/CSVs. Build/install hashes match and INI is
+  unchanged. See `benchmarks/2026-10-18-material-chain-install.json`.
+- [ ] Collect the user's beta.13 heavy-save presentation-rate/pacing and
+  method-count coverage capture. Do not infer 60 FPS from synthetic timings.
 
 - [x] 2026-10-18: beta.10 activates the qualified native group path with
   signature-verified startup installation, production accounting and group
