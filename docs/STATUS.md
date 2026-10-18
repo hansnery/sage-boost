@@ -21,14 +21,53 @@ The replaced binary, INI and capture are backed up at
 See [restoration receipt](benchmarks/2026-10-18-beta13-restoration.json) and
 the [original installation](benchmarks/2026-10-18-material-chain-install.json).
 
+## Beta.13 gameplay: active batching, insufficient render budget (2026-10-18)
+
+The user reports high initial FPS followed by a drop to 30. This new run
+loads **0.9.11-beta.13**, with the tested ASI and intended INI hashes above;
+QueueInsert, QueueSort and BulkRender activate. The closed-game capture is
+`%TEMP%\bfme2perf-beta13-test-20261018-162847-140777`. See
+[measurements and provenance](benchmarks/2026-10-18-beta13-gameplay-check.json).
+
+- Busy seconds 94..153 contain 1,817 completed presentation calls over
+  60 nominal seconds: **30.2833/s**, with four extra frames. Pooled gap p50
+  is `(25, 33.334] ms`, p95 `(33.334, 50] ms`. All four extra profiles include
+  a fresh shadow pass, and all four verification-error counters are zero.
+- This interval contains zero logic ticks at seconds 99..102, consistent
+  with a brief pause/inactive simulation. It is not a controlled unpaused
+  60-second benchmark. The new save also differs from earlier captures;
+  do not claim an A/B performance gain or regression between versions.
+- There are 1,576 cost-blocked frames, 61 catch-up blocks, zero pause/stop
+  blocks, zero recovery probes and zero extra-frame lateness in this window.
+  Initial/transitional late draws outside it receive only grace-period
+  pauses. The sustained drop is not a permanent safety shutdown.
+- Normal frame time averages 23.2837 ms; measured idle time is 9.8502 ms
+  per wait. The final extra-cost estimate is 12.261 ms; with the existing
+  3 ms + cost/8 margin and 0.5 ms slack, the admission requirement is
+  17.293 ms. Row averages cannot reconstruct individual scheduling choices,
+  and that estimate is not a measurement of later unseen extra frames.
+- Bulk consumes 9,302,622 regular follower records (5,125.41 per update),
+  with **40.71% in multi-method groups**: counts 1/2/3 are
+  5,515,536 / 3,752,113 / 34,973; counts 4..6 are zero. This proves use of
+  the beta.13 path, not time saved or a share of every eligible record.
+- Rendering averages 17.0886 ms, FX batches 9.8458 ms, FX mesh scopes
+  4.7737 ms, skeleton render 1.3586 ms and instanced shadow submission
+  0.2144 ms. These scopes overlap. Remaining FX group/material setup and
+  unbatched work are the next CPU investigation; do not weaken scheduling
+  guards or revisit small/rejected filters as if they solved the deficit.
+
+No new runtime build, settings change or gameplay request follows from
+this capture. The 60 FPS target remains unmet. Beta.13 stays installed.
+
+### Previous run used the published plugin
+
 The user recreated the save after a Realms update and again reported a
 FrameView maximum of 30 FPS. The copied run at
 `%TEMP%\bfme2perf-new-test-20261018-161755-746488` identifies **0.9.10**,
 with 1,078 timing rows and no presentation-gap or bulk-follower counters.
 It therefore does not measure beta.13. Do not infer presentation rate from
 `frames + extra_frames` or claim that the beta failed/passed this run.
-The last capture with presentation instrumentation remains beta.11's
-30.0667/s; the 60 FPS goal is unproven.
+That run was superseded by the genuine beta.13 capture above.
 
 Launcher source confirms every Play can repair a locally replaced plugin
 against its installed release state and renders INIs from cached templates.
@@ -43,8 +82,8 @@ launcher state, published release or stable branch was changed.
 The capture analyzer reports beta.13 follower totals by method count,
 with separate regular/extra frame denominators. All 20 checks pass and
 the copied beta.11 interval reproduces every prior metric unchanged.
-Await a settled 60-second beta.13 capture using the new save; results from
-the old and recreated saves are not a controlled performance comparison.
+The new capture establishes live coverage and the rendering bottleneck;
+results from old and recreated saves are not a controlled comparison.
 
 - User requested committing/pushing current work, then a target of at least
   60 FPS. Clean beta history through `ace76a5` pushed to origin/codex/perf-beta.
@@ -66,9 +105,9 @@ the old and recreated saves are not a controlled performance comparison.
   six selected replay corruptions are rejected. Fresh paired completion
   savings are 3.4243 ms lit and 2.6242 ms shadow per synthetic normal/extra
   pair. See [runtime decision and limits](specs/2026-10-18-material-chain-runtime.md).
-- Beta.13 is committed, pushed and installed with the receipt above. Live
-  chain coverage and saved-game FPS remain unmeasured for beta.13; no 60 FPS
-  claim follows from the fixture.
+- Beta.13 is committed, pushed and installed with the receipt above. The
+  subsequent gameplay capture establishes live chain coverage but remains
+  around 30 FPS; no 60 FPS claim follows from the fixture.
 
 - Recovery qualification now passes sixteen normal runs and rejects 22
   deliberate corruptions. The final checks require nonempty images and

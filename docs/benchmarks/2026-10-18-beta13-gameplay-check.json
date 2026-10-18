@@ -1,0 +1,408 @@
+{
+  "window": {
+    "start_s": 94,
+    "end_s_exclusive": 154,
+    "nominal_seconds": 60,
+    "at_least_60_seconds": true
+  },
+  "presentation_calls": 1817,
+  "presentation_calls_per_nominal_second": 30.283333333333335,
+  "nominal_rate_at_least_59": false,
+  "rate_bounds_from_timestamp_quantization": {
+    "lower": 29.78688524590164,
+    "upper": 30.796610169491526
+  },
+  "per_row_calls": {
+    "min": 28,
+    "max": 32
+  },
+  "regular_frame_updates": 1815,
+  "extra_frames": 4,
+  "pacing": {
+    "gaps": 1817,
+    "histogram_counts": {
+      "present_gap_le_8333us": 0,
+      "present_gap_le_12500us": 1,
+      "present_gap_le_16667us": 10,
+      "present_gap_le_20000us": 9,
+      "present_gap_le_25000us": 162,
+      "present_gap_le_33334us": 758,
+      "present_gap_le_50000us": 856,
+      "present_gap_le_100000us": 21,
+      "present_gap_le_200000us": 0,
+      "present_gap_le_500000us": 0,
+      "present_gap_le_1000000us": 0,
+      "present_gap_over_1000000us": 0
+    },
+    "p50": {
+      "lower_exclusive_ms": 25.0,
+      "upper_ms": 33.334
+    },
+    "p95": {
+      "lower_exclusive_ms": 33.334,
+      "upper_ms": 50.0
+    },
+    "fraction_over_25_ms": 0.8998348926802422,
+    "fraction_over_50_ms": 0.011557512383048982
+  },
+  "shadows": {
+    "extra_draw_calls": 4,
+    "extra_completed_pass_samples": 4,
+    "valid_extra_profiles": 4,
+    "invalid_extra_profiles": 0,
+    "regular_shadow_skips": 0,
+    "extra_counts_match_each_row": true
+  },
+  "verification_failures": {
+    "verify_bad": 0,
+    "shadow_verify_bad": 0,
+    "spv_bad": 0,
+    "lt_verify_bad": 0
+  },
+  "bulk_coverage": {
+    "available": true,
+    "instrumented_rows": 60,
+    "selected_rows": 60,
+    "regular": {
+      "consumed_followers_by_method_count": {
+        "1": 5515536,
+        "2": 3752113,
+        "3": 34973,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      },
+      "consumed_followers": 9302622,
+      "multi_method_followers": 3787086,
+      "multi_method_fraction": 0.4070987727976048,
+      "frame_denominator": 1815,
+      "consumed_followers_per_frame": 5125.411570247934
+    },
+    "extra": {
+      "consumed_followers_by_method_count": {
+        "1": 7516,
+        "2": 7997,
+        "3": 40,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      },
+      "consumed_followers": 15553,
+      "multi_method_followers": 8037,
+      "multi_method_fraction": 0.5167491802224651,
+      "frame_denominator": 4,
+      "consumed_followers_per_frame": 3888.25
+    },
+    "limits": [
+      "Consumed follower records across render passes; not unique units or successful draws.",
+      "Deferred leaders are excluded; no total eligible-record denominator is recorded.",
+      "Regular per-frame values include updates whose render was skipped.",
+      "Method counts measure use of the path, not time saved or FPS gained."
+    ]
+  },
+  "limits": [
+    "Completed flip-enabled EndScene calls; not measured display refresh or GPU success.",
+    "Row timestamps quantize duration; reported FPS uses the nominal interval.",
+    "Percentiles are pooled histogram bounds, not exact gaps or averaged row percentiles.",
+    "The first gap may begin before the selected interval.",
+    "Matching shadow counts do not prove correct pixels or per-frame correspondence.",
+    "Confirm the saved-game scene, loaded version/settings, visual output and runtime log.",
+    "Simulation/network/input/camera invariants require separate evidence.",
+    "Busy interval selected after the initial load/light-view transition, not a peak-FPS window.",
+    "Zero logic ticks at seconds 99..102 indicate a pause or inactive simulation interval; this is not a controlled unpaused 60-second benchmark.",
+    "The recreated save differs from earlier captures; these are not controlled beta.11/beta.13 comparisons.",
+    "Timing scopes overlap and must not be added together.",
+    "The per-frame scheduling inequality cannot be reconstructed from row averages; blocker counters identify the recorded reason.",
+    "The extra-frame cost estimate is stale between extras; it is not a measurement of later unseen extra frames.",
+    "Bulk counters establish path use, not savings against a disabled-bulk run."
+  ],
+  "frame_weighted_metrics": {
+    "frame_avg_ms": 23.283720661157027,
+    "logic_ms": 1.5113118457300274,
+    "render_ms": 17.088641873278235,
+    "shadow_ms": 7.48568870523416,
+    "reflect_ms": 2.983267217630854,
+    "views_ms": 7.120265013774104,
+    "ui_ms": 0.9010115702479339,
+    "terrain_ms": 0.3451520661157025,
+    "fx_batch_ms": 9.8457608815427,
+    "fx_mesh_ms": 4.7737223140495875,
+    "skel_render_ms": 1.3586027548209367,
+    "lt_ms_shadow": 2.182705785123967,
+    "lt_pre_ms_shadow": 0.2692363636363636,
+    "lt_env_ms_shadow": 0.16156749311294766,
+    "lt_ms_views": 0.6870942148760331,
+    "lt_pre_ms_views": 0.2423289256198347,
+    "lt_env_ms_views": 0.15967217630853994,
+    "inst_groups": 449.42424242424244,
+    "fx_groups": 1222.2617079889808,
+    "inst_meshes": 5769.231955922865,
+    "shadow_inst_ms": 0.21437300275482093,
+    "rest_ms": 3.270608815426997
+  },
+  "blockers": {
+    "fps_block_cost": 1576,
+    "fps_block_catchup": 61,
+    "fps_block_pause": 0,
+    "fps_block_stop": 0,
+    "fps_probe_attempts": 0,
+    "extra_late": 0,
+    "skipped_draws": 2
+  },
+  "idle_ms_per_wait": 9.850187499999999,
+  "cost_estimate_at_window_end_ms": 12.261,
+  "required_idle_for_that_estimate_ms": 17.293,
+  "zero_logic_tick_seconds": [
+    99,
+    100,
+    101,
+    102
+  ],
+  "loaded_version": "bfme2perf 0.9.11-beta.13",
+  "activation": [
+    "render: QueueInsert=1: applied",
+    "render: QueueSort=1: applied",
+    "render: BulkRender=1: guarded native group batching enabled"
+  ],
+  "capture": {
+    "capture": "C:\\Users\\Hans\\AppData\\Local\\Temp\\bfme2perf-beta13-test-20261018-162847-140777",
+    "files": {
+      "bfme2perf.asi": {
+        "sha256": "976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd",
+        "bytes": 339456,
+        "source_mtime": 1792360989.9454637
+      },
+      "bfme2perf.ini": {
+        "sha256": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b",
+        "bytes": 7080,
+        "source_mtime": 1792365689.3884096
+      },
+      "bfme2perf.log": {
+        "sha256": "641a72011d6149859c11012c613db4f08d22abf0a6487f8c74168e58e01693e9",
+        "bytes": 25527,
+        "source_mtime": 1792366070.0378654
+      },
+      "bfme2perf_timing.csv": {
+        "sha256": "79ec885b1bff0033d6ca7b89db39dd866a0af43410b2e75af4137a2cb9990ff8",
+        "bytes": 88272,
+        "source_mtime": 1792366071.1595757
+      },
+      "bfme2perf_scopes.csv": {
+        "sha256": "136ac43dc9dbb8c4c551967598a3b84c7b90d3b02da7c8399aba18da8c70f2d5",
+        "bytes": 6899,
+        "source_mtime": 1792366017.1276045
+      }
+    }
+  },
+  "transition_rows": [
+    {
+      "time_s": "79",
+      "frames": "30",
+      "present_calls": "51",
+      "extra_frames": "21",
+      "frame_avg_ms": "6.327",
+      "render_ms": "2.263",
+      "inst_meshes": "250",
+      "extra_cost_ms": "14.481",
+      "fps_block_cost": "0",
+      "fps_block_pause": "0",
+      "fps_block_stop": "0"
+    },
+    {
+      "time_s": "80",
+      "frames": "30",
+      "present_calls": "73",
+      "extra_frames": "43",
+      "frame_avg_ms": "7.209",
+      "render_ms": "2.429",
+      "inst_meshes": "253",
+      "extra_cost_ms": "7.772",
+      "fps_block_cost": "0",
+      "fps_block_pause": "0",
+      "fps_block_stop": "0"
+    },
+    {
+      "time_s": "81",
+      "frames": "31",
+      "present_calls": "62",
+      "extra_frames": "32",
+      "frame_avg_ms": "10.110",
+      "render_ms": "4.739",
+      "inst_meshes": "513",
+      "extra_cost_ms": "5.257",
+      "fps_block_cost": "0",
+      "fps_block_pause": "0",
+      "fps_block_stop": "0"
+    },
+    {
+      "time_s": "82",
+      "frames": "30",
+      "present_calls": "85",
+      "extra_frames": "55",
+      "frame_avg_ms": "10.027",
+      "render_ms": "5.486",
+      "inst_meshes": "588",
+      "extra_cost_ms": "5.616",
+      "fps_block_cost": "0",
+      "fps_block_pause": "0",
+      "fps_block_stop": "0"
+    },
+    {
+      "time_s": "83",
+      "frames": "30",
+      "present_calls": "72",
+      "extra_frames": "42",
+      "frame_avg_ms": "10.746",
+      "render_ms": "6.131",
+      "inst_meshes": "1140",
+      "extra_cost_ms": "7.275",
+      "fps_block_cost": "0",
+      "fps_block_pause": "0",
+      "fps_block_stop": "0"
+    },
+    {
+      "time_s": "84",
+      "frames": "31",
+      "present_calls": "48",
+      "extra_frames": "17",
+      "frame_avg_ms": "16.024",
+      "render_ms": "10.760",
+      "inst_meshes": "1931",
+      "extra_cost_ms": "9.654",
+      "fps_block_cost": "4",
+      "fps_block_pause": "0",
+      "fps_block_stop": "0"
+    },
+    {
+      "time_s": "85",
+      "frames": "30",
+      "present_calls": "30",
+      "extra_frames": "0",
+      "frame_avg_ms": "19.362",
+      "render_ms": "13.587",
+      "inst_meshes": "3704",
+      "extra_cost_ms": "9.654",
+      "fps_block_cost": "10",
+      "fps_block_pause": "0",
+      "fps_block_stop": "0"
+    },
+    {
+      "time_s": "86",
+      "frames": "30",
+      "present_calls": "30",
+      "extra_frames": "0",
+      "frame_avg_ms": "19.235",
+      "render_ms": "13.468",
+      "inst_meshes": "4900",
+      "extra_cost_ms": "9.654",
+      "fps_block_cost": "17",
+      "fps_block_pause": "0",
+      "fps_block_stop": "0"
+    },
+    {
+      "time_s": "87",
+      "frames": "30",
+      "present_calls": "30",
+      "extra_frames": "0",
+      "frame_avg_ms": "26.579",
+      "render_ms": "20.292",
+      "inst_meshes": "4016",
+      "extra_cost_ms": "9.654",
+      "fps_block_cost": "23",
+      "fps_block_pause": "0",
+      "fps_block_stop": "0"
+    },
+    {
+      "time_s": "100",
+      "frames": "30",
+      "present_calls": "32",
+      "extra_frames": "2",
+      "frame_avg_ms": "16.772",
+      "render_ms": "13.823",
+      "inst_meshes": "5063",
+      "extra_cost_ms": "12.261",
+      "fps_block_cost": "10",
+      "fps_block_pause": "0",
+      "fps_block_stop": "0"
+    },
+    {
+      "time_s": "144",
+      "frames": "29",
+      "present_calls": "30",
+      "extra_frames": "2",
+      "frame_avg_ms": "21.116",
+      "render_ms": "14.713",
+      "inst_meshes": "5313",
+      "extra_cost_ms": "12.261",
+      "fps_block_cost": "12",
+      "fps_block_pause": "0",
+      "fps_block_stop": "0"
+    },
+    {
+      "time_s": "156",
+      "frames": "32",
+      "present_calls": "38",
+      "extra_frames": "8",
+      "frame_avg_ms": "12.487",
+      "render_ms": "6.666",
+      "inst_meshes": "1481",
+      "extra_cost_ms": "12.261",
+      "fps_block_cost": "2",
+      "fps_block_pause": "0",
+      "fps_block_stop": "0"
+    },
+    {
+      "time_s": "157",
+      "frames": "31",
+      "present_calls": "53",
+      "extra_frames": "22",
+      "frame_avg_ms": "7.475",
+      "render_ms": "2.240",
+      "inst_meshes": "17",
+      "extra_cost_ms": "12.261",
+      "fps_block_cost": "1",
+      "fps_block_pause": "0",
+      "fps_block_stop": "0"
+    },
+    {
+      "time_s": "158",
+      "frames": "28",
+      "present_calls": "51",
+      "extra_frames": "24",
+      "frame_avg_ms": "14.705",
+      "render_ms": "7.989",
+      "inst_meshes": "1753",
+      "extra_cost_ms": "12.261",
+      "fps_block_cost": "1",
+      "fps_block_pause": "0",
+      "fps_block_stop": "0"
+    },
+    {
+      "time_s": "159",
+      "frames": "32",
+      "present_calls": "32",
+      "extra_frames": "0",
+      "frame_avg_ms": "19.036",
+      "render_ms": "12.757",
+      "inst_meshes": "5075",
+      "extra_cost_ms": "12.261",
+      "fps_block_cost": "22",
+      "fps_block_pause": "0",
+      "fps_block_stop": "0"
+    },
+    {
+      "time_s": "160",
+      "frames": "30",
+      "present_calls": "30",
+      "extra_frames": "0",
+      "frame_avg_ms": "23.193",
+      "render_ms": "17.035",
+      "inst_meshes": "5748",
+      "extra_cost_ms": "12.261",
+      "fps_block_cost": "29",
+      "fps_block_pause": "0",
+      "fps_block_stop": "0"
+    }
+  ],
+  "goal_achieved": false
+}
