@@ -15,7 +15,7 @@ SRCS  := src/main.c src/log.c src/rt.c src/scan.c src/sites.c src/patch.c src/st
          src/timing.c src/presentgap.c src/csvrow.c src/clock.c src/reflect.c src/config.c src/uistate.c \
          src/inst.c src/declcache.c src/fpsites.c src/fps.c src/extraprofile.c src/fpsmath.c src/btnclock.c src/passflag.c \
          src/shadowpass.c src/spsites.c src/fxguard.c src/catchup.c src/cusites.c src/notice.c \
-         src/lights.c src/ltsites.c
+         src/lights.c src/ltsites.c src/queueinsert.c
 OBJS  := $(SRCS:src/%.c=$(BUILD)/%.o) $(BUILD)/version.o
 
 COMMON_FLAGS := -std=gnu11 -Wall -Wextra -Werror -DWIN32_LEAN_AND_MEAN -DUNICODE -D_UNICODE
@@ -93,8 +93,9 @@ test-native-sort: $(BUILD)/bench_native_sort.exe
 bench-native-sort: $(BUILD)/bench_native_sort.exe
 	python ../tools/bench_native_sort.py "$(AOTR_DAT)" $< --self-test
 
-$(BUILD)/bench_native_insert.exe: tests/bench_native_insert.c tests/bench_guard.h | $(BUILD)
-	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $<
+QUEUE_OBJS := $(BUILD)/queueinsert.o $(BUILD)/scan.o $(BUILD)/patch.o
+$(BUILD)/bench_native_insert.exe: tests/bench_native_insert.c tests/bench_guard.h $(QUEUE_OBJS) | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $< $(QUEUE_OBJS)
 
 .PHONY: test-native-insert bench-native-insert
 test-native-insert: $(BUILD)/bench_native_insert.exe
@@ -103,6 +104,15 @@ test-native-insert: $(BUILD)/bench_native_insert.exe
 
 bench-native-insert: $(BUILD)/bench_native_insert.exe
 	python ../tools/bench_native_insert.py "$(AOTR_DAT)" $< --self-test
+
+$(BUILD)/test_queueinsert.exe: tests/test_queueinsert.c tests/bench_native_insert.c tests/bench_guard.h $(QUEUE_OBJS) | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $< $(QUEUE_OBJS)
+
+.PHONY: test-queueinsert
+test-queueinsert: $(BUILD)/test_queueinsert.exe
+	python ../tools/verify_sites.py --perf-queue
+	python ../tools/test_queueinsert.py "$(AOTR_DAT)" $<
+	python ../tools/test_queueinsert.py "$(ROTWK_DAT)" $<
 
 $(BUILD)/test_sites.exe: tests/test_sites.c src/scan.c src/sites.c src/uistate.c src/fpsites.c \
                          src/btnclock.c src/passflag.c src/spsites.c src/cusites.c src/ltsites.c \
@@ -161,11 +171,16 @@ $(BUILD)/test_lights.exe: tests/test_lights.c src/lights.c src/shadowpass.c src/
 test: all $(BUILD)/test_row.exe $(BUILD)/test_reflect.exe $(BUILD)/test_config.exe \
       $(BUILD)/test_sites.exe $(BUILD)/test_hooks.exe $(BUILD)/test_fps.exe $(BUILD)/test_load.exe \
       $(BUILD)/test_inst.exe $(BUILD)/test_declcache.exe $(BUILD)/test_btn.exe $(BUILD)/test_shadowpass.exe \
-      $(BUILD)/test_catchup.exe $(BUILD)/test_lights.exe $(BUILD)/test_extraprofile.exe $(BUILD)/test_presentgap.exe
+      $(BUILD)/test_catchup.exe $(BUILD)/test_lights.exe $(BUILD)/test_extraprofile.exe $(BUILD)/test_presentgap.exe \
+      $(BUILD)/test_queueinsert.exe
 	./$(BUILD)/test_row.exe
 	./$(BUILD)/test_reflect.exe
 	./$(BUILD)/test_btn.exe
 	./$(BUILD)/test_config.exe
+	@if [ -f "$(AOTR_DAT)" ] && [ -f "$(ROTWK_DAT)" ]; then \
+	  AOTR_DAT="$(AOTR_DAT)" ROTWK_DAT="$(ROTWK_DAT)" python ../tools/verify_sites.py --perf-queue; fi
+	@if [ -f "$(AOTR_DAT)" ]; then python ../tools/test_queueinsert.py "$(AOTR_DAT)" $(BUILD)/test_queueinsert.exe; fi
+	@if [ -f "$(ROTWK_DAT)" ]; then python ../tools/test_queueinsert.py "$(ROTWK_DAT)" $(BUILD)/test_queueinsert.exe; fi
 	./$(BUILD)/test_sites.exe $(SITE_TEST_ARGS)
 	./$(BUILD)/test_hooks.exe
 	./$(BUILD)/test_fps.exe
@@ -366,7 +381,7 @@ bench-native-queue-gpu: $(BUILD)/bench_native_queue_gpu.exe
 	  DXVK_LOG_LEVEL=none python ../../../tools/bench_native_queue_gpu.py $(QUEUE_OPTIONS) --mode $(QUEUE_MODE) --order $(QUEUE_ORDER) "$(AOTR_DAT)" bench_native_queue_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first && \
 	  DXVK_LOG_LEVEL=none python ../../../tools/bench_native_queue_gpu.py $(QUEUE_OPTIONS) --mode $(QUEUE_MODE) --order $(QUEUE_ORDER) "$(AOTR_DAT)" bench_native_queue_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 leader-bulk-first
 
-$(BUILD)/native_insert_fixture.o: tests/bench_native_insert.c tests/bench_guard.h | $(BUILD)
+$(BUILD)/native_insert_fixture.o: tests/bench_native_insert.c tests/bench_guard.h src/queueinsert.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -Wno-unused-function -DPF_NATIVE_INSERT_EMBED -c -o $@ $<
 
 $(BUILD)/bench_native_insert_gpu.exe: tests/bench_native_insert_gpu.c tests/bench_native_queue_gpu.c tests/native_shared_arena.h tests/bench_native_fx_gpu.c tests/native_fx_image.h tests/bench_native_group_gpu.c tests/bench_native_leader.c tests/native_group_image.h tests/native_mesh_image.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/native_insert_fixture.o $(BUILD)/native_sort_fixture.o $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h

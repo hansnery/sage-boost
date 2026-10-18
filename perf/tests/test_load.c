@@ -71,7 +71,7 @@ int main(int argc, char **argv)
         goto done;
     CHECK(read_file(log_path, log, sizeof log), "no log at %ls", log_path);
     printf("%s", log);
-    CHECK(strstr(log, "bfme2perf 0.9.11-beta.3\r\n") == log, "first line is not the version");
+    CHECK(strstr(log, "bfme2perf 0.9.11-beta.4\r\n") == log, "first line is not the version");
     CHECK(strstr(log, "self: ") && strstr(log, "bfme2perf-test\\bfme2perf.asi"), "no self path");
     CHECK(strstr(log, "host: ") && strstr(log, "test_load.exe"), "no host path");
     CHECK(strstr(log, "pinned=1") != NULL, "not pinned");
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
     CHECK(strstr(log, "(missing, using defaults)") != NULL, "missing INI not reported");
     CHECK(strstr(log, "settings: [Perf] Enabled=1 Log=1, [Timing] Enabled=1 Detail=1, "
                       "[Render] ReflectionInterval=1 ShadowInterval=1 ShadowFullWhileScrolling=0 "
-                      "Batching=0 Instancing=0 InstancingVerify=1 ShadowInstancing=1 MaxFPS=30 "
+                      "Batching=0 QueueInsert=1 Instancing=0 InstancingVerify=1 ShadowInstancing=1 MaxFPS=30 "
                       "FrameSmoothing=3 "
                       "ExtraFrameShadows=0 ExtraFrameReflections=0 "
                       "ShadowBatchIgnoreLight=1 NoStencilFlushes=1 ShadowSkipParticles=1 "
@@ -93,6 +93,8 @@ int main(int argc, char **argv)
                       "[Skeleton] Threads=0 Verify=0") != NULL,
           "no settings line");
     /* No game code: catch-up finds nothing and stays off. */
+    CHECK(strstr(log, "render: QueueInsert=0: entry signature missing") != NULL,
+          "queue insertion not refused without the game");
     CHECK(strstr(log, "render: catch-up: ") != NULL &&
               strstr(log, "not found, renders are never skipped") != NULL,
           "catch-up not reported off without the game");

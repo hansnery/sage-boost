@@ -7,6 +7,17 @@ Strike an item through, with the date, when it's done.
 
 ## Full-rate 60 FPS investigation (2026-10-17)
 
+- [x] 2026-10-18: integrate queue insertion into beta.4 with a generated
+  signature/hash/dependency guard, original fallback and configuration.
+  Both images pass production-handler and actual private-entry comparisons,
+  runtime refusals, joined GPU controls and full plugin tests. Combined
+  runtime-handler savings remain 7.54-7.80 ms shuffled / ~6.13 ms ordered.
+  See `specs/2026-10-18-runtime-queue-insertion.md`; no installation or FPS claim.
+- [ ] Integrate native-order sorting and the guarded bulk renderer into
+  production code, including remaining source/lifetime and device/replay
+  failure boundaries. Install/test the complete significant improvement;
+  the queue-only beta.4 is not the requested final candidate.
+
 - [x] Beta.2 saved-game test captured 2026-10-17 with full-rate shadows;
   steady section still ~30 presentation calls/s, no extras. See STATUS.md.
 - [ ] Resolve busy-scene extra-cost observability: no extras after the

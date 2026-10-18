@@ -12,6 +12,8 @@ user's own installs at run time.
 |---|---|
 | `verify_sites.py` | unlocker: checks every signature against each game's baseline image and regenerates `dll/src/patch_table.c` and `dll/tests/baseline_expect.h` (`--write`). Run by `make test` in `dll/`. Needs `pefile` and `capstone`. |
 | `inst_shaders.py` | plugin: generates `perf/src/inst_shaders.h` from `perf/shaders/inst.hlsl` and the local `Shaders.big` (stores only hashes of the game's shaders). |
+| `queueinsert_table.py` | plugin: helper for `verify_sites.py --perf-queue [--write]`; verifies both configured images and generates the short signature, full normalized hashes and symbolic dependency metadata in `perf/src/queueinsert_table.h`. Does not touch unlocker tables. |
+| `test_queueinsert.py` | checks the runtime queue finder and actual installed entry in private mapped images. `make test-queueinsert` covers altered bodies/dependencies, ambiguous signatures and bounds, then native ownership/ABI/growth comparisons. The game is never launched. |
 
 ## Executable research
 

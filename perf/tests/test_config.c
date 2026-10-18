@@ -134,6 +134,16 @@ int main(void)
     pf_config_load(&c, g_ini);
     CHECK(c.batching == 1, "1 -> %d", c.batching);
 
+    printf("queue insertion\n");
+    write_ini("");
+    pf_config_load(&c, g_ini);
+    CHECK(c.queue_insert == 1, "default %d", c.queue_insert);
+    write_ini("[Render]\r\nQueueInsert=0\r\n");
+    pf_config_load(&c, g_ini);
+    CHECK(c.queue_insert == 0, "disabled %d", c.queue_insert);
+    write_ini("[Render]\r\nQueueInsert=off\r\n");
+    pf_config_load(&c, g_ini);
+    CHECK(c.queue_insert == 1, "junk %d", c.queue_insert);
     printf("instancing\n");
     DeleteFileW(g_ini);
     pf_config_load(&c, g_ini);

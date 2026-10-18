@@ -18,6 +18,7 @@ typedef struct {
     int shadow_interval;   /* the same, clamped to 1..4 */
     int shadow_scrolling;  /* [Render] ShadowFullWhileScrolling, default 0 */
     int batching;          /* [Render] Batching, default 0 (read and logged only) */
+    int queue_insert;      /* [Render] QueueInsert, default 1: verified spare-capacity append */
     int instancing;        /* [Render] Instancing, default 0 */
     int instancing_verify; /* [Render] InstancingVerify, default 1 (only with Instancing=1) */
     int shadow_instancing; /* [Render] ShadowInstancing, default 1: instancing in the shadow-map

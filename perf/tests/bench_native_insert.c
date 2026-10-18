@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stddef.h>
 #include "bench_guard.h"
+#include "queueinsert.h"
 #define REQUIRE(c) do { if(!(c)) { fprintf(stderr,"insert screen refused line %d: %s\n",__LINE__,#c); exit(1); } } while(0)
 #define COUNT 33
 #define CAPACITY 7680
@@ -40,40 +41,21 @@ static void heap_check(void *ptr)
 static void __cdecl heap_release(void *ptr)
 { if(ptr) {heap_check(ptr);releases++;free((unsigned *)ptr-4);} }
 
-static int intersects(unsigned begin,unsigned end,unsigned other,unsigned size)
-{ return begin<other+size && other<end; }
+static void __attribute__((thiscall)) original_append(void *queues,void *mesh,const void *methods)
+{ fallback_calls++;((Add)bodies[0])(queues,mesh,methods); }
 static void __attribute__((thiscall)) direct_append(Queue *queues,Mesh *mesh,const Methods *methods)
 {
-    unsigned begin=(unsigned)methods->first,end=(unsigned)methods->last;
-    if(end<begin || ((end-begin)&3) || end-begin>24 || !mesh || !mesh->model)goto fallback;
-    unsigned which=0;
-    if(mesh->model[0x19]&4) {
-        unsigned char *geometry=*(unsigned char **)(mesh->model+0xbc);
-        if(!geometry)goto fallback;
-        which=*geometry?1:2;
+    unsigned before=fallback_calls;
+    pf_queue_insert_add(queues,mesh,methods);
+    if(before==fallback_calls) {
+        fast_calls++;
+        if(broken) {
+            unsigned which=(mesh->model[0x19]&4)?(**(unsigned char **)(mesh->model+0xbc)?1:2):0;
+            queues[which].last[-1].word[7]^=1;
+        }
     }
-    Queue *q=queues+which;
-    unsigned first=(unsigned)q->first,last=(unsigned)q->last,limit=(unsigned)q->limit;
-    if(!first || last<first || limit<last || ((last-first)&31) || ((limit-first)&31) || limit-last<32)goto fallback;
-    /* Native construction precedes reading the method stack. Aliasing its
-     * new slot must retain that exact behavior through the original path. */
-    if(intersects(begin,end,last,32) || intersects((unsigned)methods,(unsigned)(methods+1),last,32))goto fallback;
-    Record *record=q->last;unsigned count=(end-begin)/4;
-    record->word[0]=(unsigned)mesh;record->word[1]=count;
-    for(unsigned i=0;i<6;i++)record->word[2+i]=0;
-    q->last++;
-    mesh->object.refs++;
-    for(unsigned i=0;i<count;i++) {
-        Object *method=methods->first[i];
-        if(method)method->refs++;
-        record->word[2+i]=(unsigned)method;
-    }
-    mesh->object.refs--;
-    if(broken)record->word[7]^=1;
-    fast_calls++;return;
-fallback:
-    fallback_calls++;((Add)bodies[0])(queues,mesh,methods);
 }
+static Add candidate = direct_append;
 
 void insert_checked(void *,Queue *,Mesh *,const Methods *);
 __asm__(
@@ -147,13 +129,14 @@ static void load(const char *path,const char *manifest)
         DWORD old;REQUIRE(VirtualProtect(code[mode],image_size,PAGE_EXECUTE_READ,&old));
         REQUIRE(FlushInstructionCache(GetCurrentProcess(),code[mode],image_size));
     }
+    pf_queue_insert_original(original_append);
 }
 
 
 #ifdef PF_NATIVE_INSERT_EMBED
 void bench_insert_load(const char *image,const char *manifest) {load(image,manifest);}
 void bench_insert_add(void *queues,void *mesh,const void *methods,unsigned optimized)
-{ ((Add)(optimized?(void *)direct_append:bodies[0]))(queues,mesh,methods); }
+{ ((Add)(optimized?(void *)candidate:bodies[0]))(queues,mesh,methods); }
 void bench_insert_corrupt(unsigned enabled) {broken=enabled;}
 void bench_insert_clear(void *queue)
 {
@@ -214,7 +197,7 @@ static void check(unsigned n,unsigned capacity,unsigned count,unsigned pattern)
         unsigned hash=0;
         for(unsigned i=0;i<n;i++) {
             meshes[i].object.refs++; /* Caller creates its by-value holder. */
-            insert_checked(mode?(void *)direct_append:bodies[0],queues,meshes+i,&methods);
+            insert_checked(mode?(void *)candidate:bodies[0],queues,meshes+i,&methods);
             REQUIRE(!insert_abi_errors);
             for(unsigned q=0;q<3;q++)heap_check(queues[q].first);
             hash+=meshes[i].object.refs;
@@ -236,9 +219,11 @@ static void check(unsigned n,unsigned capacity,unsigned count,unsigned pattern)
             for(unsigned i=0;i<8;i++)oracle(expected_refs[i]==method_objects[i].refs);
             oracle(expected_deletes==deleted && expected_allocations==allocations);
             oracle(expected_mesh_hash==fnv((const unsigned char *)meshes,sizeof meshes));
-            REQUIRE(fast_calls+fallback_calls==n);
-            if(capacity>=n && count<=6)REQUIRE(fast_calls==n);
-            if(count>6)REQUIRE(fallback_calls==n);
+            if(candidate==direct_append) {
+                REQUIRE(fast_calls+fallback_calls==n);
+                if(capacity>=n && count<=6)REQUIRE(fast_calls==n);
+                if(count>6)REQUIRE(fallback_calls==n);
+            }
         }
         destroy_queues(queues);REQUIRE(allocations==releases);
         for(unsigned i=0;i<n;i++)REQUIRE(meshes[i].object.refs==1);
@@ -251,19 +236,19 @@ static void edge_controls(void)
     for(unsigned mode=0;mode<2;mode++) {
         Queue queues[3];init_objects(7,0);init_queues(queues,2);
         Methods too_many={method_words,method_words+7,method_words+7};
-        insert_checked(mode?(void *)direct_append:bodies[0],queues,meshes,&too_many);
+        insert_checked(mode?(void *)candidate:bodies[0],queues,meshes,&too_many);
         REQUIRE(deleted==1 && !meshes[0].object.refs);
-        insert_checked(mode?(void *)direct_append:bodies[0],queues,NULL,&too_many);
+        insert_checked(mode?(void *)candidate:bodies[0],queues,NULL,&too_many);
         REQUIRE(deleted==1);
         /* Source methods alias unused destination: native zero construction
          * makes the method NULL, so the candidate must delegate this case. */
         Methods alias={(void **)&queues[0].last->word[2],(void **)&queues[0].last->word[3],(void **)&queues[0].last->word[3]};
         queues[0].last->word[2]=(unsigned)method_objects;
         meshes[0].object.refs=2;
-        insert_checked(mode?(void *)direct_append:bodies[0],queues,meshes,&alias);
+        insert_checked(mode?(void *)candidate:bodies[0],queues,meshes,&alias);
         REQUIRE(queues[0].last==queues[0].first+1 && !queues[0].first->word[2]);
         REQUIRE(meshes[0].object.refs==2 && method_objects[0].refs==3);
-        if(mode)REQUIRE(fallback_calls==3 && !fast_calls);
+        if(mode && candidate==direct_append)REQUIRE(fallback_calls==3 && !fast_calls);
         destroy_queues(queues);REQUIRE(allocations==releases && !insert_abi_errors);
     }
 }
@@ -271,7 +256,7 @@ static unsigned long long timed(unsigned mode,unsigned count,unsigned grow)
 {
     Queue queues[3];init_objects(count,0);init_queues(queues,grow?0:CAPACITY/3);
     Methods methods={method_words,method_words+count,method_words+7};
-    Add add=mode?direct_append:(Add)bodies[0];
+    Add add=mode?candidate:(Add)bodies[0];
     LARGE_INTEGER before,after;REQUIRE(QueryPerformanceCounter(&before));
     for(unsigned rep=0;rep<8;rep++) {
         for(unsigned i=0;i<CAPACITY;i++) {meshes[i].object.refs++;add(queues,meshes+i,&methods);}

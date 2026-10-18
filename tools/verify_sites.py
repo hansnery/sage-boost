@@ -835,7 +835,13 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--game", type=Path, help="verify only this image (no header I/O)")
     ap.add_argument("--write", action="store_true", help="regenerate the C headers")
+    ap.add_argument("--perf-queue", action="store_true", help="verify/generate only the performance queue insertion contract")
     args = ap.parse_args()
+    if args.perf_queue:
+        if args.game:
+            ap.error("--perf-queue verifies both configured images; omit --game")
+        from queueinsert_table import run
+        return run(args.write)
 
     failures: list[str] = []
     if args.game:

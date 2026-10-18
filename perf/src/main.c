@@ -17,6 +17,7 @@
 #include "notice.h"
 #include "passflag.h"
 #include "patch.h"
+#include "queueinsert.h"
 #include "scan.h"
 #include "sites.h"
 #include "stubs.h"
@@ -25,7 +26,7 @@
 #include "timing.h"
 #include "uistate.h"
 
-#define PERF_VERSION "0.9.11-beta.3"
+#define PERF_VERSION "0.9.11-beta.4"
 
 static WCHAR g_log_path[MAX_PATH];
 
@@ -327,6 +328,13 @@ static void install_hooks(const pf_config *cfg, const WCHAR *csv_path, const WCH
     }
     fu_logf("exe : .text crc32 %08X, %u bytes, timestamp %08X",
             pf_crc32(img.base + img.text_rva, img.text_size), img.text_size, img.timestamp);
+    if (cfg->queue_insert) {
+        const char *why;
+        int applied = pf_queue_insert_install(&img, &why);
+        fu_logf("render: QueueInsert=%d: %s", applied, why);
+    } else {
+        fu_logf("render: QueueInsert=0, original queue insertion");
+    }
     for (i = 0; i < PF_SITE_COUNT; i++)
         enabled[i] = cfg->timing && (i != PF_DRAW || cfg->detail);
     enabled[PF_REFLECT] = cfg->reflect_interval > 1;
@@ -393,7 +401,7 @@ static void install_hooks(const pf_config *cfg, const WCHAR *csv_path, const WCH
            enabled[PF_SAME_BATCH] | enabled[PF_STENCIL_OCCLUDEE] | enabled[PF_SHADOW_PARTICLES] |
            enabled[PF_CU_RENDER];
     if (!any) {
-        fu_logf("hooks: none wanted ([Timing] Enabled=0, ReflectionInterval=1, ShadowInterval=1, "
+        fu_logf("timing/render hooks: none wanted ([Timing] Enabled=0, ReflectionInterval=1, ShadowInterval=1, "
                 "Instancing=0, MaxFPS=30, shadow-pass fixes and light cuts off, catch-up off)");
         return;
     }
@@ -600,14 +608,14 @@ BOOL WINAPI DllMain(HINSTANCE inst, DWORD reason, LPVOID reserved)
     fu_logf("ini : %ls (%s)", ini, cfg.ini_found ? "found" : "missing, using defaults");
     fu_logf("settings: [Perf] Enabled=%d Log=%d, [Timing] Enabled=%d Detail=%d, "
             "[Render] ReflectionInterval=%d ShadowInterval=%d ShadowFullWhileScrolling=%d "
-            "Batching=%d Instancing=%d InstancingVerify=%d ShadowInstancing=%d MaxFPS=%d "
+            "Batching=%d QueueInsert=%d Instancing=%d InstancingVerify=%d ShadowInstancing=%d MaxFPS=%d "
             "FrameSmoothing=%d ExtraFrameShadows=%d ExtraFrameReflections=%d "
             "ShadowBatchIgnoreLight=%d NoStencilFlushes=%d ShadowSkipParticles=%d "
             "ShadowPassVerify=%d LightSkipShadow=%d LightCull=%d LightReuse=%d LightVerify=%d, "
             "[CatchUp] Enabled=%d MaxSkips=%d Notice=%d NoticeText=%s NoticeMinSkips=%d, "
             "[Skeleton] Threads=%d Verify=%d (the skeleton pre-pass is not in this build)",
             cfg.enabled, cfg.log, cfg.timing, cfg.detail, cfg.reflect_interval,
-            cfg.shadow_interval, cfg.shadow_scrolling, cfg.batching, cfg.instancing,
+            cfg.shadow_interval, cfg.shadow_scrolling, cfg.batching, cfg.queue_insert, cfg.instancing,
             cfg.instancing_verify, cfg.shadow_instancing, cfg.max_fps, cfg.frame_smoothing,
             cfg.extra_shadows, cfg.extra_reflections, cfg.shadow_batch, cfg.stencil_flushes,
             cfg.shadow_particles, cfg.shadow_verify, cfg.light_skip, cfg.light_cull,

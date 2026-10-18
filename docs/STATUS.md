@@ -21,6 +21,28 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Queue insertion integrated into the runtime (2026-10-18)
+
+- Beta **0.9.11-beta.4** adds `[Render] QueueInsert=1`: fill available
+  rendering-queue storage directly; growth/unsupported inputs stay native.
+  A unique signature and 33 complete normalized body checks guard the hook.
+  See [runtime queue insertion](specs/2026-10-18-runtime-queue-insertion.md).
+- Both images pass 576 comparisons through the production handler and 576
+  through the actual installed entry in private RAM, plus 92 no-write
+  runtime refusal cases each. Full plugin suite and eight joined GPU cases
+  pass; all 24 corrupt-record controls are rejected.
+- Two shuffled DXVK repeats retain 7.54-7.80 ms combined savings per pair;
+  ordered input saves about 6.13 ms in one run. Preserve 126 timing samples
+  and source/build/control hashes. These replace earlier combined results.
+- This build contains the insertion optimization only. Sorting/bulk rendering
+  remain offline and require runtime integration and remaining failure/lifetime
+  guards. No installation/INI changes or gameplay request. Last gameplay is
+  still ~30.18/s; sustained 60 FPS is unachieved.
+- Built ASI SHA256:
+  `3dd6207681f93389f34e40c412f46988e4b31fb9a365c1989c107fa302f9212c`.
+  Next integrate sorting, then the guarded bulk path, before installing the
+  complete improvement and requesting the user's saved-game test.
+
 ## Deferred units recovered at native fallback (2026-10-18)
 
 - [Native group fallback](specs/2026-10-18-native-group-fallback.md) resolves
