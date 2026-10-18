@@ -20,6 +20,7 @@ static struct {unsigned pad[3];const char *name;} ng_name={{0},"BENCH_SYNTHETIC_
 static unsigned ng_current_group,ng_callbacks_begin,ng_callbacks_end,ng_callbacks_hash;
 static unsigned ng_prepares,ng_finishes,ng_begins,ng_ends,ng_passes,ng_pass_ends;
 static unsigned ng_begin_fail,ng_failed_begins,ng_force_identical;
+static void (*ng_after_setup)(void);
 
 static unsigned *ng_frame(void)
 {
@@ -142,6 +143,7 @@ static void ng_setup(void)
     scopes_per_group=GROUP_SIZE+1; validate_retained=ng_validate;
     comparison_name="native-group-mesh-bulk-first";
     puts("NATIVE GROUP: nine verified bodies joined to native mesh and GPU; actual events, owned methods, loop and cleanup; source/state helpers remain controlled");
+    if(ng_after_setup) ng_after_setup();
 }
 
 typedef struct {
@@ -233,7 +235,10 @@ static void ng_validate(void)
     printf("NATIVE GROUP CONTROLS: %u original/candidate pairs, actual callback sequence/draw observations, empty/small groups, native and partial model splits, earlier DIP, Begin failure, verification and ABI pass\n",cases);
 }
 
-int main(int argc,char **argv)
+#ifndef PF_NATIVE_GROUP_MAIN
+#define PF_NATIVE_GROUP_MAIN main
+#endif
+int PF_NATIVE_GROUP_MAIN(int argc,char **argv)
 {
     REQUIRE(argc==10 && !strcmp(argv[6],"leader-bulk-first"));
     nm_image=argv[7]; nm_manifest=argv[8]; ng_manifest=argv[9]; setup_complete=ng_setup;

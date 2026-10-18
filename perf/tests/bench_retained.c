@@ -37,6 +37,7 @@ static void (*setup_complete)(void);
 static int (*dispatch_available)(void);
 static void (*group_render)(unsigned);
 static unsigned scopes_per_group=GROUP_SIZE;
+static int benchmark_controls_only;
 
 static void retained_workload(void)
 {
@@ -220,6 +221,7 @@ static int retained_benchmark(int argc, char **argv)
     if (validate_retained) validate_retained();
     printf("RETAINED %s: %u groups/%u meshes, %u covered, %u changed by fresh pose; pixels/depth within tolerance\n",
            shadow_mode?"shadow":"lit", GROUPS, GROUPS*GROUP_SIZE, covered, moved);
+    if(benchmark_controls_only) goto cleanup;
     puts("round,baseline_regular_ms,retained_regular_ms,baseline_extra_ms,retained_extra_ms,baseline_pair_ms,retained_pair_ms,saved_pair_ms,baseline_complete_ms,retained_complete_ms,saved_complete_ms");
     for(r=0; r<ROUNDS+WARMUP; r++) {
         REQUIRE(bench_no_game());
@@ -245,6 +247,7 @@ static int retained_benchmark(int argc, char **argv)
     printf("SUMMARY %s %s: net paired savings median %.4f ms (p10 %.4f, p90 %.4f), completion %.4f; %s, no FPS claim\n",
            comparison_name?comparison_name:(dispatch_only?"bulk-only":"retained"),shadow_mode?"shadow":"lit",saved[ROUNDS/2],saved[2],saved[18],saved_complete[ROUNDS/2],
            dispatch_only?"no retained cache":"capture cost included");
+cleanup:
     bench_retained_clear();
     REQUIRE(!bench_replay(0,records[0],records[0]+sizeof records[0]));
     IDirect3DStateBlock9_Release(outer);

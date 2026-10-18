@@ -52,6 +52,15 @@ Strike an item through, with the date, when it's done.
   submission in the joined fixture; current zero-consumption abort is not
   a runtime fallback. Native source/state/lifetime and exception boundaries
   remain open, and further savings are needed before a gameplay request.
+- [x] 2026-10-18: reproduce GPU rejection defects in the joined native path:
+  224 controlled observations, with clean unique-position image controls,
+  immediate state snapshots and broken-oracle checks. Each backend/workload
+  has 28 changed outputs and 28 state leaks. See
+  `specs/2026-10-18-native-gpu-fault-audit.md`; recovery is still unfixed.
+- [ ] Check all batch setup/restoration results and retain enough staged
+  ownership/commit information to replay only unsubmitted meshes after
+  coherent device/effect/engine state restoration. Require the fault audit
+  to show matching output/state, not merely detect today's counterexamples.
 - [x] 2026-10-17: larger material-queue fixture passes native/DXVK fresh
   pose, material invalidation, regular/extra image and state checks.
 - [x] 2026-10-17: recollect material-queue timings with the game closed.

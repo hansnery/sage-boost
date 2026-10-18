@@ -21,6 +21,26 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Native GPU fault audit (2026-10-18)
+
+- [Rejected-call audit](specs/2026-10-18-native-gpu-fault-audit.md) records
+  224 observations across native D3D9/DXVK, lit/fresh shadows and regular/
+  extra frames. Each 56-case set detects 28 changed outputs and 28 immediate
+  state leaks; 52 remain enabled despite an observed error. Rejected DIPs
+  disable instancing but lose staged units. Recovery is not implemented.
+- Clean original/candidate images and counts match with separately placed
+  meshes; immediate device-state snapshots catch leaks hidden by later
+  restoration. Native ownership/ABI/scope checks and deliberately broken
+  oracle controls pass. A separate proxy leaves the driver's vtable intact.
+- This changes the next action from an unspecified failure proof to explicit
+  staged-draw ownership, checked setup/restoration and no-duplicate replay.
+  Effect/engine state and lifetime reconciliation remain necessary. No
+  installation, gameplay request or additional performance claim.
+- Full plugin suite and all four joined native/GPU regressions pass. The
+  fault audit passes by detecting the documented defects, not by recovering
+  from them. Built beta.3, installed 0.9.10 and installed INI hashes match
+  their prior values.
+
 ## Joined native group/GPU screen (2026-10-18)
 
 - [Native group and mesh together](specs/2026-10-18-native-group-gpu-screen.md)

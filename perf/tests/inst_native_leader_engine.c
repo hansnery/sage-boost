@@ -67,7 +67,10 @@ static HRESULT WINAPI leader_skip(void *dev, unsigned type, int base,
     return S_OK;
 }
 
-void *pf_inst_enter(unsigned k, void **slot, void *next)
+#ifndef PF_NATIVE_INST_ENTER
+#define PF_NATIVE_INST_ENTER pf_inst_enter
+#endif
+void *PF_NATIVE_INST_ENTER(unsigned k, void **slot, void *next)
 {
     if (k==g_mesh_site) {
         leader_slot=slot; leader_mesh=slot[-4];
