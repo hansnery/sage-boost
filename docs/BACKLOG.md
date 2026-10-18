@@ -15,8 +15,16 @@ Strike an item through, with the date, when it's done.
 - [x] 2026-10-18: beta.10 committed/pushed as `ebe5681` and installed with
   the previous binary, INI and capture backed up. Build/install hashes match;
   existing ASCII/LF INI values are preserved. See STATUS.md for the backup.
-- [ ] Collect the user's 90-second saved-game run. Actual 60 FPS and
-  gameplay material/lifetime behavior remain unverified.
+- [x] 2026-10-18: collect beta.10 gameplay. FrameView maximum 30 FPS;
+  captured seconds 50..109 average 29.4833 presentation calls/s with zero
+  extras. New hooks activated, but batching eligibility regressed.
+- [x] 2026-10-18: correct native identity-anchor admission in beta.11;
+  expanded native/GPU validation, full suite and instruction checks pass.
+  Combined DXVK savings with mixed anchors are 8.18-8.66 ms shuffled and
+  6.52-7.14 ms ordered. See
+  `specs/2026-10-18-anchor-gate-fix.md`.
+- [ ] Commit/push and install beta.11 with backup; verify the same saved-game
+  scenario. Sustained 60 FPS remains unproved.
 - Earlier research notes below retain their version-specific limits.
   Beta.10 supplies a finite fail-disabled policy for persistent errors; it
   does not promise unchanged pixels during arbitrary driver failure or
@@ -70,10 +78,10 @@ Strike an item through, with the date, when it's done.
   runtime refusals, joined GPU controls and full plugin tests. Combined
   runtime-handler savings remain 7.54-7.80 ms shuffled / ~6.13 ms ordered.
   See `specs/2026-10-18-runtime-queue-insertion.md`; no installation or FPS claim.
-- [ ] Integrate the guarded bulk renderer into production code, including
-  remaining source/lifetime and device/replay
-  failure boundaries. Install/test the complete significant improvement;
-  insertion/sorting beta.5 is not the requested final candidate.
+- [x] 2026-10-18 (beta.10): integrate the guarded bulk renderer and its
+  lifetime/device/replay failure policy, then install the complete path.
+  Its gameplay result and the resulting anchor correction are recorded
+  above; the 60 FPS objective remains open.
 
 - [x] Beta.2 saved-game test captured 2026-10-17 with full-rate shadows;
   steady section still ~30 presentation calls/s, no extras. See STATUS.md.

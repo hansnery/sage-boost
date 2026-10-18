@@ -172,6 +172,12 @@ int main(void)
         REQUIRE(draws==1 && g.mode==(remaining==3?M_LEADER:M_STOCK));finished();cases++;
     }
 
+    /* Rigid rendering does not read the skeletal anchor at all. */
+    reset_case(0);game_context();g_bulk_on=1;
+    *(unsigned *)(model+PF_MODEL_FLAGS)=0;
+    *(void **)(mesh+PF_MESH_ANCHOR)=(void *)1;
+    REQUIRE(lead(mesh) && !g.skinned);finished();cases++;
+
     reset_case(0);capture_leader();game_context();g.mode=M_INST;
     begin_group(mesh,method,1,frame+0x40,records,(void *)1);
     REQUIRE(g.mode==M_LEADER);finished();cases++;
@@ -184,12 +190,29 @@ int main(void)
     REQUIRE(mesh_call(slot,(void *)1)==pf_skip_thunk(8));
     REQUIRE(g.mode==M_IDLE && draws==1 && method[1]==2);finished();cases++;
 
-    /* A refused per-mesh state must also refuse the ordinary member path;
+    /* Null storage, a null pointee and a self anchor take the native
+     * skeletal identity-world branch and must remain eligible. */
+    for(unsigned kind=0;kind<3;kind++) {
+        const unsigned char *anchor=kind==1?NULL:mesh;
+        reset_case(0);game_context();g_bulk_on=1;
+        *(const unsigned char *const **)(mesh+0x310)=kind?&anchor:NULL;
+        REQUIRE(lead(mesh) && g.mode==M_LEADER);finished();cases++;
+
+        reset_case(0);capture_leader();game_context();g.mode=M_INST;g_bulk_on=1;
+        *(const unsigned char *const **)(mesh+0x310)=kind?&anchor:NULL;
+        REQUIRE(member(mesh,g.end-PF_RECORD_SIZE,method,(void *)1)==pf_skip_thunk(8));
+        REQUIRE(g.count==1 && method[1]==2 && draw_batch(1));
+        pf_inst_init(0);finished();cases++;
+    }
+
+    /* A different anchor must also refuse the ordinary member path;
      * returning from the bulk bridge alone cannot cancel a deferred leader. */
     reset_case(0);capture_leader();game_context();g.mode=M_INST;g.count=2;g_bulk_on=1;
-    *(void **)(mesh+0x310)=(void *)1;
+    const unsigned char *different_anchor=other;
+    *(const unsigned char *const **)(mesh+0x310)=&different_anchor;
     REQUIRE(member(mesh,g.end-3*PF_RECORD_SIZE,method,(void *)1)==(void *)1);
-    REQUIRE(draws==1 && g.mode==M_STOCK && method[1]==3);finished();cases++;
+    REQUIRE(draws==1 && g.mode==M_STOCK && method[1]==3 && g.mm==MM_ANCHOR);
+    finished();cases++;
 
     reset_case(1);capture_leader();REQUIRE(!g.capture_reason && !g_stream_owner);
     g.count=2;REQUIRE(draw_batch(0));pf_inst_init(0);

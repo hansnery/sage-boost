@@ -21,7 +21,37 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
-## Runtime group batching installed for saved-game test (2026-10-18)
+## Beta.10 gameplay failed; beta.11 anchor correction validated (2026-10-18)
+
+- User reports FrameView maximum 30 FPS in the troop-heavy save. Copied log,
+  INI and CSVs to
+  `%TEMP%/bfme2perf-beta10-test-20261018-091513-787491` before analysis.
+  Beta.10 loaded and all three new optimizations activated.
+- Seconds 50..109 contain 1,769 presentation calls: **29.4833/s**, zero
+  extras. Median/p95 gap bounds both `(33.334, 50] ms`; verification errors
+  zero. The 60 FPS objective failed. See
+  `benchmarks/2026-10-18-beta10-gameplay-check.json`.
+- Only about 285 meshes/frame were instanced, with 7,127 mismatches/frame.
+  The new +0x310 check rejects non-null anchor storage even when the native
+  pointee is null or self and the world transform remains identity. The
+  earlier fixture covered only null storage. New admission and native/GPU
+  cases fail with beta.10, reproducing that gap.
+- Beta.11 corrects all admission/bulk gates and distinguishes relative
+  anchors in the log. Nineteen admission/ownership cases, expanded native
+  D3D9/DXVK checks for both images, the full suite and general-register
+  instruction inspection all pass. See
+  `specs/2026-10-18-anchor-gate-fix.md` and its implementation plan.
+- Six serial DXVK runs with mixed anchors retain **8.18-8.66 ms** median
+  savings per regular/extra pair for shuffled input, **6.52-7.14 ms** for
+  ordered input. This compares the complete optimized path with ordinary
+  instancing in a controlled workload; it is not a gameplay FPS estimate.
+- Tested beta.11 ASI SHA256:
+  `574a085967d477a53037526c1ea7f6b6d257a559a36aab7f76573c4ca7cfe027`.
+  Evidence: `benchmarks/2026-10-18-anchor-gate-checks.json` and 126 raw
+  samples. Commit/push and backed-up installation are next; the installed
+  beta.10 binary and INI have not yet changed.
+
+## Earlier beta.10 installation and offline results (2026-10-18)
 
 - **0.9.11-beta.10** connects verified startup discovery, native group
   entry/loop hooks, production instancing and aggregate timing. New
@@ -49,11 +79,10 @@ files before relying on it.
   commented `[Render] QueueInsert=1`, `QueueSort=1`, and `BulkRender=1`.
   Installed INI SHA256:
   `e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b`.
-- Await the user's same troop-heavy save for at least 90 seconds after
-  loading, then close the game before reading its copied logs. Verify at
-  least 59 actual presentations/s over a settled 60-second interval and
-  report pacing. No game was launched by the agent. Last actual gameplay
-  remains 30.18/s; the goal remains open.
+- The subsequent troop-heavy saved-game capture failed at 29.4833
+  presentation calls/s; see the beta.10 gameplay section above. No game was
+  launched by the agent. The objective remains at least 59 presentation
+  calls/s over a settled 60-second interval, with pacing reported.
 
 ## Gameplay capture analysis prepared (2026-10-18)
 
@@ -66,10 +95,10 @@ files before relying on it.
   no extra frames. Median gap is `(25, 33.334] ms`; p95 is
   `(33.334, 50] ms`. This 51-second baseline is shorter than the acceptance
   interval. See `benchmarks/2026-10-18-gameplay-baseline-check.json`.
-- The installed beta.10 binary/settings are unchanged. No fresh gameplay
-  capture is available yet. The report does not measure physical display
-  refresh or prove visual/network/camera behavior; those remain separate
-  acceptance checks. No success claim follows from this tooling work.
+- This tooling was prepared before the beta.10 capture reported above.
+  Its report does not measure physical display refresh or prove
+  visual/network/camera behavior; those remain separate acceptance checks.
+  No success claim follows from this tooling work.
 
 ## Production bulk instancer built (2026-10-18)
 

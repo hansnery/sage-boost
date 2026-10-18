@@ -1,0 +1,110 @@
+{
+  "window": {
+    "start_s": 50,
+    "end_s_exclusive": 110,
+    "nominal_seconds": 60,
+    "at_least_60_seconds": true
+  },
+  "presentation_calls": 1769,
+  "presentation_calls_per_nominal_second": 29.483333333333334,
+  "nominal_rate_at_least_59": false,
+  "rate_bounds_from_timestamp_quantization": {
+    "lower": 29.0,
+    "upper": 29.983050847457626
+  },
+  "per_row_calls": {
+    "min": 15,
+    "max": 31
+  },
+  "regular_frame_updates": 1803,
+  "extra_frames": 0,
+  "pacing": {
+    "gaps": 1769,
+    "histogram_counts": {
+      "present_gap_le_8333us": 0,
+      "present_gap_le_12500us": 0,
+      "present_gap_le_16667us": 2,
+      "present_gap_le_20000us": 12,
+      "present_gap_le_25000us": 130,
+      "present_gap_le_33334us": 734,
+      "present_gap_le_50000us": 842,
+      "present_gap_le_100000us": 46,
+      "present_gap_le_200000us": 3,
+      "present_gap_le_500000us": 0,
+      "present_gap_le_1000000us": 0,
+      "present_gap_over_1000000us": 0
+    },
+    "p50": {
+      "lower_exclusive_ms": 33.334,
+      "upper_ms": 50.0
+    },
+    "p95": {
+      "lower_exclusive_ms": 33.334,
+      "upper_ms": 50.0
+    },
+    "fraction_over_25_ms": 0.9185980780101752,
+    "fraction_over_50_ms": 0.027699265121537593
+  },
+  "shadows": {
+    "extra_draw_calls": 0,
+    "extra_completed_pass_samples": 0,
+    "valid_extra_profiles": 0,
+    "invalid_extra_profiles": 0,
+    "regular_shadow_skips": 0,
+    "extra_counts_match_each_row": false
+  },
+  "verification_failures": {
+    "verify_bad": 0,
+    "shadow_verify_bad": 0,
+    "spv_bad": 0,
+    "lt_verify_bad": 0
+  },
+  "limits": [
+    "Completed flip-enabled EndScene calls; not measured display refresh or GPU success.",
+    "Row timestamps quantize duration; reported FPS uses the nominal interval.",
+    "Percentiles are pooled histogram bounds, not exact gaps or averaged row percentiles.",
+    "The first gap may begin before the selected interval.",
+    "Matching shadow counts do not prove correct pixels or per-frame correspondence.",
+    "Confirm the saved-game scene, loaded version/settings, visual output and runtime log.",
+    "Simulation/network/input/camera invariants require separate evidence."
+  ],
+  "frame_weighted_metrics": {
+    "frame_avg_ms": 26.398882972823074,
+    "logic_ms": 3.7104514697726008,
+    "render_ms": 17.824014975041596,
+    "shadow_ms": 8.086804769828065,
+    "fx_batch_ms": 10.075420410427066,
+    "fx_mesh_ms": 6.456064891846922,
+    "inst_meshes": 285.012201885746,
+    "inst_groups": 44.89351081530782,
+    "inst_leaders": 44.89351081530782,
+    "inst_small": 444.85357737104823,
+    "inst_mismatch": 7126.992235163616,
+    "budget_ms": 8.154790904048808,
+    "extra_cost_ms": 17.714
+  },
+  "blockers": {
+    "fps_block_cost": 1477,
+    "fps_block_catchup": 272,
+    "fps_block_pause": 0,
+    "fps_block_stop": 0,
+    "fps_probe_attempts": 0,
+    "fps_probe_success": 0,
+    "fps_probe_late": 0
+  },
+  "loaded_version": "bfme2perf 0.9.11-beta.10",
+  "activation": [
+    "render: QueueInsert=1: applied",
+    "render: QueueSort=1: applied",
+    "render: BulkRender=1: guarded native group batching enabled"
+  ],
+  "user_observation": "FrameView maximum 30 FPS in the saved game with many troops",
+  "scene_limit": "Post-loading interval selected from the reported run; unchanged camera/poses not independently verified",
+  "source_capture": "C:\\Users\\Hans\\AppData\\Local\\Temp\\bfme2perf-beta10-test-20261018-091513-787491",
+  "source_sha256": {
+    "bfme2perf.ini": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b",
+    "bfme2perf.log": "af606368afddfe6930f6f006bae9c9d8f3e30829fd063af2f1d22b335e6b79b1",
+    "bfme2perf_scopes.csv": "0795ebb3ee538dee987655e4c4feeed6b6812910e2fc787f73f214d6ea564786",
+    "bfme2perf_timing.csv": "a80650733b4ec6f21b18fe1a4aad37ac0e8ac5955e9d3c67d559c6cade1540a3"
+  }
+}

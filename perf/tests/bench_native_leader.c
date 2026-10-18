@@ -17,6 +17,9 @@ static unsigned nm_changed,nm_one=0x3F800000,nm_threshold=0x3DCCCCCD;
 static unsigned nm_limit,nm_draw_count,nm_api_count;
 static unsigned char nm_emissive,nm_enabled=1,nm_snapshot;
 static unsigned nm_early_draw;
+#ifdef PF_RUNTIME_BULK
+static const unsigned char *nm_anchors[GROUPS * GROUP_SIZE];
+#endif
 
 static void nm_unexpected(void) { REQUIRE(!"unexpected native dependency or exception"); }
 static void __attribute__((thiscall)) nm_dynamic(void *self,unsigned channel)
@@ -66,6 +69,18 @@ static void nm_patch(unsigned body,unsigned offset,void *target,int nop)
 static void nm_validate(void);
 static void nm_setup(void)
 {
+#ifdef PF_RUNTIME_BULK
+    /* The live beta.10 test exposed a fixture gap: real meshes can have
+     * non-null anchor storage even when the native world branch is identity.
+     * Exercise null storage, null pointee and self throughout every queue,
+     * including leaders, followers, callback fallbacks and shadow passes. */
+    for(unsigned i=0;i<GROUPS*GROUP_SIZE;i++) {
+        unsigned kind=i%3;
+        nm_anchors[i]=kind==1?NULL:many_meshes[i].b;
+        *(const unsigned char *const **)(many_meshes[i].b+0x310)=kind?&nm_anchors[i]:NULL;
+    }
+    puts("ANCHORS: null storage, null pointee and self anchor mixed across 7200 runtime-fixture meshes");
+#endif
     for(unsigned i=7;i<19;i++) nm_symbols[i]=nm_unexpected;
     nm_symbols[12]=nm_geometry; nm_symbols[14]=PF_NATIVE_MESH_APPLY_STATE; nm_symbols[15]=nm_statistics;
     void *data[]={&nm_changed,nm_state,&nm_one,&nm_sas_ptr,&nm_limit,&nm_emissive,

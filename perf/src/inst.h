@@ -41,6 +41,7 @@ typedef struct {
 #define PF_MESH_CONTAINER 0x7C
 #define PF_MESH_MODEL 0xC4
 #define PF_MESH_BASE_VERTEX 0x300
+#define PF_MESH_ANCHOR 0x310 /* pointer to the skeletal world-transform anchor */
 #define PF_MODEL_FLAGS 0x18
 #define PF_MODEL_SKIN 0x400
 #define PF_MODEL_FACING 0xA00 /* ALIGNED | ORIENTED: built toward the camera */

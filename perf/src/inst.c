@@ -103,7 +103,7 @@ static unsigned g_bulk_leaders;
  * the instanced draw needs. */
 enum {
     MM_REFS, MM_GEOMETRY, MM_FACING, MM_BONES_NONE, MM_JOINTS_BAD, MM_JOINTS_SHADER, MM_DRAWS,
-    MM_STATE, MM_MODEL, MM_SKIN_SHADER, MM_DECL, MM_FREQ, MM_COUNT
+    MM_STATE, MM_MODEL, MM_SKIN_SHADER, MM_DECL, MM_FREQ, MM_ANCHOR, MM_COUNT
 };
 static unsigned g_mm[MM_COUNT], g_splits, g_bone_logs;
 /* The unknown vertex shaders (no_shader): meshes per shader. */
@@ -649,12 +649,12 @@ static void summary(void)
                  t->bonelist);
     fu_log_event("inst:   mismatch by kind: no reference count %u, geometry without its own buffer "
                  "%u, camera-facing %u, bone map %u, leader not one draw %u, device state %u, model "
-                 "change %u; groups split at a model change %u",
+                 "change %u, relative skin anchor %u; groups split at a model change %u",
                  g_mm[MM_REFS], g_mm[MM_GEOMETRY], g_mm[MM_FACING],
                  g_mm[MM_BONES_NONE] + g_mm[MM_JOINTS_BAD] + g_mm[MM_JOINTS_SHADER], g_mm[MM_DRAWS],
                  g_mm[MM_STATE] + g_mm[MM_SKIN_SHADER] + g_mm[MM_DECL] +
                      g_mm[MM_FREQ],
-                 g_mm[MM_MODEL], g_splits);
+                 g_mm[MM_MODEL], g_mm[MM_ANCHOR], g_splits);
     fu_log_event("inst:   bone map: no bone list %u, joints per vertex not 1 or 2 %u, joints unlike "
                  "the bound shader's %u",
                  g_mm[MM_BONES_NONE], g_mm[MM_JOINTS_BAD], g_mm[MM_JOINTS_SHADER]);
@@ -919,6 +919,16 @@ static unsigned *refs_of(void *method)
     return (unsigned *)((unsigned char *)method + PF_METHOD_REFS);
 }
 
+/* The verified native skeletal branch uses identity world state for null
+ * anchor storage, a null pointee, or an anchor referring to this mesh.
+ * Another mesh requires its relative world transform and stays native. */
+static int identity_skin_anchor(const unsigned char *mesh)
+{
+    const unsigned char *const *anchor =
+        *(const unsigned char *const *const *)(mesh + PF_MESH_ANCHOR);
+    return !anchor || !*anchor || *anchor == mesh;
+}
+
 /* mesh leads the meshes after it: the game draws it and its draw is
  * captured. 0 (g.reason set) if its model can't be instanced. */
 static int lead(const unsigned char *mesh)
@@ -930,8 +940,8 @@ static int lead(const unsigned char *mesh)
 
     g.reason = REASON(mismatch);
     g.mm = MM_GEOMETRY;
-    if (g_bulk_on && *(const void *const *)(mesh + 0x310)) {
-        g.mm = MM_MODEL;
+    if (g_bulk_on && (flags & PF_MODEL_SKIN) && !identity_skin_anchor(mesh)) {
+        g.mm = MM_ANCHOR;
         return 0;
     }
     g.model = model;
@@ -1076,7 +1086,7 @@ static void *member(const unsigned char *mesh, const unsigned char *rec, void *m
     int same = *(const unsigned char *const *)(mesh + PF_MESH_MODEL) == g.model &&
                *(const unsigned *)(mesh + PF_MESH_BASE_VERTEX) == g.base_vertex &&
                method == g.method && *refs_of(method) >= 2 &&
-               (!g_bulk_on || !*(const void *const *)(mesh + 0x310));
+               (!g_bulk_on || !g.skinned || identity_skin_anchor(mesh));
 
     if (g_failed) {
         g.count = 0;
@@ -1220,7 +1230,7 @@ int pf_inst_bulk_matches(const unsigned char *rec, const unsigned char *end, voi
     const unsigned char *mesh = *(const void *const *)rec;
     return mesh && *(const void *const *)(mesh + PF_MESH_MODEL) == g.model &&
            *(const unsigned *)(mesh + PF_MESH_BASE_VERTEX) == g.base_vertex &&
-           !*(const void *const *)(mesh + 0x310);
+           identity_skin_anchor(mesh);
 }
 
 unsigned pf_inst_bulk_advance(const unsigned char *rec, const unsigned char *end, void *method,
@@ -1237,7 +1247,7 @@ unsigned pf_inst_bulk_advance(const unsigned char *rec, const unsigned char *end
         const unsigned char *mesh = *(const void *const *)rec;
         if (!mesh || *(const void *const *)(mesh + PF_MESH_MODEL) != g.model ||
             *(const unsigned *)(mesh + PF_MESH_BASE_VERTEX) != g.base_vertex ||
-            *(const void *const *)(mesh + 0x310) || !stage(mesh))
+            !identity_skin_anchor(mesh) || !stage(mesh))
             break;
         n++;
         rec += PF_RECORD_SIZE;
@@ -1331,7 +1341,7 @@ static int bulk_defer_leader(void **slot)
         *(const unsigned *)(g_leader_mesh + PF_MESH_BASE_VERTEX) != g.base_vertex ||
         *(const void *const *)(g.model + PF_MODEL_GEOMETRY) != g_leader_geometry ||
         !g_leader_geometry || g_leader_geometry[0] ||
-        *(const void *const *)(g_leader_mesh + 0x310) ||
+        !identity_skin_anchor(g_leader_mesh) ||
         *(const void *const *)(g_leader_geometry + PF_GEOM_BONES_BEGIN) != g.bonemap ||
         *(const short *const *)(g_leader_geometry + PF_GEOM_BONES_END) != g.bonemap + g.nbones ||
         *(const unsigned *)(g_leader_geometry + PF_GEOM_JOINTS) != g.joints)
