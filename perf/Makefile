@@ -510,6 +510,19 @@ $(BUILD)/bench_runtime_bulk_gpu.exe: tests/bench_native_insert_gpu.c tests/bench
 $(BUILD)/bench_runtime_bulk_20_gpu.exe: tests/bench_native_insert_gpu.c $(BUILD)/bench_runtime_bulk_gpu.exe
 	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_RUNTIME_BULK -DPF_FIXTURE_BONES=20 -static -o $@ $< $(BUILD)/native_insert_fixture.o $(BUILD)/native_sort_fixture.o $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS)) $(CHECKED_WRAP)
 
+$(BUILD)/bulk_chain_screen.c: src/bulk.c ../tools/prepare_chain_screen.py | $(BUILD)
+	python ../tools/prepare_chain_screen.py $< $@
+
+$(BUILD)/bulk_chain_screen.o: $(BUILD)/bulk_chain_screen.c src/*.h
+	$(CC) $(CFLAGS) -Isrc -c -o $@ $<
+
+CHAIN_SCREEN_OBJS = $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(BUILD)/bulk_chain_screen.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o $(BUILD)/bulk.o,$(DISPATCH_OBJS))
+$(BUILD)/bench_chain_screen.exe: tests/bench_chain_screen.c $(BUILD)/bench_runtime_bulk_gpu.exe $(BUILD)/bulk_chain_screen.o
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_RUNTIME_BULK -static -o $@ $< $(CHAIN_SCREEN_OBJS) $(CHECKED_WRAP)
+
+$(BUILD)/bench_chain_screen_20.exe: tests/bench_chain_screen.c $(BUILD)/bench_runtime_bulk_gpu.exe $(BUILD)/bulk_chain_screen.o
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_RUNTIME_BULK -DPF_FIXTURE_BONES=20 -static -o $@ $< $(CHAIN_SCREEN_OBJS) $(CHECKED_WRAP)
+
 $(BUILD)/inst_verify_old.c: | $(BUILD)
 	git show 35ac82b:perf/src/inst.c > $@
 

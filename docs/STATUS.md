@@ -21,6 +21,25 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Material-chain dispatch screen (2026-10-18)
+
+- The copied log's cumulative shadow-state summary leaves zero comparator
+  splits after merging 6,119. This does not identify every live group, but
+  it removes support for an opacity change as the next optimization.
+- Native grouping compares every material method. The installed follower
+  bulk dispatcher accepts only one-method groups; leader deferral already
+  works independently. Leader counters do not establish follower coverage.
+- A developer-only fixture switches this gate in one executable while
+  keeping native grouping, hooks, leader deferral, FX state and draw counts
+  identical. Controlled owning chains of length 1..6 retain exact boundaries
+  and references. Production and installed beta.11/INI are unchanged.
+- Sixteen normal-path runs pass, six deliberate faults are rejected, and
+  168 paired samples show 2.29-4.75 ms median completion savings per
+  synthetic regular/extra pair. This warrants runtime qualification, not
+  a saved-game FPS claim. Preserve full method-array boundaries.
+- Qualify native child behavior, fallback/failure and live coverage before
+  promotion. See [experiment](specs/2026-10-18-material-chain-bulk.md).
+
 ## Beta.12 verification-window fix: development only (2026-10-18)
 
 - Share the existing sample-selection predicate between evaluation and bulk
@@ -33,9 +52,10 @@ files before relying on it.
   window, so the forced-window benchmark does not establish a substantial
   saved-game gain. Keep beta.11 installed, with its INI unchanged; no new
   gameplay test request. The last real result remains 30.0667/s.
-- Shadow fragmentation remains a lead. The public reference identifies a
-  three-factor mesh opacity product, not a single alpha load; no opacity
-  merging or new runtime signature has been implemented. See
+- A later log audit finds zero remaining shadow-state comparator splits in
+  its cumulative summary; investigate material chains before opacity. The
+  public three-factor opacity getter remains reference information only;
+  no opacity merging or new runtime signature has been implemented. See
   [scope, evidence and limits](specs/2026-10-18-verification-window-bulk.md).
 
 ## Typed material-write screen: standalone route rejected (2026-10-18)

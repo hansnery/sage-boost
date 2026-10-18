@@ -1,0 +1,652 @@
+{
+  "source_base_commit": "7c960201ebb5b85f03b1167cf74959879b1c2cc3",
+  "production_changed": false,
+  "comparison": "Same process, identical native bodies/hooks/leader deferral/FX; only method-count gate is switched between installed one-method policy and 1..6.",
+  "validation_runs": [
+    {
+      "label": "control-6-native-game.dat-lit-chain6",
+      "bones": 6,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "lit",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-control-6-native-game.dat-lit-chain6.txt",
+      "sha256": "e0acd6bc03ec7e9f688f440139d0d1afafdaeea9cd70de6c8024f5efa6de48ef"
+    },
+    {
+      "label": "control-6-native-game.dat-shadow-chain6",
+      "bones": 6,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-control-6-native-game.dat-shadow-chain6.txt",
+      "sha256": "a5aecdbaec3f202a0e5c6c28a5084776b7f4a8cb63b3b3e62e5c67a6b4d411ab"
+    },
+    {
+      "label": "control-6-native-game820.dat-lit-chain6",
+      "bones": 6,
+      "backend": "native",
+      "image": "game820.dat",
+      "kind": "lit",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-control-6-native-game820.dat-lit-chain6.txt",
+      "sha256": "e0acd6bc03ec7e9f688f440139d0d1afafdaeea9cd70de6c8024f5efa6de48ef"
+    },
+    {
+      "label": "control-6-native-game820.dat-shadow-chain6",
+      "bones": 6,
+      "backend": "native",
+      "image": "game820.dat",
+      "kind": "shadow",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-control-6-native-game820.dat-shadow-chain6.txt",
+      "sha256": "a5aecdbaec3f202a0e5c6c28a5084776b7f4a8cb63b3b3e62e5c67a6b4d411ab"
+    },
+    {
+      "label": "control-6-dxvk-game.dat-lit-chain6",
+      "bones": 6,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "lit",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-control-6-dxvk-game.dat-lit-chain6.txt",
+      "sha256": "c486bfd862b695d63a804619bfac4badc9b314e54234d8e171fa353c810cc7c3"
+    },
+    {
+      "label": "control-6-dxvk-game.dat-shadow-chain6",
+      "bones": 6,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-control-6-dxvk-game.dat-shadow-chain6.txt",
+      "sha256": "8cb03fe1540e59f8a4d6e27df95f8cab918df911de028214dafba87d870ef8bd"
+    },
+    {
+      "label": "control-6-dxvk-game820.dat-lit-chain6",
+      "bones": 6,
+      "backend": "dxvk",
+      "image": "game820.dat",
+      "kind": "lit",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-control-6-dxvk-game820.dat-lit-chain6.txt",
+      "sha256": "c486bfd862b695d63a804619bfac4badc9b314e54234d8e171fa353c810cc7c3"
+    },
+    {
+      "label": "control-6-dxvk-game820.dat-shadow-chain6",
+      "bones": 6,
+      "backend": "dxvk",
+      "image": "game820.dat",
+      "kind": "shadow",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-control-6-dxvk-game820.dat-shadow-chain6.txt",
+      "sha256": "8cb03fe1540e59f8a4d6e27df95f8cab918df911de028214dafba87d870ef8bd"
+    },
+    {
+      "label": "control-20-native-game.dat-lit-chain6",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "lit",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-control-20-native-game.dat-lit-chain6.txt",
+      "sha256": "4b0f45f09c9d416adf683f328f66b78320d8f99f025f198846795a9ffcd81fac"
+    },
+    {
+      "label": "control-20-native-game.dat-shadow-chain6",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-control-20-native-game.dat-shadow-chain6.txt",
+      "sha256": "7008c288c672bf8724848c281a22cc8eac06677346197e146e35869d4188dab2"
+    },
+    {
+      "label": "control-20-native-game820.dat-lit-chain6",
+      "bones": 20,
+      "backend": "native",
+      "image": "game820.dat",
+      "kind": "lit",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-control-20-native-game820.dat-lit-chain6.txt",
+      "sha256": "4b0f45f09c9d416adf683f328f66b78320d8f99f025f198846795a9ffcd81fac"
+    },
+    {
+      "label": "control-20-native-game820.dat-shadow-chain6",
+      "bones": 20,
+      "backend": "native",
+      "image": "game820.dat",
+      "kind": "shadow",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-control-20-native-game820.dat-shadow-chain6.txt",
+      "sha256": "7008c288c672bf8724848c281a22cc8eac06677346197e146e35869d4188dab2"
+    },
+    {
+      "label": "control-20-dxvk-game.dat-lit-chain6",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "lit",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-control-20-dxvk-game.dat-lit-chain6.txt",
+      "sha256": "c7ae333ea9156751e9582d7da07778b21bd264884c59d92af51a5996477e89d2"
+    },
+    {
+      "label": "control-20-dxvk-game.dat-shadow-chain6",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-control-20-dxvk-game.dat-shadow-chain6.txt",
+      "sha256": "9b2034d50d5f01fcec82b1673ce3953b239b64b978031b17120d56eba0a90911"
+    },
+    {
+      "label": "control-20-dxvk-game820.dat-lit-chain6",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game820.dat",
+      "kind": "lit",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-control-20-dxvk-game820.dat-lit-chain6.txt",
+      "sha256": "c7ae333ea9156751e9582d7da07778b21bd264884c59d92af51a5996477e89d2"
+    },
+    {
+      "label": "control-20-dxvk-game820.dat-shadow-chain6",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game820.dat",
+      "kind": "shadow",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-control-20-dxvk-game820.dat-shadow-chain6.txt",
+      "sha256": "9b2034d50d5f01fcec82b1673ce3953b239b64b978031b17120d56eba0a90911"
+    },
+    {
+      "label": "control-20-native-game.dat-shadow-chain6-broken1",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 1,
+      "exit_code": 1,
+      "log": "perf/build/chain-control-20-native-game.dat-shadow-chain6-broken1.txt",
+      "sha256": "404bc7f7fd50b67864f4281e80fd9faeba0bdddb66a19f4e1328ed0f65ac64e9",
+      "oracle_failure": "benchmark refused: tests/bench_chain_screen.c:111: !ng_group_abi_errors && chain_begins==2 && g_stock_draws==2"
+    },
+    {
+      "label": "control-20-native-game.dat-shadow-chain6-broken2",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 2,
+      "exit_code": 1,
+      "log": "perf/build/chain-control-20-native-game.dat-shadow-chain6-broken2.txt",
+      "sha256": "2374a91fabc8183d7fd737ebca870cb85d4728be35da10c56229acf0a0799d99",
+      "oracle_failure": "benchmark refused: tests/bench_chain_screen.c:37: chain_children[i].refs==5"
+    },
+    {
+      "label": "control-20-native-game.dat-shadow-chain6-broken3",
+      "bones": 20,
+      "backend": "native",
+      "image": "game.dat",
+      "kind": "shadow",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 3,
+      "exit_code": 1,
+      "log": "perf/build/chain-control-20-native-game.dat-shadow-chain6-broken3.txt",
+      "sha256": "607e548db634d2c57705c33425baf950d866fcfe53efd7147c79dc39efd6ee77",
+      "oracle_failure": "benchmark refused: tests/bench_chain_screen.c:75: bench_native_group_consumed()==(bulk?GROUPS*(GROUP_SIZE-1):0)"
+    },
+    {
+      "label": "control-20-dxvk-game.dat-shadow-chain6-broken1",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 1,
+      "exit_code": 1,
+      "log": "perf/build/chain-control-20-dxvk-game.dat-shadow-chain6-broken1.txt",
+      "sha256": "43d4f153dd354a3d11b724e0fb07f95feabf7dc88392b5b1e12932a69e69a1be",
+      "oracle_failure": "benchmark refused: tests/bench_chain_screen.c:111: !ng_group_abi_errors && chain_begins==2 && g_stock_draws==2"
+    },
+    {
+      "label": "control-20-dxvk-game.dat-shadow-chain6-broken2",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 2,
+      "exit_code": 1,
+      "log": "perf/build/chain-control-20-dxvk-game.dat-shadow-chain6-broken2.txt",
+      "sha256": "5936f205330e7b7dd5a57bbec3d19738247acd930cbdb981998a55dc7c529da4",
+      "oracle_failure": "benchmark refused: tests/bench_chain_screen.c:37: chain_children[i].refs==5"
+    },
+    {
+      "label": "control-20-dxvk-game.dat-shadow-chain6-broken3",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "controls": true,
+      "chain_count": 6,
+      "broken": 3,
+      "exit_code": 1,
+      "log": "perf/build/chain-control-20-dxvk-game.dat-shadow-chain6-broken3.txt",
+      "sha256": "5726bbd46765986edd2b5f33519e29cf12e0b38089308a8edfce2598aa93964b",
+      "oracle_failure": "benchmark refused: tests/bench_chain_screen.c:75: bench_native_group_consumed()==(bulk?GROUPS*(GROUP_SIZE-1):0)"
+    },
+    {
+      "label": "timing-6-dxvk-game.dat-lit-chain2",
+      "bones": 6,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "lit",
+      "controls": false,
+      "chain_count": 2,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-timing-6-dxvk-game.dat-lit-chain2.txt",
+      "sha256": "b1953875ab1c063a5696bc2c03fe4fd7f82592edfc2ca9a855f9cc996d557b53"
+    },
+    {
+      "label": "timing-6-dxvk-game.dat-shadow-chain2",
+      "bones": 6,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "controls": false,
+      "chain_count": 2,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-timing-6-dxvk-game.dat-shadow-chain2.txt",
+      "sha256": "4d8c4bfa8988670882c83ef9cc0066699ab28b97cd0f28fe516d2571efa1ef9e"
+    },
+    {
+      "label": "timing-6-dxvk-game.dat-lit-chain6",
+      "bones": 6,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "lit",
+      "controls": false,
+      "chain_count": 6,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-timing-6-dxvk-game.dat-lit-chain6.txt",
+      "sha256": "f9958d92096671026e3f016f6af75ab73f0f69da38a6837b4802645594db0b28"
+    },
+    {
+      "label": "timing-6-dxvk-game.dat-shadow-chain6",
+      "bones": 6,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "controls": false,
+      "chain_count": 6,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-timing-6-dxvk-game.dat-shadow-chain6.txt",
+      "sha256": "cd6d5f98fcc114982e9be6c6d8e36c82f7019e2062c9c612c1c0e301f54cd95d"
+    },
+    {
+      "label": "timing-20-dxvk-game.dat-lit-chain2",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "lit",
+      "controls": false,
+      "chain_count": 2,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-timing-20-dxvk-game.dat-lit-chain2.txt",
+      "sha256": "e7acf276cb58fea7e918bea0ceeb4c62940edc4b0afcfa9c97f14051560ea977"
+    },
+    {
+      "label": "timing-20-dxvk-game.dat-shadow-chain2",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "controls": false,
+      "chain_count": 2,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-timing-20-dxvk-game.dat-shadow-chain2.txt",
+      "sha256": "de9253df943b706e01c1ee6545119ef53987f1db1ed8799503ea68957e7b207d"
+    },
+    {
+      "label": "timing-20-dxvk-game.dat-lit-chain6",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "lit",
+      "controls": false,
+      "chain_count": 6,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-timing-20-dxvk-game.dat-lit-chain6.txt",
+      "sha256": "cd95293aa48acfadd5ca5864b222c7452cbd587e4d71efbaacb22be33a313e51"
+    },
+    {
+      "label": "timing-20-dxvk-game.dat-shadow-chain6",
+      "bones": 20,
+      "backend": "dxvk",
+      "image": "game.dat",
+      "kind": "shadow",
+      "controls": false,
+      "chain_count": 6,
+      "broken": 0,
+      "exit_code": 0,
+      "log": "perf/build/chain-timing-20-dxvk-game.dat-shadow-chain6.txt",
+      "sha256": "a273658cc27bb25f86e0aab74afd81cc53b34722a0e83cb425727b1fc60f232a"
+    }
+  ],
+  "input_hashes": {
+    "perf/tests/bench_chain_screen.c": "f82f480039afd2fb4247bf8178eda66cc6b46103a3471d5712661fb326770488",
+    "tools/prepare_chain_screen.py": "2ce5196f1ac91bac446f3a564ba09cd0d49323352d482a4730e3aab1fa278524",
+    "perf/src/bulk.c": "0a979e3b92e1722d09500139647e3de7bd198a8b62e7683f40ef1143888cc04a",
+    "perf/Makefile": "34d87df229d8f2d6eafc767cb3d42e73b49f5ce9eeaecf6c980b966faf61dc32",
+    "perf/build/bulk_chain_screen.c": "43b1de162c26ca31d8c99d405d28f054bab0dd4604035b10a7f83ae2a592a148",
+    "perf/build/bulk_chain_screen.o": "dbafab7582fd69bdb5acb8199ba9b118fa4cc827e198bed8b7ded034adab6e8f",
+    "perf/build/bench_chain_screen.exe": "10a80e74f6fafa613eeed0496f465ed2e4c6abc6cccd393554dea68383bc97b7",
+    "perf/build/bench_chain_screen_20.exe": "949a644df505d4fc8cb091dca5a157512fe1de4cdf5d43c35c6eda6e0bfbdd1e",
+    "perf/build/chain_screen_dxvk/bench_chain_screen.exe": "10a80e74f6fafa613eeed0496f465ed2e4c6abc6cccd393554dea68383bc97b7",
+    "perf/build/chain_screen_dxvk/bench_chain_screen_20.exe": "949a644df505d4fc8cb091dca5a157512fe1de4cdf5d43c35c6eda6e0bfbdd1e",
+    "perf/build/chain_screen_dxvk/d3d9.dll": "00bc142e98ddad1e334a4d88fa630038e092b0758b3d79e295172b181a4c772d"
+  },
+  "instruction_audit": [
+    {
+      "object": "perf/build/bulk_chain_screen.o",
+      "instructions": 445,
+      "executable_bytes": 1616,
+      "sha256": "dbafab7582fd69bdb5acb8199ba9b118fa4cc827e198bed8b7ded034adab6e8f",
+      "result": "No x87, SIMD or FP-control instructions"
+    }
+  ],
+  "timings": [
+    {
+      "run": "timing-6-dxvk-game.dat-lit-chain2",
+      "bones": 6,
+      "methods": 2,
+      "kind": "lit",
+      "median_ms": {
+        "baseline_regular_ms": 5.7363,
+        "retained_regular_ms": 3.8452,
+        "baseline_extra_ms": 5.1583,
+        "retained_extra_ms": 3.5374,
+        "baseline_pair_ms": 11.3769,
+        "retained_pair_ms": 7.7759,
+        "saved_pair_ms": 3.299,
+        "baseline_complete_ms": 11.8353,
+        "retained_complete_ms": 8.1399,
+        "saved_complete_ms": 3.1766,
+        "paired_regular_saving_ms": 1.8419000000000003,
+        "paired_extra_saving_ms": 1.384
+      },
+      "paired_saving_p10_p90_ms": [
+        2.1042,
+        4.2937
+      ]
+    },
+    {
+      "run": "timing-6-dxvk-game.dat-shadow-chain2",
+      "bones": 6,
+      "methods": 2,
+      "kind": "shadow",
+      "median_ms": {
+        "baseline_regular_ms": 5.234,
+        "retained_regular_ms": 3.5591,
+        "baseline_extra_ms": 4.4306,
+        "retained_extra_ms": 3.2703,
+        "baseline_pair_ms": 10.1097,
+        "retained_pair_ms": 7.2704,
+        "saved_pair_ms": 3.9179,
+        "baseline_complete_ms": 11.0274,
+        "retained_complete_ms": 7.551,
+        "saved_complete_ms": 3.8885,
+        "paired_regular_saving_ms": 2.1021,
+        "paired_extra_saving_ms": 1.7807000000000004
+      },
+      "paired_saving_p10_p90_ms": [
+        1.7058,
+        5.0773
+      ]
+    },
+    {
+      "run": "timing-6-dxvk-game.dat-lit-chain6",
+      "bones": 6,
+      "methods": 6,
+      "kind": "lit",
+      "median_ms": {
+        "baseline_regular_ms": 5.4215,
+        "retained_regular_ms": 3.6267,
+        "baseline_extra_ms": 4.8631,
+        "retained_extra_ms": 3.4088,
+        "baseline_pair_ms": 10.8066,
+        "retained_pair_ms": 7.4403,
+        "saved_pair_ms": 3.2849,
+        "baseline_complete_ms": 11.293,
+        "retained_complete_ms": 7.9569,
+        "saved_complete_ms": 3.3351,
+        "paired_regular_saving_ms": 2.0043999999999995,
+        "paired_extra_saving_ms": 1.3735999999999997
+      },
+      "paired_saving_p10_p90_ms": [
+        2.6895,
+        5.2457
+      ]
+    },
+    {
+      "run": "timing-6-dxvk-game.dat-shadow-chain6",
+      "bones": 6,
+      "methods": 6,
+      "kind": "shadow",
+      "median_ms": {
+        "baseline_regular_ms": 4.4337,
+        "retained_regular_ms": 2.6664,
+        "baseline_extra_ms": 3.8831,
+        "retained_extra_ms": 2.5167,
+        "baseline_pair_ms": 8.6017,
+        "retained_pair_ms": 5.5275,
+        "saved_pair_ms": 3.2096,
+        "baseline_complete_ms": 8.9683,
+        "retained_complete_ms": 5.8819,
+        "saved_complete_ms": 3.1998,
+        "paired_regular_saving_ms": 1.7622999999999998,
+        "paired_extra_saving_ms": 1.3913999999999995
+      },
+      "paired_saving_p10_p90_ms": [
+        2.4948,
+        3.7464
+      ]
+    },
+    {
+      "run": "timing-20-dxvk-game.dat-lit-chain2",
+      "bones": 20,
+      "methods": 2,
+      "kind": "lit",
+      "median_ms": {
+        "baseline_regular_ms": 8.4642,
+        "retained_regular_ms": 6.8714,
+        "baseline_extra_ms": 7.9844,
+        "retained_extra_ms": 6.7785,
+        "baseline_pair_ms": 17.6645,
+        "retained_pair_ms": 14.8897,
+        "saved_pair_ms": 2.2081,
+        "baseline_complete_ms": 18.2315,
+        "retained_complete_ms": 15.3697,
+        "saved_complete_ms": 2.2921,
+        "paired_regular_saving_ms": 1.5077000000000007,
+        "paired_extra_saving_ms": 1.1145999999999994
+      },
+      "paired_saving_p10_p90_ms": [
+        0.7848,
+        4.6497
+      ]
+    },
+    {
+      "run": "timing-20-dxvk-game.dat-shadow-chain2",
+      "bones": 20,
+      "methods": 2,
+      "kind": "shadow",
+      "median_ms": {
+        "baseline_regular_ms": 7.9018,
+        "retained_regular_ms": 6.4974,
+        "baseline_extra_ms": 7.255,
+        "retained_extra_ms": 5.9409,
+        "baseline_pair_ms": 16.6364,
+        "retained_pair_ms": 14.1368,
+        "saved_pair_ms": 3.6351,
+        "baseline_complete_ms": 17.1615,
+        "retained_complete_ms": 14.6391,
+        "saved_complete_ms": 3.1555,
+        "paired_regular_saving_ms": 1.8426,
+        "paired_extra_saving_ms": 1.5270000000000001
+      },
+      "paired_saving_p10_p90_ms": [
+        1.632,
+        5.1172
+      ]
+    },
+    {
+      "run": "timing-20-dxvk-game.dat-lit-chain6",
+      "bones": 20,
+      "methods": 6,
+      "kind": "lit",
+      "median_ms": {
+        "baseline_regular_ms": 9.8304,
+        "retained_regular_ms": 7.7875,
+        "baseline_extra_ms": 9.1497,
+        "retained_extra_ms": 7.634,
+        "baseline_pair_ms": 20.902,
+        "retained_pair_ms": 17.1977,
+        "saved_pair_ms": 4.5504,
+        "baseline_complete_ms": 21.4324,
+        "retained_complete_ms": 17.9865,
+        "saved_complete_ms": 4.7467,
+        "paired_regular_saving_ms": 2.2698,
+        "paired_extra_saving_ms": 1.7719000000000005
+      },
+      "paired_saving_p10_p90_ms": [
+        1.5107,
+        6.7469
+      ]
+    },
+    {
+      "run": "timing-20-dxvk-game.dat-shadow-chain6",
+      "bones": 20,
+      "methods": 6,
+      "kind": "shadow",
+      "median_ms": {
+        "baseline_regular_ms": 8.7439,
+        "retained_regular_ms": 6.5426,
+        "baseline_extra_ms": 8.0005,
+        "retained_extra_ms": 6.1824,
+        "baseline_pair_ms": 18.6965,
+        "retained_pair_ms": 13.9661,
+        "saved_pair_ms": 3.3912,
+        "baseline_complete_ms": 19.0903,
+        "retained_complete_ms": 14.5051,
+        "saved_complete_ms": 3.2449,
+        "paired_regular_saving_ms": 1.9372000000000007,
+        "paired_extra_saving_ms": 1.4969000000000001
+      },
+      "paired_saving_p10_p90_ms": [
+        2.2121,
+        5.3389
+      ]
+    }
+  ],
+  "samples": {
+    "count": 168,
+    "path": "docs/benchmarks/2026-10-18-material-chain-samples.csv",
+    "sha256": "10c3b1f4c06c75e448b87f9b90a3a49f6327b8419985c754477df32d58d5439d"
+  },
+  "capture": {
+    "sha256": "6e74233c7fafefe1e3eba74c381dfec07ea9b64a9469ec8bbb380a2bdfb39501",
+    "shadow_summaries": [
+      "shadowpass: totals: batch tests 0, group ends 0 -> 0 (0 groups merged, 0 setups given the game's light environment, 0 missed); objects without stencil flushes 0 shadow pass, 0 other passes; particle walks skipped 906, kept 0; verify samples 4, bad 0",
+      "shadowpass: totals: batch tests 3081904, group ends 6119 -> 0 (6119 groups merged, 63 setups given the game's light environment, 0 missed); objects without stencil flushes 0 shadow pass, 0 other passes; particle walks skipped 1273, kept 1001; verify samples 9, bad 0"
+    ],
+    "limit": "Untimestamped cumulative summaries, not coverage of every row in the settled 98..157-second interval. Zero remaining comparator splits contradicts assigning its fragmentation to opacity."
+  },
+  "fixture_repairs": [
+    "Moved inherited controls after creation of the outer state block; the first setup-time attempt faulted.",
+    "Expanded effect snapshot capacity from 1024 to the existing 4096-word size; the lit effect correctly refused the small buffer."
+  ],
+  "installed": {
+    "version": "0.9.11-beta.11",
+    "binary_sha256": "574a085967d477a53037526c1ea7f6b6d257a559a36aab7f76573c4ca7cfe027",
+    "ini_sha256": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b",
+    "changed": false
+  },
+  "limits": [
+    "Child-method SetNext ownership is controlled; arbitrary native chained subclasses and per-child effect behavior are not qualified.",
+    "Native compare/prepare helpers and material-source computations remain controlled, as in the existing fixture.",
+    "Native grouping still compares the complete method array; this does not implement merging distinct chains.",
+    "All timed groups contain 25 synthetic meshes and the chosen number of methods; live multi-method coverage is unknown.",
+    "Current and candidate both defer leaders. Only the follower native-loop work is removed; GPU draw count and geometry remain equal.",
+    "No queue collection/sort is added to this group/mesh/FX timing. Samples include shared observers and fixture pose work.",
+    "No installed GPU-failure, arbitrary child callback or chained exception/recovery guarantee follows from this normal-path screen.",
+    "No saved-game FPS prediction; last actual settled capture remains 30.0667 presentation calls/s."
+  ]
+}

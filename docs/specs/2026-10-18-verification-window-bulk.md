@@ -81,6 +81,13 @@ the benchmark. Native cases have no local D3D9 proxy. Repeat controls with
 
 ## Remaining shadow fragmentation
 
+Follow-up: the [material-chain screen](2026-10-18-material-chain-bulk.md)
+finds that the capture's cumulative shadow-state summary has **zero**
+remaining comparator splits after 6,119 original splits are merged. Do not
+treat the hypothesis below as evidence for changing opacity handling.
+Native grouping also compares the entire method array; that condition is
+separate from the shadow-state comparator and is the next investigation.
+
 The copied capture averages about 1,900 meshes/frame in adjacent shadow
 groups sharing a model and method. This counter establishes fragmentation,
 not its cause. The current batching predicate still preserves material

@@ -63,10 +63,20 @@ Strike an item through, with the date, when it's done.
   groups without changing sample selection or quotas. Policy/native/GPU
   checks and the full suite pass. Retain as a development fix; the capture
   does not establish sufficient duty cycle for a standalone installation.
-- [ ] Identify remaining shadow group-split causes before mixed-opacity
-  batching. The public mesh getter multiplies three factors; installed
-  dispatch, rounding, material/preshader alpha and fallback need proof.
-  See `specs/2026-10-18-verification-window-bulk.md`.
+- [x] 2026-10-18: inspect the cumulative shadow-state summary before pursuing
+  mixed-opacity batching. All 6,119 tested original splits were merged,
+  leaving zero comparator splits; this does not identify the reason for
+  every group in the full settled interval. Opacity merging is unsupported
+  by this evidence. Full method arrays are a separate native grouping gate.
+- [ ] Qualify multi-method bulk dispatch and establish live coverage. The
+  current follower dispatcher requires one method; leader deferral does
+  not share that restriction, so inferred leader coverage cannot settle
+  follower-loop coverage. See `specs/2026-10-18-material-chain-bulk.md`.
+- [x] 2026-10-18: screen the method-count gate with native chain walkers,
+  controlled owning children and complete method-array boundaries. Both
+  images/backends and six/twenty-bone lit/shadow controls pass; six broken
+  cases are rejected. Paired completion medians save 2.29-4.75 ms, enough
+  to justify qualification. No production or installed change yet.
 - Earlier research notes below retain their version-specific limits.
   Beta.10 supplies a finite fail-disabled policy for persistent errors; it
   does not promise unchanged pixels during arbitrary driver failure or
