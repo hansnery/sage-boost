@@ -55,6 +55,22 @@ files before relying on it.
   report pacing. No game was launched by the agent. Last actual gameplay
   remains 30.18/s; the goal remains open.
 
+## Gameplay capture analysis prepared (2026-10-18)
+
+- `tools/perf_capture.py` reads a copied timing CSV without changing it.
+  It requires an explicit interval and a following boundary row, rejects
+  missing seconds/counters, and pools presentation-gap bins for median/p95
+  bounds. Sixteen tests cover misleading averages and incomplete evidence.
+- Rechecking beta.2 seconds 50 through 100 reproduces 1,539 completed
+  flip-enabled EndScene calls over 51 nominal seconds: **30.1765/s**,
+  no extra frames. Median gap is `(25, 33.334] ms`; p95 is
+  `(33.334, 50] ms`. This 51-second baseline is shorter than the acceptance
+  interval. See `benchmarks/2026-10-18-gameplay-baseline-check.json`.
+- The installed beta.10 binary/settings are unchanged. No fresh gameplay
+  capture is available yet. The report does not measure physical display
+  refresh or prove visual/network/camera behavior; those remain separate
+  acceptance checks. No success claim follows from this tooling work.
+
 ## Production bulk instancer built (2026-10-18)
 
 - Beta **0.9.11-beta.9** moves leader eligibility, palette capture, checked

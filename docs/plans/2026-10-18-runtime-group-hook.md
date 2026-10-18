@@ -66,3 +66,9 @@ native D3D9/DXVK fixtures, GCC general-register flags.
   preserve all existing INI values and request the user's saved-game test.
   Code commit `ebe5681` is pushed and installed; STATUS.md records hashes
   and backup. The actual gameplay capture remains pending.
+- [x] Prepare the read-only capture check in `tools/perf_capture.py` and
+  verify it with `python tools/test_perf_capture.py`. Select a settled
+  interval explicitly, require consecutive rows plus an end boundary, pool
+  presentation histogram counts and report shadow/verification counters.
+  The 16 tests include bursty 60 FPS and short/incomplete captures. No tool
+  result alone proves the scene, output, invariants or overall goal.

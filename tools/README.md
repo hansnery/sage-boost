@@ -46,6 +46,31 @@ private-image patch installation after the prerequisite hooks, and
 transaction cleanup. All are offline; none launches the game. See
 `docs/specs/2026-10-18-runtime-group-hook.md`.
 
+## Gameplay capture checks
+
+After the user closes the game, copy its log, INI and CSVs to a new capture
+folder before reading. `perf_capture.py` reads a copied timing CSV and reports
+one explicitly selected interval; it never launches or modifies the game:
+
+```powershell
+python tools/perf_capture.py C:/path/to/capture/bfme2perf_timing.csv --start-s 100 --seconds 60
+python tools/test_perf_capture.py
+```
+
+Choose the same settled troop-heavy scene, not the fastest window. The row at
+`start + seconds` must exist; the final shutdown row can be partial. Missing
+seconds, missing counters and inconsistent histograms are refused. The report
+uses completed flip-enabled EndScene calls (not `frames + extra_frames`) and
+pools the exclusive histogram bins to give median/p95 bounds. Overflow means
+greater than one second, never zero. CSV timestamps quantize the interval;
+exact display refresh/GPU completion is outside this instrumentation.
+
+The report includes extra-shadow calls, completed shadow samples, invalid
+profiles and verification errors. No numeric field declares the overall goal
+complete: confirm the loaded version/settings, runtime log, same scene and
+visual behavior separately. Sixteen tests cover bursty 60 FPS,
+short/incomplete intervals, counter corruption and absent/mismatched shadows.
+
 ## Executable research
 
 | script | what |

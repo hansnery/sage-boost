@@ -1,0 +1,75 @@
+{
+  "window": {
+    "start_s": 50,
+    "end_s_exclusive": 101,
+    "nominal_seconds": 51,
+    "at_least_60_seconds": false
+  },
+  "presentation_calls": 1539,
+  "presentation_calls_per_nominal_second": 30.176470588235293,
+  "nominal_rate_at_least_59": false,
+  "rate_bounds_from_timestamp_quantization": {
+    "lower": 29.596153846153847,
+    "upper": 30.78
+  },
+  "per_row_calls": {
+    "min": 28,
+    "max": 31
+  },
+  "regular_frame_updates": 1546,
+  "extra_frames": 0,
+  "pacing": {
+    "gaps": 1539,
+    "histogram_counts": {
+      "present_gap_le_8333us": 0,
+      "present_gap_le_12500us": 0,
+      "present_gap_le_16667us": 4,
+      "present_gap_le_20000us": 7,
+      "present_gap_le_25000us": 64,
+      "present_gap_le_33334us": 704,
+      "present_gap_le_50000us": 745,
+      "present_gap_le_100000us": 13,
+      "present_gap_le_200000us": 2,
+      "present_gap_le_500000us": 0,
+      "present_gap_le_1000000us": 0,
+      "present_gap_over_1000000us": 0
+    },
+    "p50": {
+      "lower_exclusive_ms": 25.0,
+      "upper_ms": 33.334
+    },
+    "p95": {
+      "lower_exclusive_ms": 33.334,
+      "upper_ms": 50.0
+    },
+    "fraction_over_25_ms": 0.9512670565302144,
+    "fraction_over_50_ms": 0.009746588693957114
+  },
+  "shadows": {
+    "extra_draw_calls": 0,
+    "extra_completed_pass_samples": 0,
+    "valid_extra_profiles": 0,
+    "invalid_extra_profiles": 0,
+    "regular_shadow_skips": 0,
+    "extra_counts_match_each_row": false
+  },
+  "verification_failures": {
+    "verify_bad": 0,
+    "shadow_verify_bad": 0,
+    "spv_bad": 0,
+    "lt_verify_bad": 0
+  },
+  "limits": [
+    "Completed flip-enabled EndScene calls; not measured display refresh or GPU success.",
+    "Row timestamps quantize duration; reported FPS uses the nominal interval.",
+    "Percentiles are pooled histogram bounds, not exact gaps or averaged row percentiles.",
+    "The first gap may begin before the selected interval.",
+    "Matching shadow counts do not prove correct pixels or per-frame correspondence.",
+    "Confirm the saved-game scene, loaded version/settings, visual output and runtime log.",
+    "Simulation/network/input/camera invariants require separate evidence."
+  ],
+  "source": {
+    "path": "C:\\Users\\Hans\\AppData\\Local\\Temp\\bfme2perf-beta2-test-20261017-174157\\bfme2perf_timing.csv",
+    "sha256": "605ee1dcb1beff8a521fd56480ec4984f8d4ca2cd90c578753cde857dbbb9246"
+  }
+}
