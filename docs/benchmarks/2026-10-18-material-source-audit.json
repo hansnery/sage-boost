@@ -1,0 +1,729 @@
+{
+  "kind": "Offline material-source demand and parameter-write screen; not native callback integration or gameplay",
+  "base_commit": "d6e08917b3e8803ef56233adcf06a68f6bfcb96f",
+  "production_changed": false,
+  "installed_changed": false,
+  "groups_per_workload": 850,
+  "warmups": 4,
+  "samples_per_case": 21,
+  "isolated_workloads_per_sample": 32,
+  "lifecycle_workloads_per_sample": 8,
+  "mode_order": "forward/reversed on alternating rounds",
+  "bones": 20,
+  "numeric_setters": {
+    "Default": 28,
+    "_CreateShadowMap": 7
+  },
+  "bytes_per_group": {
+    "Default": 1136,
+    "_CreateShadowMap": 828
+  },
+  "metadata_counts": {
+    "technique_runtime_backend_rows": 152,
+    "parameter_request_rows": 1476,
+    "exact_duplicate_requests": 0
+  },
+  "family_codes": {
+    "0": "Other",
+    "1": "Sas.Camera",
+    "2": "Sas.Time",
+    "3": "Sas.AmbientLight",
+    "4": "Sas.DirectionalLight",
+    "5": "Sas.PointLight",
+    "6": "Sas.Shadow",
+    "7": "Sas.Skeleton"
+  },
+  "semantic_indices": [
+    "World",
+    "View",
+    "Projection",
+    "WorldView",
+    "WorldViewProjection",
+    "Time",
+    "Ambient"
+  ],
+  "suffix_indices": [
+    "bare",
+    "Inverse",
+    "InverseTranspose"
+  ],
+  "dynamic_annotation": "-1 means absent/invalid; this is not the resolved native dynamic channel",
+  "runs": [
+    {
+      "backend": "native",
+      "runtime": "D3DX27",
+      "repeat": 1,
+      "log": {
+        "path": "perf/build/source-final-native-source-writes-1.txt",
+        "sha256": "1f54fa2fa60f51bb2592d0e4ff656c0bbd622318e379de6ad1af1c714ae1ecdf"
+      },
+      "control_counts": {
+        "authored_duplicate_cases": 2,
+        "changed_pose_comparisons_per_technique": 3,
+        "broken_static_reuse_controls_per_technique": 3
+      },
+      "statistics_ms": {
+        "Default": {
+          "isolated_writes_ms": {
+            "median": 0.404097,
+            "p10": 0.392072,
+            "p90": 0.426441
+          },
+          "all_writes_ms": {
+            "median": 3.696262,
+            "p10": 3.4844,
+            "p90": 3.843812
+          },
+          "no_writes_ms": {
+            "median": 2.060088,
+            "p10": 1.8619,
+            "p90": 2.2875
+          },
+          "all_minus_none_ms": {
+            "median": 1.592963,
+            "p10": 1.324262,
+            "p90": 1.788938
+          },
+          "all_completed_ms": {
+            "median": 3.741862,
+            "p10": 3.492388,
+            "p90": 3.902225
+          },
+          "none_completed_ms": {
+            "median": 2.06615,
+            "p10": 1.868838,
+            "p90": 2.303875
+          },
+          "all_minus_none_completed_ms": {
+            "median": 1.608262,
+            "p10": 1.32465,
+            "p90": 1.945837
+          },
+          "pose_only_ms": {
+            "median": 2.216825,
+            "p10": 2.038525,
+            "p90": 2.436138
+          },
+          "pose_only_completed_ms": {
+            "median": 2.2231,
+            "p10": 2.043338,
+            "p90": 2.441038
+          },
+          "all_minus_pose_ms": {
+            "median": 1.513338,
+            "p10": 1.15225,
+            "p90": 1.696175
+          },
+          "all_minus_pose_completed_ms": {
+            "median": 1.547013,
+            "p10": 1.153775,
+            "p90": 1.716788
+          },
+          "filtered_ms": {
+            "median": 2.801612,
+            "p10": 2.657175,
+            "p90": 3.097762
+          },
+          "filtered_completed_ms": {
+            "median": 2.8416,
+            "p10": 2.661625,
+            "p90": 3.115912
+          },
+          "filter_saved_ms": {
+            "median": 0.793563,
+            "p10": 0.578825,
+            "p90": 1.039087
+          },
+          "filter_saved_completed_ms": {
+            "median": 0.820037,
+            "p10": 0.5932,
+            "p90": 1.065012
+          }
+        },
+        "_CreateShadowMap": {
+          "isolated_writes_ms": {
+            "median": 0.105531,
+            "p10": 0.09935,
+            "p90": 0.1175
+          },
+          "all_writes_ms": {
+            "median": 3.7633,
+            "p10": 3.525812,
+            "p90": 4.051612
+          },
+          "no_writes_ms": {
+            "median": 1.3457,
+            "p10": 1.093588,
+            "p90": 1.600975
+          },
+          "all_minus_none_ms": {
+            "median": 2.448212,
+            "p10": 2.195025,
+            "p90": 2.890825
+          },
+          "all_completed_ms": {
+            "median": 3.769737,
+            "p10": 3.5298,
+            "p90": 4.05895
+          },
+          "none_completed_ms": {
+            "median": 1.37305,
+            "p10": 1.098775,
+            "p90": 1.619575
+          },
+          "all_minus_none_completed_ms": {
+            "median": 2.4263,
+            "p10": 2.19275,
+            "p90": 2.888888
+          },
+          "pose_only_ms": {
+            "median": 2.6992,
+            "p10": 2.571038,
+            "p90": 2.974862
+          },
+          "pose_only_completed_ms": {
+            "median": 2.70405,
+            "p10": 2.575988,
+            "p90": 2.981038
+          },
+          "all_minus_pose_ms": {
+            "median": 1.025412,
+            "p10": 0.732188,
+            "p90": 1.382413
+          },
+          "all_minus_pose_completed_ms": {
+            "median": 1.024987,
+            "p10": 0.683525,
+            "p90": 1.3819
+          },
+          "filtered_ms": {
+            "median": 2.907138,
+            "p10": 2.781337,
+            "p90": 3.206475
+          },
+          "filtered_completed_ms": {
+            "median": 2.922388,
+            "p10": 2.788188,
+            "p90": 3.218562
+          },
+          "filter_saved_ms": {
+            "median": 0.796125,
+            "p10": 0.50445,
+            "p90": 1.10105
+          },
+          "filter_saved_completed_ms": {
+            "median": 0.796988,
+            "p10": 0.503488,
+            "p90": 1.100213
+          }
+        }
+      }
+    },
+    {
+      "backend": "dxvk",
+      "runtime": "D3DX27",
+      "repeat": 1,
+      "log": {
+        "path": "perf/build/source-final-dxvk-source-writes-1.txt",
+        "sha256": "8664a0cee5d6c0bef4d4fbd1ed34a93ccf139330c9115d8043424105b20aa4df"
+      },
+      "control_counts": {
+        "authored_duplicate_cases": 2,
+        "changed_pose_comparisons_per_technique": 3,
+        "broken_static_reuse_controls_per_technique": 3
+      },
+      "statistics_ms": {
+        "Default": {
+          "isolated_writes_ms": {
+            "median": 0.40825,
+            "p10": 0.3932,
+            "p90": 0.423141
+          },
+          "all_writes_ms": {
+            "median": 2.74705,
+            "p10": 2.617638,
+            "p90": 3.1074
+          },
+          "no_writes_ms": {
+            "median": 1.100375,
+            "p10": 1.048938,
+            "p90": 1.278
+          },
+          "all_minus_none_ms": {
+            "median": 1.656412,
+            "p10": 1.414075,
+            "p90": 1.910563
+          },
+          "all_completed_ms": {
+            "median": 2.778412,
+            "p10": 2.646638,
+            "p90": 3.1356
+          },
+          "none_completed_ms": {
+            "median": 1.144963,
+            "p10": 1.09005,
+            "p90": 1.307338
+          },
+          "all_minus_none_completed_ms": {
+            "median": 1.657737,
+            "p10": 1.402663,
+            "p90": 1.911487
+          },
+          "pose_only_ms": {
+            "median": 1.2661,
+            "p10": 1.168087,
+            "p90": 1.36275
+          },
+          "pose_only_completed_ms": {
+            "median": 1.32065,
+            "p10": 1.193738,
+            "p90": 1.393538
+          },
+          "all_minus_pose_ms": {
+            "median": 1.552725,
+            "p10": 1.281037,
+            "p90": 1.771112
+          },
+          "all_minus_pose_completed_ms": {
+            "median": 1.554437,
+            "p10": 1.282763,
+            "p90": 1.81215
+          },
+          "filtered_ms": {
+            "median": 1.754112,
+            "p10": 1.690938,
+            "p90": 1.863675
+          },
+          "filtered_completed_ms": {
+            "median": 1.780162,
+            "p10": 1.718275,
+            "p90": 1.89205
+          },
+          "filter_saved_ms": {
+            "median": 1.0537,
+            "p10": 0.75505,
+            "p90": 1.242975
+          },
+          "filter_saved_completed_ms": {
+            "median": 1.040137,
+            "p10": 0.755275,
+            "p90": 1.281538
+          }
+        },
+        "_CreateShadowMap": {
+          "isolated_writes_ms": {
+            "median": 0.107469,
+            "p10": 0.102141,
+            "p90": 0.121169
+          },
+          "all_writes_ms": {
+            "median": 2.72425,
+            "p10": 2.558362,
+            "p90": 2.847
+          },
+          "no_writes_ms": {
+            "median": 0.37725,
+            "p10": 0.353025,
+            "p90": 0.458025
+          },
+          "all_minus_none_ms": {
+            "median": 2.35165,
+            "p10": 2.172625,
+            "p90": 2.486988
+          },
+          "all_completed_ms": {
+            "median": 2.789688,
+            "p10": 2.60245,
+            "p90": 2.919188
+          },
+          "none_completed_ms": {
+            "median": 0.425438,
+            "p10": 0.407988,
+            "p90": 0.505063
+          },
+          "all_minus_none_completed_ms": {
+            "median": 2.355475,
+            "p10": 2.178712,
+            "p90": 2.520925
+          },
+          "pose_only_ms": {
+            "median": 1.827112,
+            "p10": 1.737325,
+            "p90": 1.982762
+          },
+          "pose_only_completed_ms": {
+            "median": 1.865025,
+            "p10": 1.774912,
+            "p90": 2.039462
+          },
+          "all_minus_pose_ms": {
+            "median": 0.93935,
+            "p10": 0.695063,
+            "p90": 1.108788
+          },
+          "all_minus_pose_completed_ms": {
+            "median": 0.950738,
+            "p10": 0.713525,
+            "p90": 1.110387
+          },
+          "filtered_ms": {
+            "median": 1.911925,
+            "p10": 1.812462,
+            "p90": 2.122412
+          },
+          "filtered_completed_ms": {
+            "median": 1.972875,
+            "p10": 1.885925,
+            "p90": 2.190588
+          },
+          "filter_saved_ms": {
+            "median": 0.803663,
+            "p10": 0.595275,
+            "p90": 0.968225
+          },
+          "filter_saved_completed_ms": {
+            "median": 0.806913,
+            "p10": 0.579062,
+            "p90": 0.964425
+          }
+        }
+      }
+    },
+    {
+      "backend": "dxvk",
+      "runtime": "D3DX27",
+      "repeat": 2,
+      "log": {
+        "path": "perf/build/source-final-dxvk-source-writes-2.txt",
+        "sha256": "fc668bbb59662dcbcef438a97e13a5cb95ca78f597c592bd869c1b9533faf509"
+      },
+      "control_counts": {
+        "authored_duplicate_cases": 2,
+        "changed_pose_comparisons_per_technique": 3,
+        "broken_static_reuse_controls_per_technique": 3
+      },
+      "statistics_ms": {
+        "Default": {
+          "isolated_writes_ms": {
+            "median": 0.408106,
+            "p10": 0.395284,
+            "p90": 0.446797
+          },
+          "all_writes_ms": {
+            "median": 2.62175,
+            "p10": 2.5329,
+            "p90": 2.810212
+          },
+          "no_writes_ms": {
+            "median": 1.113625,
+            "p10": 1.03505,
+            "p90": 1.2199
+          },
+          "all_minus_none_ms": {
+            "median": 1.530375,
+            "p10": 1.4226,
+            "p90": 1.642712
+          },
+          "all_completed_ms": {
+            "median": 2.651975,
+            "p10": 2.57045,
+            "p90": 2.85015
+          },
+          "none_completed_ms": {
+            "median": 1.141412,
+            "p10": 1.062375,
+            "p90": 1.246975
+          },
+          "all_minus_none_completed_ms": {
+            "median": 1.532175,
+            "p10": 1.408425,
+            "p90": 1.630888
+          },
+          "pose_only_ms": {
+            "median": 1.240512,
+            "p10": 1.174675,
+            "p90": 1.411988
+          },
+          "pose_only_completed_ms": {
+            "median": 1.266625,
+            "p10": 1.224675,
+            "p90": 1.437937
+          },
+          "all_minus_pose_ms": {
+            "median": 1.374275,
+            "p10": 1.262713,
+            "p90": 1.5456
+          },
+          "all_minus_pose_completed_ms": {
+            "median": 1.392187,
+            "p10": 1.23925,
+            "p90": 1.548262
+          },
+          "filtered_ms": {
+            "median": 1.769238,
+            "p10": 1.697875,
+            "p90": 1.91305
+          },
+          "filtered_completed_ms": {
+            "median": 1.798975,
+            "p10": 1.724312,
+            "p90": 1.970738
+          },
+          "filter_saved_ms": {
+            "median": 0.854262,
+            "p10": 0.736675,
+            "p90": 1.072912
+          },
+          "filter_saved_completed_ms": {
+            "median": 0.856313,
+            "p10": 0.68895,
+            "p90": 1.0743
+          }
+        },
+        "_CreateShadowMap": {
+          "isolated_writes_ms": {
+            "median": 0.108594,
+            "p10": 0.101091,
+            "p90": 0.126631
+          },
+          "all_writes_ms": {
+            "median": 2.799088,
+            "p10": 2.657675,
+            "p90": 3.014313
+          },
+          "no_writes_ms": {
+            "median": 0.406512,
+            "p10": 0.358288,
+            "p90": 0.50735
+          },
+          "all_minus_none_ms": {
+            "median": 2.382138,
+            "p10": 2.233312,
+            "p90": 2.575275
+          },
+          "all_completed_ms": {
+            "median": 2.840688,
+            "p10": 2.705775,
+            "p90": 3.05695
+          },
+          "none_completed_ms": {
+            "median": 0.447013,
+            "p10": 0.398037,
+            "p90": 0.545663
+          },
+          "all_minus_none_completed_ms": {
+            "median": 2.377975,
+            "p10": 2.234237,
+            "p90": 2.570325
+          },
+          "pose_only_ms": {
+            "median": 1.852825,
+            "p10": 1.702312,
+            "p90": 1.953688
+          },
+          "pose_only_completed_ms": {
+            "median": 1.884575,
+            "p10": 1.757838,
+            "p90": 2.040225
+          },
+          "all_minus_pose_ms": {
+            "median": 0.966175,
+            "p10": 0.789163,
+            "p90": 1.060625
+          },
+          "all_minus_pose_completed_ms": {
+            "median": 0.96485,
+            "p10": 0.782788,
+            "p90": 1.0629
+          },
+          "filtered_ms": {
+            "median": 1.941525,
+            "p10": 1.8154,
+            "p90": 2.199988
+          },
+          "filtered_completed_ms": {
+            "median": 1.9946,
+            "p10": 1.865925,
+            "p90": 2.305612
+          },
+          "filter_saved_ms": {
+            "median": 0.813625,
+            "p10": 0.539425,
+            "p90": 1.038237
+          },
+          "filter_saved_completed_ms": {
+            "median": 0.816312,
+            "p10": 0.489738,
+            "p90": 1.03825
+          }
+        }
+      }
+    }
+  ],
+  "regressions": [
+    {
+      "mode": "members-only",
+      "backend": "native",
+      "exit_code": 0,
+      "result": "member-usage controls and audit pass",
+      "log": {
+        "path": "perf/build/source-final-native-members-only-1.txt",
+        "sha256": "081017b88fd7f499dcb97e09742abcbdb83ad6bde594cbdf3fe053f0dbab6253"
+      }
+    },
+    {
+      "mode": "default",
+      "backend": "native",
+      "exit_code": 2,
+      "result": "existing three runtime differences remain; not a compatibility pass",
+      "log": {
+        "path": "perf/build/source-final-native-default-1.txt",
+        "sha256": "5cbe92c0c20c067ba3dfa5e1f94410f8f4300d0c21e56a8c99c9e82b2e790e94"
+      }
+    },
+    {
+      "mode": "members-only",
+      "backend": "dxvk",
+      "exit_code": 0,
+      "result": "member-usage controls and audit pass",
+      "log": {
+        "path": "perf/build/source-final-dxvk-members-only-1.txt",
+        "sha256": "9cbd5d00e940b09c694f40130539869bef7e6da8e75243376632e47cb3254d05"
+      }
+    },
+    {
+      "mode": "default",
+      "backend": "dxvk",
+      "exit_code": 2,
+      "result": "existing three runtime differences remain; not a compatibility pass",
+      "log": {
+        "path": "perf/build/source-final-dxvk-default-1.txt",
+        "sha256": "c838167bb27f1855849b99298fc515848e83570af05519fb87df65b46838be5f"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "docs/benchmarks/2026-10-18-material-source-demand.csv",
+      "sha256": "ae772d3c9cd759cda4a46e63acde1f71c7e776fe5113a736adf0f47f94683eb4"
+    },
+    {
+      "path": "docs/benchmarks/2026-10-18-material-source-parameters.csv",
+      "sha256": "e2c2d5ea3f9775f29800a4b9a8490f3a49ac7a358d23350694df3cc8ba7fda69"
+    },
+    {
+      "path": "docs/benchmarks/2026-10-18-material-source-writes.csv",
+      "sha256": "ea0172fba3ac387d8a2ee93039a40abd49d3d3faa35ae65d4ff24789c5bcb0bd"
+    }
+  ],
+  "files": [
+    {
+      "path": "perf/Makefile",
+      "sha256": "f512fa9c1b5bcb7178bf32458aa822a8458f6fe1201e6dc0759b0f81f1edc027"
+    },
+    {
+      "path": "perf/tests/bench_effect.c",
+      "sha256": "d3b69196ea494ee6d240055513077bc9c668a9cf3e9ffd10975a94f3a2727349"
+    },
+    {
+      "path": "perf/tests/effect_source_audit.h",
+      "sha256": "8bc5b9e69f7de2007b956a2573537b011c16250fabe22e9a7e742555f98f16df"
+    },
+    {
+      "path": "perf/tests/shadow_fx/shadow_fx.c",
+      "sha256": "efce887c586ad8245b3de68b9427548242e4a38533d89c3fd1ae526b7617809f"
+    },
+    {
+      "path": "perf/build/bench_effect.exe",
+      "sha256": "69cd2a5a5ece984d569cda804be3db3e7efeea7ffd81bab8d6306a44fdb7be69"
+    },
+    {
+      "path": "perf/build/source_demand_dxvk/bench_effect.exe",
+      "sha256": "69cd2a5a5ece984d569cda804be3db3e7efeea7ffd81bab8d6306a44fdb7be69"
+    },
+    {
+      "path": "perf/build/source_demand_dxvk/d3d9.dll",
+      "sha256": "00bc142e98ddad1e334a4d88fa630038e092b0758b3d79e295172b181a4c772d"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "C:/Jogos/AgeoftheRing/rotwk/Shaders.big",
+      "sha256": "353c835b0e77387b322a094b62477b35c34e8e1cea6d75f5844a20b9e36b091b"
+    },
+    {
+      "path": "C:/Jogos/AgeoftheRing/rotwk/d3dx9_27.dll",
+      "sha256": "a70d571cd675c97c9eeb4a234dba1d667ffb54ec3bb14defb36b3e2f605ae257"
+    },
+    {
+      "path": "C:/Windows/SysWOW64/d3dx9_43.dll",
+      "sha256": "0b28546be22c71834501f7d7185ede5d79742457331c7ee09efc14490dd64f5f"
+    },
+    {
+      "path": "C:/Windows/SysWOW64/d3d9.dll",
+      "sha256": "210e52314d24bdc8492e5185674626225af2c030ff51d13c01155aedb2d248ad"
+    }
+  ],
+  "installed_files": [
+    {
+      "path": "C:/Jogos/AgeoftheRing/rotwk/mss/bfme2perf.asi",
+      "sha256": "574a085967d477a53037526c1ea7f6b6d257a559a36aab7f76573c4ca7cfe027"
+    },
+    {
+      "path": "C:/Jogos/AgeoftheRing/rotwk/mss/bfme2perf.ini",
+      "sha256": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b"
+    }
+  ],
+  "limitations": [
+    "Numeric metadata-derived fields with generic SetValue and twenty-bone SetRawValue; actual typed native callback computations are not executed",
+    "No meshes, draws, presentation, parameter blocks, arbitrary source mutations, device loss or effect lifetime qualification",
+    "Static parameter values are constant within a workload; one bone component changes per group in all/pose-only/filtered modes; no-writes is an artificial non-equivalent ceiling control",
+    "Filter reads current parameter bytes on every call; no persistent value cache; successful GetValue and exact comparison can skip SetValue for this fixture only",
+    "Getter/setter error equivalence, parameter-block recording and actual typed setters still require qualification",
+    "Poisoned-state controls compare 256 vertex and 32 pixel float registers and shader hashes for the selected unit techniques; no pixel comparison or general device-state equivalence claim",
+    "Default mode still reports three D3DX27/D3DX43 command differences and exits 2; this does not authorize replacing the runtime",
+    "Lit and shadow cases each use 850 groups; do not add their savings or infer gameplay FPS"
+  ],
+  "exploratory_logs": [
+    {
+      "path": "perf/build/source-exploratory-isolated-dxvk-1.txt",
+      "sha256": "66a3a53856a7b7855a6c15203ac9c4d4f8252ad266834b2b4a1ef64013b07fe4"
+    },
+    {
+      "path": "perf/build/source-exploratory-isolated-dxvk-2.txt",
+      "sha256": "be5df9289791913f08ac47b16ffbce2694f0c614056a47d82ae5b8e3870dea69"
+    },
+    {
+      "path": "perf/build/source-exploratory-isolated-native.txt",
+      "sha256": "be008450cf9cd13994f4fbd5c64b36ef53aa88f1697195dc40d02a1ac0dc85b3"
+    },
+    {
+      "path": "perf/build/source-exploratory-lifecycle-dxvk-1.txt",
+      "sha256": "4b1fae1a3623348486d6b1326322a7fdc96ead0d89d1f7e65b14c03b56b95655"
+    },
+    {
+      "path": "perf/build/source-exploratory-lifecycle-dxvk-2.txt",
+      "sha256": "322d714076011b2055d280871fbf2ea8ad0866c7bc81efb3030a4701a154a45e"
+    },
+    {
+      "path": "perf/build/source-exploratory-lifecycle-native.txt",
+      "sha256": "0a59a64538e87a9e642cdcbb13ee8376d5c34b9294e119369d2fe7db4a9892aa"
+    },
+    {
+      "path": "perf/build/source-exploratory-pose-dxvk-1.txt",
+      "sha256": "2801f3925c973f2b9a2f34632fd40956c54bb654e3f3f023f8b9ad65b315f1af"
+    },
+    {
+      "path": "perf/build/source-exploratory-pose-dxvk-2.txt",
+      "sha256": "0ebbc900f5fa02bf17287ca5692d6a3517501d75d003e3814bfd4093da1a47a7"
+    },
+    {
+      "path": "perf/build/source-exploratory-pose-native.txt",
+      "sha256": "31df15470a2c81d929e2834e4adf9508974fab8b2fa0ce3cba6c075270c04df8"
+    }
+  ],
+  "rejected_partial_read": {
+    "path": "perf/build/source-rejected-partial-read.txt",
+    "sha256": "6b78734c44ce913e4d3df0982e04f4e763593ba4a00fa5c6207d53501834a1f9"
+  }
+}

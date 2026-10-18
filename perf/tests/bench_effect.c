@@ -306,11 +306,16 @@ static void member_control(create_effect_fn create,unsigned runtime)
     free(saved);FXCALL(fx,Release);
 }
 
+#include "effect_source_audit.h"
+
 int main(int argc, char **argv)
 {
     REQUIRE(bench_no_game());
     const char *assets = argc > 1 ? argv[1] : "C:/Jogos/AgeoftheRing/rotwk";
     int usage_only=argc>2 && !strcmp(argv[2],"--members-only");
+    int source_writes_only=argc>2 && !strcmp(argv[2],"--source-writes");
+    int sources_only=source_writes_only || (argc>2 && !strcmp(argv[2],"--sources-only"));
+    REQUIRE(argc<=3 && (argc<3 || usage_only || sources_only));
     char path[MAX_PATH], backend[MAX_PATH];
     unsigned size, pos = 16, files, i, technique, checked = 0, differences = 0;
     unsigned char *big;
@@ -345,6 +350,7 @@ int main(int argc, char **argv)
     g_rec = malloc(REC_MAX * 4); REQUIRE(g_rec);
     g_rm_vtbl.SetVertexShader = normalized_vs; g_rm_vtbl.SetPixelShader = normalized_ps;
     if(usage_only)for(i=0;i<2;i++)member_control(create[i],i);
+    if(sources_only)for(i=0;i<2;i++)source_control(create[i],i);
     files = be32(big + 8);
     for (i = 0; i < files; i++) {
         unsigned off, len;
@@ -362,8 +368,15 @@ int main(int argc, char **argv)
             HR(FXCALL(fx[rt], GetDesc, &desc[rt]));
         }
         REQUIRE(desc[0].Techniques == desc[1].Techniques);
-        if(usage_only) {
-            for(unsigned rt=0;rt<2;rt++) {audit_usage(fx[rt],rt,name);FXCALL(fx[rt],Release);}
+        if(usage_only || sources_only) {
+            for(unsigned rt=0;rt<2;rt++) {
+                if(sources_only) {
+                    audit_sources(fx[rt],rt,name);
+                    if(source_writes_only && !rt)source_write_cost(fx[rt],name);
+                }
+                else audit_usage(fx[rt],rt,name);
+                FXCALL(fx[rt],Release);
+            }
             checked+=desc[0].Techniques;continue;
         }
         for (technique = 0; technique < desc[0].Techniques; technique++) {
@@ -406,7 +419,8 @@ int main(int argc, char **argv)
         FXCALL(fx[0], Release); FXCALL(fx[1], Release);
     }
     REQUIRE(checked);
-    if(usage_only)printf("MEMBER_AUDIT,%u techniques,2 runtimes\n",checked);
+    if(sources_only)printf("SOURCE_AUDIT,%u techniques,2 runtimes\n",checked);
+    else if(usage_only)printf("MEMBER_AUDIT,%u techniques,2 runtimes\n",checked);
     else printf("%s: %u techniques, %u command comparisons (two parameter sets), %u differences\n",
         differences ? "MISMATCH" : "OK", checked, 2 * checked, differences);
     free(g_rec); free(big);

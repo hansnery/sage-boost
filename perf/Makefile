@@ -344,7 +344,7 @@ test-fx-lifecycle: $(BUILD)/test_fx_lifecycle.exe
 	python ../tools/test_fx_lifecycle.py "$(ROTWK_DAT)"
 DISPATCH_ASSETS ?= C:/Jogos/AgeoftheRing/rotwk
 
-$(BUILD)/bench_effect.exe: tests/bench_effect.c tests/bench_guard.h tests/shadow_fx/shadow_fx.c src/shadowfx_table.h | $(BUILD)
+$(BUILD)/bench_effect.exe: tests/bench_effect.c tests/effect_source_audit.h tests/bench_guard.h tests/shadow_fx/shadow_fx.c src/shadowfx_table.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -static -o $@ $<
 
 $(BUILD)/inst_retained_engine.o: tests/inst_retained_engine.c tests/inst_dispatch_engine.c src/inst.c src/*.h | $(BUILD)

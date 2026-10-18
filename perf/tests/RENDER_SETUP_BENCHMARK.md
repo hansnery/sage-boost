@@ -62,6 +62,16 @@ See `docs/specs/2026-10-18-effect-member-audit.md`: a false leaf query does
 not prove that the leaf is unused. The executable now refuses a running
 game or WorldBuilder in either mode.
 
+## Material-source demand and writes
+
+The `--sources-only` mode audits used annotation roots and recognized
+standard-semantic requests, with an authored duplicate-request control.
+`--source-writes` adds numeric-write/lifecycle timings and an experimental
+read-before-write filter, retaining changing twenty-bone palettes. It
+compares shader/constants after hostile device and parameter writes;
+it is not native callback integration or a pixel/FPS benchmark. See
+`docs/specs/2026-10-18-material-source-demand.md` for modes and limitations.
+
 ## Ambient-light sampling
 
 Build and run `mingw32-make bench-ambient`, or:

@@ -44,6 +44,14 @@ Strike an item through, with the date, when it's done.
   CPU rendering before judging another optimization. The live shadow
   counters suggest substantial leader deferral; 0.2014 ms of instanced
   shadow submission alone is too small to close the deficit.
+- [x] 2026-10-18: audit actual material-source requests and screen numeric
+  writes through the full effect lifecycle. No duplicate binding shortcut;
+  a read-before-write filter retains changed poses and saves 0.79-1.05 ms
+  per modeled 850-group workload. See `specs/2026-10-18-material-source-demand.md`.
+- [ ] Qualify the numeric filter against actual typed source callbacks,
+  parameter blocks, failed setters/getters, lifetimes and the combined GPU
+  workload. Current generic-field evidence is below the standalone promotion
+  gate and does not justify an install or gameplay test.
 - [ ] Establish actual bulk-loop coverage separately from ordinary
   instancing, and reduce remaining regular-frame render work. Beta.11
   averages 22.457 ms per normal frame in the chosen interval. Do not lower

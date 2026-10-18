@@ -21,6 +21,26 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Material-source write screen (2026-10-18)
+
+- Actual local effect metadata has no exact duplicate annotation/semantic
+  requests across 152 technique/runtime/backend observations. The default
+  unit and shadow techniques do not request the combined WorldView or
+  WorldViewProjection semantics; caching those is not supported here.
+- A developer-only read-before-write numeric filter retains changing bone
+  palettes and saves 0.79-1.05 ms per modeled 850-group lifecycle workload,
+  including live getter/byte-comparison costs. Hostile constant/parameter
+  controls pass and detect deliberately stale values. Preserve 126 samples.
+- This is below the standalone promotion gate, with generic field setters
+  and no geometry or native source computation. Next qualify actual typed
+  callbacks, parameter blocks, error/lifetime behavior and the joined GPU
+  workload. Do not extrapolate these timings to saved-game FPS.
+- Member-audit regressions pass. The existing default runtime comparison
+  still exits 2 with three known D3DX27/D3DX43 differences; it is not a
+  runtime-replacement compatibility pass. Production/install/settings are
+  unchanged; last actual gameplay remains 30.0667 presentation calls/s.
+  See [audit](specs/2026-10-18-material-source-demand.md).
+
 ## Larger-palette and queue-cleanup screens (2026-10-18)
 
 - Twenty-bone native/GPU workloads now exercise the production hooks and
