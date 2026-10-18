@@ -1,0 +1,60 @@
+{
+  "parent_commit": "390737f",
+  "runs": [
+    {
+      "log": "group-gpu-controls-1.txt",
+      "sha256": "2e38f684429e81fbb337c7f0d0a5473f98524c7e4677324136ec9c7aa9b30967",
+      "samples": 84,
+      "log_mtime_utc": "2026-10-18T08:43:38.464432+00:00"
+    },
+    {
+      "log": "group-gpu-controls-2.txt",
+      "sha256": "8814cbbcad3b0537556534b0ca746a6719b82065951e2290385580717e41584d",
+      "samples": 84,
+      "log_mtime_utc": "2026-10-18T08:44:54.507630+00:00"
+    }
+  ],
+  "sources": {
+    "perf/tests/bench_native_group_gpu.c": "625c4bbcb8963b0964c5338cf15a81e3365ecc16f85b468bcd28c4da87830c53",
+    "perf/tests/native_group_gpu_bridge.c": "790ab62645818378775cd28b7d4824f807076d76614af004b77554f19a94b3be",
+    "perf/tests/native_group_image.h": "2f804504e6244bc202dd96b4f88df71f7fbd65d343798fb6dbf312744924c881",
+    "perf/tests/bench_native_leader.c": "3240cd29f02139872f0e4875e4c3f13234585768c0b2e7f5c727bb5f9d4330f8",
+    "perf/tests/native_mesh_image.h": "a4d587f4318913da1f0fe67e70e8cf4c3ff4308f16eba3052fa3cd5da551b6f8",
+    "perf/tests/inst_native_leader_engine.c": "30c372149241ee838dc764aec961ddba097f38aefd61b29cc527ee60ec0f6ef8",
+    "perf/tests/bench_material_queue.c": "2e15d112b0bdab3e6187fefb9f8e06d9060ea629b2f7329f1c25e28d2011df60",
+    "perf/tests/bench_retained.c": "c0fbb1e97ced78cb55a08551be79f54d35aee078dcaed29139aa09399241f251",
+    "perf/tests/bench_dispatch.c": "0375da98234f0e50e900b6ef0f13317e28cece8168cefb50a26e5f47e2539a68",
+    "perf/tests/test_inst.c": "4231608af07e8a0733b1987cd064fd55e41d5e16523eeb58339c1602d8f0763a",
+    "perf/tests/inst_retained_engine.c": "b1d3d466ca49a621626607ec32c0223d18bd6b6fa0cadce6fb2b9bea36481135",
+    "perf/tests/inst_dispatch_engine.c": "b4312e3449f3bceeb344acca110bcba6baf776adca00cc9cf3f96fe27a00af6c",
+    "perf/tests/material_fixture.c": "7e7b7e5d78459a5a0b7eeb70105984f6743ed9aaf1f56338ecf1504b1a365b09",
+    "perf/tests/effect_filter_bench.c": "85e8da48832e61011a5315ef27b22674b1ab5aa429d20d89e5a8ff83d467cbc4",
+    "perf/tests/timing_bulk_bench.c": "b2651023195165c67dc6b807e00ea45bc2fc7be08bfdfb30133417b19a39eda3",
+    "perf/tests/bench_guard.h": "46082a3fef62b0e26ea0f16b6294171af964e0cb952c7dd7c8ef9a509cd8adf6",
+    "perf/src/inst.c": "cf48d58e4b1185cf8269fbb52cdd2a401ae39c6a90dbb0f5409922937b1e8d69",
+    "perf/src/timing.c": "a5bddd8f6c7afdf03e345a557f2a75a2b30cb17bfd6e836764b221f081a23596",
+    "perf/src/stubs.c": "5f9eb64ed0bad6f75ca60eca013eae4ad09aeb70d577a0b5b7582a8889e63fdc",
+    "perf/Makefile": "bc5b39cdc0a1a5e6d249c92345595d1a081d5e64c968a20f41701222ac248577",
+    "tools/bench_native_group_gpu.py": "7ec90e390cc97316a7a8f4585e63e98076b63d99bc1302993f2e527b69ea3d9f",
+    "tools/test_group_contract.py": "83d296949d492571a63c825f8c7a7f4de0ba933485c4daacd4afb54e02f9e359",
+    "tools/test_mesh_draw_contract.py": "0d5d51695ff904a05a38001a5cf70ceaafd0fb8902e1833aba4db593348878af"
+  },
+  "executable_sha256": "683a64e40d8a422cc1132c133c4f5c68d15d65ee931cbc2f0415d89a18cde380",
+  "notes": [
+    "Two serial guarded repeats: 21 alternating-order samples, eight fenced regular/extra pairs per sample after four warmups. No concurrent test execution during qualified measurements.",
+    "Sixteen verified local native bodies total 4332 bytes in private RAM: group, SEH prologue, model-name getter, method-chain helpers, four event bodies, mesh, triangles, draw, context and cleanup.",
+    "Actual native group events pass through production timing hooks; the general-register bridge skips only eligible members before their native owning temporary and event are created. Native iteration, EndPass, End, finish, chain clearing and release continue.",
+    "Real local D3DX27 Begin/BeginPass/CommitChanges/EndPass/End are driven by controlled method virtuals. Equality, mesh prepare/finish, source computation, geometry binding, statistics and engine state application remain controlled.",
+    "136 original/candidate pairs per backend/workload plus verification controls exercise empty/small groups, both native group and partial plugin splits, all callback combinations with label/draw observations, earlier DIPs and method Begin failure. ABI, FS chain, refs, contexts, counts and output are checked.",
+    "Native exceptions, multipass/multiple-method or native multi-instance GPU integration, lifetimes and GPU failure recovery remain open; this is not installable and establishes no gameplay FPS.",
+    "Fresh full-rate shadows; lit/shadow are alternative full workloads and cannot be added. No cache, graphics reduction, logic/camera change, game startup or installation.",
+    "group-gpu-initial.txt is a failed pre-control integration attempt, contains no performance sample and is excluded. Subsequent mesh-only regression timings are excluded.",
+    "Log modification times are not exact start times."
+  ],
+  "native_contract_log_sha256": "5040b3a395e7b332eb217f0d57a5b3920525030850e1268bf463711354dcd618",
+  "verification": {
+    "group-gpu-suite.txt": "d4e12aaed4eb6d05cfd990235923ae243371f0a397f0e2696486d538b5a4c4c6",
+    "group-gpu-mesh-regression.txt": "b22077962c71a0449eb82697955970d8eba4dce85b0e592ed9ac5e99a953d49c"
+  },
+  "bridge_object_sha256": "32cdc4dca51a3d19b7605cdb90af2d999dc71b20d3f0a9301722072f3aa4c485"
+}

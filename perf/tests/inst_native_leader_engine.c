@@ -42,6 +42,15 @@ int bench_leader_can_bulk(void)
            (g.mode==M_INST || (g.mode==M_LEADER && g.dips==1 && !g.capture_reason));
 }
 
+int bench_native_bulk_matches(const unsigned char *rec,const unsigned char *end,void *method)
+{
+    if(!bench_leader_can_bulk() || !rec || rec>=end || end!=g.end || method!=g.method ||
+       !method || *refs_of(method)<1) return 0;
+    const unsigned char *mesh=*(const void *const *)rec;
+    return mesh && *(const void *const *)(mesh+PF_MESH_MODEL)==g.model &&
+           *(const unsigned *)(mesh+PF_MESH_BASE_VERTEX)==g.base_vertex;
+}
+
 unsigned bench_inst_bulk(const unsigned char *rec, const unsigned char *end, void *method)
 {
     if (!bench_leader_can_bulk()) return 0;

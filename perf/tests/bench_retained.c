@@ -35,11 +35,14 @@ static int (*dispatch_scope_begin)(void),(*dispatch_scope_end)(unsigned);
 static void (*prepare_sample)(unsigned, unsigned);
 static void (*setup_complete)(void);
 static int (*dispatch_available)(void);
+static void (*group_render)(unsigned);
+static unsigned scopes_per_group=GROUP_SIZE;
 
 static void retained_workload(void)
 {
     unsigned group, i;
     for (group = 0; group < GROUPS; group++) {
+        if(group_render) { group_render(group); continue; }
         /* Distinct synthetic opacity for each group, shared by both paths.
          * A full state block must restore this as well as geometry/buffers. */
         float opacity[4] = {0.5f + (group % 8) / 16.0f, 0, 0, 0};
@@ -138,7 +141,7 @@ static void frame_draw(int extra, int retained, unsigned *pixels)
     if(frame_check) frame_check(extra);
     if(validate_markers) {
         pf_timing_get_stats(&after_scopes);
-        REQUIRE(after_scopes.scopes-before_scopes.scopes==(extra?0:GROUPS*GROUP_SIZE));
+        REQUIRE(after_scopes.scopes-before_scopes.scopes==(extra?0:GROUPS*scopes_per_group));
         REQUIRE(after_scopes.stale_scopes==before_scopes.stale_scopes);
     }
     if (pixels) read_pixels(pixels);

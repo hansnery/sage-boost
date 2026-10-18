@@ -202,6 +202,10 @@ void material_fixture_start(void)
 }
 void material_fixture_begin(unsigned group) { prepare(group); material_fixture_start(); }
 void material_fixture_end(void) { HR(F(EndPass)); material_fixture_close(); }
+/* Native group integration drives its Begin/Pass/End virtuals separately. */
+void material_fixture_prepare(unsigned group) { prepare(group); }
+void material_fixture_pass_begin(unsigned pass) { HR(F(BeginPass,pass)); }
+void material_fixture_pass_end(void) { HR(F(EndPass)); }
 void material_fixture_bones(const void *bones,unsigned bytes)
 {
     HR(F(SetRawValue,bones_handle,bones,0,bytes)); HR(F(CommitChanges));

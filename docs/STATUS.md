@@ -21,6 +21,27 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Joined native group/GPU screen (2026-10-18)
+
+- [Native group and mesh together](specs/2026-10-18-native-group-gpu-screen.md)
+  now exercise sixteen verified bodies, real diagnostic events and method
+  ownership, actual timing hooks and the local effect/GPU path. Two serial
+  repeats save 2.78-2.99 ms per pair on DXVK; 168 samples/hashes preserved.
+- Each backend/workload passes 136 original/candidate pairs plus a real
+  verification window: callbacks and draw observations, empty/small groups,
+  native/partial splits, earlier DIPs, Begin failure, state, references and
+  ABI. Both local images still pass the separate native group contracts.
+- Source/geometry/engine-state helpers remain controlled. GPU failure
+  recovery, lifetimes and native exception handling are still open; the
+  bridge aborts the offline fixture for an unexpected zero-consumption
+  attempt rather than claiming a production fallback. No runtime promotion.
+- This strengthens the existing roughly 3 ms result; it is not additive,
+  still falls short of the full-rate 60 FPS budget, and warrants no new
+  gameplay request or installation.
+- Full plugin suite and all four earlier mesh/GPU cases pass after the
+  shared fixture changes. Built beta.3, installed 0.9.10 and installed INI
+  hashes remain unchanged; the bridge object uses general registers only.
+
 ## Native mesh/GPU integration screen (2026-10-18)
 
 - [Guarded native-mesh GPU screen](specs/2026-10-18-native-mesh-gpu-screen.md)

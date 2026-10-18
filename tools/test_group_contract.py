@@ -191,6 +191,17 @@ def refusals(reference, target, symbols):
     print(f'Native group verifier: {len(mutations)} refusal controls passed', flush=True)
 
 
+def write_manifest(path,records):
+    """Persist numeric relocation roles and hashes, never image bytes."""
+    lines=[]
+    for index,record in enumerate(records):
+        patches=[(field,0,symbol) for field,symbol in CALLS[index]]
+        patches += [(field,1,symbol) for field,symbol in ABSOLUTE[index]]
+        lines.append(' '.join(map(str,(*record,len(patches)))))
+        lines.extend(' '.join(map(str,patch)) for patch in patches)
+    path.write_text('\n'.join(lines)+'\n',encoding='ascii')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('image', type=Path)
@@ -205,13 +216,7 @@ def main():
     if args.execute:
         with tempfile.TemporaryDirectory(prefix='sage-group-contract-') as folder:
             path = Path(folder)/'contract.txt'
-            lines = []
-            for index, record in enumerate(records):
-                patches = [(field, 0, symbol) for field, symbol in CALLS[index]]
-                patches += [(field, 1, symbol) for field, symbol in ABSOLUTE[index]]
-                lines.append(' '.join(map(str, (*record, len(patches)))))
-                lines.extend(' '.join(map(str, patch)) for patch in patches)
-            path.write_text('\n'.join(lines)+'\n', encoding='ascii')
+            write_manifest(path,records)
             exe = Path(__file__).resolve().parent.parent/'perf/build/test_native_group.exe'
             command = [str(exe), str(args.image), str(path), str(args.image.parent/'msvcr71.dll')]
             result = subprocess.call(command)

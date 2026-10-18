@@ -44,6 +44,14 @@ Strike an item through, with the date, when it's done.
   verification-window controls. Two repeats save 2.81-2.95 ms per pair on
   DXVK; see `specs/2026-10-18-native-mesh-gpu-screen.md`. Native enclosing
   group/events, engine-state reconciliation and failure recovery remain open.
+- [x] 2026-10-18: join the native group/events/method ownership to that
+  native mesh/GPU fixture. All four backend/workload cases pass 136 paired
+  controls plus verification, and two repeats save 2.78-2.99 ms per pair
+  on DXVK. See `specs/2026-10-18-native-group-gpu-screen.md`.
+- [ ] Prove GPU-operation failure recovery after leader deferral/partial
+  submission in the joined fixture; current zero-consumption abort is not
+  a runtime fallback. Native source/state/lifetime and exception boundaries
+  remain open, and further savings are needed before a gameplay request.
 - [x] 2026-10-17: larger material-queue fixture passes native/DXVK fresh
   pose, material invalidation, regular/extra image and state checks.
 - [x] 2026-10-17: recollect material-queue timings with the game closed.

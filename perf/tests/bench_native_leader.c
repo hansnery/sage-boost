@@ -172,7 +172,10 @@ static void nm_validate(void)
     puts("NATIVE CONTROLS: callback-slot fallback, split at member 13, partial bulk, earlier source DIP and real verification window pass; output, cleanup and references match");
 }
 
-int main(int argc,char **argv)
+#ifndef PF_NATIVE_MESH_MAIN
+#define PF_NATIVE_MESH_MAIN main
+#endif
+int PF_NATIVE_MESH_MAIN(int argc,char **argv)
 {
     REQUIRE(argc==9 && !strcmp(argv[6],"leader-bulk-first"));
     nm_image=argv[7]; nm_manifest=argv[8]; setup_complete=nm_setup;
