@@ -196,15 +196,13 @@ static int compare_double(const void *a, const void *b)
     return (x > y) - (x < y);
 }
 
-int main(int argc, char **argv)
+static void setup_dispatch(int argc, char **argv)
 {
-    static unsigned a[RT * RT], b[RT * RT];
     static pf_site sites[PF_SITE_COUNT];
     HMODULE crt;
     char backend[MAX_PATH];
     LARGE_INTEGER freq;
-    unsigned i, r, detail, covered = 0;
-    double s[2], c[2];
+    unsigned i;
     const char *crt_path = argc > 2 ? argv[2] : "C:/Jogos/AgeoftheRing/rotwk/msvcr71.dll";
     shadow_mode = argc > 3 && !strcmp(argv[3], "shadow");
     REQUIRE(fixture_main(argc, argv) == 0);
@@ -277,6 +275,15 @@ int main(int argc, char **argv)
     }
     *(int *)(frame_ptr + PF_FRAME_PASS_COUNT) = 1;
     *(int *)(frame_ptr + PF_FRAME_MAX_INSTANCES) = 1;
+}
+
+#ifndef PF_DISPATCH_EMBED
+int main(int argc, char **argv)
+{
+    static unsigned a[RT * RT], b[RT * RT];
+    unsigned i, r, detail, covered = 0;
+    double s[2], c[2];
+    setup_dispatch(argc, argv);
     sample(0, 1, &s[0], &c[0], a);
     sample(1, 1, &s[1], &c[1], b);
     REQUIRE(!memcmp(a, b, sizeof a));
@@ -319,3 +326,4 @@ int main(int argc, char **argv)
     }
     return 0;
 }
+#endif

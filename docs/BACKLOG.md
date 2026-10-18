@@ -20,6 +20,13 @@ Strike an item through, with the date, when it's done.
   target-ABI, material, reference, state, scope and fallback proofs before
   implementing an installed fast path. Current prototype is offline only.
 - [ ] Demonstrate sustained 60 visual FPS with full-rate shadows; still open.
+- [x] 2026-10-17: prototype retained GPU batches with fresh bone palettes,
+  per-regular-frame capture cost, native/DXVK output/state checks and paired
+  timings. Narrow replay passes but DXVK completion saves only ~0.2-0.4 ms;
+  broad state snapshots regress. No runtime promotion or gameplay test.
+- [ ] Whole-queue reuse remains unproved: establish callback/visibility and
+  material lifetime/state equivalence before a larger prototype. Existing
+  adjacent single-method counters do not measure the whole opportunity.
 - [x] 2026-10-17: screen newer effect runtime, state-save overhead and
   terrain ambient sampling offline; insufficient savings, no install.
 - [x] 2026-10-17: beta.3 fixes ShadowInterval=1 reusing the previous extra

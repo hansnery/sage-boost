@@ -21,6 +21,21 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Retained extra-frame batch experiment (2026-10-17)
+
+- Built an offline retained-GPU-setup prototype with fresh palettes and a
+  newly drawn shadow map, including regular-frame capture overhead in cost.
+  [Results and limits](specs/2026-10-17-retained-batch-screen.md); 336 paired
+  samples preserved. Production ASI/INI remain unchanged.
+- Narrow snapshots save ~1.3-1.8 ms in native submission, ~0.4-0.7 ms in
+  DXVK submission, but only ~0.2-0.4 ms in DXVK completion. Broad snapshots
+  regress. Lit pixels match exactly; fresh shadow depths match within the
+  established tolerance. The full plugin suite and fixture regressions pass.
+- Not promoted or installed: insufficient gain on the installed backend
+  for a runtime cache with still-unproved lifetime/material/state behavior.
+  No gameplay test requested; full-rate 60 FPS remains open. Adjacent-group
+  counters alone do not rule out whole-queue opportunities.
+
 ## Dispatch experiment completed (2026-10-17)
 
 - Added an offline benchmark and test-only bulk prototype, outside the ASI.

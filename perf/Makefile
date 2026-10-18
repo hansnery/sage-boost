@@ -191,11 +191,31 @@ DISPATCH_OBJS := $(filter-out $(BUILD)/main.o $(BUILD)/rt.o $(BUILD)/inst.o $(BU
 $(BUILD)/bench_dispatch.exe: tests/bench_dispatch.c tests/test_inst.c $(BUILD)/inst_dispatch_engine.o $(DISPATCH_OBJS) src/*.h
 	$(CC) $(TEST_CFLAGS) -O2 -static -o $@ $< $(BUILD)/inst_dispatch_engine.o $(DISPATCH_OBJS)
 
-.PHONY: bench-dispatch bench-ambient
+.PHONY: bench-dispatch bench-ambient bench-retained
 DISPATCH_ASSETS ?= C:/Jogos/AgeoftheRing/rotwk
 
 $(BUILD)/bench_effect.exe: tests/bench_effect.c tests/shadow_fx/shadow_fx.c src/shadowfx_table.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -static -o $@ $<
+
+$(BUILD)/inst_retained_engine.o: tests/inst_retained_engine.c tests/inst_dispatch_engine.c src/inst.c src/*.h | $(BUILD)
+	$(CC) $(CFLAGS) -Isrc -c -o $@ $<
+
+$(BUILD)/fps_extra_bench.o: tests/fps_extra_bench.c src/fps.c src/*.h | $(BUILD)
+	$(CC) $(CFLAGS) -Isrc -c -o $@ $<
+
+$(BUILD)/bench_retained.exe: tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(DISPATCH_OBJS) src/*.h
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(filter-out $(BUILD)/fps.o,$(DISPATCH_OBJS))
+
+RETAINED_MASK ?= narrow
+bench-retained: $(BUILD)/bench_retained.exe
+	./$(BUILD)/bench_retained.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit $(RETAINED_MASK)
+	./$(BUILD)/bench_retained.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow $(RETAINED_MASK)
+	@test -f "$(DXVK_D3D9)" || { echo "error: bench-retained requires DXVK_D3D9"; exit 1; }
+	mkdir -p $(BUILD)/retained_dxvk
+	cp $(BUILD)/bench_retained.exe "$(DXVK_D3D9)" $(BUILD)/retained_dxvk/
+	cd $(BUILD)/retained_dxvk && \
+	  DXVK_LOG_LEVEL=none ./bench_retained.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit $(RETAINED_MASK) && \
+	  DXVK_LOG_LEVEL=none ./bench_retained.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow $(RETAINED_MASK)
 
 $(BUILD)/bench_ambient.exe: tests/bench_ambient.c | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -static -o $@ $<
