@@ -108,6 +108,11 @@ it, preserve effect lifecycle/cleanup and engine-visible render state, use
 current records rather than borrowed objects across frames, and fail before
 partial replay. The current fixture is not such a bridge.
 
+The first [native contract checks](2026-10-17-native-fx-lifecycle-audit.md)
+now pass: eight verified wrappers, 58 controlled trace/ABI cases on both
+local images, and altered-code refusal controls. The native group bridge,
+actual source callbacks, lifetime policy and runtime cache remain open.
+
 The ongoing goal remains sustained 60 visual FPS in the user's troop-heavy
 save with fresh shadows and unchanged multiplayer behavior. Do not lower
 that goal to a synthetic gain or request a diagnostic-only gameplay cycle.

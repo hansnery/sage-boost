@@ -191,7 +191,16 @@ DISPATCH_OBJS := $(filter-out $(BUILD)/main.o $(BUILD)/rt.o $(BUILD)/inst.o $(BU
 $(BUILD)/bench_dispatch.exe: tests/bench_dispatch.c tests/test_inst.c $(BUILD)/inst_dispatch_engine.o $(DISPATCH_OBJS) src/*.h
 	$(CC) $(TEST_CFLAGS) -O2 -static -o $@ $< $(BUILD)/inst_dispatch_engine.o $(DISPATCH_OBJS)
 
-.PHONY: bench-dispatch bench-ambient bench-retained bench-material-queue
+.PHONY: bench-dispatch bench-ambient bench-retained bench-material-queue test-fx-lifecycle
+
+# Native wrapper correctness only: no GPU, scene, startup or timing claims.
+$(BUILD)/test_fx_lifecycle.exe: tests/test_fx_lifecycle.c | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -static -o $@ $<
+
+test-fx-lifecycle: $(BUILD)/test_fx_lifecycle.exe
+	python ../tools/test_fx_contract.py
+	python ../tools/test_fx_lifecycle.py "$(AOTR_DAT)"
+	python ../tools/test_fx_lifecycle.py "$(ROTWK_DAT)"
 DISPATCH_ASSETS ?= C:/Jogos/AgeoftheRing/rotwk
 
 $(BUILD)/bench_effect.exe: tests/bench_effect.c tests/shadow_fx/shadow_fx.c src/shadowfx_table.h | $(BUILD)

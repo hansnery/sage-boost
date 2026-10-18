@@ -29,6 +29,10 @@ Strike an item through, with the date, when it's done.
 - [ ] If clean measurements justify it, prove the native effect/group
   bridge, lifetimes, engine state and diagnostics before runtime promotion.
   Current persistent cache borrows fixed fixture objects only.
+- [x] 2026-10-17: eight native FX wrappers/source-walker bodies pass 58
+  isolated call-order/ABI cases on both local images; verifier refusal
+  controls pass. See `specs/2026-10-17-native-fx-lifecycle-audit.md`.
+  This is only a partial contract proof, not the group bridge or speedup.
 - [ ] Account for the externally observed return to installed 0.9.10 before
   the next deployment/test. This work did not replace the ASI; INI unchanged.
 - [x] 2026-10-17: prototype retained GPU batches with fresh bone palettes,

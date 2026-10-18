@@ -21,6 +21,7 @@ user's own installs at run time.
 | `xrefs.py` | callers/references of an address, named by the function annotations of the Open-BFME-2 source tree (read only) |
 | `port_sites.py` | turns a 1.06 function's first bytes into a wildcard signature that matches another image once; tests in `test_port_sites.py` |
 | `bench_ambient.py` | verifies the full ambient-light sampler against the read-only reference and runs the isolated native cost screen on synthetic data; requires `perf/build/bench_ambient.exe`. No game entry point or scene runs. See `perf/tests/RENDER_SETUP_BENCHMARK.md`. |
+| `test_fx_lifecycle.py` | verifies eight complete native FX wrapper bodies, then runs controlled ABI/call-order tests without a game entry point, scene or GPU. `make test-fx-lifecycle` builds the harness and checks both local images; `test_fx_contract.py` tests altered-code refusals with synthetic bytes. See `docs/specs/2026-10-17-native-fx-lifecycle-audit.md`. |
 
 ## Maps, castles and AI bases (`.map`, `.bse`)
 

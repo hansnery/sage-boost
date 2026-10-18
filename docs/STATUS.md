@@ -23,6 +23,12 @@ files before relying on it.
 
 ## Material-queue cache experiment (2026-10-17)
 
+- Native integration groundwork: eight complete local FX wrapper bodies
+  now pass 58 offline call-order/ABI cases on both executable images;
+  altered-code refusal controls pass. [Contract and remaining limits](specs/2026-10-17-native-fx-lifecycle-audit.md).
+  This verifies asset initialization, six-channel binding, HRESULT paths,
+  statistics and effect-pointer timing. It does not prove the native group
+  bridge, source callbacks, lifetimes or a runtime cache. No speed claim.
 - Added a larger offline fixture with the actual local D3DX27 lifecycle,
   fresh palettes and material-state capture. A persistent mode also reuses
   unchanged regular-frame groups after exact input checks. Native/DXVK
