@@ -19,6 +19,15 @@ static unsigned q_compare_mode,q_pattern,q_render_on,q_sort_on,q_oracle=1,q_expe
 static unsigned q_owned,q_sort_calls,q_group_calls,q_order_hash,q_broken;
 static void (*q_previous_validate)(void);
 static const char *q_sort_manifest;
+#ifdef PF_NATIVE_QUEUE_INSERT
+extern void bench_insert_load(const char *,const char *);
+extern void bench_insert_add(void *,void *,const void *,unsigned);
+extern void bench_insert_corrupt(unsigned);
+extern void bench_insert_clear(void *);
+static const char *q_insert_manifest;
+static unsigned q_insert_on;
+static struct {QueueRecord *first,*last,*limit;} q_insert_queues[3][3];
+#endif
 
 static unsigned q_random(unsigned *state)
 { *state=*state*1664525u+1013904223u;return *state; }
@@ -63,16 +72,41 @@ static void q_collect(void)
 {
     REQUIRE(!q_owned);q_owned=1;
     memset(q_buffer.before,0xa5,sizeof q_buffer.before);memset(q_buffer.after,0xa5,sizeof q_buffer.after);
+#ifdef PF_NATIVE_QUEUE_INSERT
+    unsigned selected=(g_model[0x19]&4)?(**(unsigned char **)(g_model+0xbc)?1:2):0;
+    for(unsigned pass=0;pass<3;pass++) {
+        __typeof__(q_insert_queues[0][0]) *queues=q_insert_queues[pass];
+        memset(queues,0,sizeof q_insert_queues[pass]);
+        queues[selected].first=queues[selected].last=q_buffer.records+q_bounds[pass];
+        queues[selected].limit=q_buffer.records+q_bounds[pass+1];
+        for(unsigned i=q_bounds[pass];i<q_bounds[pass+1];i++) {
+            unsigned index=q_order[i];
+            unsigned *source=(unsigned *)(records[index/GROUP_SIZE]+(index%GROUP_SIZE)*PF_RECORD_SIZE);
+            struct {void **first,**last,**limit;} methods={(void **)(source+2),(void **)(source+3),(void **)(source+8)};
+            REQUIRE(source[1]==1);
+            (*(unsigned *)(many_meshes[index].b+4))++;
+            bench_insert_add(queues,many_meshes+index,&methods,q_insert_on);
+        }
+        REQUIRE(queues[selected].last==queues[selected].limit);
+        for(unsigned q=0;q<3;q++)if(q!=selected)REQUIRE(!queues[q].first && !queues[q].last && !queues[q].limit);
+    }
+#else
     for(unsigned i=0;i<QUEUE_RECORDS;i++) {
         unsigned index=q_order[i];
         bench_sort_copy(q_buffer.records+i,records[index/GROUP_SIZE]+(index%GROUP_SIZE)*PF_RECORD_SIZE);
     }
+#endif
     if(q_oracle)q_refs(1);
 }
 static void q_release(void)
 {
     REQUIRE(q_owned);
+#ifdef PF_NATIVE_QUEUE_INSERT
+    for(unsigned pass=0;pass<3;pass++)for(unsigned queue=0;queue<3;queue++)
+        if(q_insert_queues[pass][queue].first)bench_insert_clear(&q_insert_queues[pass][queue]);
+#else
     for(unsigned i=0;i<QUEUE_RECORDS;i++)bench_sort_destroy(q_buffer.records+i);
+#endif
     q_owned=0;
     if(q_oracle)q_refs(0);
     REQUIRE(g_method.refs==5);
@@ -104,8 +138,11 @@ static void q_workload(unsigned group)
 }
 static void q_frame_mode(int optimized)
 {
-    q_sort_on=optimized && q_compare_mode!=2;
-    q_render_on=optimized && q_compare_mode!=1;
+    q_sort_on=optimized && (q_compare_mode==0 || q_compare_mode==1);
+    q_render_on=optimized && (q_compare_mode==0 || q_compare_mode==2);
+#ifdef PF_NATIVE_QUEUE_INSERT
+    q_insert_on=optimized && (q_compare_mode==0 || q_compare_mode==3);
+#endif
     q_sort_calls=q_group_calls=0;q_order_hash=2166136261u;
     nx_frame_mode(q_render_on);
 }
@@ -164,6 +201,9 @@ static void q_validate(void)
 static void q_setup(void)
 {
     bench_sort_load(nm_image,q_sort_manifest);bench_sort_corrupt(q_broken==1);
+#ifdef PF_NATIVE_QUEUE_INSERT
+    bench_insert_load(nm_image,q_insert_manifest);bench_insert_corrupt(q_broken==4);
+#endif
     q_previous_validate=validate_retained;
     q_restore_models();
     for(unsigned i=0;i<QUEUE_RECORDS;i++)*(unsigned *)(many_meshes[i].b+4)=1;
@@ -173,17 +213,29 @@ static void q_setup(void)
     group_render=q_workload;frame_mode=q_frame_mode;frame_check=q_frame_check;
     prepare_sample=q_sample;validate_retained=q_validate;
     comparison_name=q_compare_mode==0?"native-queue-sort-render":q_compare_mode==1?"native-queue-sort-only":"native-queue-render-only";
+#ifdef PF_NATIVE_QUEUE_INSERT
+    comparison_name=q_compare_mode==0?"native-insert-sort-render":q_compare_mode==3?"native-insert-only":comparison_name;
+    puts("INSERTION: actual native Add_Rendering_Task with spare-capacity pass queues; method/mesh ownership included");
+#endif
     printf("QUEUE: 7200 owned records, ranges 2900/1400/2900, 288 distinct model identities, comparison=%u order=%u; native render bodies retain relative layout; no gameplay claim\n",q_compare_mode,q_pattern);
 }
 int main(int argc,char **argv)
 {
+#ifdef PF_NATIVE_QUEUE_INSERT
+    REQUIRE(argc==15 || argc==16);q_insert_manifest=argv[14];
+    if(argc==16)argv[14]=argv[15];
+    argc--;
+#endif
     REQUIRE(argc==14 || argc==15);
     q_sort_manifest=argv[11];q_compare_mode=(unsigned)atoi(argv[12]);q_pattern=(unsigned)atoi(argv[13]);
     if(argc==15) {
-        unsigned option=(unsigned)atoi(argv[14]);REQUIRE(option<=3);
-        q_broken=option<3?option:0;benchmark_controls_only=option!=0;
+        unsigned option=(unsigned)atoi(argv[14]);REQUIRE(option<=4);
+        q_broken=option==3?0:option;benchmark_controls_only=option!=0;
     }
-    REQUIRE(q_compare_mode<=2 && q_pattern<=3 && q_broken<=2);
+    REQUIRE(q_compare_mode<=3 && q_pattern<=3 && q_broken<=4);
+#ifndef PF_NATIVE_QUEUE_INSERT
+    REQUIRE(q_compare_mode<=2 && q_broken<=2);
+#endif
     ng_after_setup=q_setup;
     int result=queue_fx_main(11,argv);
     REQUIRE(VirtualFree(na_base,0,MEM_RELEASE));

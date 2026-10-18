@@ -93,6 +93,17 @@ test-native-sort: $(BUILD)/bench_native_sort.exe
 bench-native-sort: $(BUILD)/bench_native_sort.exe
 	python ../tools/bench_native_sort.py "$(AOTR_DAT)" $< --self-test
 
+$(BUILD)/bench_native_insert.exe: tests/bench_native_insert.c tests/bench_guard.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $<
+
+.PHONY: test-native-insert bench-native-insert
+test-native-insert: $(BUILD)/bench_native_insert.exe
+	python ../tools/bench_native_insert.py "$(AOTR_DAT)" $< --self-test --samples 0
+	python ../tools/bench_native_insert.py "$(ROTWK_DAT)" $< --self-test --samples 0
+
+bench-native-insert: $(BUILD)/bench_native_insert.exe
+	python ../tools/bench_native_insert.py "$(AOTR_DAT)" $< --self-test
+
 $(BUILD)/test_sites.exe: tests/test_sites.c src/scan.c src/sites.c src/uistate.c src/fpsites.c \
                          src/btnclock.c src/passflag.c src/spsites.c src/cusites.c src/ltsites.c \
                          src/*.h | $(BUILD)
@@ -337,6 +348,29 @@ bench-native-queue-gpu: $(BUILD)/bench_native_queue_gpu.exe
 	cd $(BUILD)/native_queue_gpu_dxvk && \
 	  DXVK_LOG_LEVEL=none python ../../../tools/bench_native_queue_gpu.py $(QUEUE_OPTIONS) --mode $(QUEUE_MODE) --order $(QUEUE_ORDER) "$(AOTR_DAT)" bench_native_queue_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first && \
 	  DXVK_LOG_LEVEL=none python ../../../tools/bench_native_queue_gpu.py $(QUEUE_OPTIONS) --mode $(QUEUE_MODE) --order $(QUEUE_ORDER) "$(AOTR_DAT)" bench_native_queue_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 leader-bulk-first
+
+$(BUILD)/native_insert_fixture.o: tests/bench_native_insert.c tests/bench_guard.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -Wno-unused-function -DPF_NATIVE_INSERT_EMBED -c -o $@ $<
+
+$(BUILD)/bench_native_insert_gpu.exe: tests/bench_native_insert_gpu.c tests/bench_native_queue_gpu.c tests/native_shared_arena.h tests/bench_native_fx_gpu.c tests/native_fx_image.h tests/bench_native_group_gpu.c tests/bench_native_leader.c tests/native_group_image.h tests/native_mesh_image.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/native_insert_fixture.o $(BUILD)/native_sort_fixture.o $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/native_insert_fixture.o $(BUILD)/native_sort_fixture.o $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
+
+INSERT_MODE ?= combined
+INSERT_ORDER ?= random
+INSERT_OPTIONS ?=
+.PHONY: test-native-insert-gpu bench-native-insert-gpu
+test-native-insert-gpu: $(BUILD)/bench_native_insert_gpu.exe
+	$(MAKE) bench-native-insert-gpu INSERT_OPTIONS="--controls-only --self-test"
+
+bench-native-insert-gpu: $(BUILD)/bench_native_insert_gpu.exe
+	python ../tools/bench_native_insert_gpu.py $(INSERT_OPTIONS) --mode $(INSERT_MODE) --order $(INSERT_ORDER) "$(AOTR_DAT)" $< "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first
+	python ../tools/bench_native_insert_gpu.py $(INSERT_OPTIONS) --mode $(INSERT_MODE) --order $(INSERT_ORDER) "$(AOTR_DAT)" $< "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 leader-bulk-first
+	@test -f "$(DXVK_D3D9)" || { echo "error: bench-native-insert-gpu requires DXVK_D3D9"; exit 1; }
+	mkdir -p $(BUILD)/native_insert_gpu_dxvk
+	cp $< "$(DXVK_D3D9)" $(BUILD)/native_insert_gpu_dxvk/
+	cd $(BUILD)/native_insert_gpu_dxvk && \
+	  DXVK_LOG_LEVEL=none python ../../../tools/bench_native_insert_gpu.py $(INSERT_OPTIONS) --mode $(INSERT_MODE) --order $(INSERT_ORDER) "$(AOTR_DAT)" bench_native_insert_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first && \
+	  DXVK_LOG_LEVEL=none python ../../../tools/bench_native_insert_gpu.py $(INSERT_OPTIONS) --mode $(INSERT_MODE) --order $(INSERT_ORDER) "$(AOTR_DAT)" bench_native_insert_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 leader-bulk-first
 
 bench-native-fx-gpu: $(BUILD)/bench_native_fx_gpu.exe
 	python ../tools/bench_native_fx_gpu.py "$(AOTR_DAT)" $(BUILD)/bench_native_fx_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first

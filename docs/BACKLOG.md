@@ -111,6 +111,17 @@ Strike an item through, with the date, when it's done.
   insertion/growth/erase. Preserve queue selection, method and mesh
   ownership, capacity checks and native growth fallback; require a combined
   timing gain before runtime integration. Full lifetimes/failures remain open.
+- [x] 2026-10-18: verify 33 native insertion/growth/erase bodies and a
+  guarded spare-capacity append. Both images pass 576 CPU comparisons and
+  refusals, plus eight joined GPU cases and 24 broken-record controls.
+  Two combined shuffled-input DXVK runs save 7.14-7.32 ms/pair; an ascending
+  sensitivity run saves 5.99-6.21 ms. Preserve 546 CPU/GPU timing samples.
+  See `specs/2026-10-18-native-insertion-gpu-screen.md`. Heap/source/lifetime
+  dependencies remain controlled; no installed speedup or 60 FPS claim.
+- [ ] Replace the group bridge's zero-consumption abort with a proven
+  ordinary-rendering fallback, including any deferred leader and partial
+  submission. Qualify source/lifetime/context boundaries and runtime
+  signatures before promoting the combined candidate to an installed beta.
 - [x] 2026-10-17: larger material-queue fixture passes native/DXVK fresh
   pose, material invalidation, regular/extra image and state checks.
 - [x] 2026-10-17: recollect material-queue timings with the game closed.

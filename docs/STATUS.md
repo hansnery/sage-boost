@@ -21,6 +21,30 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Native insertion joined to sorting and GPU rendering (2026-10-18)
+
+- [Insertion/GPU screen](specs/2026-10-18-native-insertion-gpu-screen.md)
+  executes 33 verified insertion/growth/erase bodies. A direct append uses
+  spare capacity, preserving mesh/method ownership and all three selector
+  branches; full capacity, oversized stacks and destination aliases fall
+  back to native insertion. Heap callbacks are controlled; exceptions stop.
+- Both images pass 576 CPU comparisons, five altered-code refusals and a
+  corrupt-record control each. Both also pass the joined GPU lit/fresh-
+  shadow checks on native D3D9 and DXVK, with 24 broken-record controls.
+  The previous queue/GPU regression and full plugin suite pass.
+- Two serial shuffled-input runs save **7.14-7.32 ms/pair on DXVK** with
+  actual insertion and native erase in the workload. Ascending input saves
+  5.99-6.21 ms in one sensitivity run. CPU insertion saves 0.80-0.86 ms per
+  7,680-record workload; these isolated numbers are not additive. Preserve
+  294 GPU and 252 CPU timings with source/build/control hashes.
+- No production/installation/INI changes or gameplay request. Last measured
+  gameplay remains ~30.18/s. The roughly 8 ms engineering target and the
+  real 60 FPS target remain unachieved; actual input order is unknown.
+- Next replace the native group bridge's zero-consumption assertion with
+  ordinary rendering fallback that resolves any deferred leader exactly
+  once. Qualify source/lifetime/context limits and guarded runtime hooks;
+  the current fixture cannot yet be installed as a complete improvement.
+
 ## Owned queues, native sorting and GPU integration (2026-10-18)
 
 - [Joined queue/GPU screen](specs/2026-10-18-native-queue-gpu-integration.md)
