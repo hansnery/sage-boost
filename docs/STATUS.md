@@ -21,6 +21,24 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Native final-draw contract (2026-10-18)
+
+- [Native mesh/draw fixture](specs/2026-10-18-native-mesh-draw-contract.md)
+  verifies seven complete bodies (3,032 bytes) and switch/data/call roles.
+  Both local images pass 38,016 native executions, eleven verifier refusal
+  controls and two deliberately broken final-draw guards.
+- The exact mesh-call stack identity distinguishes the final draw from
+  recursive same-mesh calls, whose ordinary return addresses also match.
+  Real entry stubs and modeled Draw return wrapping preserve the contract.
+- Normal cleanup, logical draw order, controlled state and ownership match.
+  Real GPU/source execution, native exceptions and full group integration
+  remain outside this proof. Next combine native group/mesh and real GPU
+  batching, including callback gates, verification and failure handling,
+  then remeasure with all guards before runtime promotion.
+- Full plugin suite passes. Built/installed ASI and INI hashes are unchanged;
+  no install or gameplay request. This is correctness evidence, not an
+  additional speedup or proof of 60 FPS.
+
 ## First-mesh instancing screen (2026-10-18)
 
 - [Leader batching screen](specs/2026-10-18-leader-batch-screen.md): including

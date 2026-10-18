@@ -24,6 +24,7 @@ user's own installs at run time.
 | `test_fx_lifecycle.py` | verifies eight complete native FX wrapper bodies, then runs controlled ABI/call-order tests without a game entry point, scene or GPU. `make test-fx-lifecycle` builds the harness and checks both local images; `test_fx_contract.py` tests altered-code refusals with synthetic bytes. See `docs/specs/2026-10-17-native-fx-lifecycle-audit.md`. |
 | `test_event_contract.py` | verifies four native diagnostic-event bodies, CRT/data/callback contracts and isolated callback/buffer/ABI behavior. `make test-native-events` checks both local images; no game startup. |
 | `test_group_contract.py` | verifies nine native group/SEH-prologue/name/chain/event bodies and runs original-versus-bulk loop, ownership, callback and partial-consumption tests. `make test-native-group` also rejects deliberately broken bridges. Normal control flow only; no native exception-unwind or GPU claim. See `docs/specs/2026-10-17-native-group-contract.md`. |
+| `test_mesh_draw_contract.py` | verifies seven native mesh/draw/cleanup bodies, their stack/data/call contracts and final-draw frame identity. `make test-native-mesh` exercises nested callbacks, recursive mesh calls, entry stubs and return wrapping on both local images, plus refusal/broken-gate controls. No game startup, real GPU or native exception-unwind claim. See `docs/specs/2026-10-18-native-mesh-draw-contract.md`. |
 
 ## Maps, castles and AI bases (`.map`, `.bse`)
 

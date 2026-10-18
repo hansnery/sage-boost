@@ -31,6 +31,14 @@ Strike an item through, with the date, when it's done.
   callback behavior and failure path before any draw suppression. Measure
   native group/GPU integration and its guards; separate logical native
   and modeled GPU tests do not establish an installable bridge.
+- [x] 2026-10-18: seven native mesh/draw/cleanup bodies and final stack-frame
+  identity pass 38,016 executions per local image, eleven altered-code/data
+  controls and two broken gates; see
+  `specs/2026-10-18-native-mesh-draw-contract.md`. Controlled dependencies
+  leave real GPU integration and failure paths open.
+- [ ] Combine native group/mesh with real effect/instancing output checks,
+  callback and verification gates, split/partial batches and failure
+  handling; remeasure the complete guarded path before runtime promotion.
 - [x] 2026-10-17: larger material-queue fixture passes native/DXVK fresh
   pose, material invalidation, regular/extra image and state checks.
 - [x] 2026-10-17: recollect material-queue timings with the game closed.

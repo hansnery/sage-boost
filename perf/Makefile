@@ -195,6 +195,14 @@ $(BUILD)/bench_dispatch.exe: tests/bench_dispatch.c tests/test_inst.c $(BUILD)/i
 
 .PHONY: test-native-events
 .PHONY: test-native-group
+.PHONY: test-native-mesh
+$(BUILD)/test_native_mesh.exe: tests/test_native_mesh.c src/stubs.c src/*.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -mgeneral-regs-only -static -o $@ $(filter %.c,$^)
+
+test-native-mesh: $(BUILD)/test_native_mesh.exe
+	python ../tools/test_mesh_draw_contract.py "$(AOTR_DAT)" --self-test --execute
+	python ../tools/test_mesh_draw_contract.py "$(ROTWK_DAT)" --self-test --execute
+
 $(BUILD)/test_native_group.exe: tests/test_native_group.c | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -mgeneral-regs-only -static -o $@ $<
 
