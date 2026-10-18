@@ -1,0 +1,93 @@
+{
+  "parent_commit": "b7e4f4c",
+  "runs": [
+    {
+      "log": "state-filter-clean-1.txt",
+      "sha256": "d10776cac9ff06e99bb618b89bc1c47cb9fd6572542c736a9e19ad8d505f281b",
+      "samples": 84,
+      "qualification": "clean",
+      "exclusion": "",
+      "log_mtime_utc": "2026-10-18T07:32:45.127761+00:00"
+    },
+    {
+      "log": "state-filter-bulk-clean-1.txt",
+      "sha256": "28a4f4f6c7b9ce8a512b66be839833b9a12107bcd52ef5b7dd9bbadc5bff0c54",
+      "samples": 84,
+      "qualification": "clean",
+      "exclusion": "",
+      "log_mtime_utc": "2026-10-18T07:33:40.833840+00:00"
+    },
+    {
+      "log": "state-forward-clean-1.txt",
+      "sha256": "b30f8b03c070873478a211973b9b11a0677f52e95c7fd9265487f1a379bada6c",
+      "samples": 84,
+      "qualification": "clean",
+      "exclusion": "",
+      "log_mtime_utc": "2026-10-18T07:34:09.090034+00:00"
+    },
+    {
+      "log": "state-filter-bulk-clean-2.txt",
+      "sha256": "864ef08ade8695774d5c4b189fa0990756455c061fb0388b9a88279d71a493e9",
+      "samples": 84,
+      "qualification": "clean",
+      "exclusion": "",
+      "log_mtime_utc": "2026-10-18T07:34:32.724782+00:00"
+    },
+    {
+      "log": "state-filter-3.txt",
+      "sha256": "08e350a50f9a04a2eca33fb4962ebb8ac9cc8235a311a3430030b6e83312a9bf",
+      "samples": 84,
+      "qualification": "excluded",
+      "exclusion": "Rejected by subsequent consecutive same-material state checks.",
+      "log_mtime_utc": "2026-10-18T07:25:22.784957+00:00"
+    },
+    {
+      "log": "state-filter-final-1.txt",
+      "sha256": "0b54e6cb53754ebae12667be38977f112fd247049326b141f8bdbb2ff037d80d",
+      "samples": 84,
+      "qualification": "exploratory",
+      "exclusion": "Earlier single-effect manager-switching protocol; not pooled with the permanent-manager protocol.",
+      "log_mtime_utc": "2026-10-18T07:27:26.943830+00:00"
+    },
+    {
+      "log": "state-filter-bulk-final-1.txt",
+      "sha256": "bad4a0a5a75862c87389dc3fdc2bf46a314a109314fb3095687e3c0436eb9132",
+      "samples": 84,
+      "qualification": "exploratory",
+      "exclusion": "Earlier single-effect manager-switching protocol; not pooled with the permanent-manager protocol.",
+      "log_mtime_utc": "2026-10-18T07:28:23.144998+00:00"
+    },
+    {
+      "log": "state-filter-separate-4.txt",
+      "sha256": "5d50720ee4bac02709d6c6bfffd29ebe73d8936249c02ba841b5a2ee2914263f",
+      "samples": 42,
+      "qualification": "excluded",
+      "exclusion": "Partial run stopped by a shader-code hash check that hashed unused GetFunction buffer capacity. Final code queries exact byte length first.",
+      "log_mtime_utc": "2026-10-18T07:31:53.220486+00:00"
+    }
+  ],
+  "sources": {
+    "perf/tests/bench_material_queue.c": "c09a34153e1733551fd0fb12476ddea1b471da9a219cb7416e9aac51b3e0002f",
+    "perf/tests/bench_retained.c": "fd36ff3de910e7b230ba92f2de4feb6278f9e75286c3d94fc9ea4d8bed254ef9",
+    "perf/tests/material_fixture.c": "4d292ffbca6be1b4d87496558e5d461a3e8bc4edc3191a69b790fd5540466da5",
+    "perf/tests/effect_filter_bench.c": "85e8da48832e61011a5315ef27b22674b1ab5aa429d20d89e5a8ff83d467cbc4",
+    "perf/tests/effect_filter_bench.h": "7ead7da86b62cea939f3c92993d6faeb22a07d6994b4efb082e80775d4d79759",
+    "perf/tests/inst_retained_engine.c": "b1d3d466ca49a621626607ec32c0223d18bd6b6fa0cadce6fb2b9bea36481135",
+    "perf/tests/timing_bulk_bench.c": "b2651023195165c67dc6b807e00ea45bc2fc7be08bfdfb30133417b19a39eda3",
+    "perf/Makefile": "a0cc40f01df8b4ae27f08bdf0a66fba894f9992b17460cdce23963c456c15f55"
+  },
+  "executable_sha256": "293579e5132691e7794e100ffe39ab59a549fb2c7ab02492676fa4489f1b18ea",
+  "notes": [
+    "Executable/source hashes describe the four clean runs only. Earlier build/control timing samples remain separate and are not pooled.",
+    "Separate original and filtered effect instances share synthetic textures and inputs. The filtered instance receives its manager before any default Begin, keeping manager lifetime stable.",
+    "The original Begin(flags=6) texture and render-state restoration is matched with an explicit state block. Their mirror entries are invalidated after End; all entries are invalidated at each frame boundary.",
+    "Every source setter and effect Begin/BeginPass/CommitChanges/EndPass/End remains. Synthetic Time advances 33 ms per pair, held constant within that pair.",
+    "All clean cases pass 32 consecutive/changed material comparisons for device state in-pass and post-End, including identical full bone inputs in both independent effects; a stale-cache control fails after an external texture write and invalidation recovers.",
+    "Final shader state comparison queries the exact GetFunction byte length before hashing in memory. No shader bytes are persisted.",
+    "Full extra-image/fresh-pose comparisons and frame state, scope-count and reference checks pass. These tests do not run the native game source callbacks or prove arbitrary-effect/device-failure/lifetime correctness.",
+    "The filter object compiles with production -O2 -mgeneral-regs-only flags, but its static borrowed resources and fixture state masks are not a runtime implementation.",
+    "All guarded runs are serial with no game/launcher/WorldBuilder. Lit and shadow are alternative full workloads, not additive. No Present or gameplay FPS measurement.",
+    "Forward counts include validation and warmup, and describe effect-manager callbacks only; they exclude automatic/manual state-block restoration and other device calls.",
+    "Log modification times are not exact start times."
+  ]
+}

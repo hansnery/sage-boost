@@ -26,6 +26,9 @@ static unsigned (*cached_extra)(void);
 static unsigned validate_markers;
 static void (*validate_accounting)(void);
 static int dispatch_only, dispatch_bulk_now;
+static int dispatch_bulk_enabled=1, pair_optimized;
+static void (*frame_mode)(int);
+static const char *comparison_name;
 static int (*dispatch_scope_begin)(void),(*dispatch_scope_end)(unsigned);
 static void (*prepare_sample)(unsigned, unsigned);
 
@@ -97,8 +100,9 @@ static void frame_draw(int extra, int retained, unsigned *pixels)
     HR(IDirect3DDevice9_BeginScene(g_dev));
     HR(IDirect3DDevice9_Clear(g_dev, 0, NULL, D3DCLEAR_TARGET |
         (shadow_mode ? D3DCLEAR_ZBUFFER : 0), shadow_mode ? 0xffffffffu : 0, 1, 0));
+    if(frame_mode) frame_mode(pair_optimized);
     bench_retained_counts(&draws,&meshes);
-    if (extra || cached_regular) {
+    if (extra || cached_regular || frame_mode) {
         HR(IDirect3DStateBlock9_Capture(outer));
         HR(IDirect3DDevice9_GetVertexShaderConstantF(g_dev,0,(float *)before_v,256));
         HR(IDirect3DDevice9_GetPixelShaderConstantF(g_dev,0,(float *)before_p,32));
@@ -112,7 +116,7 @@ static void frame_draw(int extra, int retained, unsigned *pixels)
         }
     } else if (!extra && retain_now && cached_regular) cached_groups=cached_regular();
     else ((void (*)(void))pf_enter_stubs[PF_DISPLAY_DRAW])();
-    if (extra || cached_regular) {
+    if (extra || cached_regular || frame_mode) {
         HR(IDirect3DStateBlock9_Apply(outer));
         HR(IDirect3DDevice9_GetVertexShaderConstantF(g_dev,0,(float *)after_v,256));
         HR(IDirect3DDevice9_GetPixelShaderConstantF(g_dev,0,(float *)after_p,32));
@@ -141,7 +145,8 @@ static void pair(int retained, double *regular, double *extra, double *total,
     unsigned refs = g_method.refs;
     pose(0);
     drain();
-    dispatch_bulk_now=dispatch_only && retained;
+    pair_optimized=retained;
+    dispatch_bulk_now=dispatch_only && retained && dispatch_bulk_enabled;
     retain_now = retained && !dispatch_only;
     a = ticks();
     frame_draw(0, 0, NULL);
@@ -228,7 +233,7 @@ static int retained_benchmark(int argc, char **argv)
     qsort(saved,ROUNDS,sizeof(double),compare_double);
     qsort(saved_complete,ROUNDS,sizeof(double),compare_double);
     printf("SUMMARY %s %s: net paired savings median %.4f ms (p10 %.4f, p90 %.4f), completion %.4f; %s, no FPS claim\n",
-           dispatch_only?"bulk-only":"retained",shadow_mode?"shadow":"lit",saved[ROUNDS/2],saved[2],saved[18],saved_complete[ROUNDS/2],
+           comparison_name?comparison_name:(dispatch_only?"bulk-only":"retained"),shadow_mode?"shadow":"lit",saved[ROUNDS/2],saved[2],saved[18],saved_complete[ROUNDS/2],
            dispatch_only?"no retained cache":"capture cost included");
     bench_retained_clear();
     REQUIRE(!bench_replay(0,records[0],records[0]+sizeof records[0]));

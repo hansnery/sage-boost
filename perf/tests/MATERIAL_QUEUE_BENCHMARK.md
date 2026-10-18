@@ -154,9 +154,10 @@ The test-only timing object preserves counts and per-pass totals; it is
 never linked into the ASI. Regular misses keep original per-member events.
 
 [Repeated results and native integration gates](../../docs/specs/2026-10-17-material-bulk-accounting-screen.md)
-show about 3.0-3.5 ms per modeled pair on DXVK. That qualifies further native
-research, not deployment. Source callbacks, lifetimes, native debug-event
-gates, engine state reconciliation and partial-failure recovery remain open.
+originally showed about 3.0-3.5 ms per modeled pair on DXVK. The subsequent
+[clock/state controls](../../docs/specs/2026-10-18-material-cache-boundary-clock.md)
+remove that qualification: the earlier clock was fixed and state restored
+only at the frame boundary. No runtime cache is promoted.
 
 `MATERIAL_PROTOCOL=lifecycle-bulk-only` isolates aggregate bulk dispatch
 without retained material state. The first two mesh dispatches and every
@@ -164,3 +165,33 @@ effect Begin/BeginPass/EndPass/End stay original; only remaining compatible
 members use the existing offline bulk prototype. Common `retained_*` CSV
 columns denote this optimized path. Cache-specific validation is skipped;
 fresh-pose, complete image, state and logical count checks remain.
+
+## Advancing clock, per-group state and device-write filtering
+
+`lifecycle-bulk-state` captures/restores the full fixture touched-state mask
+per replay hit. `lifecycle-bulk-clock` advances Time between pairs, leaving
+it fixed within each pair; every regular exact key misses. The combined
+`lifecycle-bulk-state-clock` retains both controls. Negative restoration and
+binding-corruption checks run outside measured samples. The combined mode
+regresses on DXVK; see the clock/state report linked above.
+
+`state-filter`, `state-filter-bulk` and `state-forward` instead keep every
+effect Begin/BeginPass/CommitChanges/EndPass/End and source setter. Separate
+effect instances compare the default manager against a custom callback
+manager attached before its first default Begin. Both advance Time.
+Render-state and texture restoration costs are included, with a complete
+mirror invalidation at frame boundaries. The filter object uses production
+compiler flags but borrows the fixture's fixed resources and state mask.
+It has no runtime native-state interception or failure/lifetime policy.
+
+The filter-only variant keeps original member events. The bulk variant
+uses aggregate accounting after the first two members. The forward control
+issues every manager request. Common CSV `retained_*` fields mean the
+alternative path; these modes contain no retained-material cache.
+
+Correctness compares full extra images/fresh poses and frame state/counts,
+plus 32 consecutive/changed-material in-pass and post-End state cases.
+A stale mirror after an external texture write is detected; invalidation
+recovers. Actual callbacks from the game are still outside the fixture.
+[Results and exploratory failures](../../docs/specs/2026-10-18-effect-state-filter-screen.md)
+do not qualify any of these variants for installation.

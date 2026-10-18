@@ -43,6 +43,10 @@ Strike an item through, with the date, when it's done.
   inputs and credible state reconciliation before further cache integration.
   Source callbacks, lifetimes and GPU-failure proofs remain necessary if
   a future candidate qualifies; the normal group-loop proof is not a cache.
+- [x] 2026-10-18: screen exact device-write filtering with the full effect
+  lifecycle and advancing Time. Standalone DXVK cost regresses; filter plus
+  bulk saves only 1.47-2.11 ms per modeled pair. State/image/count controls
+  pass; no runtime promotion. See `specs/2026-10-18-effect-state-filter-screen.md`.
 - [x] 2026-10-17: four native event bodies pass nine refusal controls and
   80 callback/buffer/ABI cases on each image. Enclosing loop/SEH remains
   outside this proof; see `specs/2026-10-17-native-event-contract.md`.

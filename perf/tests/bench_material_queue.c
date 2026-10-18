@@ -16,6 +16,10 @@ extern void material_fixture_verify_end(unsigned);
 extern void material_fixture_end_counts(unsigned *,unsigned *);
 extern void material_fixture_clock_probe(void);
 extern void material_fixture_clock(unsigned);
+extern void material_fixture_filter(unsigned);
+extern void material_fixture_filter_check(void);
+extern void bench_filter_counts(unsigned long long *,unsigned long long *);
+extern void bench_filter_clear(void);
 extern HRESULT material_fixture_mask(IDirect3DDevice9 *);
 extern unsigned material_fixture_state(IDirect3DDevice9 *,unsigned *,unsigned);
 extern void bench_retained_material_mask(HRESULT (*)(IDirect3DDevice9 *));
@@ -34,6 +38,13 @@ static unsigned persistent_hits,persistent_misses;
 static unsigned preserve_lifecycle;
 static unsigned restore_group_state;
 static unsigned advancing_clock;
+static unsigned state_filter_mode;
+static void filter_frame(int optimized)
+{
+    /* A frame boundary performs unobserved native state writes/restoration.
+     * No mirror entries survive it, including when returning to baseline. */
+    material_fixture_filter(optimized?state_filter_mode:0);
+}
 static void accounting_init(void) {}
 static void check_bulk_accounting(void)
 {
@@ -280,6 +291,25 @@ int main(int argc,char **argv)
         prepare_sample=sample_epoch;
     }
     if(argc>6) {
+        if(!strcmp(argv[6],"state-forward") || !strcmp(argv[6],"state-filter") ||
+           !strcmp(argv[6],"state-filter-bulk")) {
+            REQUIRE(argc==7);
+            state_filter_mode=!strcmp(argv[6],"state-forward")?1:2;
+            advancing_clock=1;
+            preserve_lifecycle=1;
+            dispatch_only=1;
+            dispatch_bulk_enabled=!strcmp(argv[6],"state-filter-bulk");
+            cached_regular=cached_extra=NULL;
+            validate_retained=material_fixture_filter_check;
+            validate_markers=1;
+            dispatch_scope_begin=bench_scope_bulk_begin;
+            dispatch_scope_end=bench_scope_bulk_end;
+            validate_accounting=check_bulk_accounting;
+            frame_mode=filter_frame;
+            comparison_name=argv[6];
+            printf("STATE FILTER MODE: %u, bulk=%d; real effect lifecycle, advancing clock, per-group and per-frame mirror invalidation\n",
+                   state_filter_mode,dispatch_bulk_enabled);
+        } else {
         advancing_clock=!strcmp(argv[6],"lifecycle-bulk-clock") || !strcmp(argv[6],"lifecycle-bulk-state-clock");
         REQUIRE(argc==7 && (advancing_clock || !strcmp(argv[6],"lifecycle") || !strcmp(argv[6],"lifecycle-markers") || !strcmp(argv[6],"lifecycle-bulk-markers") || !strcmp(argv[6],"lifecycle-bulk-only") || !strcmp(argv[6],"lifecycle-bulk-state")));
         preserve_lifecycle=1;
@@ -311,9 +341,17 @@ int main(int argc,char **argv)
             validate_accounting=check_bulk_accounting;
             puts("BULK ONLY: original effect/leader path each draw, aggregate accounting after second member; no retained cache");
         }
+        }
     }
     if(cached_regular) printf("PERSISTENT material cache, %u percent selected groups alternate inputs each pair\n",persistent_churn);
     int result=retained_benchmark(argc,argv);
     if(cached_regular) printf("PERSISTENT hits=%u misses=%u (includes validation/warmup)\n",persistent_hits,persistent_misses);
+    if(state_filter_mode) {
+        unsigned long long calls,sent;
+        bench_filter_counts(&calls,&sent);
+        printf("STATE FILTER TOTAL: %llu/%llu effect device calls forwarded (validation and warmup included)\n",sent,calls);
+        material_fixture_filter(0);
+    }
+    bench_filter_clear();
     return result;
 }

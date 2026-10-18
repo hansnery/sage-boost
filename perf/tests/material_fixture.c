@@ -3,28 +3,52 @@
 #define main unused_shadow_fixture_main
 #include "shadow_fx/shadow_fx.c"
 #undef main
+#include "effect_filter_bench.h"
 
 #define REQUIRE(c) do { if(!(c)) { fprintf(stderr,"material fixture refused %s:%d: %s\n",__FILE__,__LINE__,#c); exit(1); } } while(0)
 #define HR(c) REQUIRE(SUCCEEDED(c))
 #define F(m,...) FXCALL(effect,m,##__VA_ARGS__)
-static ID3DXEffect *effect;
+typedef struct {
+    ID3DXEffect *instance;
+    D3DXHANDLE tech,bones,opacity,diffuse,texture,clock,block;
+    D3DXHANDLE inputs_[64],key_handles_[64];
+    unsigned input_bytes_[64],input_count_,key_bytes_[64],key_count_,key_texture_[64];
+    unsigned char input_values_[64][4096];
+} material_context;
+static material_context contexts[2],*current=&contexts[0];
+#define effect (current->instance)
+#define technique (current->tech)
+#define bones_handle (current->bones)
+#define opacity_handle (current->opacity)
+#define diffuse_handle (current->diffuse)
+#define texture_handle (current->texture)
+#define clock_handle (current->clock)
+#define material_block (current->block)
+#define inputs (current->inputs_)
+#define input_bytes (current->input_bytes_)
+#define input_count (current->input_count_)
+#define input_values (current->input_values_)
+#define key_handles (current->key_handles_)
+#define key_bytes (current->key_bytes_)
+#define key_count (current->key_count_)
+#define key_texture (current->key_texture_)
 static IDirect3DTexture9 *textures[2];
-static D3DXHANDLE technique, bones_handle, opacity_handle, diffuse_handle, texture_handle;
 static unsigned char rs_mask[256], sampler_mask[16][14], tss_mask[8][33], texture_mask[16];
-static D3DXHANDLE inputs[64];
-static unsigned input_bytes[64], input_count;
-static unsigned char input_values[64][4096];
-static D3DXHANDLE material_block;
 static unsigned epoch;
 static unsigned churn=100;
-static D3DXHANDLE key_handles[64];
-static unsigned key_bytes[64],key_count,key_texture[64];
 static IDirect3DDevice9 *material_device;
 static unsigned verify_end,verified_ends,changed_end_states;
 static unsigned clock_override;
 static float clock_value;
-static D3DXHANDLE clock_handle;
 static DWORD entry_render_states[256];
+static unsigned filter_mode;
+
+void material_fixture_filter(unsigned mode)
+{
+    filter_mode=mode;
+    bench_filter_mode(mode);
+    current=&contexts[mode?1:0];
+}
 
 void material_fixture_verify_end(unsigned enabled)
 {
@@ -151,6 +175,7 @@ void material_fixture_open(void)
     UINT passes=0;
     if(verify_end) for(unsigned i=0;i<256;i++) if(rs_mask[i])
         HR(IDirect3DDevice9_GetRenderState(material_device,i,&entry_render_states[i]));
+    if(filter_mode) HR(bench_filter_begin());
     HR(F(Begin,&passes,6)); REQUIRE(passes==1);
 }
 void material_fixture_close(void)
@@ -161,6 +186,7 @@ void material_fixture_close(void)
         changed_end_states+=state!=entry_render_states[i];
     }
     HR(F(End));
+    if(filter_mode) HR(bench_filter_end());
     if(verify_end) {
         for(unsigned i=0;i<256;i++) if(rs_mask[i]) {
             HR(IDirect3DDevice9_GetRenderState(material_device,i,&state));
@@ -249,6 +275,114 @@ void material_fixture_clock_probe(void)
     printf("CLOCK KEY: %u clock-dependent fields; each changed value invalidates the exact key\n",clocks);
 }
 
+static unsigned filter_snapshot(unsigned *out)
+{
+    IDirect3DVertexShader9 *v=NULL;
+    IDirect3DPixelShader9 *p=NULL;
+    HR(IDirect3DDevice9_GetVertexShader(material_device,&v));
+    HR(IDirect3DDevice9_GetPixelShader(material_device,&p));
+    /* Independently created effects can own distinct COM shader objects.
+     * Compare their exact code hashes, never serialize their bytecode. */
+    unsigned char code[32768]; UINT bytes=sizeof code;
+    out[0]=out[1]=0;
+    if(v) {
+        HR(IDirect3DVertexShader9_GetFunction(v,NULL,&bytes)); REQUIRE(bytes<=sizeof code);
+        HR(IDirect3DVertexShader9_GetFunction(v,code,&bytes));
+        out[0]=fnv1a(code,bytes);
+    }
+    bytes=sizeof code;
+    if(p) {
+        HR(IDirect3DPixelShader9_GetFunction(p,NULL,&bytes)); REQUIRE(bytes<=sizeof code);
+        HR(IDirect3DPixelShader9_GetFunction(p,code,&bytes));
+        out[1]=fnv1a(code,bytes);
+    }
+    if(v) IDirect3DVertexShader9_Release(v);
+    if(p) IDirect3DPixelShader9_Release(p);
+    HR(IDirect3DDevice9_GetVertexShaderConstantF(material_device,0,(float*)(out+2),256));
+    HR(IDirect3DDevice9_GetPixelShaderConstantF(material_device,0,(float*)(out+1026),32));
+    return 1154+material_fixture_state(material_device,out+1154,2048-1154);
+}
+
+void material_fixture_filter_check(void)
+{
+    IDirect3DStateBlock9 *entry=NULL;
+    static unsigned during[2][8][2048],after[2][8][2048];
+    static const unsigned groups[8]={0,0,1,1,0,2,2,0};
+    unsigned char bones[8192]; D3DXPARAMETER_DESC bone_desc;
+    unsigned checks=0;
+    unsigned long long calls0,sent0,calls1,sent1;
+    HR(IDirect3DDevice9_CreateStateBlock(material_device,D3DSBT_ALL,&entry));
+    HR(IDirect3DStateBlock9_Capture(entry));
+    bench_filter_counts(&calls0,&sent0);
+    material_fixture_verify_end(1);
+    material_fixture_filter(0);
+    HR(F(GetParameterDesc,bones_handle,&bone_desc)); REQUIRE(bone_desc.Bytes<=sizeof bones);
+    HR(F(GetValue,bones_handle,bones,bone_desc.Bytes));
+    for(unsigned mode=1;mode<=2;mode++) for(unsigned phase=0;phase<2;phase++) {
+        unsigned n[2][8],m[2][8];
+        material_fixture_epoch(phase);
+        material_fixture_clock(1000+phase*33);
+        for(unsigned alternative=0;alternative<2;alternative++) {
+            HR(IDirect3DStateBlock9_Apply(entry));
+            material_fixture_filter(alternative?mode:0);
+            HR(F(SetRawValue,bones_handle,bones,0,bone_desc.Bytes));
+            for(unsigned step=0;step<8;step++) {
+                material_fixture_begin(groups[step]);
+                HR(F(CommitChanges));
+                HR(F(CommitChanges));
+                n[alternative][step]=filter_snapshot(during[alternative][step]);
+                material_fixture_end();
+                m[alternative][step]=filter_snapshot(after[alternative][step]);
+            }
+        }
+        for(unsigned step=0;step<8;step++) {
+            for(unsigned word=0;word<n[0][step];word++) if(during[0][step][word]!=during[1][step][word]) {
+                printf("STATE FILTER mismatch: mode=%u phase=%u step=%u in-pass word=%u\n",mode,phase,step,word);
+                break;
+            }
+            for(unsigned word=0;word<m[0][step];word++) if(after[0][step][word]!=after[1][step][word]) {
+                printf("STATE FILTER mismatch: mode=%u phase=%u step=%u post-End word=%u\n",mode,phase,step,word);
+                break;
+            }
+            REQUIRE(n[0][step]==n[1][step] && !memcmp(during[0][step],during[1][step],n[0][step]*4));
+            REQUIRE(m[0][step]==m[1][step] && !memcmp(after[0][step],after[1][step],m[0][step]*4));
+            checks++;
+        }
+    }
+    /* An unobserved original draw invalidates a device mirror. Prove this
+     * control fails without invalidation, then verify the supported path. */
+    HR(IDirect3DStateBlock9_Apply(entry));
+    material_fixture_filter(2);
+    material_fixture_begin(0);
+    IDirect3DBaseTexture9 *expected=NULL,*actual=NULL;
+    unsigned slot=0;
+    for(;slot<16;slot++) {
+        HR(IDirect3DDevice9_GetTexture(material_device,slot,&expected));
+        if(expected) break;
+    }
+    REQUIRE(expected && slot<16);
+    HR(IDirect3DDevice9_SetTexture(material_device,slot,NULL));
+    ID3DXEffectStateManager *manager=bench_filter_manager();
+    HR(manager->lpVtbl->SetTexture(manager,slot,expected));
+    HR(IDirect3DDevice9_GetTexture(material_device,slot,&actual));
+    REQUIRE(actual!=expected); /* Deliberately stale mirror must be detected. */
+    if(actual) IDirect3DBaseTexture9_Release(actual);
+    bench_filter_invalidate();
+    HR(manager->lpVtbl->SetTexture(manager,slot,expected));
+    HR(IDirect3DDevice9_GetTexture(material_device,slot,&actual));
+    REQUIRE(actual==expected);
+    if(actual) IDirect3DBaseTexture9_Release(actual);
+    IDirect3DBaseTexture9_Release(expected);
+    material_fixture_end();
+    material_fixture_filter(0);
+    HR(IDirect3DStateBlock9_Apply(entry));
+    IDirect3DStateBlock9_Release(entry);
+    bench_filter_counts(&calls1,&sent1);
+    REQUIRE(calls1>calls0 && sent1>sent0 && calls1-calls0>sent1-sent0);
+    printf("STATE FILTER: %u original/manager in-pass and post-End comparisons; external-write negative control detected; invalidation recovered; %llu/%llu calls forwarded\n",
+           checks,sent1-sent0,calls1-calls0);
+}
+
 void material_fixture_init(IDirect3DDevice9 *dev,const void *code,unsigned size,int shadow,const char *runtime)
 {
     create_effect_fn create;
@@ -260,6 +394,17 @@ void material_fixture_init(IDirect3DDevice9 *dev,const void *code,unsigned size,
     HMODULE dll=LoadLibraryA(runtime);
     material_device=dev;
     create=(create_effect_fn)(void*)GetProcAddress(dll,"D3DXCreateEffect"); REQUIRE(create);
+    g_rec=calloc(REC_MAX,4); REQUIRE(g_rec);
+    for(unsigned i=0;i<2;i++) {
+        D3DLOCKED_RECT locked;
+        HR(IDirect3DDevice9_CreateTexture(dev,8,8,1,0,D3DFMT_A8R8G8B8,D3DPOOL_MANAGED,&textures[i],NULL));
+        HR(IDirect3DTexture9_LockRect(textures[i],0,&locked,NULL,0));
+        for(unsigned y=0;y<8;y++) for(unsigned x=0;x<8;x++)
+            ((unsigned*)((char*)locked.pBits+y*locked.Pitch))[x]=((x+y)%3?0xff000000u:0) | (i?0x00e0c0a0u:0x0080e0c0u);
+        HR(IDirect3DTexture9_UnlockRect(textures[i],0));
+    }
+    for(unsigned instance=0;instance<2;instance++) {
+    current=&contexts[instance];
     HR(create(dev,code,size,NULL,NULL,0,NULL,&effect,NULL));
     technique=F(GetTechniqueByName,shadow?"_CreateShadowMap":"Default"); REQUIRE(technique);
     integer("NumJointsPerVertex",1); integer("NumTextures",1); integer("NumShadows",0);
@@ -269,14 +414,6 @@ void material_fixture_init(IDirect3DDevice9 *dev,const void *code,unsigned size,
     value("AmbientLightColor",gray,sizeof gray); value("ColorDiffuse",white,12);
     value("ColorAmbient",white,12); scalar("Opacity",1); scalar("OpacityOverride",1);
     value("TexCoordTransform_0",texcoord,sizeof texcoord);
-    for(unsigned i=0;i<2;i++) {
-        D3DLOCKED_RECT locked;
-        HR(IDirect3DDevice9_CreateTexture(dev,8,8,1,0,D3DFMT_A8R8G8B8,D3DPOOL_MANAGED,&textures[i],NULL));
-        HR(IDirect3DTexture9_LockRect(textures[i],0,&locked,NULL,0));
-        for(unsigned y=0;y<8;y++) for(unsigned x=0;x<8;x++)
-            ((unsigned*)((char*)locked.pBits+y*locked.Pitch))[x]=((x+y)%3?0xff000000u:0) | (i?0x00e0c0a0u:0x0080e0c0u);
-        HR(IDirect3DTexture9_UnlockRect(textures[i],0));
-    }
     bones_handle=F(GetParameterByName,NULL,"WorldBones");
     opacity_handle=F(GetParameterByName,NULL,"OpacityOverride");
     diffuse_handle=F(GetParameterByName,NULL,"ColorDiffuse");
@@ -311,13 +448,15 @@ void material_fixture_init(IDirect3DDevice9 *dev,const void *code,unsigned size,
         key_handles[key_count]=h; key_texture[key_count]=p.Type==D3DXPT_TEXTURE;
         key_bytes[key_count++]=p.Type==D3DXPT_TEXTURE?sizeof(void*):p.Bytes;
     }
-    g_rec=calloc(REC_MAX,4); REQUIRE(g_rec);
     HR(F(SetStateManager,(ID3DXEffectStateManager*)&g_rm));
     for(unsigned i=0;i<8;i++) {
         g_rec_n=0; g_rec_overflow=0;
         material_fixture_begin(i); material_fixture_end(); collect_mask();
     }
-    HR(F(SetStateManager,NULL));
+    HR(F(SetStateManager,instance?bench_filter_manager():NULL));
+    }
+    current=&contexts[0];
+    bench_filter_init(dev,rs_mask,texture_mask);
     printf("Material fixture: D3DX27, %s, %u fixed input setters/group, fresh palette on each leader\n",shadow?"shadow":"lit",input_count);
     {
         unsigned states=0,samplers=0,stages=0,tex=0,bytes=0;

@@ -21,6 +21,22 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Effect-state filter follow-up (2026-10-18)
+
+- A [device-write filter screen](specs/2026-10-18-effect-state-filter-screen.md)
+  keeps source setters and the whole D3DX lifecycle, including advancing
+  Time. It matches texture/render-state restoration with a custom block;
+  separate original/filtered effects avoid manager-switch history effects.
+- Final native/DXVK image, state and count controls pass, including repeated
+  identical materials and an external-write negative control. The standalone
+  filter regresses DXVK completion by 0.48-0.50 ms per modeled pair; with
+  aggregate mesh dispatch, two repeats save only 1.47-2.11 ms. Not promoted.
+- Preserve 336 final samples and 294 exploratory/excluded samples separately.
+  No production edits, deployment or gameplay test; 60 FPS remains unachieved.
+- Full plugin suite and earlier clock/state material-cache regression pass.
+  Source/log/sample hashes verify; built beta.3, installed 0.9.10 and installed
+  INI hashes remain unchanged.
+
 ## Material-cache clock/state follow-up (2026-10-18)
 
 - [Stronger clock and per-group state controls](specs/2026-10-18-material-cache-boundary-clock.md)
