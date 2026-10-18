@@ -3,7 +3,7 @@
 Local diagnostic beta for the approved 60 visual FPS investigation, with
 shadows also at 60. It retains beta.1 rendering and scheduling decisions.
 This build does not claim a performance gain or an achieved 60 FPS target.
-No configuration keys or defaults changed. Installed beta.1 remains in place.
+No configuration keys or defaults changed. Installed locally at the user's request on 2026-10-17.
 
 ## Measurements
 
@@ -59,7 +59,9 @@ already validated instancing group, subject to benchmarking and safety proof.
 
 ## Installation and rollback
 
-This build is not installed or published. A local package contains only the
+Build commit `cad786f` is pushed on `codex/perf-beta` and installed locally;
+it is not publicly released. Previous binary, INI and logs are backed up in
+`%TEMP%/bfme2perf-0.9.11-beta.1-installed-20261017-173715`. A local package contains only the
 ASI and the unchanged template INI. Existing users keep their own INI.
 Back up the installed ASI, INI, log and CSVs before replacement; keep exactly
 one ASI in `mss`. Restore the backed-up ASI to roll back. Stable branches and

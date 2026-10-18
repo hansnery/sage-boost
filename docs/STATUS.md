@@ -14,8 +14,8 @@ files before relying on it.
 - Explicit preference: keep shadows at 60 too; no shadow-cadence shortcut.
 - Approved next-stage design:
   [60 FPS with full-rate shadows](specs/2026-10-17-60fps-full-shadows-design.md).
-- Detailed timings currently exclude extra frames. Close that measurement
-  gap and audit full-pass material/object setup before choosing the next
+- Beta.2 adds extra-frame timings and the full-pass setup audit is complete.
+  Capture the same save with these measurements before choosing the next
   optimization. The combined CPU budget needs roughly 8 ms of savings in
   the captured heavy scene. This is a target, not an achieved result.
 
@@ -25,10 +25,19 @@ files before relying on it.
   reflection, views and UI timings, with safety-failure invalidation; completed
   flip-enabled End_Scene call counts and bounded gap percentiles/histogram.
 - Full plugin tests and all 59 shader comparisons on both native D3D9
-  and DXVK pass; final buffer-size regression checks pass. Committed locally,
-  with no new push, deployment, tag or publication.
+  and DXVK pass; final buffer-size regression checks pass. Build commit
+  `cad786f` pushed to origin/codex/perf-beta and installed on 2026-10-17.
+  No tag or public release.
 - No rendering/cadence/quality changes. Full-rate shadows remain the target.
-  60 FPS has not been achieved or claimed. Installed beta.1 is unchanged.
+  60 FPS has not been achieved or claimed. Installed beta.2 ASI SHA-256:
+  `05d9b381feb2b7ddc0001466ea8c23333e33ce06679786ca2bd1b4c87de94799`.
+- Prior beta.1 ASI, INI, log and both CSVs backed up to
+  `%TEMP%/bfme2perf-0.9.11-beta.1-installed-20261017-173715`.
+  Installed INI hash verified unchanged; no game launched.
+- Standing user authorization (2026-10-17): when committing this ongoing
+  development work, push the development branch and install tested plugin
+  builds without asking again. Continue backups and INI preservation;
+  this does not request tags, stable promotion or public release.
 - [Release notes and test procedure](releases/perf-0.9.11-beta.2.md),
   [full-pass audit](specs/2026-10-17-full-pass-audit.md).
 - Next candidate: benchmark repeated per-mesh dispatch within an already
