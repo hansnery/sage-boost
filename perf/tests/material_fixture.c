@@ -21,6 +21,9 @@ static D3DXHANDLE key_handles[64];
 static unsigned key_bytes[64],key_count,key_texture[64];
 static IDirect3DDevice9 *material_device;
 static unsigned verify_end,verified_ends,changed_end_states;
+static unsigned clock_override;
+static float clock_value;
+static D3DXHANDLE clock_handle;
 static DWORD entry_render_states[256];
 
 void material_fixture_verify_end(unsigned enabled)
@@ -40,6 +43,10 @@ void material_fixture_end_counts(unsigned *ends,unsigned *changed)
 
 void material_fixture_epoch(unsigned value) { epoch=value; }
 void material_fixture_churn(unsigned value) { REQUIRE(value<=100); churn=value; }
+void material_fixture_clock(unsigned ms)
+{
+    REQUIRE(clock_handle); clock_override=1; clock_value=ms*0.001f;
+}
 
 static void value(const char *name,const void *v,unsigned bytes)
 {
@@ -135,6 +142,7 @@ static void prepare(unsigned group)
     HR(F(SetFloat,opacity_handle,opacity));
     HR(F(SetValue,diffuse_handle,diffuse,sizeof diffuse));
     HR(F(SetTexture,texture_handle,(IDirect3DBaseTexture9 *)textures[(group+delta)&1]));
+    if(clock_override) HR(F(SetFloat,clock_handle,clock_value));
 }
 /* A retained hit keeps the real Begin/End pair but issues its drawing
  * directly. It never sends CommitChanges/EndPass without a BeginPass. */
@@ -173,10 +181,9 @@ void material_fixture_bones(const void *bones,unsigned bytes)
     HR(F(SetRawValue,bones_handle,bones,0,bytes)); HR(F(CommitChanges));
 }
 
-unsigned material_fixture_key(unsigned group,unsigned char *out,unsigned capacity)
+static unsigned read_key(unsigned char *out,unsigned capacity)
 {
     unsigned n=0;
-    prepare(group);
     for(unsigned i=0;i<key_count;i++) {
         REQUIRE(key_bytes[i]<=capacity-n);
         if(key_texture[i]) {
@@ -188,6 +195,58 @@ unsigned material_fixture_key(unsigned group,unsigned char *out,unsigned capacit
         n+=key_bytes[i];
     }
     return n;
+}
+
+unsigned material_fixture_key(unsigned group,unsigned char *out,unsigned capacity)
+{
+    prepare(group);
+    return read_key(out,capacity);
+}
+
+void material_fixture_clock_probe(void)
+{
+    unsigned char before[8192],after[8192];
+    unsigned clocks=0;
+    prepare(0);
+    for(unsigned i=0;i<key_count;i++) {
+        D3DXPARAMETER_DESC p;
+        const char *address=NULL;
+        D3DXHANDLE annotation;
+        HR(F(GetParameterDesc,key_handles[i],&p));
+        annotation=F(GetAnnotationByName,key_handles[i],"SasBindAddress");
+        if(annotation) HR(F(GetString,annotation,&address));
+        if(strcmp(p.Name,"Time") && (!p.Semantic || _stricmp(p.Semantic,"Time")) &&
+           (!address || !contains_i(address,"Sas.Time."))) continue;
+        REQUIRE(p.Type==D3DXPT_FLOAT && p.Bytes==sizeof(float));
+        float old;
+        HR(F(GetFloat,key_handles[i],&old));
+        unsigned n=read_key(before,sizeof before);
+        HR(F(SetFloat,key_handles[i],old+123.0f));
+        REQUIRE(read_key(after,sizeof after)==n && memcmp(before,after,n));
+        HR(F(SetFloat,key_handles[i],old));
+        REQUIRE(read_key(after,sizeof after)==n && !memcmp(before,after,n));
+        /* Distinguish a changed parameter key from changed device commands
+         * in this fixed material. The recorder does not draw or persist EA
+         * shader code. Equality here is not a general Time-omission proof. */
+        unsigned *commands=malloc(REC_MAX*sizeof(unsigned)); REQUIRE(commands);
+        HR(F(SetStateManager,(ID3DXEffectStateManager*)&g_rm));
+        g_rec_n=0; g_rec_overflow=0;
+        material_fixture_start(); HR(F(CommitChanges)); material_fixture_end();
+        REQUIRE(!g_rec_overflow);
+        unsigned command_words=g_rec_n;
+        memcpy(commands,g_rec,command_words*sizeof(unsigned));
+        HR(F(SetFloat,key_handles[i],old+123.0f));
+        g_rec_n=0; g_rec_overflow=0;
+        material_fixture_start(); HR(F(CommitChanges)); material_fixture_end();
+        REQUIRE(!g_rec_overflow);
+        unsigned changed=g_rec_n!=command_words;
+        for(unsigned k=0;k<g_rec_n && k<command_words;k++) changed+=commands[k]!=g_rec[k];
+        HR(F(SetFloat,key_handles[i],old));
+        HR(F(SetStateManager,NULL)); free(commands);
+        printf("CLOCK COMMANDS: %u/%u recorded words, %u differences for fixed fixture inputs\n",command_words,g_rec_n,changed);
+        clocks++;
+    }
+    printf("CLOCK KEY: %u clock-dependent fields; each changed value invalidates the exact key\n",clocks);
 }
 
 void material_fixture_init(IDirect3DDevice9 *dev,const void *code,unsigned size,int shadow,const char *runtime)
@@ -222,6 +281,7 @@ void material_fixture_init(IDirect3DDevice9 *dev,const void *code,unsigned size,
     opacity_handle=F(GetParameterByName,NULL,"OpacityOverride");
     diffuse_handle=F(GetParameterByName,NULL,"ColorDiffuse");
     texture_handle=F(GetParameterByName,NULL,"Texture_0");
+    clock_handle=F(GetParameterByName,NULL,"Time");
     REQUIRE(bones_handle && opacity_handle && diffuse_handle && texture_handle);
     HR(F(GetDesc,&desc));
     HR(F(BeginParameterBlock));

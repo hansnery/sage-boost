@@ -1,0 +1,52 @@
+{
+  "parent_commit": "801fb95",
+  "runs": [
+    {
+      "log": "material-clock-10-1.txt",
+      "sha256": "6074f9825e4545a7c85364ba1d33c5da48e8d2fb1070be8ece9df7bbac2b008b",
+      "samples": 84,
+      "qualification": "clean",
+      "log_mtime_utc": "2026-10-18T07:06:13.491404+00:00"
+    },
+    {
+      "log": "material-clock-10-2.txt",
+      "sha256": "69215acfbee647272aa3e02035d53406f140335478873c4c99464b599aed1691",
+      "samples": 84,
+      "qualification": "clean",
+      "log_mtime_utc": "2026-10-18T07:08:06.922656+00:00"
+    },
+    {
+      "log": "material-clock-state-10-1.txt",
+      "sha256": "20cfb12ac44d1fc852677b7aec0b82d335a7453bc1e1be0898c8bfc6cb7fa7fd",
+      "samples": 84,
+      "qualification": "clean",
+      "log_mtime_utc": "2026-10-18T07:09:37.112066+00:00"
+    },
+    {
+      "log": "material-clock-state-10-2.txt",
+      "sha256": "576771bbaa38045e1fe7a55900ac505b5fd34e29c1b46cb5aa4d4b78dbe7a9a1",
+      "samples": 84,
+      "qualification": "clean",
+      "log_mtime_utc": "2026-10-18T07:13:26.641047+00:00"
+    }
+  ],
+  "sources": {
+    "perf/tests/bench_material_queue.c": "c339869e4ef8cd7198e5dd110e88f2c7a64c4ee755dac27d279e4c5393383eb0",
+    "perf/tests/bench_retained.c": "9dbb257b75f56d6e2e422c2c6fa95ddeaa4cfc7d12e446ab0c1778c1b9bf11e7",
+    "perf/tests/material_fixture.c": "db35e8b84f6b4c14b4b76bbf7acadaff5ad344eb6f546640989bcda6b4837e73",
+    "perf/tests/inst_retained_engine.c": "b1d3d466ca49a621626607ec32c0223d18bd6b6fa0cadce6fb2b9bea36481135",
+    "perf/tests/timing_bulk_bench.c": "b2651023195165c67dc6b807e00ea45bc2fc7be08bfdfb30133417b19a39eda3",
+    "perf/Makefile": "7c9afd1afaffce02ef051be7f9a66aa03bbd3df495c7e68af5ae5f8a2514f92a"
+  },
+  "executable_sha256": "326a33b043eb0cc7be9bf18246f1e27d6b7f48e5ee1cf4b39ab92c2b5b9a5455",
+  "notes": [
+    "These hashes describe all four advancing-clock runs; prior fixed-clock boundary runs retain their original metadata in 2026-10-17-material-boundary-runs.json.",
+    "Every regular/extra pair advances synthetic Time by 33 ms; Time is held within that pair. Both A/B paths receive identical times. No game is run or modified.",
+    "Exact keys contain Time in both fixture techniques. Correctness checks require 288 regular misses and 288 following extra hits after a clock change.",
+    "The clock-only mode retains the prior whole-frame restoration strategy. The state-clock mode captures/restores the complete fixture touched-state mask per replay hit, including all vertex/pixel float constants.",
+    "Exhaustive boundary reads and deliberate binding corruption are correctness-only and disabled before measured warmups. Capture/restore remains timed.",
+    "All runs passed process guards. Lit and shadow are separate full workloads, not additive. No presentation or gameplay FPS measurement.",
+    "Native callbacks, engine-side state caches, lifetimes and GPU failure handling remain outside this fixture.",
+    "Log timestamps are modification times, not exact run start times."
+  ]
+}

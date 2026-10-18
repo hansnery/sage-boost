@@ -12,6 +12,10 @@ static unsigned replay_draws, replay_meshes;
 static HRESULT (*record_material_mask)(IDirect3DDevice9 *);
 static void (*replay_marker_begin)(void),(*replay_marker_end)(void);
 static int (*replay_bulk_begin)(void),(*replay_bulk_end)(unsigned);
+static IDirect3DStateBlock9 *boundary;
+static unsigned (*boundary_material_state)(IDirect3DDevice9 *,unsigned *,unsigned);
+static unsigned boundary_verify,boundary_open,boundary_size,boundary_checks,boundary_changed;
+static unsigned boundary_before[2048];
 
 void bench_retained_bulk_markers(int (*begin)(void),int (*end)(unsigned))
 {
@@ -39,7 +43,7 @@ void bench_retained_counts(unsigned *draws, unsigned *meshes)
 
 /* Fixture-specific state mask, NOT an inferred mask for an arbitrary game
  * material. It includes every state the synthetic workload changes. */
-static HRESULT create_narrow(IDirect3DDevice9 *dev, IDirect3DStateBlock9 **out)
+static HRESULT create_narrow(IDirect3DDevice9 *dev, IDirect3DStateBlock9 **out,int whole_palette)
 {
     IDirect3DVertexShader9 *vs=0;
     IDirect3DPixelShader9 *ps=0;
@@ -82,8 +86,11 @@ static HRESULT create_narrow(IDirect3DDevice9 *dev, IDirect3DStateBlock9 **out)
     SET(IDirect3DDevice9_SetIndices(dev,ib));
     /* This fixture uses quaternion skinned vs_2_0 and ps_2_0. Every bone
      * is uploaded afresh; only non-palette vertex registers are retained. */
-    if(bone_first) SET(IDirect3DDevice9_SetVertexShaderConstantF(dev,0,vc,bone_first));
-    if(bone_end<256) SET(IDirect3DDevice9_SetVertexShaderConstantF(dev,bone_end,vc+bone_end*4,256-bone_end));
+    if(whole_palette) SET(IDirect3DDevice9_SetVertexShaderConstantF(dev,0,vc,256));
+    else {
+        if(bone_first) SET(IDirect3DDevice9_SetVertexShaderConstantF(dev,0,vc,bone_first));
+        if(bone_end<256) SET(IDirect3DDevice9_SetVertexShaderConstantF(dev,bone_end,vc+bone_end*4,256-bone_end));
+    }
     SET(IDirect3DDevice9_SetPixelShaderConstantF(dev,0,pc,32));
     for(i=0;i<2;i++) {
         SET(IDirect3DDevice9_SetStreamSource(dev,i,vb[i],offset[i],stride[i]));
@@ -111,13 +118,134 @@ int bench_retain(unsigned index)
         g.capture_reason || !g.dev || !g.decl || !g.cap)
         return 0;
     if (!blocks[index])
-        hr = narrow ? create_narrow((IDirect3DDevice9 *)g.dev,&blocks[index]) :
+        hr = narrow ? create_narrow((IDirect3DDevice9 *)g.dev,&blocks[index],0) :
              IDirect3DDevice9_CreateStateBlock((IDirect3DDevice9 *)g.dev,
                                               D3DSBT_ALL, &blocks[index]);
     if (FAILED(hr)) return 0;
     if (FAILED(IDirect3DStateBlock9_Capture(blocks[index]))) return 0;
     retained[index] = g;
     return 1;
+}
+
+/* A stronger fixture boundary: capture all device state this replay can
+ * touch, and restore it before returning to arbitrary native work. The
+ * mask is still fixture-specific, not a runtime state-discovery policy. */
+void bench_retained_boundary_config(unsigned verify,
+        unsigned (*material_state)(IDirect3DDevice9 *,unsigned *,unsigned))
+{
+    boundary_verify=verify;
+    boundary_material_state=material_state;
+}
+
+static unsigned boundary_snapshot(IDirect3DDevice9 *dev,unsigned *out)
+{
+    IDirect3DVertexShader9 *vs=NULL;
+    IDirect3DPixelShader9 *ps=NULL;
+    IDirect3DVertexDeclaration9 *decl=NULL;
+    IDirect3DIndexBuffer9 *ib=NULL;
+    unsigned n=0;
+    if(FAILED(IDirect3DDevice9_GetVertexShader(dev,&vs))) return 0;
+    out[n++]=(unsigned)vs; if(vs) IDirect3DVertexShader9_Release(vs);
+    if(FAILED(IDirect3DDevice9_GetPixelShader(dev,&ps))) return 0;
+    out[n++]=(unsigned)ps; if(ps) IDirect3DPixelShader9_Release(ps);
+    if(FAILED(IDirect3DDevice9_GetVertexDeclaration(dev,&decl))) return 0;
+    out[n++]=(unsigned)decl; if(decl) IDirect3DVertexDeclaration9_Release(decl);
+    if(FAILED(IDirect3DDevice9_GetIndices(dev,&ib))) return 0;
+    out[n++]=(unsigned)ib; if(ib) IDirect3DIndexBuffer9_Release(ib);
+    for(unsigned stream=0;stream<2;stream++) {
+        IDirect3DVertexBuffer9 *vb=NULL;
+        if(FAILED(IDirect3DDevice9_GetStreamSource(dev,stream,&vb,&out[n+1],&out[n+2]))) return 0;
+        out[n]=(unsigned)vb; if(vb) IDirect3DVertexBuffer9_Release(vb); n+=3;
+        if(FAILED(IDirect3DDevice9_GetStreamSourceFreq(dev,stream,&out[n++]))) return 0;
+    }
+    if(FAILED(IDirect3DDevice9_GetVertexShaderConstantF(dev,0,(float*)(out+n),256))) return 0;
+    n+=1024;
+    if(FAILED(IDirect3DDevice9_GetPixelShaderConstantF(dev,0,(float*)(out+n),32))) return 0;
+    n+=128;
+    if(boundary_material_state) {
+        unsigned size=boundary_material_state(dev,out+n,2048-n);
+        if(!size || size>2048-n) return 0;
+        n+=size;
+    }
+    return n;
+}
+
+int bench_retained_boundary_begin(unsigned index)
+{
+    IDirect3DDevice9 *dev;
+    if(boundary_open || index>=RETAINED_GROUPS || !blocks[index]) return 0;
+    dev=(IDirect3DDevice9*)retained[index].dev;
+    if(!boundary) {
+        group saved=g; HRESULT hr;
+        g=retained[index]; hr=create_narrow(dev,&boundary,1); g=saved;
+        if(FAILED(hr)) return 0;
+    }
+    if(boundary_verify) {
+        boundary_size=boundary_snapshot(dev,boundary_before);
+        if(!boundary_size) return 0;
+    }
+    if(FAILED(IDirect3DStateBlock9_Capture(boundary))) return 0;
+    boundary_open=index+1;
+    return 1;
+}
+
+static int boundary_end(unsigned restore)
+{
+    unsigned after[2048],n,changed=0;
+    IDirect3DDevice9 *dev;
+    if(!boundary_open) return 0;
+    dev=(IDirect3DDevice9*)retained[boundary_open-1].dev;
+    boundary_open=0;
+    if(boundary_verify) {
+        n=boundary_snapshot(dev,after);
+        if(n!=boundary_size) return 0;
+        for(unsigned i=0;i<n;i++) changed|=after[i]!=boundary_before[i];
+        boundary_changed+=changed;
+    }
+    if(restore && FAILED(IDirect3DStateBlock9_Apply(boundary))) return 0;
+    if(boundary_verify) {
+        n=boundary_snapshot(dev,after);
+        if(n!=boundary_size) return 0;
+        for(unsigned i=0;i<n;i++) if(after[i]!=boundary_before[i]) return 0;
+        boundary_checks++;
+    }
+    return 1;
+}
+int bench_retained_boundary_end(void) { return boundary_end(1); }
+
+int bench_retained_boundary_negative(unsigned index)
+{
+    unsigned poison[4]={0x3F345678,0x3F123456,0x3F789ABC,0x3F456789};
+    if(!boundary_verify || !bench_retained_boundary_begin(index)) return 0;
+    IDirect3DDevice9 *dev=(IDirect3DDevice9*)retained[index].dev;
+    if(FAILED(IDirect3DDevice9_SetVertexShaderConstantF(dev,0,(const float*)poison,1))) return 0;
+    int rejected=!boundary_end(0);
+    if(FAILED(IDirect3DStateBlock9_Apply(boundary))) return 0;
+    return rejected;
+}
+int bench_retained_boundary_bindings(unsigned index)
+{
+    unsigned poison[4]={0x3F345678,0x3F123456,0x3F789ABC,0x3F456789};
+    if(!boundary_verify || !bench_retained_boundary_begin(index)) return 0;
+    IDirect3DDevice9 *dev=(IDirect3DDevice9*)retained[index].dev;
+    /* Do not draw this deliberately incompatible state. It makes buffer,
+     * shader and constant restoration observable even when the workload's
+     * groups happen to share the same synthetic VB/IB. */
+    if(FAILED(IDirect3DDevice9_SetVertexShader(dev,NULL)) ||
+       FAILED(IDirect3DDevice9_SetPixelShader(dev,NULL)) ||
+       FAILED(IDirect3DDevice9_SetVertexDeclaration(dev,NULL)) ||
+       FAILED(IDirect3DDevice9_SetIndices(dev,NULL)) ||
+       FAILED(IDirect3DDevice9_SetStreamSource(dev,0,NULL,0,0)) ||
+       FAILED(IDirect3DDevice9_SetStreamSourceFreq(dev,0,PF_STREAM_INDEXED|2)) ||
+       FAILED(IDirect3DDevice9_SetStreamSourceFreq(dev,1,PF_STREAM_INSTANCE|1)) ||
+       FAILED(IDirect3DDevice9_SetVertexShaderConstantF(dev,0,(const float*)poison,1)) ||
+       FAILED(IDirect3DDevice9_SetVertexShaderConstantF(dev,255,(const float*)poison,1)) ||
+       FAILED(IDirect3DDevice9_SetPixelShaderConstantF(dev,31,(const float*)poison,1))) return 0;
+    return boundary_end(1);
+}
+void bench_retained_boundary_counts(unsigned *checks,unsigned *changed)
+{
+    *checks=boundary_checks; *changed=boundary_changed;
 }
 
 /* The fixture owns this entire replay region and restores its entry state
@@ -188,4 +316,6 @@ void bench_retained_clear(void)
         if (blocks[i]) IDirect3DStateBlock9_Release(blocks[i]);
         blocks[i] = 0;
     }
+    if(boundary) IDirect3DStateBlock9_Release(boundary);
+    boundary=NULL; boundary_open=0;
 }

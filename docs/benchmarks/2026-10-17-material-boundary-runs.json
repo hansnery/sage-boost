@@ -1,0 +1,51 @@
+{
+  "parent_commit": "801fb95",
+  "runs": [
+    {
+      "log": "material-boundary-10-1.txt",
+      "sha256": "e9e5447ec4d89720cf2a245d017963a7559a6968ff00c76cf3218814218329e8",
+      "samples": 84,
+      "qualification": "preliminary",
+      "log_mtime_utc": "2026-10-18T06:54:24.448130+00:00"
+    },
+    {
+      "log": "material-boundary-10-2.txt",
+      "sha256": "8c89bbbe5eebe7eb51f7df63803ffa9fb107342f9820c9382bbf5251c6e8f2a9",
+      "samples": 84,
+      "qualification": "clean",
+      "log_mtime_utc": "2026-10-18T06:58:25.832905+00:00"
+    },
+    {
+      "log": "material-boundary-control.txt",
+      "sha256": "f9f5ec52e33cb5c0c0e839491d22b1dcd522546172d7587d1e1ca25a09ef347e",
+      "samples": 84,
+      "qualification": "regression_control",
+      "log_mtime_utc": "2026-10-18T06:58:54.455769+00:00"
+    },
+    {
+      "log": "material-boundary-10-3.txt",
+      "sha256": "7b432bf3cd3d34c040652b974573a63ac73acc528f66aa2df80cd6af8f469c3b",
+      "samples": 84,
+      "qualification": "clean",
+      "log_mtime_utc": "2026-10-18T06:59:22.891393+00:00"
+    }
+  ],
+  "sources": {
+    "perf/tests/bench_material_queue.c": "b3d4f403c39dc254ce56ad0d6cc5923a890f20351e01ef97db9e2aea80b0b745",
+    "perf/tests/bench_retained.c": "9dbb257b75f56d6e2e422c2c6fa95ddeaa4cfc7d12e446ab0c1778c1b9bf11e7",
+    "perf/tests/material_fixture.c": "51bbaf9ec354b34fa9f015651f5218b3322dc0821471395f236f0e9325edfbbf",
+    "perf/tests/inst_retained_engine.c": "b1d3d466ca49a621626607ec32c0223d18bd6b6fa0cadce6fb2b9bea36481135",
+    "perf/tests/timing_bulk_bench.c": "b2651023195165c67dc6b807e00ea45bc2fc7be08bfdfb30133417b19a39eda3",
+    "perf/Makefile": "7c9afd1afaffce02ef051be7f9a66aa03bbd3df495c7e68af5ae5f8a2514f92a"
+  },
+  "executable_sha256": "a7386d95fd0aaf7d365e506e07f260469d546b9e68dfb84bdbc7aba10e471a6c",
+  "notes": [
+    "Executable/source hashes describe runs 2/3 and the regression control; preliminary run 1 binary was rebuilt and its hash is unavailable.",
+    "All runs passed process guard. Runs 2/3 additionally poison shader/buffer/frequency and boundary constant bindings outside timing.",
+    "Every replay hit captures and restores its complete touched-state mask, including all vertex/pixel float constants; per-group exhaustive reads are disabled before measured warmups.",
+    "This is a fixture-specific device-state restoration strategy, not a native engine-cache or source-callback proof.",
+    "10 percent regular-group churn alternates 30 of 288 inputs; following extras may hit. Actual game hit rate is unknown.",
+    "Native lit/shadow and DXVK lit/shadow are separate full workloads, not additive. No presentation or gameplay FPS measurement.",
+    "Log timestamps are modification times, not exact run start times."
+  ]
+}

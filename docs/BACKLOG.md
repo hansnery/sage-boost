@@ -32,10 +32,17 @@ Strike an item through, with the date, when it's done.
 - [x] 2026-10-17: screen aggregate accounting with material reuse; 420 clean
   samples retain mesh counts and measured work. DXVK savings ~3.0-3.5 ms
   per modeled pair; changed interval boundaries documented in
-  `specs/2026-10-17-material-bulk-accounting-screen.md`.
-- [ ] Complete source-callback, cache-lifetime, GPU-failure and engine-state
-  reconciliation proofs for the combined candidate. The native callback
-  and normal group-loop contracts below do not establish a runtime cache.
+  `specs/2026-10-17-material-bulk-accounting-screen.md`. Favorable screening
+  decision superseded by the October 18 clock/state controls below.
+- [x] 2026-10-18: advance Time between regular frames and restore the full
+  fixture touched-state mask per hit. All image/state/count controls pass,
+  but DXVK completion regresses 0.26-0.87 ms per pair. Preserve 672 samples
+  and separate build metadata; see
+  `specs/2026-10-18-material-cache-boundary-clock.md`. No runtime promotion.
+- [ ] Establish meaningful gain for a redesigned candidate with changing
+  inputs and credible state reconciliation before further cache integration.
+  Source callbacks, lifetimes and GPU-failure proofs remain necessary if
+  a future candidate qualifies; the normal group-loop proof is not a cache.
 - [x] 2026-10-17: four native event bodies pass nine refusal controls and
   80 callback/buffer/ABI cases on each image. Enclosing loop/SEH remains
   outside this proof; see `specs/2026-10-17-native-event-contract.md`.

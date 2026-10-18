@@ -14,17 +14,26 @@ extern void material_fixture_open(void);
 extern void material_fixture_close(void);
 extern void material_fixture_verify_end(unsigned);
 extern void material_fixture_end_counts(unsigned *,unsigned *);
+extern void material_fixture_clock_probe(void);
+extern void material_fixture_clock(unsigned);
 extern HRESULT material_fixture_mask(IDirect3DDevice9 *);
 extern unsigned material_fixture_state(IDirect3DDevice9 *,unsigned *,unsigned);
 extern void bench_retained_material_mask(HRESULT (*)(IDirect3DDevice9 *));
 extern void bench_retained_markers(void (*)(void),void (*)(void));
 extern void bench_retained_bulk_markers(int (*)(void),int (*)(unsigned));
 extern int bench_scope_bulk_begin(void),bench_scope_bulk_end(unsigned),bench_scope_bulk_check(void);
+extern int bench_retained_boundary_begin(unsigned),bench_retained_boundary_end(void);
+extern int bench_retained_boundary_negative(unsigned);
+extern int bench_retained_boundary_bindings(unsigned);
+extern void bench_retained_boundary_config(unsigned,unsigned (*)(IDirect3DDevice9 *,unsigned *,unsigned));
+extern void bench_retained_boundary_counts(unsigned *,unsigned *);
 static unsigned char material_keys[GROUPS][8192];
 static unsigned material_sizes[GROUPS];
 static unsigned persistent_churn;
 static unsigned persistent_hits,persistent_misses;
 static unsigned preserve_lifecycle;
+static unsigned restore_group_state;
+static unsigned advancing_clock;
 static void accounting_init(void) {}
 static void check_bulk_accounting(void)
 {
@@ -101,7 +110,12 @@ static void validate_materials(void)
     static unsigned old[RT*RT], stock[RT*RT], fresh[RT*RT], stale[RT*RT];
     double regular,extra,total;
     unsigned changed=0,wrong=0,covered=0;
+    material_fixture_clock_probe();
     pair(1,&regular,&extra,&total,old);
+    if(restore_group_state) {
+        REQUIRE(bench_retained_boundary_negative(0));
+        REQUIRE(bench_retained_boundary_bindings(0));
+    }
     material_fixture_epoch(1);
     pair(0,&regular,&extra,&total,stock);
     /* Negative control: replay the previous material generation. */
@@ -179,6 +193,24 @@ static void validate_materials(void)
         REQUIRE(ends>1000 && changed>1000);
         printf("EFFECT END: %u group boundaries restore entry render states; %u changed states exercised\n",ends,changed);
     }
+    if(advancing_clock) {
+        material_fixture_clock(1000);
+        pair(1,&regular,&extra,&total,fresh);
+        unsigned hits=persistent_hits,misses=persistent_misses;
+        material_fixture_clock(1033);
+        pair(0,&regular,&extra,&total,stock);
+        pair(1,&regular,&extra,&total,fresh);
+        REQUIRE(persistent_misses-misses==GROUPS && persistent_hits-hits==GROUPS);
+        for(unsigned i=0;i<RT*RT;i++)
+            REQUIRE(shadow_mode?pf_depth_diff(stock[i],fresh[i])<=PF_DEPTH_TOLERANCE:stock[i]==fresh[i]);
+        puts("ADVANCING CLOCK: all regular groups invalidate; same-time extra hits preserve output");
+    }
+    if(restore_group_state) {
+        unsigned checks,changed;
+        bench_retained_boundary_counts(&checks,&changed);
+        REQUIRE(checks>1000 && changed>1000);
+        printf("GROUP STATE: %u full input/output state checks; %u changed boundaries; omitted-restore control rejected; binding poison restored\n",checks,changed);
+    }
 }
 
 static unsigned persistent_regular(void)
@@ -191,8 +223,10 @@ static unsigned persistent_regular(void)
         current_records=records[group];
         if(n==material_sizes[group] && !memcmp(key,material_keys[group],n)) {
             if(preserve_lifecycle) material_fixture_open();
+            if(restore_group_state) REQUIRE(bench_retained_boundary_begin(group));
             REQUIRE(bench_replay(group,current_records,current_records+sizeof records[0]));
             if(preserve_lifecycle) material_fixture_close();
+            if(restore_group_state) REQUIRE(bench_retained_boundary_end());
             hits++; persistent_hits++;
             continue;
         }
@@ -220,8 +254,10 @@ static unsigned persistent_regular(void)
 static void sample_epoch(unsigned round,unsigned repetition)
 {
     material_fixture_verify_end(0); /* Correctness-only reads, outside timing. */
+    if(restore_group_state) bench_retained_boundary_config(0,material_fixture_state);
     material_fixture_churn(persistent_churn);
     material_fixture_epoch((round*FRAMES_PER_SAMPLE+repetition)&1);
+    if(advancing_clock) material_fixture_clock((round*FRAMES_PER_SAMPLE+repetition)*33);
 }
 
 int main(int argc,char **argv)
@@ -244,7 +280,8 @@ int main(int argc,char **argv)
         prepare_sample=sample_epoch;
     }
     if(argc>6) {
-        REQUIRE(argc==7 && (!strcmp(argv[6],"lifecycle") || !strcmp(argv[6],"lifecycle-markers") || !strcmp(argv[6],"lifecycle-bulk-markers") || !strcmp(argv[6],"lifecycle-bulk-only")));
+        advancing_clock=!strcmp(argv[6],"lifecycle-bulk-clock") || !strcmp(argv[6],"lifecycle-bulk-state-clock");
+        REQUIRE(argc==7 && (advancing_clock || !strcmp(argv[6],"lifecycle") || !strcmp(argv[6],"lifecycle-markers") || !strcmp(argv[6],"lifecycle-bulk-markers") || !strcmp(argv[6],"lifecycle-bulk-only") || !strcmp(argv[6],"lifecycle-bulk-state")));
         preserve_lifecycle=1;
         cached_extra=persistent_regular;
         if(strcmp(argv[6],"lifecycle-bulk-only"))
@@ -253,11 +290,17 @@ int main(int argc,char **argv)
             validate_markers=1;
             bench_retained_markers(replay_marker_begin,replay_marker_end);
             puts("MARKERS: identical per-mesh labels, entry/exit hooks, copies and scope accounting on replay");
-        } else if(!strcmp(argv[6],"lifecycle-bulk-markers")) {
+        } else if(advancing_clock || !strcmp(argv[6],"lifecycle-bulk-markers") || !strcmp(argv[6],"lifecycle-bulk-state")) {
             validate_markers=1;
             bench_retained_bulk_markers(bench_scope_bulk_begin,bench_scope_bulk_end);
             validate_accounting=check_bulk_accounting;
             puts("BULK MARKERS: logical mesh counts and one measured aggregate interval; no native debug callbacks in fixture");
+            if(!strcmp(argv[6],"lifecycle-bulk-state") || !strcmp(argv[6],"lifecycle-bulk-state-clock")) {
+                restore_group_state=1;
+                bench_retained_boundary_config(1,material_fixture_state);
+                puts("GROUP STATE: capture and restore every replay boundary, including all palette registers");
+            }
+            if(advancing_clock) puts("ADVANCING CLOCK: Time advances 33 ms per regular/extra pair, same time within the pair");
         } else if(!strcmp(argv[6],"lifecycle-bulk-only")) {
             dispatch_only=1;
             cached_regular=cached_extra=NULL;

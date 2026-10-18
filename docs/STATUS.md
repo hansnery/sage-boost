@@ -1,4 +1,4 @@
-# Status and handoff (2026-10-17)
+# Status and handoff (2026-10-18)
 
 Where the three repositories and the installed game stand, for a model or
 person picking the work up. Rules, build steps and branches are in
@@ -21,7 +21,28 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
-## Material-queue cache experiment (2026-10-17)
+## Material-cache clock/state follow-up (2026-10-18)
+
+- [Stronger clock and per-group state controls](specs/2026-10-18-material-cache-boundary-clock.md)
+  reverse the earlier favorable combined-cache screening decision. Both
+  exact keys contain Time; advancing it on regular frames reduces DXVK
+  completion savings to 0.61-1.08 ms per modeled pair. With per-hit fixture
+  state restoration, two repeats instead regress by 0.26-0.87 ms.
+- All native/DXVK output, fresh-pose, input-invalidation, count and state
+  checks pass. The final protocol passes 10,309 boundary comparisons per
+  case, including deliberate binding corruption and omitted restoration.
+  This is still not a native engine-cache/lifetime/failure proof.
+- Preserve 336 boundary samples and 336 clock samples with separate build
+  metadata. Earlier fixed-clock gains are not a gameplay FPS estimate.
+  Last confirmed saved-game result remains about 30.18 presentations/s.
+- Do not promote or install this cache candidate. Further work needs a
+  changed implementation with measured gain under these stronger controls;
+  native contract tests alone do not establish a speedup. No user test
+  requested, no production source or settings changed.
+- Full plugin suite and the shared retained-batch fixture regression pass;
+  built beta.3, installed 0.9.10 and installed INI hashes remain unchanged.
+
+## Material-queue cache experiment (2026-10-17, superseded screen)
 
 - User closed the game/launcher; [clean recollection and stronger controls](specs/2026-10-17-material-queue-clean-results.md)
   are complete. Original protocol saved 3.2-3.9 ms on DXVK, but retaining
@@ -35,9 +56,9 @@ files before relying on it.
   measured work. The [combined aggregate-accounting screen](specs/2026-10-17-material-bulk-accounting-screen.md)
   now passes repeated native/DXVK image/state/count checks and saves
   3.42-3.53 ms lit or 3.03-3.06 ms shadow per modeled pair on DXVK (separate
-  workloads, not additive). This merits native integration research, not
-  installation: debug callback gates, group lifetimes, source callbacks and
-  engine-state reconciliation remain unproved. Full plugin tests pass.
+  workloads, not additive). Those fixed-clock results initially supported
+  native integration research; the October 18 clock/state controls above
+  withdraw that performance qualification. Full plugin tests pass.
 - Native event groundwork: [four complete routine bodies](specs/2026-10-17-native-event-contract.md)
   pass full-body/import/branch checks, nine refusal controls and 80 isolated
   callback/buffer/ABI cases per local image. Active callbacks are observable
@@ -52,8 +73,8 @@ files before relying on it.
   remain outside that proof. No production hook or installation.
 - The same paired fixture also isolates aggregate dispatch without retained
   material state. Two guarded repeats save only 1.69-2.65 ms on DXVK, below
-  the standalone screening gate. All output/state/count checks pass; the
-  combined material/accounting candidate remains the stronger lead.
+  the standalone screening gate. All output/state/count checks pass. The
+  later clock/state controls also disqualify the combined cache candidate.
 - Native integration groundwork: eight complete local FX wrapper bodies
   now pass 58 offline call-order/ABI cases on both executable images;
   altered-code refusal controls pass. [Contract and remaining limits](specs/2026-10-17-native-fx-lifecycle-audit.md).
@@ -73,8 +94,8 @@ files before relying on it.
   verified; the subsequent no-game runs also pass the guard.
 - No production source/installation changes. No claim of 60 FPS or a
   saved-game speedup. The per-member-marker variant does not meet its gate;
-  the combined aggregate variant qualifies for further integration work,
-  with the remaining runtime obligations above. No gameplay request yet.
+  the combined aggregate variant also fails its stronger follow-up screen.
+  No gameplay request yet.
 - At 20:00, installation was independently observed back on **0.9.10**
   (file modified 19:57:12), ASI SHA-256
   `db65e51d42bb7f49947631a17b9aeebc0604f3cd9e2c055d8e8a35daf65408e5`.

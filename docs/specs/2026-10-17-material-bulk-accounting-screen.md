@@ -1,5 +1,11 @@
 # Material reuse with aggregate mesh accounting
 
+**Superseded screening decision (2026-10-18):** these timings hold the
+effect clock fixed and restore device state only at the whole-frame
+boundary. [Advancing-clock and per-hit state controls](2026-10-18-material-cache-boundary-clock.md)
+remove the qualifying gain. The current cache is not promoted; the results
+below remain a record of the earlier, more optimistic fixture.
+
 The combined offline prototype saves **3.42-3.53 ms per modeled pair for
 lit rendering, and 3.03-3.06 ms for shadow rendering on DXVK**, across three
 guarded repeats. These are separate whole workloads, not additive gains.
@@ -118,7 +124,8 @@ Two guarded runs pass all four native/DXVK image/state/count cases. Native
 completion savings are 2.30-2.85 ms lit and 2.33-2.54 ms shadow per pair.
 DXVK savings are 2.17-2.65 ms lit and 1.69-2.13 ms shadow. This simpler
 candidate remains below the roughly 3 ms screening gate. The combined
-candidate remains the stronger lead; the component savings are not additive.
+candidate initially looked stronger but fails the subsequent clock/state
+screen linked above; the component savings are not additive.
 [168 samples](../benchmarks/2026-10-17-dispatch-pair.csv) and
 [metadata](../benchmarks/2026-10-17-dispatch-pair-runs.json) are retained.
 
