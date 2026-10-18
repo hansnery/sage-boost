@@ -242,13 +242,13 @@ int main(int argc,char **argv)
         persistent_churn=(unsigned)atoi(argv[5]);
         cached_regular=persistent_regular;
         prepare_sample=sample_epoch;
-        printf("PERSISTENT material cache, %u percent selected groups alternate inputs each pair\n",persistent_churn);
     }
     if(argc>6) {
-        REQUIRE(argc==7 && (!strcmp(argv[6],"lifecycle") || !strcmp(argv[6],"lifecycle-markers") || !strcmp(argv[6],"lifecycle-bulk-markers")));
+        REQUIRE(argc==7 && (!strcmp(argv[6],"lifecycle") || !strcmp(argv[6],"lifecycle-markers") || !strcmp(argv[6],"lifecycle-bulk-markers") || !strcmp(argv[6],"lifecycle-bulk-only")));
         preserve_lifecycle=1;
         cached_extra=persistent_regular;
-        puts("LIFECYCLE: real Begin/End on each hit; prepare and validate inputs again in extras");
+        if(strcmp(argv[6],"lifecycle-bulk-only"))
+            puts("LIFECYCLE: real Begin/End on each hit; prepare and validate inputs again in extras");
         if(!strcmp(argv[6],"lifecycle-markers")) {
             validate_markers=1;
             bench_retained_markers(replay_marker_begin,replay_marker_end);
@@ -258,8 +258,18 @@ int main(int argc,char **argv)
             bench_retained_bulk_markers(bench_scope_bulk_begin,bench_scope_bulk_end);
             validate_accounting=check_bulk_accounting;
             puts("BULK MARKERS: logical mesh counts and one measured aggregate interval; no native debug callbacks in fixture");
+        } else if(!strcmp(argv[6],"lifecycle-bulk-only")) {
+            dispatch_only=1;
+            cached_regular=cached_extra=NULL;
+            validate_retained=NULL;
+            validate_markers=1;
+            dispatch_scope_begin=bench_scope_bulk_begin;
+            dispatch_scope_end=bench_scope_bulk_end;
+            validate_accounting=check_bulk_accounting;
+            puts("BULK ONLY: original effect/leader path each draw, aggregate accounting after second member; no retained cache");
         }
     }
+    if(cached_regular) printf("PERSISTENT material cache, %u percent selected groups alternate inputs each pair\n",persistent_churn);
     int result=retained_benchmark(argc,argv);
     if(cached_regular) printf("PERSISTENT hits=%u misses=%u (includes validation/warmup)\n",persistent_hits,persistent_misses);
     return result;

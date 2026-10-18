@@ -105,3 +105,25 @@ Reproduce in the documented Git Bash toolchain, in `perf/`:
 ```sh
 mingw32-make bench-material-queue MATERIAL_CHURN=10 MATERIAL_PROTOCOL=lifecycle-bulk-markers
 ```
+
+## Isolating the simpler dispatch-only change
+
+`MATERIAL_PROTOCOL=lifecycle-bulk-only` runs original effect setup and the
+first two original mesh dispatches on every group in both draws. It then
+uses the earlier bulk-staging prototype with aggregate accounting. No
+retained material snapshot or input key is used. This separates the simpler
+runtime-loop opportunity from the additional material-cache work.
+
+Two guarded runs pass all four native/DXVK image/state/count cases. Native
+completion savings are 2.30-2.85 ms lit and 2.33-2.54 ms shadow per pair.
+DXVK savings are 2.17-2.65 ms lit and 1.69-2.13 ms shadow. This simpler
+candidate remains below the roughly 3 ms screening gate. The combined
+candidate remains the stronger lead; the component savings are not additive.
+[168 samples](../benchmarks/2026-10-17-dispatch-pair.csv) and
+[metadata](../benchmarks/2026-10-17-dispatch-pair-runs.json) are retained.
+
+The common CSV's `retained_*` columns mean optimized bulk dispatch in this
+mode. Run 1 also retained the old console summary wording; run 2 corrects
+that wording without changing measured paths. The common fixture's image,
+fresh-pose and state checks apply, but cache invalidation tests are inapplicable
+and are skipped. No gameplay test or standalone dispatch beta is justified.

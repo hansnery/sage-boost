@@ -43,6 +43,10 @@ files before relying on it.
   callback/buffer/ABI cases per local image. Active callbacks are observable
   and require original events; the enclosing loop/SEH and ownership contract
   still needs proof. No production event omission or installation.
+- The same paired fixture also isolates aggregate dispatch without retained
+  material state. Two guarded repeats save only 1.69-2.65 ms on DXVK, below
+  the standalone screening gate. All output/state/count checks pass; the
+  combined material/accounting candidate remains the stronger lead.
 - Native integration groundwork: eight complete local FX wrapper bodies
   now pass 58 offline call-order/ABI cases on both executable images;
   altered-code refusal controls pass. [Contract and remaining limits](specs/2026-10-17-native-fx-lifecycle-audit.md).

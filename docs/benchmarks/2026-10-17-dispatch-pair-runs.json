@@ -1,0 +1,30 @@
+{
+  "parent_commit": "65b05dc",
+  "runs": [
+    {
+      "run": 1,
+      "log": "dispatch-pair-10-1.txt",
+      "sha256": "ef61a709fa4413bf6e1414b749b75516ba503e2623a4991d1a2206ad5c7c2b99",
+      "samples": 84
+    },
+    {
+      "run": 2,
+      "log": "dispatch-pair-10-2.txt",
+      "sha256": "8ec0af367c9d50d314a7904b7f77f294237f47ca10a4e4c13b3b3933cb9f64be",
+      "samples": 84
+    }
+  ],
+  "sources": {
+    "perf/tests/bench_material_queue.c": "327647cc26e1945c108c993ceb796e322699b503e332e019aada8c90d881d45a",
+    "perf/tests/bench_retained.c": "9dbb257b75f56d6e2e422c2c6fa95ddeaa4cfc7d12e446ab0c1778c1b9bf11e7",
+    "perf/tests/inst_dispatch_engine.c": "b4312e3449f3bceeb344acca110bcba6baf776adca00cc9cf3f96fe27a00af6c",
+    "perf/tests/timing_bulk_bench.c": "b2651023195165c67dc6b807e00ea45bc2fc7be08bfdfb30133417b19a39eda3"
+  },
+  "notes": [
+    "Paired regular/extra draws use actual D3DX material setup and original leaders; no retained cache.",
+    "The baseline uses per-member markers; optimized remaining members use aggregate logical accounting.",
+    "Run 1 predates console-label corrections only; the measured paths are unchanged.",
+    "The synthetic fixture has no native debug callbacks or complete native caller proof."
+  ],
+  "executable_sha256": "76d3e481d1cb40dd7c284e3f91c470052daae97b2df80619f311e2c5612760c7"
+}

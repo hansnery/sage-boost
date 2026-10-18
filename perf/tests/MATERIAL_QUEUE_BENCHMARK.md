@@ -157,3 +157,10 @@ never linked into the ASI. Regular misses keep original per-member events.
 show about 3.0-3.5 ms per modeled pair on DXVK. That qualifies further native
 research, not deployment. Source callbacks, lifetimes, native debug-event
 gates, engine state reconciliation and partial-failure recovery remain open.
+
+`MATERIAL_PROTOCOL=lifecycle-bulk-only` isolates aggregate bulk dispatch
+without retained material state. The first two mesh dispatches and every
+effect Begin/BeginPass/EndPass/End stay original; only remaining compatible
+members use the existing offline bulk prototype. Common `retained_*` CSV
+columns denote this optimized path. Cache-specific validation is skipped;
+fresh-pose, complete image, state and logical count checks remain.
