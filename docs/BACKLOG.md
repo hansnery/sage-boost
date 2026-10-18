@@ -100,6 +100,17 @@ Strike an item through, with the date, when it's done.
   exact order, commands, lifetimes and fallback. Measure combined costs;
   isolated sort timings cannot be added or doubled into gameplay gains.
   Qualify installed context guards and exception behavior if worthwhile.
+- [x] 2026-10-18: join normal owned queues, native sort/group/mesh/FX and
+  GPU rendering, with target-relative code placement. Both images pass
+  eight backend/workload cases and sixteen specific corruption controls.
+  Two shuffled-input repeats save 5.42-5.84 ms/pair on DXVK; ascending
+  input saves 4.48-4.51 ms in one run. Preserve 378 samples. See
+  `specs/2026-10-18-native-queue-gpu-integration.md`; no runtime promotion.
+- [ ] Screen actual Add_Rendering_Task and the available-capacity vector
+  path. The joined fixture uses native record copy/destruction, not native
+  insertion/growth/erase. Preserve queue selection, method and mesh
+  ownership, capacity checks and native growth fallback; require a combined
+  timing gain before runtime integration. Full lifetimes/failures remain open.
 - [x] 2026-10-17: larger material-queue fixture passes native/DXVK fresh
   pose, material invalidation, regular/extra image and state checks.
 - [x] 2026-10-17: recollect material-queue timings with the game closed.

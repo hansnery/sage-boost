@@ -181,6 +181,6 @@ int PF_NATIVE_FX_MAIN(int argc,char **argv)
     REQUIRE(argc==11);nx_manifest=argv[10];
     nx_after_setup=ng_after_setup;ng_after_setup=nx_setup;
     int result=nx_group_main(argc-1,argv);
-    for(unsigned i=0;i<9;i++)REQUIRE(VirtualFree(nx_symbols[i],0,MEM_RELEASE));
+    for(unsigned i=0;i<9;i++)REQUIRE(PF_NATIVE_BODY_FREE(nx_symbols[i]));
     return result;
 }

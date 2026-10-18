@@ -21,6 +21,27 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Owned queues, native sorting and GPU integration (2026-10-18)
+
+- [Joined queue/GPU screen](specs/2026-10-18-native-queue-gpu-integration.md)
+  collects owned records, sorts three modeled pass ranges, renders those
+  exact ranges through the native group/mesh/FX path, then releases them.
+  The rendering bodies retain target-relative placement in a shared arena.
+- Both images pass lit/fresh-shadow controls on native D3D9 and DXVK:
+  eight cases with exact records/ties, ordered groups, object/engine/effect
+  state, references and ABI; sixteen corrupt/duplicate-record controls
+  fail the required oracle. Earlier group and GPU recovery checks pass.
+- Two serial shuffled-input runs save 5.42-5.84 ms/pair on DXVK. Sorting
+  and rendering isolation runs each save about 2.6-2.8 ms; an ascending
+  sensitivity run saves 4.48-4.51 ms combined. Preserve 378 timings/hashes.
+  These replace adding isolated screens; actual queue order is unknown.
+- Full plugin suite passes. No production/installation/INI changes and no
+  gameplay request. Last gameplay remains ~30.18/s; 60 FPS is unproved.
+- Next screen the verified native insertion/resize boundary with available
+  queue capacity: it builds/copies/destroys a temporary record per mesh.
+  Queue selection, ownership and growth fallback must match. Actual
+  insertion, source/lifetime/exception and runtime bridge work remain open.
+
 ## Native sorting and effect-member screens (2026-10-18)
 
 - [Native sort screen](specs/2026-10-18-native-sort-screen.md) preserves

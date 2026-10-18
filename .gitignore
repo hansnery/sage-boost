@@ -3,3 +3,4 @@ dll/dist/
 __pycache__/
 perf/build/
 perf/dist/
+*.dxvk-cache

@@ -116,6 +116,14 @@ def refusals(reference,target,records):
     print('Four altered sort contracts refused',flush=True)
 
 
+def write_manifest(path,records):
+    lines=[str(len(records))]
+    for rva,size,digest,patches in records:
+        lines.append(f'{rva} {size} {digest} {len(patches)}')
+        lines.extend(' '.join(map(str,p)) for p in patches)
+    path.write_bytes(('\n'.join(lines)+'\n').encode())
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('image',type=Path);p.add_argument('executable',type=Path)
@@ -126,11 +134,7 @@ def main():
     print('image_sha256',hashlib.sha256(a.image.read_bytes()).hexdigest(),flush=True)
     print('exe_sha256',hashlib.sha256(a.executable.read_bytes()).hexdigest(),flush=True)
     with tempfile.TemporaryDirectory(prefix='sage-native-sort-') as folder:
-        path=Path(folder)/'manifest.txt';lines=[str(len(records))]
-        for rva,size,digest,patches in records:
-            lines.append(f'{rva} {size} {digest} {len(patches)}')
-            lines.extend(' '.join(map(str,p)) for p in patches)
-        path.write_bytes(('\n'.join(lines)+'\n').encode())
+        path=Path(folder)/'manifest.txt';write_manifest(path,records)
         command=[str(a.executable.resolve()),str(a.image.resolve()),str(path)]
         result=subprocess.call(command+[str(a.samples),'0'])
         if result:return result

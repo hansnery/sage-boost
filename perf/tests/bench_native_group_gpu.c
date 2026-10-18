@@ -249,8 +249,8 @@ int PF_NATIVE_GROUP_MAIN(int argc,char **argv)
     int result=material_queue_main(7,argv);
     REQUIRE(ng_prepares==ng_finishes+ng_failed_begins && ng_begins==ng_ends+ng_failed_begins &&
             ng_passes==ng_pass_ends);
-    for(unsigned i=0;i<7;i++) REQUIRE(VirtualFree(nm_symbols[i],0,MEM_RELEASE));
-    for(unsigned i=0;i<9;i++) REQUIRE(VirtualFree(ng_symbols[i],0,MEM_RELEASE));
+    for(unsigned i=0;i<7;i++) REQUIRE(PF_NATIVE_BODY_FREE(nm_symbols[i]));
+    for(unsigned i=0;i<9;i++) REQUIRE(PF_NATIVE_BODY_FREE(ng_symbols[i]));
     REQUIRE(VirtualFree(ng_hooked,0,MEM_RELEASE));
     return result;
 }

@@ -30,7 +30,7 @@ static void native_fx_load(void **symbols,const char *image,const char *manifest
             }
         }
         REQUIRE(matches==1 && fnv(raw+offset,size)==hash);
-        symbols[i]=VirtualAlloc(NULL,4096,MEM_RESERVE|MEM_COMMIT,PAGE_READWRITE);REQUIRE(symbols[i]);
+        symbols[i]=PF_NATIVE_BODY_ALLOC(nt->OptionalHeader.SizeOfImage,rva,size);REQUIRE(symbols[i]);
         memcpy(symbols[i],raw+offset,size);
         for(unsigned j=0;j<n;j++) {
             REQUIRE(np<256);Patch *p=&patches[np++];p->body=i;

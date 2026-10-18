@@ -183,6 +183,6 @@ int PF_NATIVE_MESH_MAIN(int argc,char **argv)
     REQUIRE(argc==9 && !strcmp(argv[6],"leader-bulk-first"));
     nm_image=argv[7]; nm_manifest=argv[8]; setup_complete=nm_setup;
     int result=material_queue_main(7,argv);
-    for(unsigned i=0;i<7;i++) REQUIRE(VirtualFree(nm_symbols[i],0,MEM_RELEASE));
+    for(unsigned i=0;i<7;i++) REQUIRE(PF_NATIVE_BODY_FREE(nm_symbols[i]));
     return result;
 }

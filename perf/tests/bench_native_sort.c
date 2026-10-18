@@ -17,11 +17,16 @@ _Static_assert(sizeof(Record)==32 && offsetof(Mesh,key)==0xc4 && offsetof(Mesh,s
 typedef unsigned (__cdecl *Compare)(const Record *,const Record *);
 typedef void (__cdecl *Sort)(Record *,Record *,Compare);
 static void *bodies[2][COUNT+1];
-static unsigned broken,cases;
+static unsigned broken;
+#ifndef PF_NATIVE_SORT_EMBED
+static unsigned cases;
+#endif
 volatile unsigned sort_abi_errors;
 
 static void __cdecl unexpected(void) { REQUIRE(0 && "native exception/termination dependency reached"); }
+#ifndef PF_NATIVE_SORT_EMBED
 static void __attribute__((thiscall)) delete_unexpected(void *self) { (void)self;REQUIRE(0 && "unexpected object destruction"); }
+#endif
 static void * __attribute__((thiscall)) raw_copy(void *to,const void *from)
 {
     unsigned *out=to;const unsigned *in=from;
@@ -108,6 +113,23 @@ static void load(const char *path,const char *manifest)
     }
 }
 
+#ifdef PF_NATIVE_SORT_EMBED
+/* The joined GPU fixture uses the same verified functions and general-
+ * register candidate, with native ownership at queue entry and exit. */
+void bench_sort_load(const char *image,const char *manifest)
+{ load(image,manifest); }
+void bench_sort_run(void *first,void *last,unsigned optimized)
+{
+    REQUIRE(optimized<2 && (unsigned)last>=(unsigned)first && !(((unsigned)last-(unsigned)first)%32));
+    sort_checked(bodies[optimized][30],first,last,(Compare)bodies[optimized][8],0);
+    REQUIRE(!sort_abi_errors);
+}
+void bench_sort_copy(void *to,const void *from)
+{ ((void *(__attribute__((thiscall)) *)(void *,const void *))bodies[0][10])(to,from); }
+void bench_sort_destroy(void *record)
+{ ((void (__attribute__((thiscall)) *)(void *))bodies[0][3])(record); }
+void bench_sort_corrupt(unsigned enabled) { broken=enabled; }
+#else
 static Mesh meshes[CAPACITY];
 static Method methods[32];
 static unsigned method_refs[32];
@@ -227,3 +249,4 @@ int main(int argc,char **argv)
     }
     REQUIRE(bench_no_game());return 0;
 }
+#endif

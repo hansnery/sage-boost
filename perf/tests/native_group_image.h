@@ -6,6 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef PF_NATIVE_BODY_ALLOC
+#define PF_NATIVE_BODY_ALLOC(image_size,rva,size) VirtualAlloc(NULL,4096,MEM_RESERVE|MEM_COMMIT,PAGE_READWRITE)
+#endif
 static unsigned ng_fnv(const unsigned char *p,unsigned n)
 {
     unsigned h=2166136261u; while(n--) h=(h^*p++)*16777619u; return h;
@@ -36,7 +39,7 @@ static void native_group_load(void **symbols,const char *image,const char *manif
             }
         }
         REQUIRE(matches==1 && ng_fnv(raw+offset,size)==hash);
-        symbols[i]=VirtualAlloc(NULL,4096,MEM_RESERVE|MEM_COMMIT,PAGE_READWRITE); REQUIRE(symbols[i]);
+        symbols[i]=PF_NATIVE_BODY_ALLOC(nt->OptionalHeader.SizeOfImage,rva,size); REQUIRE(symbols[i]);
         memcpy(symbols[i],raw+offset,size);
         for(unsigned j=0;j<n;j++) {
             REQUIRE(np<100); NativeGroupPatch *p=&patches[np++]; p->body=i;

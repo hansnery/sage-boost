@@ -315,6 +315,29 @@ test-native-fx-recovery: $(BUILD)/test_native_fx_recovery.exe
 $(BUILD)/bench_native_fx_gpu.exe: tests/bench_native_fx_gpu.c tests/native_fx_image.h tests/bench_native_group_gpu.c tests/bench_native_leader.c tests/native_group_image.h tests/native_mesh_image.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
 	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
 
+$(BUILD)/native_sort_fixture.o: tests/bench_native_sort.c tests/bench_guard.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -Wno-unused-function -DPF_NATIVE_SORT_EMBED -c -o $@ $<
+
+$(BUILD)/bench_native_queue_gpu.exe: tests/bench_native_queue_gpu.c tests/native_shared_arena.h tests/bench_native_fx_gpu.c tests/native_fx_image.h tests/bench_native_group_gpu.c tests/bench_native_leader.c tests/native_group_image.h tests/native_mesh_image.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/native_sort_fixture.o $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/native_sort_fixture.o $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_recovery_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
+
+QUEUE_MODE ?= combined
+QUEUE_ORDER ?= random
+QUEUE_OPTIONS ?=
+.PHONY: test-native-queue-gpu bench-native-queue-gpu
+test-native-queue-gpu: $(BUILD)/bench_native_queue_gpu.exe
+	$(MAKE) bench-native-queue-gpu QUEUE_OPTIONS="--controls-only --self-test"
+
+bench-native-queue-gpu: $(BUILD)/bench_native_queue_gpu.exe
+	python ../tools/bench_native_queue_gpu.py $(QUEUE_OPTIONS) --mode $(QUEUE_MODE) --order $(QUEUE_ORDER) "$(AOTR_DAT)" $< "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first
+	python ../tools/bench_native_queue_gpu.py $(QUEUE_OPTIONS) --mode $(QUEUE_MODE) --order $(QUEUE_ORDER) "$(AOTR_DAT)" $< "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 leader-bulk-first
+	@test -f "$(DXVK_D3D9)" || { echo "error: bench-native-queue-gpu requires DXVK_D3D9"; exit 1; }
+	mkdir -p $(BUILD)/native_queue_gpu_dxvk
+	cp $< "$(DXVK_D3D9)" $(BUILD)/native_queue_gpu_dxvk/
+	cd $(BUILD)/native_queue_gpu_dxvk && \
+	  DXVK_LOG_LEVEL=none python ../../../tools/bench_native_queue_gpu.py $(QUEUE_OPTIONS) --mode $(QUEUE_MODE) --order $(QUEUE_ORDER) "$(AOTR_DAT)" bench_native_queue_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first && \
+	  DXVK_LOG_LEVEL=none python ../../../tools/bench_native_queue_gpu.py $(QUEUE_OPTIONS) --mode $(QUEUE_MODE) --order $(QUEUE_ORDER) "$(AOTR_DAT)" bench_native_queue_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 leader-bulk-first
+
 bench-native-fx-gpu: $(BUILD)/bench_native_fx_gpu.exe
 	python ../tools/bench_native_fx_gpu.py "$(AOTR_DAT)" $(BUILD)/bench_native_fx_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first
 	python ../tools/bench_native_fx_gpu.py "$(AOTR_DAT)" $(BUILD)/bench_native_fx_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 leader-bulk-first

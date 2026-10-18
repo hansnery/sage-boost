@@ -6,6 +6,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef PF_NATIVE_BODY_ALLOC
+#define PF_NATIVE_BODY_ALLOC(image_size,rva,size) VirtualAlloc(NULL,4096,MEM_RESERVE|MEM_COMMIT,PAGE_READWRITE)
+#endif
+#ifndef PF_NATIVE_BODY_FREE
+#define PF_NATIVE_BODY_FREE(body) VirtualFree(body,0,MEM_RELEASE)
+#endif
+#ifndef PF_NATIVE_TABLE_ALLOC
+#define PF_NATIVE_TABLE_ALLOC(body,size) ((char *)(body)+(size))
+#endif
 static unsigned fnv(const unsigned char *p,unsigned n)
 {
     unsigned h=2166136261u; while(n--) h=(h^*p++)*16777619u; return h;
@@ -35,14 +44,14 @@ static void native_mesh_load(void **symbols,const char *image,const char *manife
             }
         }
         REQUIRE(matches==1 && fnv(raw+offset,size)==hash);
-        symbols[i]=VirtualAlloc(NULL,4096,MEM_RESERVE|MEM_COMMIT,PAGE_READWRITE); REQUIRE(symbols[i]);
+        symbols[i]=PF_NATIVE_BODY_ALLOC(nt->OptionalHeader.SizeOfImage,rva,size); REQUIRE(symbols[i]);
         memcpy(symbols[i],raw+offset,size);
         for(unsigned j=0;j<n;j++) {
             REQUIRE(np<256); Patch *p=&patches[np++]; p->body=i;
             REQUIRE(fscanf(f,"%u %u %u %u",&p->offset,&p->kind,&p->symbol,&p->add)==4 && p->offset<=size-4 && p->kind<=1 && p->symbol<32 && p->add<0x290);
         }
     }
-    symbols[31]=(char*)symbols[2]+452;
+    symbols[31]=PF_NATIVE_TABLE_ALLOC(symbols[2],452);
     for(unsigned i=0;i<8;i++) {
         unsigned offset; REQUIRE(fscanf(f,"%u",&offset)==1 && offset<452);
         ((void**)symbols[31])[i]=(char*)symbols[2]+offset;
