@@ -26,8 +26,12 @@ Strike an item through, with the date, when it's done.
   The original 504 excluded samples remain separate. Stronger lifecycle,
   extra-input and marker controls reduce DXVK gain to 0.66-1.04 ms/pair;
   insufficient for promotion. See `specs/2026-10-17-material-queue-clean-results.md`.
-- [ ] Investigate marker-processing overhead with preserved diagnostics
-  and the native debug contract; do not change the installed Detail setting.
+- [x] 2026-10-17: three guarded CPU marker runs, 315 samples preserved;
+  about 1.95 ms total marker work per modeled regular/extra pair. See
+  `specs/2026-10-17-marker-cpu-screen.md`. No installed Detail change.
+- [ ] Screen aggregate batch accounting with material reuse; retain mesh
+  counts and measured work, document changed interval boundaries, and prove
+  the native debug contract before any runtime omission of events.
 - [ ] If clean measurements justify it, prove the native effect/group
   bridge, lifetimes, engine state and diagnostics before runtime promotion.
   Current persistent cache borrows fixed fixture objects only.

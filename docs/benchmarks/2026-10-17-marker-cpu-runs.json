@@ -1,0 +1,39 @@
+{
+  "base_commit": "e3a4372a8618a757ce00935a4cf9344b3bbffb9b",
+  "timestamp_note": "Log modification times, not exact benchmark start times.",
+  "workload": "7200 synthetic labels and modeled event copies; production entry hooks; no draw or Present",
+  "game_guard": "Read-only process guard before setup and before/after each round",
+  "runs": [
+    {
+      "run": 1,
+      "log": "scopes-screen-1.txt",
+      "sha256": "6217713520f95bc62498e3c62e3aa1f7f2d49a12ac8bd9d27bd4620a6761174c",
+      "log_mtime_utc": "2026-10-18T05:26:58.475975+00:00",
+      "samples": 105
+    },
+    {
+      "run": 2,
+      "log": "scopes-screen-2.txt",
+      "sha256": "03133baaed8caab904956f394a974fa8c253fb4268f5958cc027638716c891d8",
+      "log_mtime_utc": "2026-10-18T05:29:21.603811+00:00",
+      "samples": 105
+    },
+    {
+      "run": 3,
+      "log": "scopes-screen-3.txt",
+      "sha256": "b6670259d45d3588c4d5375283bb94d3d1fdc5d1259efafc509426c7f7e41e67",
+      "log_mtime_utc": "2026-10-18T05:29:24.661172+00:00",
+      "samples": 105
+    }
+  ],
+  "source_sha256": {
+    "perf/tests/bench_scopes.c": "37c6044eaece12db1696774c5213f63b4413be753fc14fc024a744457dda5309",
+    "perf/tests/bench_dispatch.c": "0375da98234f0e50e900b6ef0f13317e28cece8168cefb50a26e5f47e2539a68",
+    "perf/tests/bench_guard.h": "46082a3fef62b0e26ea0f16b6294171af964e0cb952c7dd7c8ef9a509cd8adf6",
+    "perf/tests/fps_extra_bench.c": "f5b7cb49d42c61b78f8f6f2e8d5736bbed726f080b4971b6976dea1886e8323e",
+    "perf/src/timing.c": "a5bddd8f6c7afdf03e345a557f2a75a2b30cb17bfd6e836764b221f081a23596",
+    "perf/src/stubs.c": "5f9eb64ed0bad6f75ca60eca013eae4ad09aeb70d577a0b5b7582a8889e63fdc",
+    "perf/Makefile": "8759ae2868164d609eebf8c308415d3a1866d27dfb6fa2c44a62c5fd5818bce7"
+  },
+  "executable_sha256": "62abd52f4d032a7d29186474b8ea36b7ff3d8a55bdecfd98edfdc6c803405942"
+}

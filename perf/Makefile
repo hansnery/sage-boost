@@ -191,7 +191,7 @@ DISPATCH_OBJS := $(filter-out $(BUILD)/main.o $(BUILD)/rt.o $(BUILD)/inst.o $(BU
 $(BUILD)/bench_dispatch.exe: tests/bench_dispatch.c tests/test_inst.c $(BUILD)/inst_dispatch_engine.o $(DISPATCH_OBJS) src/*.h
 	$(CC) $(TEST_CFLAGS) -O2 -static -o $@ $< $(BUILD)/inst_dispatch_engine.o $(DISPATCH_OBJS)
 
-.PHONY: bench-dispatch bench-ambient bench-retained bench-material-queue test-fx-lifecycle
+.PHONY: bench-dispatch bench-ambient bench-retained bench-material-queue test-fx-lifecycle bench-scopes
 
 # Native wrapper correctness only: no GPU, scene, startup or timing claims.
 $(BUILD)/test_fx_lifecycle.exe: tests/test_fx_lifecycle.c | $(BUILD)
@@ -211,6 +211,12 @@ $(BUILD)/inst_retained_engine.o: tests/inst_retained_engine.c tests/inst_dispatc
 
 $(BUILD)/fps_extra_bench.o: tests/fps_extra_bench.c src/fps.c src/*.h | $(BUILD)
 	$(CC) $(CFLAGS) -Isrc -c -o $@ $<
+
+$(BUILD)/bench_scopes.exe: tests/bench_scopes.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/inst_dispatch_engine.o $(BUILD)/fps_extra_bench.o $(DISPATCH_OBJS) src/*.h
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/inst_dispatch_engine.o $(BUILD)/fps_extra_bench.o $(filter-out $(BUILD)/fps.o,$(DISPATCH_OBJS))
+
+bench-scopes: $(BUILD)/bench_scopes.exe
+	./$(BUILD)/bench_scopes.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll"
 
 $(BUILD)/bench_retained.exe: tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(DISPATCH_OBJS) src/*.h
 	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(filter-out $(BUILD)/fps.o,$(DISPATCH_OBJS))

@@ -28,7 +28,11 @@ files before relying on it.
   real Begin/End, extra input checks and per-mesh markers reduces the final
   gain to 0.66-1.04 ms per modeled pair. Individual samples regress.
   **Not promoted**: insufficient gain for this runtime cache. No installation
-  or gameplay test. Next investigate marker-processing cost and its contract.
+  or gameplay test. A [marker CPU screen](specs/2026-10-17-marker-cpu-screen.md)
+  now measures about 1.95 ms for all marker work per modeled regular/extra
+  pair, including about 1.29 ms above unhooked modeled copies. Next screen
+  aggregate batch accounting with the cache, preserving mesh counts and
+  measured work; individual debug callback semantics remain a native gate.
 - Native integration groundwork: eight complete local FX wrapper bodies
   now pass 58 offline call-order/ABI cases on both executable images;
   altered-code refusal controls pass. [Contract and remaining limits](specs/2026-10-17-native-fx-lifecycle-audit.md).
