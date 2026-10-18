@@ -20,6 +20,17 @@ Strike an item through, with the date, when it's done.
   target-ABI, material, reference, state, scope and fallback proofs before
   implementing an installed fast path. Current prototype is offline only.
 - [ ] Demonstrate sustained 60 visual FPS with full-rate shadows; still open.
+- [x] 2026-10-18: screen including the first mesh in instanced batches;
+  leader-only DXVK savings are 0.31-0.46 ms/pair, combined with aggregate
+  dispatch 2.94-3.12 ms in two repeats. Regular/extra output, missing-leader
+  control, counts, state and references pass. See
+  `specs/2026-10-18-leader-batch-screen.md`; no runtime promotion.
+- [x] 2026-10-18: extend the native group fixture to bulk after one or two
+  members: 10,752 cases per image plus refusal/broken-bridge controls pass.
+- [ ] Prove the native leader's final draw and post-draw state/cleanup,
+  callback behavior and failure path before any draw suppression. Measure
+  native group/GPU integration and its guards; separate logical native
+  and modeled GPU tests do not establish an installable bridge.
 - [x] 2026-10-17: larger material-queue fixture passes native/DXVK fresh
   pose, material invalidation, regular/extra image and state checks.
 - [x] 2026-10-17: recollect material-queue timings with the game closed.

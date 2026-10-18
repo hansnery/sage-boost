@@ -21,6 +21,27 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## First-mesh instancing screen (2026-10-18)
+
+- [Leader batching screen](specs/2026-10-18-leader-batch-screen.md): including
+  the first mesh removes 288 modeled DIPs per frame. Alone it saves only
+  0.31-0.46 ms per regular/extra pair on DXVK. With aggregate dispatch after
+  the first member, two repeats save 2.94-3.12 ms. These are synthetic
+  full workloads, not additive pass savings or gameplay FPS.
+- Regular/extra images, fresh shadows, deliberately omitted-leader control,
+  counts, references and frame state pass. Preserve 252 final samples and
+  168 earlier exploratory samples separately. No production edit or install.
+- Native group tests now cover bulk entry after one or two members:
+  10,752 cases per local image, with verifier and broken-bridge controls.
+  Native mesh rendering is still a controlled dependency.
+- Near the research threshold, but not runtime-qualified. Next prove the
+  native leader's final draw and subsequent state/cleanup, then measure
+  native loop/GPU integration including guards. A source-level single draw
+  is insufficient evidence to suppress it before observing completion.
+- Full plugin suite and old bulk-only fixture regression pass. Built beta.3,
+  installed 0.9.10 and installed INI hashes remain unchanged. No user test
+  requested; last saved-game result remains about 30.18 presentations/s.
+
 ## Effect-state filter follow-up (2026-10-18)
 
 - A [device-write filter screen](specs/2026-10-18-effect-state-filter-screen.md)

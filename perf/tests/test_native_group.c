@@ -40,6 +40,7 @@ static void *begin_callback,*end_callback;
 static const char prefix[]="SceneAnalyst";
 static const char *labels[]={"RenderFXShaderBatch","Rendering mesh\tFXShader\t","(unnamed)","MeshFXShader","Rendering %d meshes\tFXShader\t%s"};
 static unsigned optimized,mode,current_pass,drop_root,root_dropped,fault_mode;
+static unsigned bulk_after=2;
 static unsigned draws,bulk_draws,bulk_runs,hook_visits,marker_begin,marker_end,marker_hash;
 static unsigned prep_count,finish_count,transform_count,chain_calls,pass_begins,pass_ends,method_begins,method_ends;
 static Task *partial_group;
@@ -182,7 +183,7 @@ int group_bulk(unsigned *regs)
     REQUIRE((Task*)frame[-7]==current+1 && regs[6]==1);
     REQUIRE(method==first->methods[0] && method->refs==(drop_root?1:2));
     if(!optimized || ((begin_callback || end_callback) && fault_mode!=3) || frame[-9]!=1 ||
-       frame[-11]!=1 || first->count!=1 || current-first<2 || mode==2 ||
+       frame[-11]!=1 || first->count!=1 || (unsigned)(current-first)<bulk_after || mode==2 ||
        (mode==3 && partial_group==first)) return 0;
     unsigned count=0,remaining=(unsigned)(end-current);
     unsigned limit=mode==3?3:remaining;
@@ -253,7 +254,7 @@ static void run(Scenario s,unsigned fast,Result *out)
     if(s.callbacks==3) REQUIRE(marker_begin==marker_end);
     if(!s.callbacks) REQUIRE(!marker_begin && !marker_end);
     REQUIRE(draws==(s.ok && s.split!=4?s.n*s.passes:0));
-    if(fast && s.n>2 && s.maximum==1 && s.passes==1 && s.ok && !s.callbacks &&
+    if(fast && s.n>bulk_after && s.maximum==1 && s.passes==1 && s.ok && !s.callbacks &&
        !s.split && fast!=2 && !s.unsupported) REQUIRE(bulk_draws>0 && bulk_runs>0);
     if(fast==2 || s.callbacks || s.passes!=1 || s.maximum!=1 || s.split==3) REQUIRE(!bulk_draws);
     Result result={0};
@@ -347,6 +348,7 @@ int main(int argc,char **argv)
     if(argc==5) { fault_mode=(unsigned)atoi(argv[4]); REQUIRE(fault_mode>=1 && fault_mode<=4); }
     load(argv[1],argv[2],argv[3]);
     const unsigned counts[]={0,1,2,3,7,25}, maxima[]={1,3,25};
+    for(bulk_after=1;bulk_after<=2;bulk_after++) {
     for(unsigned n=0;n<6;n++) for(unsigned m=0;m<3;m++) for(unsigned p=0;p<3;p++)
     for(unsigned ok=0;ok<2;ok++) for(unsigned cb=0;cb<4;cb++) for(unsigned name=0;name<3;name++) {
         Scenario s={counts[n],maxima[m],p,ok,cb,0,name,0,0};
@@ -360,7 +362,8 @@ int main(int argc,char **argv)
         Scenario s={25,1,1,1,cb,0,0,drop,1};
         run(s,0,&baseline); for(unsigned fast=1;fast<=3;fast++) run(s,fast,NULL);
     }
-    printf("Native group: %u cases passed; logical order, passes, method chains/references, callback fallback, partial batches, SEH state, FS chain and ABI\n",cases);
+    }
+    printf("Native group: %u cases passed; bulk after one/two members; logical order, passes, method chains/references, callback fallback, partial batches, SEH state, FS chain and ABI\n",cases);
     for(unsigned i=0;i<9;i++) REQUIRE(VirtualFree(symbols[i],0,MEM_RELEASE));
     REQUIRE(VirtualFree(group_hooked,0,MEM_RELEASE)); return 0;
 }

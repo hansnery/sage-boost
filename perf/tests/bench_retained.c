@@ -27,7 +27,9 @@ static unsigned validate_markers;
 static void (*validate_accounting)(void);
 static int dispatch_only, dispatch_bulk_now;
 static int dispatch_bulk_enabled=1, pair_optimized;
+static unsigned dispatch_first_member=2;
 static void (*frame_mode)(int);
+static void (*frame_check)(int);
 static const char *comparison_name;
 static int (*dispatch_scope_begin)(void),(*dispatch_scope_end)(unsigned);
 static void (*prepare_sample)(unsigned, unsigned);
@@ -44,7 +46,7 @@ static void retained_workload(void)
         current_records = records[group];
         *(unsigned char **)(frame_ptr + PF_FRAME_GROUP_END) = current_records + sizeof records[0];
         for (i = 0; i < GROUP_SIZE;) {
-            if(dispatch_bulk_now && i==2) {
+            if(dispatch_bulk_now && i==dispatch_first_member) {
                 REQUIRE(dispatch_scope_begin && dispatch_scope_end && dispatch_scope_begin());
                 unsigned n=bench_inst_bulk(current_records+i*PF_RECORD_SIZE,
                                            current_records+sizeof records[0],&g_method);
@@ -129,6 +131,7 @@ static void frame_draw(int extra, int retained, unsigned *pixels)
     REQUIRE(draws==2*cached_groups && meshes==GROUP_SIZE*cached_groups);
     REQUIRE(pf_inst_active());
     check_state();
+    if(frame_check) frame_check(extra);
     if(validate_markers) {
         pf_timing_get_stats(&after_scopes);
         REQUIRE(after_scopes.scopes-before_scopes.scopes==(extra?0:GROUPS*GROUP_SIZE));

@@ -49,7 +49,7 @@ loop has already computed the native chunk end, but has not constructed
 the mesh event or acquired its owning method temporary. The group event
 and group-owned method reference are still alive, with cleanup state 1.
 
-The private prototype retains two original members, then handles eligible
+The private prototype retains one or two original members, then handles eligible
 remaining records. It sets the chunk end to the first unconsumed record and
 resumes at offset `0x2B7`; the native iterator, EndPass, End, mesh finish,
 method-chain clearing and final reference release continue normally. A
@@ -65,7 +65,8 @@ side effect. The enclosing loop is checked as a complete body.
 
 ## Native fixture results
 
-Each image passes 5,376 cases, comparing the original native body with the
+Each image passes 10,752 cases (expanded on October 18 from 5,376 to cover
+both boundaries), comparing the original native body with the
 private bridge and checking explicit counts and native frame state:
 
 - Empty and 1/2/3/7/25-member ranges; native chunks of 1, 3 and 25.
@@ -111,8 +112,11 @@ slots. This supports checking both live slots before omitting events; it
 does not prove that either slot is null in a particular game session.
 
 The standalone dispatch screen remains below its promotion threshold.
-This contract work supports integration of the stronger combined candidate;
-it does not justify a separate diagnostic beta or a new gameplay request.
+Stronger clock/state controls subsequently disqualified the material cache.
+The October 18 [leader batching screen](2026-10-18-leader-batch-screen.md)
+is near the research threshold, but requires a distinct native mesh/draw
+contract and GPU integration. This logical-loop proof does not establish
+safe suppression of a leader's draw or justify a new gameplay request.
 Last qualifying gameplay remains about 30.18 presentations/s; sustained
 60 FPS with fresh full-rate shadows remains unproved.
 

@@ -39,6 +39,48 @@ static unsigned preserve_lifecycle;
 static unsigned restore_group_state;
 static unsigned advancing_clock;
 static unsigned state_filter_mode;
+#ifdef PF_BENCH_LEADER
+extern void bench_leader_mode(unsigned,unsigned);
+extern unsigned bench_leader_suppressed(void);
+static unsigned leader_omit;
+static void leader_frame(int optimized)
+{
+    pf_inst_counts discard;
+    pf_inst_take(&discard);
+    bench_leader_mode(optimized,leader_omit);
+}
+static void leader_check(int extra)
+{
+    pf_inst_counts c;
+    pf_inst_take(&c);
+    REQUIRE(bench_leader_suppressed()==(pair_optimized?GROUPS:0));
+    if(!extra) {
+        unsigned per_group=GROUP_SIZE-1+(pair_optimized && !leader_omit);
+        REQUIRE(c.meshes==GROUPS*per_group && c.draws==2*GROUPS);
+    }
+}
+static void validate_leaders(void)
+{
+    static unsigned baseline[RT*RT], optimized[RT*RT], missing[RT*RT];
+    unsigned changed=0;
+    for(unsigned phase=0;phase<2;phase++) {
+        pose(phase);
+        pair_optimized=0; dispatch_bulk_now=0;
+        frame_draw(phase,0,baseline);
+        pair_optimized=1; dispatch_bulk_now=dispatch_bulk_enabled;
+        frame_draw(phase,0,optimized);
+        for(unsigned i=0;i<RT*RT;i++)
+            REQUIRE(shadow_mode?pf_depth_diff(baseline[i],optimized[i])<=PF_DEPTH_TOLERANCE:
+                    baseline[i]==optimized[i]);
+        leader_omit=1;
+        frame_draw(phase,0,missing);
+        leader_omit=0;
+        for(unsigned i=0;i<RT*RT;i++) changed+=missing[i]!=baseline[i];
+    }
+    REQUIRE(changed>100);
+    printf("LEADER: regular and extra images match; missing-leader control changes %u pixels; 288 fewer DIPs per frame; counts and references checked\n",changed);
+}
+#endif
 static void filter_frame(int optimized)
 {
     /* A frame boundary performs unobserved native state writes/restoration.
@@ -114,6 +156,11 @@ static void spread(float *pivot,unsigned mesh)
     unsigned group=mesh/GROUP_SIZE;
     pivot[4]+=3.f*(group%18);
     pivot[5]+=3.f*(group/18);
+#ifdef PF_BENCH_LEADER
+    /* Give the leader a visible location: the nine-pose source repeats and
+     * would otherwise let another mesh hide an accidentally omitted leader. */
+    if(mesh%GROUP_SIZE==0) pivot[4]+=1.2f;
+#endif
 }
 
 static void validate_materials(void)
@@ -291,6 +338,27 @@ int main(int argc,char **argv)
         prepare_sample=sample_epoch;
     }
     if(argc>6) {
+#ifdef PF_BENCH_LEADER
+        if(!strcmp(argv[6],"leader") || !strcmp(argv[6],"leader-bulk") ||
+           !strcmp(argv[6],"leader-bulk-first")) {
+            REQUIRE(argc==7);
+            advancing_clock=1;
+            preserve_lifecycle=1;
+            dispatch_only=1;
+            dispatch_bulk_enabled=strcmp(argv[6],"leader")!=0;
+            dispatch_first_member=!strcmp(argv[6],"leader-bulk-first")?1:2;
+            cached_regular=cached_extra=NULL;
+            validate_retained=validate_leaders;
+            validate_markers=1;
+            dispatch_scope_begin=bench_scope_bulk_begin;
+            dispatch_scope_end=bench_scope_bulk_end;
+            validate_accounting=check_bulk_accounting;
+            frame_mode=leader_frame;
+            frame_check=leader_check;
+            comparison_name=argv[6];
+            puts("LEADER SCREEN: modeled single-DIP callee only; full effect lifecycle and advancing clock; no runtime hook");
+        } else
+#endif
         if(!strcmp(argv[6],"state-forward") || !strcmp(argv[6],"state-filter") ||
            !strcmp(argv[6],"state-filter-bulk")) {
             REQUIRE(argc==7);

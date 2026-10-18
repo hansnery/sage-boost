@@ -1,0 +1,78 @@
+{
+  "parent_commit": "284afff",
+  "runs": [
+    {
+      "log": "leader-clean-1.txt",
+      "sha256": "09bd6746117dd1ae37efb8d8222b08aee5f28aacd44aed688c2196efd205a4a8",
+      "samples": 84,
+      "qualification": "clean",
+      "exclusion": "",
+      "log_mtime_utc": "2026-10-18T07:49:17.667573+00:00"
+    },
+    {
+      "log": "leader-first-1.txt",
+      "sha256": "5346a3fb16ec301c4e6458cb7b034b1e28584ebe0cc2b5fdc63bcf6768886765",
+      "samples": 84,
+      "qualification": "clean",
+      "exclusion": "",
+      "log_mtime_utc": "2026-10-18T07:46:15.600987+00:00"
+    },
+    {
+      "log": "leader-first-2.txt",
+      "sha256": "7e3c4286ed31f0ec76858373882ab55219e24a72bfdfa6a5e16f4dbf8b75a956",
+      "samples": 84,
+      "qualification": "clean",
+      "exclusion": "",
+      "log_mtime_utc": "2026-10-18T07:47:02.287421+00:00"
+    },
+    {
+      "log": "leader-initial-1.txt",
+      "sha256": "1db8ca2f4ad65629d8833b49da64e817fc1a90bf37eb4a997fb13a4d26be69dd",
+      "samples": 84,
+      "qualification": "exploratory",
+      "exclusion": "Earlier adapter before adding the after-first-member bulk entry; not pooled with final-build samples.",
+      "log_mtime_utc": "2026-10-18T07:44:32.178727+00:00"
+    },
+    {
+      "log": "leader-bulk-1.txt",
+      "sha256": "61b12be32cb861473050a678be6127fd4750a4edba83fcde29bb746751bad838",
+      "samples": 84,
+      "qualification": "exploratory",
+      "exclusion": "Earlier adapter batches after two members; distinct protocol and build, not pooled with final-build samples.",
+      "log_mtime_utc": "2026-10-18T07:45:12.526589+00:00"
+    }
+  ],
+  "sources": {
+    "perf/tests/bench_material_queue.c": "aa15da6617658c3a0d747a696c624266330f10aef384d0e2527b201968a223b7",
+    "perf/tests/bench_retained.c": "8e22507ce9de8954e71d3bca279445cd6712ea14597998b09a0a9c9176ebaa3c",
+    "perf/tests/bench_dispatch.c": "0375da98234f0e50e900b6ef0f13317e28cece8168cefb50a26e5f47e2539a68",
+    "perf/tests/inst_leader_engine.c": "ede7709889eae344458e27a3aff2ff79b917e3faf84395ffb0c469ea2ef89d00",
+    "perf/tests/inst_retained_engine.c": "b1d3d466ca49a621626607ec32c0223d18bd6b6fa0cadce6fb2b9bea36481135",
+    "perf/tests/inst_dispatch_engine.c": "b4312e3449f3bceeb344acca110bcba6baf776adca00cc9cf3f96fe27a00af6c",
+    "perf/tests/material_fixture.c": "4d292ffbca6be1b4d87496558e5d461a3e8bc4edc3191a69b790fd5540466da5",
+    "perf/tests/effect_filter_bench.c": "85e8da48832e61011a5315ef27b22674b1ab5aa429d20d89e5a8ff83d467cbc4",
+    "perf/tests/effect_filter_bench.h": "7ead7da86b62cea939f3c92993d6faeb22a07d6994b4efb082e80775d4d79759",
+    "perf/tests/timing_bulk_bench.c": "b2651023195165c67dc6b807e00ea45bc2fc7be08bfdfb30133417b19a39eda3",
+    "perf/tests/bench_guard.h": "46082a3fef62b0e26ea0f16b6294171af964e0cb952c7dd7c8ef9a509cd8adf6",
+    "perf/Makefile": "56a367193a23a170cd98587f563cd185a70220386c51fc77e1a0764c1b4b4ed6"
+  },
+  "executable_sha256": "4c97f3b7d7fa0ef13357560f39e694507aef64a0fac4a8452ae73ab1fe4b2816",
+  "notes": [
+    "Source/executable hashes describe the three clean runs. Earlier adapter/protocol timing samples remain separately exploratory.",
+    "All performance runs were serial and guarded against game, launcher and WorldBuilder activity. Later legacy-fixture regression timings overlapped a native correctness test, are not performance-qualified, and are not included.",
+    "Original effect source setters and Begin/BeginPass/CommitChanges/EndPass/End remain. Synthetic Time advances 33 ms per pair, held constant within it. No retained material cache or effect-state filter.",
+    "Optimistic adapter relies on the independently modeled callee making exactly one DIP with no following device-state mutation. Native callee, exception and GPU failure contracts remain unproved.",
+    "The leader palette joins the batch. 288 modeled groups each draw 25 meshes with two instanced DIPs instead of one ordinary plus two instanced DIPs.",
+    "Every shadow map is cleared and redrawn. Lit pixels match exactly; shadow depths are within existing tolerance. Both regular and extra output are compared. Deliberately omitting visible leaders changes 2768 lit or 2516 shadow pixels across two frames.",
+    "Native hook stubs, production instancing code, exact logical scope counts, balanced method references and frame binding/constant restoration are checked. Prototype compiles with production general-register flags.",
+    "Final combined mode aggregates 24 members after the modeled leader returns. The earlier exploratory combined mode waits for two members.",
+    "Lit and shadow are alternative full workloads, not additive. No game Present, gameplay FPS, native scene traversal or source-callback timing is measured.",
+    "Log modification times are not exact start times."
+  ],
+  "verification": {
+    "leader-native-group.txt": "165e110219b313d8d0a23e5a71f4ba8600944f6522494ee6fdcbfd9a778ac079",
+    "leader-legacy-regression.txt": "c01c395369c00229464957c1ca67839ee5d5f50689a5bb0897f7059fc7ab8af8",
+    "leader-suite.txt": "0902258040ebf733e937a2e4b2ab43dbbb1a6d623f5d27e29d53334c07559952"
+  },
+  "native_fixture_source_sha256": "e5824179b13d699434955a8f6032437ca7a688cbe69a50049d4a9ac9f2ec091f"
+}

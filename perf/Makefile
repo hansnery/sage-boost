@@ -252,6 +252,24 @@ $(BUILD)/bench_material_queue.exe: tests/bench_material_queue.c tests/bench_reta
 RETAINED_MASK ?= narrow
 MATERIAL_CHURN ?=
 MATERIAL_PROTOCOL ?=
+$(BUILD)/inst_leader_engine.o: tests/inst_leader_engine.c tests/inst_retained_engine.c tests/inst_dispatch_engine.c src/inst.c src/*.h | $(BUILD)
+	$(CC) $(CFLAGS) -Isrc -c -o $@ $<
+
+$(BUILD)/bench_leader.exe: tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_leader_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_BENCH_LEADER -static -o $@ $< $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_leader_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
+
+LEADER_PROTOCOL ?= leader
+.PHONY: bench-leader
+bench-leader: $(BUILD)/bench_leader.exe
+	./$(BUILD)/bench_leader.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 $(LEADER_PROTOCOL)
+	./$(BUILD)/bench_leader.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 $(LEADER_PROTOCOL)
+	@test -f "$(DXVK_D3D9)" || { echo "error: bench-leader requires DXVK_D3D9"; exit 1; }
+	mkdir -p $(BUILD)/leader_dxvk
+	cp $(BUILD)/bench_leader.exe "$(DXVK_D3D9)" $(BUILD)/leader_dxvk/
+	cd $(BUILD)/leader_dxvk && \
+	  DXVK_LOG_LEVEL=none ./bench_leader.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 $(LEADER_PROTOCOL) && \
+	  DXVK_LOG_LEVEL=none ./bench_leader.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 $(LEADER_PROTOCOL)
+
 bench-material-queue: $(BUILD)/bench_material_queue.exe
 	./$(BUILD)/bench_material_queue.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit $(RETAINED_MASK) $(MATERIAL_CHURN) $(MATERIAL_PROTOCOL)
 	./$(BUILD)/bench_material_queue.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow $(RETAINED_MASK) $(MATERIAL_CHURN) $(MATERIAL_PROTOCOL)

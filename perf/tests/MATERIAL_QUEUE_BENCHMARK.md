@@ -5,6 +5,16 @@ These tests extend the retained GPU-setup fixture with the local game's
 file is changed, and no EA shader bytes are saved. These executables are not
 linked into the ASI.
 
+The separate `bench-leader` target screens including the first mesh in
+the instanced batch. `LEADER_PROTOCOL=leader` keeps per-member dispatch;
+`leader-bulk-first` aggregates after the leader returns, while `leader-bulk`
+waits for the second member. All keep the full effect lifecycle and advance
+Time. The adapter assumes its modeled callee makes exactly one DIP without
+later device-state changes; this is not a runtime fallback contract.
+Regular/extra image, omitted-leader negative control and draw/count/state
+checks are documented in
+`docs/specs/2026-10-18-leader-batch-screen.md` from the repository root.
+
 From Git Bash with the documented i686 toolchain:
 
 ```sh
