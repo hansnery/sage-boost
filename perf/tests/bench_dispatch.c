@@ -37,6 +37,13 @@ static unsigned bulk_members;
     __FILE__, __LINE__, #c); exit(1); } } while (0)
 #define HR(c) REQUIRE(SUCCEEDED(c))
 
+static unsigned fixture_batches(unsigned meshes)
+{
+    unsigned capacity=g_v->ir_count/(2*BONES);
+    REQUIRE(capacity>=2 && BONES<=g_v->ea_bones);
+    return (meshes+capacity-1)/capacity;
+}
+
 /* Real entry stub register/stack contract, with synthetic game records. */
 extern void bench_mesh(fake_mesh *, void *, void *, void *, fake_method *);
 __asm__(".text\n"
@@ -181,8 +188,7 @@ static void sample(int bulk, int detail, double *submit, double *complete, unsig
     REQUIRE(g_method.refs == refs && g_stock_draws == GROUPS);
     REQUIRE(bulk_members == (bulk ? GROUPS * (GROUP_SIZE - 2) : 0));
     REQUIRE(c.meshes == GROUPS * (GROUP_SIZE - 1) && c.groups == GROUPS && c.leaders == GROUPS);
-    /* Six bones: 12 registers/instance; both selected variants fit 15. */
-    REQUIRE(c.draws == GROUPS * 2 && c.mismatch == 0 && c.verify == 0);
+    REQUIRE(c.draws == GROUPS * fixture_batches(GROUP_SIZE-1) && c.mismatch == 0 && c.verify == 0);
     REQUIRE(SH(c, meshes) == (shadow_mode ? c.meshes : 0));
     REQUIRE(after.scopes - before.scopes == (detail ? GROUPS * (bulk ? 2 : GROUP_SIZE) : 0));
     REQUIRE(after.stale_scopes == before.stale_scopes);
@@ -283,6 +289,8 @@ static void setup_dispatch(int argc, char **argv)
         *(fake_mesh **)(records[i / GROUP_SIZE] + (i % GROUP_SIZE) * PF_RECORD_SIZE) = &many_meshes[i];
     }
     *(int *)(frame_ptr + PF_FRAME_PASS_COUNT) = 1;
+    printf("PALETTE: %u bones, %u registers per instance, %u instances per batch\n",
+           (unsigned)BONES,(unsigned)(2*BONES),g_v->ir_count/(2*BONES));
     *(int *)(frame_ptr + PF_FRAME_MAX_INSTANCES) = 1;
 }
 

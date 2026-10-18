@@ -43,8 +43,12 @@ static int g_failures;
 #define RT 256
 #define GRID 8
 #define MESHES 9
-#define BONES 6
-#define PIVOTS 8
+#ifndef PF_FIXTURE_BONES
+#define PF_FIXTURE_BONES 6
+#endif
+#define BONES PF_FIXTURE_BONES
+#define PIVOTS (BONES + 2)
+_Static_assert(BONES >= 3 && BONES <= 20, "fixture palette range");
 #define SITE_MESH 16
 #define SITE_DIP 17
 
@@ -750,7 +754,8 @@ int main(int argc, char **argv)
         unsigned gx = i % (GRID + 1), gy = i / (GRID + 1);
         v[0] = ((float)gx / GRID - 0.5f) * 0.6f, v[1] = ((float)gy / GRID - 0.5f) * 0.6f, v[2] = 0;
         v[3] = 0, v[4] = 0.3f, v[5] = 0.95f;
-        ((DWORD *)v)[6] = (DWORD)((gx + gy) % BONES); /* blue byte = .z = bone */
+        /* Cover all twenty entries in the larger workload as well. */
+        ((DWORD *)v)[6] = (DWORD)((gx + (BONES > 6 ? 3 : 1) * gy) % BONES);
         v[7] = (float)gx / GRID, v[8] = (float)gy / GRID;
         ((DWORD *)v)[9] = 0xFFFFFFFF;
     }

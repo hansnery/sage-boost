@@ -56,7 +56,7 @@ static void leader_check(int extra)
     REQUIRE(bench_leader_suppressed()==(pair_optimized?GROUPS:0));
     if(!extra) {
         unsigned per_group=GROUP_SIZE-1+(pair_optimized && !leader_omit);
-        REQUIRE(c.meshes==GROUPS*per_group && c.draws==2*GROUPS);
+        REQUIRE(c.meshes==GROUPS*per_group && c.draws==fixture_batches(per_group)*GROUPS);
     }
 }
 static void validate_leaders(void)
@@ -78,7 +78,8 @@ static void validate_leaders(void)
         for(unsigned i=0;i<RT*RT;i++) changed+=missing[i]!=baseline[i];
     }
     REQUIRE(changed>100);
-    printf("LEADER: regular and extra images match; missing-leader control changes %u pixels; 288 fewer DIPs per frame; counts and references checked\n",changed);
+    printf("LEADER: regular and extra images match; missing-leader control changes %u pixels; %u fewer DIPs per frame; counts and references checked\n",
+           changed,GROUPS*(1+fixture_batches(GROUP_SIZE-1)-fixture_batches(GROUP_SIZE)));
 }
 #endif
 static void filter_frame(int optimized)

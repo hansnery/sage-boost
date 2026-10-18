@@ -136,7 +136,7 @@ static void frame_draw(int extra, int retained, unsigned *pixels)
     HR(IDirect3DDevice9_EndScene(g_dev));
     REQUIRE(g_stock_draws == GROUPS-cached_groups);
     bench_retained_counts(&draws,&meshes);
-    REQUIRE(draws==2*cached_groups && meshes==GROUP_SIZE*cached_groups);
+    REQUIRE(draws==fixture_batches(GROUP_SIZE)*cached_groups && meshes==GROUP_SIZE*cached_groups);
     REQUIRE(pf_inst_active());
     check_state();
     if(frame_check) frame_check(extra);

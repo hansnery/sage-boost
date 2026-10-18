@@ -34,8 +34,14 @@ Strike an item through, with the date, when it's done.
   native GPU fixture. Actual entry trampolines and indirect-device calls
   retain bulk batching and output. Fix the fault fixture's proxy plumbing.
   See `specs/2026-10-18-installed-hook-parity.md`.
-- [ ] Extend workload realism to twenty-bone models/material diversity
-  before judging another CPU-rendering optimization. The live shadow
+- [x] 2026-10-18: extend the production-hook GPU fixture to twenty bones.
+  Both-image/backends lit/shadow controls and six-bone regressions pass.
+  Palette size substantially increases cost and can remove the leader's
+  draw-count benefit. See `specs/2026-10-18-workload-screens.md`.
+- [x] 2026-10-18: reject queue cleanup for runtime promotion after three
+  correct offline runs save only 0.0836-0.0926 ms per 7,680-record clear.
+- [ ] Extend material/source computation realism and investigate remaining
+  CPU rendering before judging another optimization. The live shadow
   counters suggest substantial leader deferral; 0.2014 ms of instanced
   shadow submission alone is too small to close the deficit.
 - [ ] Establish actual bulk-loop coverage separately from ordinary

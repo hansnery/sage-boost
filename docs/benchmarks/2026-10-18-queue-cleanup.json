@@ -1,0 +1,310 @@
+{
+  "kind": "Offline normal-return queue cleanup screen; rejected for runtime promotion",
+  "base_commit": "9979bce182076addafdacb828e08cd4ec6deb6b9",
+  "records_per_clear": 7680,
+  "clears_per_sample": 8,
+  "warmups_per_mode": 4,
+  "paired_rounds_per_method_count": 21,
+  "order": "alternating native/candidate and candidate/native",
+  "callback_observations": [
+    "exact deletion object sequence",
+    "old queue finish at callback",
+    "first eight method reference counts at callback",
+    "each deleted object has zero references"
+  ],
+  "limits": [
+    "Observer callbacks do not free the fixture objects",
+    "No exception or reentrancy qualification",
+    "No production hook, GPU timing or gameplay result"
+  ],
+  "runs": [
+    {
+      "image": "aotr",
+      "repeat": 1,
+      "log": {
+        "path": "perf/build/queue-cleanup-final-aotr-1.txt",
+        "sha256": "f33f491fb278470bc467514b49807bda8ea45bcfff83bd0eaab7403ec149090b"
+      },
+      "controls": 192,
+      "negative_control_rejected": true,
+      "methods": [
+        {
+          "method_holders": 0,
+          "native_ms": {
+            "median": 0.135925,
+            "p10": 0.1303625,
+            "p90": 0.1451375
+          },
+          "candidate_ms": {
+            "median": 0.04985,
+            "p10": 0.04745,
+            "p90": 0.051725
+          },
+          "saved_ms": {
+            "median": 0.08585,
+            "p10": 0.0819125,
+            "p90": 0.092225
+          }
+        },
+        {
+          "method_holders": 1,
+          "native_ms": {
+            "median": 0.133475,
+            "p10": 0.1291,
+            "p90": 0.14795
+          },
+          "candidate_ms": {
+            "median": 0.046075,
+            "p10": 0.0447625,
+            "p90": 0.0491
+          },
+          "saved_ms": {
+            "median": 0.0859,
+            "p10": 0.0825625,
+            "p90": 0.09885
+          }
+        },
+        {
+          "method_holders": 3,
+          "native_ms": {
+            "median": 0.137075,
+            "p10": 0.1291,
+            "p90": 0.1905375
+          },
+          "candidate_ms": {
+            "median": 0.045525,
+            "p10": 0.0412875,
+            "p90": 0.0745
+          },
+          "saved_ms": {
+            "median": 0.089975,
+            "p10": 0.0835875,
+            "p90": 0.1189
+          }
+        },
+        {
+          "method_holders": 6,
+          "native_ms": {
+            "median": 0.1367125,
+            "p10": 0.1294875,
+            "p90": 0.1435125
+          },
+          "candidate_ms": {
+            "median": 0.0442375,
+            "p10": 0.041975,
+            "p90": 0.0473625
+          },
+          "saved_ms": {
+            "median": 0.092425,
+            "p10": 0.086725,
+            "p90": 0.098225
+          }
+        }
+      ]
+    },
+    {
+      "image": "rotwk",
+      "repeat": 1,
+      "log": {
+        "path": "perf/build/queue-cleanup-final-rotwk-1.txt",
+        "sha256": "157a92458eb1df89098618e7c58e0c90819ac14f6ae40402c3644470328f81a1"
+      },
+      "controls": 192,
+      "negative_control_rejected": true,
+      "methods": [
+        {
+          "method_holders": 0,
+          "native_ms": {
+            "median": 0.1346125,
+            "p10": 0.1292375,
+            "p90": 0.14095
+          },
+          "candidate_ms": {
+            "median": 0.0506,
+            "p10": 0.0473875,
+            "p90": 0.0537125
+          },
+          "saved_ms": {
+            "median": 0.0836125,
+            "p10": 0.07915,
+            "p90": 0.0878
+          }
+        },
+        {
+          "method_holders": 1,
+          "native_ms": {
+            "median": 0.136975,
+            "p10": 0.1296,
+            "p90": 0.1579625
+          },
+          "candidate_ms": {
+            "median": 0.0473,
+            "p10": 0.0447875,
+            "p90": 0.0598125
+          },
+          "saved_ms": {
+            "median": 0.0857875,
+            "p10": 0.080025,
+            "p90": 0.0946
+          }
+        },
+        {
+          "method_holders": 3,
+          "native_ms": {
+            "median": 0.13125,
+            "p10": 0.1293,
+            "p90": 0.165675
+          },
+          "candidate_ms": {
+            "median": 0.0439625,
+            "p10": 0.041725,
+            "p90": 0.047625
+          },
+          "saved_ms": {
+            "median": 0.088525,
+            "p10": 0.0832375,
+            "p90": 0.117275
+          }
+        },
+        {
+          "method_holders": 6,
+          "native_ms": {
+            "median": 0.1311375,
+            "p10": 0.1288875,
+            "p90": 0.1452375
+          },
+          "candidate_ms": {
+            "median": 0.04255,
+            "p10": 0.041975,
+            "p90": 0.0615625
+          },
+          "saved_ms": {
+            "median": 0.0876125,
+            "p10": 0.0774375,
+            "p90": 0.0947375
+          }
+        }
+      ]
+    },
+    {
+      "image": "aotr",
+      "repeat": 2,
+      "log": {
+        "path": "perf/build/queue-cleanup-final-aotr-2.txt",
+        "sha256": "878169ec7fbd7c26fed697717f1e7567cdff3d5bf813fe1ac753cb13ec88203a"
+      },
+      "controls": 192,
+      "negative_control_rejected": true,
+      "methods": [
+        {
+          "method_holders": 0,
+          "native_ms": {
+            "median": 0.134825,
+            "p10": 0.13015,
+            "p90": 0.149075
+          },
+          "candidate_ms": {
+            "median": 0.04985,
+            "p10": 0.047125,
+            "p90": 0.057825
+          },
+          "saved_ms": {
+            "median": 0.0840375,
+            "p10": 0.073125,
+            "p90": 0.09715
+          }
+        },
+        {
+          "method_holders": 1,
+          "native_ms": {
+            "median": 0.1331625,
+            "p10": 0.1295375,
+            "p90": 0.1503625
+          },
+          "candidate_ms": {
+            "median": 0.0477,
+            "p10": 0.0448125,
+            "p90": 0.0501125
+          },
+          "saved_ms": {
+            "median": 0.084975,
+            "p10": 0.080775,
+            "p90": 0.1032625
+          }
+        },
+        {
+          "method_holders": 3,
+          "native_ms": {
+            "median": 0.139175,
+            "p10": 0.129875,
+            "p90": 0.1578875
+          },
+          "candidate_ms": {
+            "median": 0.0459,
+            "p10": 0.0416875,
+            "p90": 0.0525625
+          },
+          "saved_ms": {
+            "median": 0.0926,
+            "p10": 0.0881875,
+            "p90": 0.1148125
+          }
+        },
+        {
+          "method_holders": 6,
+          "native_ms": {
+            "median": 0.135875,
+            "p10": 0.128875,
+            "p90": 0.153475
+          },
+          "candidate_ms": {
+            "median": 0.0432375,
+            "p10": 0.0419375,
+            "p90": 0.0474375
+          },
+          "saved_ms": {
+            "median": 0.0896625,
+            "p10": 0.0868625,
+            "p90": 0.0990875
+          }
+        }
+      ]
+    }
+  ],
+  "raw_samples": {
+    "path": "docs/benchmarks/2026-10-18-queue-cleanup.csv",
+    "sha256": "11655e00df9bfb3204bdb721b73e6d176041b086f74e553e4881ad1f8ceb5923"
+  },
+  "image_sha256": {
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat": "035da15c626af6cd1663d1886deea605464ec6776f2c5f1d24570c2be6d73e61",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\game820.dat": "bcf4c85ec72ecb9eb95a844fc0072434fdcef49a5b2c59abb77ac04af29c277e"
+  },
+  "files": [
+    {
+      "path": "perf/tests/bench_queue_cleanup.c",
+      "sha256": "d30e62ada8567c962d8af38bbd92cc5df0235c2f0118db68a688d4755718dd17"
+    },
+    {
+      "path": "tools/bench_queue_cleanup.py",
+      "sha256": "bc989441dae05917dae97165f4963738b9e12a9ff07316351c39855bc754e3c8"
+    },
+    {
+      "path": "perf/tests/bench_native_insert.c",
+      "sha256": "599038e4ddecbc51897d7f92109c07a40eb6f176b8c0797263344729983fa0c1"
+    },
+    {
+      "path": "tools/bench_native_insert.py",
+      "sha256": "de9d7dab213f027a136eba0ddb033f651564f4899568c259a445910a4bb0b6c3"
+    },
+    {
+      "path": "perf/build/bench_queue_cleanup.exe",
+      "sha256": "b214610c7f0e789781f58a670e6db4bcc0b49ef82e40a6e17fdda152fd0fb44f"
+    }
+  ],
+  "full_plugin_suite": {
+    "command": "mingw32-make test",
+    "exit_code": 0,
+    "log": "perf/build/palette20-suite.txt",
+    "sha256": "4f121278fa9c38861bb12cf49b4283ee1fb90e4050aba15d7288796bf29a99b6"
+  }
+}

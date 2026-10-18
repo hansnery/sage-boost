@@ -21,6 +21,27 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Larger-palette and queue-cleanup screens (2026-10-18)
+
+- Twenty-bone native/GPU workloads now exercise the production hooks and
+  derive draw counts from shader capacity. Both-image native D3D9/DXVK
+  lit/shadow controls, six-bone DXVK regressions and the full plugin suite pass.
+- At twenty bones, 25 units take seven draws either with an ordinary leader
+  or fully batched. Existing bulk dispatch still helps, but an additional
+  draw reduction cannot be assumed. Optimized pair costs rise from roughly
+  7-9 ms at six bones to 15-16 ms at twenty in this controlled workload.
+  These are not saved-game FPS or a newly implemented speedup.
+- A separate queue-cleanup candidate passes 192 normal-return controls per
+  image/run, including exact callback observations and a broken-release
+  negative control. Three runs save only 0.0836-0.0926 ms per 7,680-record
+  clear. Reject runtime promotion; exception/reentrancy remain unqualified.
+- Preserve 252 cleanup and 126 GPU timing samples with hashes. See
+  [results and reproduction](specs/2026-10-18-workload-screens.md).
+- Installed beta.11 and the INI are unchanged. Last actual gameplay remains
+  30.0667 presentation calls/s. No installation or new gameplay request.
+  Native material-source computations remain a fixture gap and the next
+  CPU-rendering investigation; source-pruning/cache shortcuts stay rejected.
+
 ## Installed-hook parity audit after beta.11 (2026-10-18)
 
 - Runtime GPU fixtures now use the actual Draw/DIP site definitions and
