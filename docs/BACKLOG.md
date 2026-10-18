@@ -39,6 +39,11 @@ Strike an item through, with the date, when it's done.
   costs 9.8458 ms within a 23.2837 ms normal frame (overlapping scopes).
   The existing source-computation fixture gap remains relevant. Preserve
   scheduling margins and full-rate shadows; no repeat test requested yet.
+- [x] 2026-10-18: measure actual native matrix-source computation, including
+  constructors and D3DX27 inverses. Both images pass output and refusal
+  controls; about 0.10 ms per 1,222 modeled groups rejects a standalone
+  matrix computation cache. See `benchmarks/2026-10-18-native-matrix-sources.json`.
+  Other source callbacks and full material lifecycle remain unqualified.
 
 - [x] 2026-10-18: beta.10 activates the qualified native group path with
   signature-verified startup installation, production accounting and group

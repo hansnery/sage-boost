@@ -697,6 +697,9 @@ bench-retained: $(BUILD)/bench_retained.exe
 $(BUILD)/bench_ambient.exe: tests/bench_ambient.c | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -static -o $@ $<
 
+$(BUILD)/bench_native_matrix_sources.exe: tests/bench_native_matrix_sources.c tests/bench_guard.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -static -o $@ $<
+
 bench-ambient: $(BUILD)/bench_ambient.exe
 	python ../tools/bench_ambient.py "$(AOTR_DAT)"
 	python ../tools/bench_ambient.py "$(ROTWK_DAT)"

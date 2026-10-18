@@ -1,0 +1,366 @@
+{
+  "date": "2026-10-18",
+  "decision": "Reject a standalone matrix-source computation cache: about 0.10 ms per modeled 1,222-group workload is too small for the multi-millisecond deficit.",
+  "limits": [
+    "Warm controlled world/view/projection matrices and native constructors, providers and inverse callbacks.",
+    "Recording setters include a 64-byte copy and assertions; no D3DX parameter storage, Begin/End, geometry or GPU work.",
+    "1,222 groups scales the synthetic workload near the captured FX group count; it does not establish actual callback coverage.",
+    "Workloads are alternatives and overlap. Do not add them or infer gameplay FPS.",
+    "This does not qualify other light/skeleton sources, binder costs, a runtime cache or a production hook."
+  ],
+  "source_hashes": {
+    "tools/bench_native_matrix_sources.py": "99a3863249abf344cf6318938c312fe9a720b56fbc60c7281950ebbacc112ae5",
+    "perf/tests/bench_native_matrix_sources.c": "0b79201ad0f0907b85824b47f10f6e6fa027d49e169a16fe2168310c16dcd0ce",
+    "perf/tests/bench_guard.h": "46082a3fef62b0e26ea0f16b6294171af964e0cb952c7dd7c8ef9a509cd8adf6"
+  },
+  "installed_unchanged": {
+    "version": "0.9.11-beta.13",
+    "asi_sha256": "976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd",
+    "ini_sha256": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b"
+  },
+  "last_gameplay_presentations_per_s": 30.283333333333335,
+  "runs": [
+    {
+      "scope": "Native matrix computation/dispatch with recording setters; no real effect storage or rendering",
+      "checks": 54,
+      "groups": 1222,
+      "repeats_per_sample": 200,
+      "samples_ms": {
+        "world_view_projection_inverse": [
+          0.1008975,
+          0.098367,
+          0.099466,
+          0.1003215,
+          0.1009185,
+          0.0993765,
+          0.098661,
+          0.099263,
+          0.105921,
+          0.103423,
+          0.1040895,
+          0.0994565,
+          0.099926,
+          0.0993105,
+          0.09964,
+          0.0993845,
+          0.0999275,
+          0.0993625,
+          0.0993665,
+          0.0995265,
+          0.099219
+        ],
+        "world_view_projection": [
+          0.0706725,
+          0.069816,
+          0.0695295,
+          0.076747,
+          0.087238,
+          0.083544,
+          0.0734215,
+          0.084543,
+          0.070369,
+          0.089644,
+          0.0869975,
+          0.077263,
+          0.085671,
+          0.086404,
+          0.082285,
+          0.0698495,
+          0.069908,
+          0.06912,
+          0.070269,
+          0.0692725,
+          0.0692
+        ],
+        "view_inverse": [
+          0.0404965,
+          0.041367,
+          0.040536,
+          0.0405305,
+          0.040356,
+          0.0413485,
+          0.040384,
+          0.040498,
+          0.040759,
+          0.041292,
+          0.0470485,
+          0.0421495,
+          0.040719,
+          0.0407035,
+          0.0410615,
+          0.0406885,
+          0.0404135,
+          0.040861,
+          0.0405055,
+          0.0404285,
+          0.0405545
+        ]
+      },
+      "refusal_controls": 8,
+      "wrong_provider_control_rejected": true,
+      "files": {
+        "baseline": {
+          "path": "C:\\repositories\\Open-BFME-2\\baselines\\bfme2\\workshop-vanilla-1.06\\files\\game.dat",
+          "sha256": "f008b587570bad693981dc7218588c81d192a1e064b0f7f861539c51156a7640"
+        },
+        "image": {
+          "path": "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+          "sha256": "035da15c626af6cd1663d1886deea605464ec6776f2c5f1d24570c2be6d73e61"
+        },
+        "harness": {
+          "path": "C:\\repositories\\sage-boost\\perf\\build\\bench_native_matrix_sources.exe",
+          "sha256": "dd54a767f8febf0ebadd00a08c5d6b882e74e8c0805cb6a47e149e893b82b733"
+        },
+        "d3dx": {
+          "path": "C:\\Jogos\\AgeoftheRing\\rotwk\\d3dx9_27.dll",
+          "sha256": "a70d571cd675c97c9eeb4a234dba1d667ffb54ec3bb14defb36b3e2f605ae257"
+        }
+      },
+      "bodies": [
+        {
+          "name": "matrix",
+          "rva": 1363361,
+          "size": 52,
+          "sha256": "cd1a8be3afb1a883ca078c65693c1c660b08a49bf40dcaa93b1b89c24cf4eb7c"
+        },
+        {
+          "name": "inverse",
+          "rva": 1363413,
+          "size": 87,
+          "sha256": "16a207a8fe2e6fb7cc9996e55c72f3fc68fa50d569f3d4bd349baf5f2604ee1b"
+        },
+        {
+          "name": "inverse_transpose",
+          "rva": 1363500,
+          "size": 87,
+          "sha256": "13a949c843deaeeb03864e502af1eb57f724e0cff33e8c9d3326bd4aeb254da9"
+        },
+        {
+          "name": "view",
+          "rva": 1365513,
+          "size": 404,
+          "sha256": "1ec0af7e1bc15ad623129232207bf5a5066dabaa60f04642def5c7d98d4bbaf1"
+        },
+        {
+          "name": "projection",
+          "rva": 1365917,
+          "size": 300,
+          "sha256": "3bec7df002bb2006119662c006583539b074301bca89849c7aa252638f1eb4b7"
+        },
+        {
+          "name": "world",
+          "rva": 1369365,
+          "size": 404,
+          "sha256": "fd11da7ddf197f2f74f59629de20c422d7ac1c2a3e211ac59719d9c6366e5ebe"
+        },
+        {
+          "name": "matrix_ctor",
+          "rva": 483276,
+          "size": 22,
+          "sha256": "81928a6d8a65d169c0430ac02004d0c7ca0825bfd233ef01c84ef14b3a87f500"
+        },
+        {
+          "name": "array_ctor",
+          "rva": 5017,
+          "size": 34,
+          "sha256": "020df369b760640548bbcf9316008af700d4d7b064148b929b47c1c543a0e90d"
+        },
+        {
+          "name": "row_ctor",
+          "rva": 5042065,
+          "size": 3,
+          "sha256": "58367ffa2a0179375018fa0f5c26da24391e42ebe0ed8fdda35a21fc7bdc396f"
+        }
+      ],
+      "image_variant": "aotr",
+      "summary_ms": {
+        "world_view_projection_inverse": {
+          "median": 0.099466,
+          "p10": 0.099219,
+          "p90": 0.103423
+        },
+        "world_view_projection": {
+          "median": 0.0734215,
+          "p10": 0.0692725,
+          "p90": 0.0869975
+        },
+        "view_inverse": {
+          "median": 0.0406885,
+          "p10": 0.0404135,
+          "p90": 0.041367
+        }
+      }
+    },
+    {
+      "scope": "Native matrix computation/dispatch with recording setters; no real effect storage or rendering",
+      "checks": 54,
+      "groups": 1222,
+      "repeats_per_sample": 200,
+      "samples_ms": {
+        "world_view_projection_inverse": [
+          0.11123,
+          0.1028375,
+          0.102538,
+          0.0998405,
+          0.099532,
+          0.0994695,
+          0.1059,
+          0.0995315,
+          0.106646,
+          0.1000995,
+          0.0992155,
+          0.1001675,
+          0.0997945,
+          0.099192,
+          0.1004305,
+          0.100001,
+          0.0994425,
+          0.0990605,
+          0.0985785,
+          0.0996375,
+          0.0996465
+        ],
+        "world_view_projection": [
+          0.069416,
+          0.086064,
+          0.0796,
+          0.067986,
+          0.0852935,
+          0.074171,
+          0.0997415,
+          0.094374,
+          0.0824305,
+          0.067251,
+          0.082743,
+          0.0715225,
+          0.067182,
+          0.0669585,
+          0.0820275,
+          0.067192,
+          0.084968,
+          0.068134,
+          0.0678775,
+          0.0671875,
+          0.067344
+        ],
+        "view_inverse": [
+          0.048707,
+          0.0421475,
+          0.041519,
+          0.042187,
+          0.0413525,
+          0.040611,
+          0.05537,
+          0.041621,
+          0.04146,
+          0.0408515,
+          0.041129,
+          0.0405525,
+          0.0403275,
+          0.0404335,
+          0.0428985,
+          0.045029,
+          0.040595,
+          0.0405745,
+          0.040448,
+          0.041497,
+          0.0408315
+        ]
+      },
+      "refusal_controls": 8,
+      "wrong_provider_control_rejected": true,
+      "files": {
+        "baseline": {
+          "path": "C:\\repositories\\Open-BFME-2\\baselines\\bfme2\\workshop-vanilla-1.06\\files\\game.dat",
+          "sha256": "f008b587570bad693981dc7218588c81d192a1e064b0f7f861539c51156a7640"
+        },
+        "image": {
+          "path": "C:\\Jogos\\AgeoftheRing\\rotwk\\game820.dat",
+          "sha256": "bcf4c85ec72ecb9eb95a844fc0072434fdcef49a5b2c59abb77ac04af29c277e"
+        },
+        "harness": {
+          "path": "C:\\repositories\\sage-boost\\perf\\build\\bench_native_matrix_sources.exe",
+          "sha256": "dd54a767f8febf0ebadd00a08c5d6b882e74e8c0805cb6a47e149e893b82b733"
+        },
+        "d3dx": {
+          "path": "C:\\Jogos\\AgeoftheRing\\rotwk\\d3dx9_27.dll",
+          "sha256": "a70d571cd675c97c9eeb4a234dba1d667ffb54ec3bb14defb36b3e2f605ae257"
+        }
+      },
+      "bodies": [
+        {
+          "name": "matrix",
+          "rva": 1363361,
+          "size": 52,
+          "sha256": "cd1a8be3afb1a883ca078c65693c1c660b08a49bf40dcaa93b1b89c24cf4eb7c"
+        },
+        {
+          "name": "inverse",
+          "rva": 1363413,
+          "size": 87,
+          "sha256": "16a207a8fe2e6fb7cc9996e55c72f3fc68fa50d569f3d4bd349baf5f2604ee1b"
+        },
+        {
+          "name": "inverse_transpose",
+          "rva": 1363500,
+          "size": 87,
+          "sha256": "13a949c843deaeeb03864e502af1eb57f724e0cff33e8c9d3326bd4aeb254da9"
+        },
+        {
+          "name": "view",
+          "rva": 1365513,
+          "size": 404,
+          "sha256": "1ec0af7e1bc15ad623129232207bf5a5066dabaa60f04642def5c7d98d4bbaf1"
+        },
+        {
+          "name": "projection",
+          "rva": 1365917,
+          "size": 300,
+          "sha256": "3bec7df002bb2006119662c006583539b074301bca89849c7aa252638f1eb4b7"
+        },
+        {
+          "name": "world",
+          "rva": 1369365,
+          "size": 404,
+          "sha256": "fd11da7ddf197f2f74f59629de20c422d7ac1c2a3e211ac59719d9c6366e5ebe"
+        },
+        {
+          "name": "matrix_ctor",
+          "rva": 483276,
+          "size": 22,
+          "sha256": "81928a6d8a65d169c0430ac02004d0c7ca0825bfd233ef01c84ef14b3a87f500"
+        },
+        {
+          "name": "array_ctor",
+          "rva": 5017,
+          "size": 34,
+          "sha256": "020df369b760640548bbcf9316008af700d4d7b064148b929b47c1c543a0e90d"
+        },
+        {
+          "name": "row_ctor",
+          "rva": 5042065,
+          "size": 3,
+          "sha256": "58367ffa2a0179375018fa0f5c26da24391e42ebe0ed8fdda35a21fc7bdc396f"
+        }
+      ],
+      "image_variant": "rotwk",
+      "summary_ms": {
+        "world_view_projection_inverse": {
+          "median": 0.0997945,
+          "p10": 0.099192,
+          "p90": 0.1059
+        },
+        "world_view_projection": {
+          "median": 0.0715225,
+          "p10": 0.0671875,
+          "p90": 0.086064
+        },
+        "view_inverse": {
+          "median": 0.0413525,
+          "p10": 0.040448,
+          "p90": 0.045029
+        }
+      }
+    }
+  ]
+}

@@ -97,6 +97,25 @@ results from old and recreated saves are not a controlled comparison.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Native matrix-source computation screen (2026-10-18)
+
+- Nine verified native bodies now execute offline: matrix/inverse callbacks,
+  world/view/projection providers and the matrix/array/row constructors.
+  D3DX27 performs the actual inverse and singular fallback; recording
+  setters isolate computation from effect storage and rendering.
+- Both executable variants pass 54 full-matrix output/identity/change/
+  singular checks, eight contract refusals and a wrong-provider negative
+  control. Only local image bytes in private RAM are executed.
+- Twenty-one samples per workload/image put world + view + projection +
+  view inverse at about **0.10 ms per 1,222 modeled groups**. This is too
+  small for a standalone computation cache; actual live callback counts
+  are unknown. The three reported workloads overlap and must not be added.
+- [Raw samples, hashes and limits](benchmarks/2026-10-18-native-matrix-sources.json).
+  D3DX storage/lifecycle, other light/skeleton sources and native binding
+  remain separate costs. The next candidate must remove substantially more
+  material processing without repeating the rejected full-state cache.
+  Beta.13 ASI/INI hashes are unchanged; no gameplay request or deployment.
+
 ## Material-chain dispatch screen (2026-10-18)
 
 - Beta.13 now promotes the bounded 1..6-method follower guard and appends
