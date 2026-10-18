@@ -318,7 +318,10 @@ static void sample_epoch(unsigned round,unsigned repetition)
     if(advancing_clock) material_fixture_clock((round*FRAMES_PER_SAMPLE+repetition)*33);
 }
 
-int main(int argc,char **argv)
+#ifndef PF_MATERIAL_MAIN
+#define PF_MATERIAL_MAIN main
+#endif
+int PF_MATERIAL_MAIN(int argc,char **argv)
 {
     const char *crt=argc>2?argv[2]:"C:/Jogos/AgeoftheRing/rotwk/msvcr71.dll";
     const char *slash=strrchr(crt,'/'),*backslash=strrchr(crt,'\\');

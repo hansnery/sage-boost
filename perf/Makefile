@@ -196,7 +196,7 @@ $(BUILD)/bench_dispatch.exe: tests/bench_dispatch.c tests/test_inst.c $(BUILD)/i
 .PHONY: test-native-events
 .PHONY: test-native-group
 .PHONY: test-native-mesh
-$(BUILD)/test_native_mesh.exe: tests/test_native_mesh.c src/stubs.c src/*.h | $(BUILD)
+$(BUILD)/test_native_mesh.exe: tests/test_native_mesh.c tests/native_mesh_image.h src/stubs.c src/*.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -mgeneral-regs-only -static -o $@ $(filter %.c,$^)
 
 test-native-mesh: $(BUILD)/test_native_mesh.exe
@@ -267,6 +267,23 @@ $(BUILD)/bench_leader.exe: tests/bench_material_queue.c tests/bench_retained.c t
 	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_BENCH_LEADER -static -o $@ $< $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_leader_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
 
 LEADER_PROTOCOL ?= leader
+.PHONY: bench-native-leader
+$(BUILD)/inst_native_leader_engine.o: tests/inst_native_leader_engine.c tests/inst_retained_engine.c tests/inst_dispatch_engine.c src/inst.c src/*.h | $(BUILD)
+	$(CC) $(CFLAGS) -Isrc -c -o $@ $<
+
+$(BUILD)/bench_native_leader.exe: tests/bench_native_leader.c tests/native_mesh_image.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_native_leader_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_native_leader_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
+
+bench-native-leader: $(BUILD)/bench_native_leader.exe
+	python ../tools/bench_native_leader.py "$(AOTR_DAT)" $(BUILD)/bench_native_leader.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first
+	python ../tools/bench_native_leader.py "$(AOTR_DAT)" $(BUILD)/bench_native_leader.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 leader-bulk-first
+	@test -f "$(DXVK_D3D9)" || { echo "error: bench-native-leader requires DXVK_D3D9"; exit 1; }
+	mkdir -p $(BUILD)/native_leader_dxvk
+	cp $(BUILD)/bench_native_leader.exe "$(DXVK_D3D9)" $(BUILD)/native_leader_dxvk/
+	cd $(BUILD)/native_leader_dxvk && \
+	  DXVK_LOG_LEVEL=none python ../../../tools/bench_native_leader.py "$(AOTR_DAT)" bench_native_leader.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first && \
+	  DXVK_LOG_LEVEL=none python ../../../tools/bench_native_leader.py "$(AOTR_DAT)" bench_native_leader.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 leader-bulk-first
+
 .PHONY: bench-leader
 bench-leader: $(BUILD)/bench_leader.exe
 	./$(BUILD)/bench_leader.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 $(LEADER_PROTOCOL)

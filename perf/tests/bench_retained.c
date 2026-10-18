@@ -33,6 +33,8 @@ static void (*frame_check)(int);
 static const char *comparison_name;
 static int (*dispatch_scope_begin)(void),(*dispatch_scope_end)(unsigned);
 static void (*prepare_sample)(unsigned, unsigned);
+static void (*setup_complete)(void);
+static int (*dispatch_available)(void);
 
 static void retained_workload(void)
 {
@@ -46,7 +48,8 @@ static void retained_workload(void)
         current_records = records[group];
         *(unsigned char **)(frame_ptr + PF_FRAME_GROUP_END) = current_records + sizeof records[0];
         for (i = 0; i < GROUP_SIZE;) {
-            if(dispatch_bulk_now && i==dispatch_first_member) {
+            if(dispatch_bulk_now && i==dispatch_first_member &&
+               (!dispatch_available || dispatch_available())) {
                 REQUIRE(dispatch_scope_begin && dispatch_scope_end && dispatch_scope_begin());
                 unsigned n=bench_inst_bulk(current_records+i*PF_RECORD_SIZE,
                                            current_records+sizeof records[0],&g_method);
@@ -66,6 +69,7 @@ static void setup(int argc, char **argv)
 {
     setup_dispatch(argc, argv);
     if (material_setup) material_setup();
+    if (setup_complete) setup_complete();
     pf_timing_set_next(PF_DISPLAY_DRAW, retained_workload);
     HR(IDirect3DDevice9_CreateStateBlock(g_dev, D3DSBT_ALL, &outer));
 }

@@ -39,6 +39,11 @@ Strike an item through, with the date, when it's done.
 - [ ] Combine native group/mesh with real effect/instancing output checks,
   callback and verification gates, split/partial batches and failure
   handling; remeasure the complete guarded path before runtime promotion.
+- [x] 2026-10-18: native mesh/draw/cleanup plus real GPU and timing.c
+  wrapping passes image, callback-gate, split/partial-batch, earlier-DIP and
+  verification-window controls. Two repeats save 2.81-2.95 ms per pair on
+  DXVK; see `specs/2026-10-18-native-mesh-gpu-screen.md`. Native enclosing
+  group/events, engine-state reconciliation and failure recovery remain open.
 - [x] 2026-10-17: larger material-queue fixture passes native/DXVK fresh
   pose, material invalidation, regular/extra image and state checks.
 - [x] 2026-10-17: recollect material-queue timings with the game closed.

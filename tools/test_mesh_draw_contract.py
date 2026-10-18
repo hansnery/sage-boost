@@ -163,6 +163,16 @@ def refusals(reference,target,symbols):
     print(f'Native mesh/draw: {len(mutations)} refusal controls passed',flush=True)
 
 
+def write_manifest(path,records,table):
+    """Numeric relocation metadata only; never write executable bytes."""
+    lines=[]
+    for rva,size,digest,patches in records:
+        lines.append(f'{rva} {size} {digest} {len(patches)}')
+        lines.extend(' '.join(map(str,p)) for p in patches)
+    lines.append(' '.join(map(str,table)))
+    path.write_text('\n'.join(lines)+'\n',encoding='ascii')
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('image',type=Path); parser.add_argument('--self-test',action='store_true')
@@ -172,12 +182,8 @@ def main():
     if args.self_test: refusals(reference,target,symbols)
     if args.execute:
         with tempfile.TemporaryDirectory(prefix='sage-mesh-draw-') as folder:
-            path=Path(folder)/'contract.txt'; lines=[]
-            for rva,size,digest,patches in records:
-                lines.append(f'{rva} {size} {digest} {len(patches)}')
-                lines.extend(' '.join(map(str,p)) for p in patches)
-            lines.append(' '.join(map(str,table)))
-            path.write_text('\n'.join(lines)+'\n',encoding='ascii')
+            path=Path(folder)/'contract.txt'
+            write_manifest(path,records,table)
             exe=Path(__file__).resolve().parent.parent/'perf/build/test_native_mesh.exe'
             command=[str(exe),str(args.image),str(path)]
             result=subprocess.call(command)

@@ -21,6 +21,23 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Native mesh/GPU integration screen (2026-10-18)
+
+- [Guarded native-mesh GPU screen](specs/2026-10-18-native-mesh-gpu-screen.md)
+  replaces the modeled mesh callee with seven verified native bodies and
+  real timing.c return wrapping. Two serial repeats save 2.81-2.95 ms per
+  regular/extra pair on DXVK. Preserve 168 samples and build/log hashes.
+- Regular/extra output, fresh shadows, omitted-leader detection, state,
+  references and logical counts pass. Additional controls cover callback
+  gates, a model split/partial batch, an earlier source DIP and the real
+  verification window. Shared native contract tests pass on both images.
+- Enclosing group/events, source computation and engine-state application
+  remain controlled; native group/GPU integration and failure recovery are
+  still required. This retains the earlier candidate's saving, not an
+  additive improvement or evidence of 60 FPS. No install or gameplay test.
+- Full plugin suite and all four prior leader/bulk GPU cases pass. Built
+  beta.3, installed 0.9.10 and installed INI hashes remain unchanged.
+
 ## Native final-draw contract (2026-10-18)
 
 - [Native mesh/draw fixture](specs/2026-10-18-native-mesh-draw-contract.md)

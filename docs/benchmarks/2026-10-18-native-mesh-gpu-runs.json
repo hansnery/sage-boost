@@ -1,0 +1,56 @@
+{
+  "parent_commit": "d0dcc18",
+  "runs": [
+    {
+      "log": "native-gpu-controls-1.txt",
+      "sha256": "20079f0e413b81da7c3340c1ee3f0516d032743c4f8429dbe26211d10ce472fc",
+      "samples": 84,
+      "log_mtime_utc": "2026-10-18T08:30:45.987334+00:00"
+    },
+    {
+      "log": "native-gpu-controls-2.txt",
+      "sha256": "d9c53b48b7b1665c3c716ea5faa3ae2a527da92dc2e2c225445237e6e093711a",
+      "samples": 84,
+      "log_mtime_utc": "2026-10-18T08:31:50.839743+00:00"
+    }
+  ],
+  "sources": {
+    "perf/tests/bench_native_leader.c": "6ab6d6e365dedf1359a16c45b593fbae95133d494383eab6dcdb62acf8ab5321",
+    "perf/tests/native_mesh_image.h": "a4d587f4318913da1f0fe67e70e8cf4c3ff4308f16eba3052fa3cd5da551b6f8",
+    "perf/tests/inst_native_leader_engine.c": "30ca5de1b8569e986bfaf3c3b708e906ee2cf84dd93a1ad9e71c6e2f3a5f635b",
+    "perf/tests/bench_material_queue.c": "2e15d112b0bdab3e6187fefb9f8e06d9060ea629b2f7329f1c25e28d2011df60",
+    "perf/tests/bench_retained.c": "5cc757e361c924231536d91f03e7359f3651b93d5fe8284ada5e7b315e487a7c",
+    "perf/tests/bench_dispatch.c": "0375da98234f0e50e900b6ef0f13317e28cece8168cefb50a26e5f47e2539a68",
+    "perf/tests/test_inst.c": "4231608af07e8a0733b1987cd064fd55e41d5e16523eeb58339c1602d8f0763a",
+    "perf/tests/inst_retained_engine.c": "b1d3d466ca49a621626607ec32c0223d18bd6b6fa0cadce6fb2b9bea36481135",
+    "perf/tests/inst_dispatch_engine.c": "b4312e3449f3bceeb344acca110bcba6baf776adca00cc9cf3f96fe27a00af6c",
+    "perf/tests/material_fixture.c": "4d292ffbca6be1b4d87496558e5d461a3e8bc4edc3191a69b790fd5540466da5",
+    "perf/tests/effect_filter_bench.c": "85e8da48832e61011a5315ef27b22674b1ab5aa429d20d89e5a8ff83d467cbc4",
+    "perf/tests/timing_bulk_bench.c": "b2651023195165c67dc6b807e00ea45bc2fc7be08bfdfb30133417b19a39eda3",
+    "perf/tests/bench_guard.h": "46082a3fef62b0e26ea0f16b6294171af964e0cb952c7dd7c8ef9a509cd8adf6",
+    "perf/src/inst.c": "cf48d58e4b1185cf8269fbb52cdd2a401ae39c6a90dbb0f5409922937b1e8d69",
+    "perf/src/timing.c": "a5bddd8f6c7afdf03e345a557f2a75a2b30cb17bfd6e836764b221f081a23596",
+    "perf/src/stubs.c": "5f9eb64ed0bad6f75ca60eca013eae4ad09aeb70d577a0b5b7582a8889e63fdc",
+    "perf/Makefile": "b1ec481f1475409b1cee48c40263ce71358b2d99f2573525e8aded597afe89ff",
+    "tools/bench_native_leader.py": "701e0e19f91fd3f173318a0867ae6242f1ca4fdf7285d6b9cfbdbba9798dc197",
+    "tools/test_mesh_draw_contract.py": "0d5d51695ff904a05a38001a5cf70ceaafd0fb8902e1833aba4db593348878af"
+  },
+  "executable_sha256": "edae4db0bbbbac71dffacd7007b3eaab76b823618e5b0601fc4c7d8b20ecdda1",
+  "notes": [
+    "Two serial guarded repeats, 21 alternating-order samples of eight fenced regular/extra pairs after four warmups. No concurrent agent tests during these samples.",
+    "Seven verified local native mesh/triangle/draw/context/cleanup bodies in RAM; actual timing.c Draw return wrapping and general-register entry stubs, real D3DX27 lifecycle and GPU instancing.",
+    "Enclosing group loop, source computation, geometry binding, engine state application and statistics remain controlled fixture dependencies. This is not complete native group/engine-cache integration.",
+    "Final-frame pointer and return-site guards, callback-slot gates, model/geometry/bone identity and verification-window refusal are included in measured code.",
+    "Untimed controls check fresh output, omitted-leader detection, split model at member 13, partial bulk, both callback slots, an earlier source DIP and actual verification rendering. Callback presence is gated, not executed by the modeled group.",
+    "No GPU failure, exception-unwinding or lifetime proof. No installed hook, game startup or gameplay FPS measurement.",
+    "Lit/shadow are alternative full workloads, never additive. Every shadow map is freshly drawn.",
+    "Earlier native-gpu-initial.txt has one exploratory native-lit run before adding fallback controls; excluded from these 168 samples.",
+    "Log modification times are not exact start times."
+  ],
+  "native_contract_log_sha256": "524d2ce09b673a31ac4508bccfaed82221eb6e7187d99b13960a44c1d15ef1d2",
+  "exploratory_log_sha256": "464a78cb9cb29daa10fc42914f85c20322ea9f4102dcbbc73eeb8b4b1d971696",
+  "verification": {
+    "native-gpu-suite.txt": "1f1ba21ecf35d7017f14e77e08ccb6d1340e92bdf851e79492facdefcb5f2814",
+    "native-gpu-legacy.txt": "2aedc77d746a31eb8a12e0c5bce4c793dfdae6708706567d663d1ccf8ac578b9"
+  }
+}
