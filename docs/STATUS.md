@@ -43,6 +43,20 @@ files before relying on it.
 - Next candidate: benchmark repeated per-mesh dispatch within an already
   validated instancing group; broad merging has few candidates in this save.
 
+## Updated source investigation (2026-10-17)
+
+- User requested pulling Open-BFME-2; fast-forwarded its master by 6,410
+  commits to `ff1544d9fef`, preserving pre-existing untracked work and leaving
+  the broken BFME1 submodule and Grok checkout alone. No authored edits there.
+- [Updated reference audit](specs/2026-10-17-updated-reference-performance-audit.md):
+  FX PerformRendering is now recorded matched (819 bytes), enabling stronger
+  investigation of group-local direct staging; stale partial comment noted.
+- Native isolated event-constructor/destructor test on AotR and game820 found
+  only ~0.24-0.26 ms per 7,000 pairs. Copies alone are not a strong candidate.
+  Full group dispatch and conditional ambient-lightmap caching remain unmeasured.
+- Installed beta.2 is unchanged. Next step is a native benchmark plus target
+  proof of complete compatible-member dispatch before a runtime experiment.
+
 ## Beta.2 saved-game test (2026-10-17)
 
 - User completed the next test. Copied INI, log and both CSVs before reading:

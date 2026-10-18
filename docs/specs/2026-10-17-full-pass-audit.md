@@ -4,6 +4,13 @@ Read-only implementation audit, 2026-10-17. No rendering optimization is
 implemented by this document. Shadows remain full rate. The reference repo
 was read only; no EA code or assets are incorporated into the plugin.
 
+## Update after the reference pull
+
+The [updated reference audit](2026-10-17-updated-reference-performance-audit.md)
+supersedes the partial-only FX loop evidence below: the refreshed ledger now
+records the 819-byte PerformRendering body as matched. It also records the
+isolated event-buffer measurement and stronger matched renderOneObject source.
+
 ## Evidence and limits
 
 The preserved beta.1 timing CSV is in
