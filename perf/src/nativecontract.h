@@ -3,7 +3,7 @@
 #include "scan.h"
 
 typedef struct { unsigned size, first, count, fnv, crc; } pf_contract_body;
-typedef struct { unsigned offset, absolute, symbol; } pf_contract_patch;
+typedef struct { unsigned offset, absolute, symbol, addend; } pf_contract_patch;
 typedef struct { unsigned symbol; const char *signature; } pf_contract_root;
 typedef struct {
     unsigned body_count, symbol_count, patch_count, root_count;
@@ -11,6 +11,10 @@ typedef struct {
     const pf_contract_patch *patches;
     const unsigned char *code;
     const pf_contract_root *roots;
+    /* Optional semantic-region extents and writable-section requirements.
+     * Without extents, bodies cover size bytes and external symbols one. */
+    const unsigned *spans;
+    const unsigned char *writable;
 } pf_native_contract;
 
 /* locations has symbol_count entries; it is filled only on success.

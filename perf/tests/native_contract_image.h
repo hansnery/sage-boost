@@ -51,8 +51,8 @@ static void contract_rebase(ContractImage *image,ContractManifest *manifest,cons
     REQUIRE(fscanf(f,"%u",&manifest->count)==1 && manifest->count && manifest->count<=64);
     unsigned delta=(unsigned)image->base-image->preferred;
     for(unsigned i=0;i<manifest->count;i++) {
-        unsigned rva,size,hash,count;unsigned char raw[512];
-        REQUIRE(fscanf(f,"%u %u %u %u",&rva,&size,&hash,&count)==4 && size<=sizeof raw && size>=4);
+        unsigned rva,size,hash,count;unsigned char raw[4096];
+        REQUIRE(fscanf(f,"%u %u %u %u",&rva,&size,&hash,&count)==4 && size<=sizeof raw && size>=1);
         REQUIRE(rva<image->size && size<=image->size-rva && count<=512-manifest->patch_count);
         manifest->rva[i]=rva;manifest->size[i]=size;
         memcpy(raw,image->base+rva,size);
@@ -60,7 +60,7 @@ static void contract_rebase(ContractImage *image,ContractManifest *manifest,cons
         for(unsigned j=0;j<count;j++) {
             ContractPatch *p=manifest->patches+manifest->patch_count++;
             p->rva=rva;p->body=i;
-            REQUIRE(fscanf(f,"%u %u %u",&p->field,&p->absolute,&p->symbol)==3 && p->field<=size-4 && p->absolute<=1);
+            REQUIRE(fscanf(f,"%u %u %u",&p->field,&p->absolute,&p->symbol)==3 && size>=4 && p->field<=size-4 && p->absolute<=1);
             if(p->absolute && contract_relocated(image,rva+p->field))*(unsigned *)(raw+p->field)-=delta;
         }
         REQUIRE(fnv(raw,size)==hash);

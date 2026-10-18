@@ -7,6 +7,16 @@ Strike an item through, with the date, when it's done.
 
 ## Full-rate 60 FPS investigation (2026-10-17)
 
+- [x] 2026-10-18: implement runtime discovery for the joined bulk-render
+  boundaries: 36 hashed regions, 85 identities, 280 dependencies and six
+  roots. Both private images pass 451 no-write refusals and coexistence with
+  queue hooks; see `specs/2026-10-18-runtime-bulk-contract.md`. The finder is
+  not yet linked into the ASI; no new performance/install/gameplay claim.
+- [ ] Before bulk promotion, verify resource lifetimes when the device holds
+  the only buffer reference. `capture()` currently stores `g.prev_vb` after
+  releasing GetStreamSource's reference; later temporary unbinding needs a
+  live owner until restoration. Preserve pending units across failure paths.
+
 - [x] 2026-10-18: integrate native-order C sorting into beta.5 with a shared
   runtime verifier, pure-comparator gate and native fallback. Both images
   pass native/entry/forced-heap/shared-holder comparisons, callback traces,

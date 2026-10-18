@@ -1,0 +1,73 @@
+{
+  "kind": "Runtime bulk-render discovery qualification; no bulk execution or gameplay FPS claim",
+  "base_commit": "0d4be7f80760d2f90c3a5867e1b65d3a7b7dca1d",
+  "plugin_version": "0.9.11-beta.6",
+  "bulk_finder_linked_into_asi": false,
+  "contract": {
+    "hashed_regions": 36,
+    "symbols": 85,
+    "dependency_fields": 280,
+    "signature_roots": 6
+  },
+  "per_image": {
+    "body_or_literal_refusals": 35,
+    "dependency_refusals": 280,
+    "interior_addend_refusals": 120,
+    "ambiguous_roots": 6,
+    "writable_section_refusals": 1,
+    "import_refusals": 8,
+    "image_bound_refusals": 1,
+    "total_refusals": 451,
+    "synthetic_region_refusals": 4,
+    "queue_insertion_coexistence": true,
+    "queue_sorting_coexistence": true
+  },
+  "images": [
+    "aotr",
+    "rotwk"
+  ],
+  "full_plugin_suite": "passed",
+  "instruction_check": "no x87/SIMD/FP-control instructions in either verifier object",
+  "limits": [
+    "Discovery only; bulk engine and bridge remain offline",
+    "External bodies outside the 36 hashed regions receive identity/section checks only",
+    "Resource lifetimes, persistent/device/replay failures still require integration work",
+    "No new performance measurement; last actual gameplay about 30.18 presentations/s",
+    "Installed ASI and INI unchanged"
+  ],
+  "sha256": {
+    "perf/Makefile": "ecff5992f816d2a7711181b351cf82d6e7ac9778137d99e4b201af3addc800d1",
+    "perf/src/main.c": "8233a2f4d5ee689c804ed429b506d0f774a37ef71803a247265ebff54f6bba81",
+    "perf/src/version.rc": "0bfb939de6dc9ef9e04835a6be88a326941325ef9c5c015db46ec5f6af929393",
+    "perf/src/nativecontract.c": "525bbfe7ead5faf89b4647a880d7bd64d8c30cd6479493f0aedc3d27950e87b0",
+    "perf/src/nativecontract.h": "a3773c8eb3745df31c1f849c8f88250e7e10088d02f991df227b5fb4436abe2a",
+    "perf/src/queueinsert.c": "1822a1ca62030719d889f87b23c79c45deba6e25e9bdf81072f0a3cbe74c638b",
+    "perf/src/queueinsert_table.h": "d8b9bd3a8098b038c68919c90e490a69795eb96781b69d3b98b76e70efcae57e",
+    "perf/src/queuesort.c": "d2578d7d91c0c21a7bd0317f81da6f5083d9b6b711c7d9bd64e85c10792772fc",
+    "perf/src/queuesort_table.h": "c16bb361f9feb35cc012791e88c00c161f3c89dcfd3453e41785cb500bfd44fb",
+    "perf/src/bulkcontract.c": "f0b8a24a60c92681145de51bba5780ced5b33e6792e0c3dc50a7efedd4b547bc",
+    "perf/src/bulkcontract.h": "5a73614c81686e35fc35a40f267d9a858a360a0252ea2792a99e388c48a6ab4c",
+    "perf/src/bulkcontract_table.h": "c1272bac477b4ca647b9e6f2515d6372c6a585a1624528a075b04f7cc5ec543b",
+    "perf/tests/native_contract_image.h": "457f8e568ef4aec488e6d52ad70ec5dcb265864ad538ace75fcfe6d9a5420b70",
+    "perf/tests/test_bulkcontract.c": "e1fb97e58864c593e8398f06344abbe951e91b05460b8a9744fa10b80f8e7be7",
+    "perf/tests/test_queueinsert.c": "89a520a1fb5c5f82704dd8d7a00decd083a495bc94bc47b1b020a386d3b1833f",
+    "perf/tests/test_queuesort.c": "1ae982d2818e8bf784f9acbca698eb3873181cfc3a084e62825e930ab99105b4",
+    "perf/tests/test_load.c": "4c2c6dde7bc153ec7b6e0547edba09cd4c96a8e3781bd18a94e9dc33458ec3c3",
+    "tools/verify_sites.py": "0a7160d2c0c8803110147c7f462992c929e6121730bff70f0d54cbac9db85155",
+    "tools/native_contract_table.py": "a3b8376cd6f82282e15557b207772d044f6cdad1bb168cef31ba466b892ba18f",
+    "tools/bulkcontract_table.py": "f9b873a91f7ca6849fd453f9773fdd4cad08a681ea13a8d3141da1e37bf08945",
+    "tools/test_bulkcontract.py": "734a320be710206b6b26926830d5be82b538e0781fbb7362099ff340049a37cd",
+    "perf/build/bfme2perf.asi": "9c8b59837d01735e0b8bd5f094785836ca406b37a4f6c75719d8fd4506dd5e54",
+    "perf/build/nativecontract.o": "5fec2349db2ade207fd397349ea534f284d95e8effa6815d029568e531345e56",
+    "perf/build/bulkcontract.o": "d11dc7f6f2ccc1bd39316ba3a341a5b9389c1932957e2da6cbf621b7ca1c69b0",
+    "perf/build/test_bulkcontract.exe": "b885718f59666498c4730b504bbf60d9d22d16999e5f946e89d4097fae6e5161",
+    "perf/build/runtime-bulk-contract-final.txt": "05b9c1a2dc996b89019049bbe649446c481e4a3849153c3798ec3dd4a948c622",
+    "perf/build/runtime-bulk-contract-suite-final.txt": "dfbba4a3915989b3f8a4267bc2b8686912cbb4507926c4ec0411c726f6bff290",
+    "perf/build/runtime-bulk-contract-registers.txt": "eefbb94fe4b9f8fd4523de3b03e4f5521980afeec857d8b2bf5f5e95d3269b8b",
+    "C:/Jogos/AgeoftheRing/rotwk/game.dat": "035da15c626af6cd1663d1886deea605464ec6776f2c5f1d24570c2be6d73e61",
+    "C:/Jogos/AgeoftheRing/rotwk/game820.dat": "bcf4c85ec72ecb9eb95a844fc0072434fdcef49a5b2c59abb77ac04af29c277e",
+    "C:/Jogos/AgeoftheRing/rotwk/msvcr71.dll": "8094af5ee310714caebccaeee7769ffb08048503ba478b879edfef5f1a24fefe",
+    "C:/Jogos/AgeoftheRing/rotwk/mss/bfme2perf.asi": "db65e51d42bb7f49947631a17b9aeebc0604f3cd9e2c055d8e8a35daf65408e5",
+    "C:/Jogos/AgeoftheRing/rotwk/mss/bfme2perf.ini": "79bbb612a6ce22e76f930e9334a6e650bc2c49c3d28260c6bc716c026da94c54"
+  }
+}

@@ -837,16 +837,19 @@ def main() -> int:
     ap.add_argument("--write", action="store_true", help="regenerate the C headers")
     ap.add_argument("--perf-queue", action="store_true", help="verify/generate only the performance queue insertion contract")
     ap.add_argument("--perf-sort", action="store_true", help="verify/generate only the performance queue sorting contract")
+    ap.add_argument("--perf-bulk", action="store_true", help="verify/generate only the performance bulk-render contract")
     args = ap.parse_args()
-    if args.perf_queue or args.perf_sort:
+    if args.perf_queue or args.perf_sort or args.perf_bulk:
         if args.game:
             ap.error("performance contracts verify both configured images; omit --game")
-        if args.perf_queue and args.perf_sort:
+        if sum((args.perf_queue, args.perf_sort, args.perf_bulk)) > 1:
             ap.error("select one performance contract at a time")
         if args.perf_queue:
             from queueinsert_table import run
-        else:
+        elif args.perf_sort:
             from queuesort_table import run
+        else:
+            from bulkcontract_table import run
         return run(args.write)
 
     failures: list[str] = []

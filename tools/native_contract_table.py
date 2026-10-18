@@ -37,7 +37,7 @@ def render(reference, module, name, prefix, option, roots, exports):
     lines += ['', f'static const pf_contract_body {lower}_bodies[] = {{']
     lines += [f'    {{{s}, {first}, {n}, 0x{fnv:08X}u, 0x{crc:08X}u}},' for s, first, n, fnv, crc in bodies]
     lines += ['};', f'static const pf_contract_patch {lower}_patches[] = {{']
-    lines += [f'    {{{off}, {kind}, {symbol}}},' for off, kind, symbol in patches]
+    lines += [f'    {{{off}, {kind}, {symbol}, 0}},' for off, kind, symbol in patches]
     roles = [int(any(s.VirtualAddress <= r < s.VirtualAddress+s.Misc_VirtualSize and
                      s.Characteristics & 0x20000000 for s in reference.pe.sections)) for r in identities]
     lines += ['};', '/* 1 = executable code, 0 = readable non-executable dependency data. */',
@@ -49,7 +49,7 @@ def render(reference, module, name, prefix, option, roots, exports):
         lines.append(f'    {{{index}, {key}}},')
     lines += ['};', f'static const pf_native_contract {lower}_contract = {{',
               f'    {prefix}_BODY_COUNT, {prefix}_SYMBOL_COUNT, {len(patches)}, {len(roots)},',
-              f'    {lower}_bodies, {lower}_patches, {lower}_code, {lower}_roots', '};', '', '#endif', '']
+              f'    {lower}_bodies, {lower}_patches, {lower}_code, {lower}_roots, NULL, NULL', '};', '', '#endif', '']
     return '\n'.join(lines)
 
 

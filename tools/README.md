@@ -15,6 +15,7 @@ user's own installs at run time.
 | `native_contract_table.py`, `queueinsert_table.py`, `queuesort_table.py` | plugin: helpers for `verify_sites.py --perf-queue/--perf-sort [--write]`; verify both configured images and generate unique signatures, full normalized hashes and symbolic dependency metadata. Do not touch unlocker tables. |
 | `test_queueinsert.py` | checks the runtime queue finder and actual installed entry in private mapped images. `make test-queueinsert` covers altered bodies/dependencies, ambiguous signatures and bounds, then native ownership/ABI/growth comparisons. The game is never launched. |
 | `test_queuesort.py` | `make test-queuesort` checks native-order C sorting through private-image entry hooks, both insertion/sort installation orders, shared holders, unknown-comparator callback observations, preflight guards and executable refusals. Forced-heap cases call the same production algorithm directly. No game startup. |
+| `bulkcontract_table.py`, `test_bulkcontract.py` | `verify_sites.py --perf-bulk [--write]` joins the native group/mesh/FX/event graph into runtime fingerprints. `make test-bulkcontract` tests the actual C finder against relocated private images, region/addend/import refusals and coexistence with queue hooks. The bulk finder is not yet linked into the ASI. No game startup or new FPS evidence. |
 
 ## Executable research
 

@@ -104,12 +104,13 @@ static void finder_controls(pf_image *image)
     unsigned size=nt->OptionalHeader.SizeOfImage;
     nt->OptionalHeader.SizeOfImage=image->text_rva+image->text_size-1;
     refused(image,"invalid text range");nt->OptionalHeader.SizeOfImage=size;
-    /* A body just beyond the section end must refuse before reading it. */
+    /* A body crossing the section end now refuses while resolving the
+     * dependency's full span, before the later body-copy check. */
     Patch p=mapped_patches[1];
     unsigned *field=(void *)(mapped+native_rvas[p.body]+p.field),old=*field;
     unsigned end=image->text_rva+image->text_size-1;
     *field=p.kind?(unsigned)mapped+end:end-(native_rvas[p.body]+p.field+4);
-    refused(image,"body outside executable section");*field=old;
+    refused(image,"dependency section role");*field=old;
     /* Repeated calls must resolve to one helper even inside valid code. */
     unsigned identity_checks=0;
     for(unsigned i=0;i<mapped_patch_count && !identity_checks;i++) {

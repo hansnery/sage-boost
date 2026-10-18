@@ -3,12 +3,13 @@
 
 #define MAX_BODIES 64u
 #define MAX_SYMBOLS 128u
-#define MAX_BODY_BYTES 512u
+#define MAX_BODY_BYTES 4096u
 
 static unsigned read_word(const unsigned char *p)
 { unsigned value; memcpy(&value, p, 4); return value; }
 
-static int section_role(const IMAGE_NT_HEADERS32 *nt, unsigned rva, unsigned size, int code)
+static int section_role(const IMAGE_NT_HEADERS32 *nt, unsigned rva, unsigned size, int code,
+                        int writable)
 {
     unsigned image_size = nt->OptionalHeader.SizeOfImage, matches = 0;
     if (!size || rva >= image_size || size > image_size - rva) return 0;
@@ -18,9 +19,23 @@ static int section_role(const IMAGE_NT_HEADERS32 *nt, unsigned rva, unsigned siz
         if (rva >= s->VirtualAddress && rva - s->VirtualAddress < s->Misc.VirtualSize &&
             size <= s->Misc.VirtualSize - (rva - s->VirtualAddress) &&
             (s->Characteristics & IMAGE_SCN_MEM_READ) &&
-            !!(s->Characteristics & IMAGE_SCN_MEM_EXECUTE) == code) matches++;
+            !!(s->Characteristics & IMAGE_SCN_MEM_EXECUTE) == code &&
+            (!writable || (s->Characteristics & IMAGE_SCN_MEM_WRITE))) matches++;
     }
     return matches == 1;
+}
+
+static unsigned span(const pf_native_contract *contract, unsigned symbol)
+{
+    return contract->spans ? contract->spans[symbol] :
+        symbol < contract->body_count ? contract->bodies[symbol].size : 1;
+}
+
+static int region(const IMAGE_NT_HEADERS32 *nt, const pf_native_contract *contract,
+                  unsigned symbol, unsigned rva)
+{
+    return section_role(nt, rva, span(contract, symbol), contract->code[symbol],
+                        contract->writable && contract->writable[symbol]);
 }
 
 const char *pf_contract_find(const pf_image *image, const pf_native_contract *contract,
@@ -45,11 +60,11 @@ const char *pf_contract_find(const pf_image *image, const pf_native_contract *co
         nt->OptionalHeader.SizeOfImage < nt->OptionalHeader.SizeOfHeaders ||
         (unsigned)((const unsigned char *)(IMAGE_FIRST_SECTION(nt) + nt->FileHeader.NumberOfSections) -
                    image->base) > nt->OptionalHeader.SizeOfHeaders) return "invalid PE header";
-    if (!section_role(nt, image->text_rva, image->text_size, 1)) return "invalid text range";
+    if (!section_role(nt, image->text_rva, image->text_size, 1, 0)) return "invalid text range";
     for (unsigned i = 0; i < contract->root_count; i++) {
         const pf_contract_root *root = contract->roots + i;
         pf_pattern pattern;
-        if (root->symbol >= contract->body_count ||
+        if (root->symbol >= contract->body_count || !contract->code[root->symbol] ||
             !pf_parse_pattern(root->signature, &pattern)) return "invalid entry pattern";
         unsigned found = 0, matches = pf_scan(image, &pattern, &found);
         if (matches != 1) return matches ? "ambiguous entry signature" : "entry signature missing";
@@ -64,17 +79,21 @@ const char *pf_contract_find(const pf_image *image, const pf_native_contract *co
             const pf_contract_body *body = contract->bodies + i;
             unsigned rva = locations[i];
             if (body->size < 1 || body->size > MAX_BODY_BYTES ||
+                body->size > span(contract, i) ||
                 body->first > contract->patch_count || body->count > contract->patch_count - body->first)
                 return "invalid body metadata";
-            if (!section_role(nt, rva, body->size, 1)) return "body outside executable section";
+            if (!region(nt, contract, i, rva)) return "body outside executable section";
             memcpy(normalized, image->base + rva, body->size);
             for (unsigned j = 0; j < body->count; j++) {
                 const pf_contract_patch *p = contract->patches + body->first + j;
                 if (body->size < 4 || p->offset > body->size - 4 || p->absolute > 1 ||
-                    p->symbol >= contract->symbol_count) return "invalid dependency metadata";
+                    p->symbol >= contract->symbol_count || p->addend >= span(contract, p->symbol))
+                    return "invalid dependency metadata";
                 unsigned value = read_word(normalized + p->offset);
                 unsigned target = p->absolute ? value - (unsigned)image->base : rva + p->offset + 4 + value;
-                if (!section_role(nt, target, 1, contract->code[p->symbol])) return "dependency section role";
+                if (target < p->addend) return "dependency section role";
+                target -= p->addend;
+                if (!region(nt, contract, p->symbol, target)) return "dependency section role";
                 if (locations[p->symbol] && locations[p->symbol] != target) return "dependency identity differs";
                 locations[p->symbol] = target;
                 memset(normalized + p->offset, 0, 4);
@@ -90,8 +109,7 @@ const char *pf_contract_find(const pf_image *image, const pf_native_contract *co
     for (unsigned i = 0; i < contract->symbol_count; i++) {
         if (!locations[i]) return "unresolved dependency";
         for (unsigned j = i + 1; j < contract->symbol_count; j++) {
-            unsigned a = i < contract->body_count ? contract->bodies[i].size : 1;
-            unsigned b = j < contract->body_count ? contract->bodies[j].size : 1;
+            unsigned a = span(contract, i), b = span(contract, j);
             if (locations[i] < locations[j] + b && locations[j] < locations[i] + a)
                 return "overlapping dependency identities";
         }

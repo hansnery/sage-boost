@@ -21,6 +21,27 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Bulk-render runtime discovery verified (2026-10-18)
+
+- Beta **0.9.11-beta.6** extends the shared verifier for larger bodies,
+  dependency addends and semantic-region bounds/roles. The new bulk finder
+  joins 36 hashed regions, 85 identities and 280 dependency fields under
+  six signature roots. See [bulk runtime discovery](specs/2026-10-18-runtime-bulk-contract.md).
+- Both relocated private images pass 451 no-write refusals, four synthetic
+  region controls and discovery after actual insertion/sort hook installation.
+  AotR lacks OriginalFirstThunk; resolved IAT entries are checked against
+  exports in the already-loaded CRT, not discarded import-name pointers.
+- Full plugin suite and general-register instruction checks pass. Built
+  beta.6 ASI SHA256:
+  `9c8b59837d01735e0b8bd5f094785836ca406b37a4f6c75719d8fd4506dd5e54`.
+  Check summaries and source/build hashes are preserved with the report.
+- The bulk finder is currently linked only into its private-image test.
+  No bulk runtime hook, installation or gameplay request. Latest performance
+  evidence is unchanged; last gameplay remains about 30.18 presentations/s.
+- Continue production bulk integration, including staged/resource ownership
+  and persistent/device/replay failures. Audit the retained `g.prev_vb`
+  pointer when temporary unbinding could release the device's last reference.
+
 ## Native-order sorting integrated into the runtime (2026-10-18)
 
 - Beta **0.9.11-beta.5** adds `[Render] QueueSort=1`. An integer-only C

@@ -83,6 +83,16 @@ bench-native-decode: $(BUILD)/bench_native_decode.exe
 	python ../tools/bench_native_decode.py "$(AOTR_DAT)" $< --self-test
 
 CONTRACT_OBJS := $(BUILD)/nativecontract.o $(BUILD)/scan.o $(BUILD)/patch.o
+BULK_CONTRACT_OBJS := $(BUILD)/bulkcontract.o $(BUILD)/queueinsert.o $(BUILD)/queuesort.o $(CONTRACT_OBJS)
+$(BUILD)/test_bulkcontract.exe: tests/test_bulkcontract.c tests/native_contract_image.h tests/bench_guard.h $(BULK_CONTRACT_OBJS) | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $< $(BULK_CONTRACT_OBJS)
+
+.PHONY: test-bulkcontract
+test-bulkcontract: $(BUILD)/test_bulkcontract.exe
+	python ../tools/verify_sites.py --perf-bulk
+	python ../tools/test_bulkcontract.py "$(AOTR_DAT)" $<
+	python ../tools/test_bulkcontract.py "$(ROTWK_DAT)" $<
+
 SORT_OBJS := $(BUILD)/queuesort.o $(CONTRACT_OBJS)
 $(BUILD)/bench_native_sort.exe: tests/bench_native_sort.c tests/bench_guard.h $(SORT_OBJS) | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $< $(SORT_OBJS)
