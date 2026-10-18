@@ -61,6 +61,15 @@ Strike an item through, with the date, when it's done.
   ownership/commit information to replay only unsubmitted meshes after
   coherent device/effect/engine state restoration. Require the fault audit
   to show matching output/state, not merely detect today's counterexamples.
+- [x] 2026-10-18: offline skeletal recovery passes 224 single rejected batch
+  operations plus eight leader-capture failures with matching output/state
+  and exactly 25 units. Missing/duplicate replay controls are rejected.
+  Two timing repeats retain 2.90-3.06 ms/pair on DXVK; see
+  `specs/2026-10-18-native-gpu-recovery.md`. No production source or install.
+- [ ] Qualify native source/effect/engine-state reconciliation and lifetimes
+  for staged replay, remaining rigid/persistent/device-loss/exception paths,
+  and the bridge's zero-consumption fallback. The single-rejection fixture
+  does not close the broader runtime-recovery item or the 60 FPS deficit.
 - [x] 2026-10-17: larger material-queue fixture passes native/DXVK fresh
   pose, material invalidation, regular/extra image and state checks.
 - [x] 2026-10-17: recollect material-queue timings with the game closed.

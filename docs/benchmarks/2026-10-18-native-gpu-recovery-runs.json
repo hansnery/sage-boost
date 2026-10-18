@@ -1,0 +1,230 @@
+{
+  "parent_commit": "1475f21",
+  "fault_log": "native-gpu-recovery-final.txt",
+  "fault_log_sha256": "08a5441a672898b645d8e867f1e89ce9e92136ebf1edebf99b3c896c44de45a0",
+  "capture_columns": [
+    "backend",
+    "workload",
+    "extra",
+    "bad_pixels",
+    "immediate_state_words",
+    "instancing_active",
+    "submitted_instances",
+    "ordinary_dips"
+  ],
+  "batch_fault_rows": 224,
+  "pre_deferral_capture_results": [
+    [
+      "Native D3D9",
+      "lit",
+      0,
+      0,
+      0,
+      0,
+      0,
+      25
+    ],
+    [
+      "Native D3D9",
+      "lit",
+      1,
+      0,
+      0,
+      0,
+      0,
+      25
+    ],
+    [
+      "Native D3D9",
+      "shadow",
+      0,
+      0,
+      0,
+      0,
+      0,
+      25
+    ],
+    [
+      "Native D3D9",
+      "shadow",
+      1,
+      0,
+      0,
+      0,
+      0,
+      25
+    ],
+    [
+      "DXVK",
+      "lit",
+      0,
+      0,
+      0,
+      0,
+      0,
+      25
+    ],
+    [
+      "DXVK",
+      "lit",
+      1,
+      0,
+      0,
+      0,
+      0,
+      25
+    ],
+    [
+      "DXVK",
+      "shadow",
+      0,
+      0,
+      0,
+      0,
+      0,
+      25
+    ],
+    [
+      "DXVK",
+      "shadow",
+      1,
+      0,
+      0,
+      0,
+      0,
+      25
+    ]
+  ],
+  "runs": [
+    {
+      "log": "native-gpu-recovery-bench-1.txt",
+      "sha256": "23e73a676a811a79f9be9b199edb697a50eed16589f21b2047e4d90b770c94b8",
+      "samples": 84
+    },
+    {
+      "log": "native-gpu-recovery-bench-2.txt",
+      "sha256": "6225190a9ce152aa4527ecf83be6d0899db4e1fa9ad1c85eb5c07ea754c5316b",
+      "samples": 84
+    }
+  ],
+  "summaries": [
+    {
+      "run": 1,
+      "backend": "Native D3D9",
+      "workload": "lit",
+      "completion_saving_median_ms": 2.5219,
+      "p10_ms": 2.3813,
+      "p90_ms": 2.7126
+    },
+    {
+      "run": 1,
+      "backend": "Native D3D9",
+      "workload": "shadow",
+      "completion_saving_median_ms": 2.6191,
+      "p10_ms": 2.3984,
+      "p90_ms": 2.8027
+    },
+    {
+      "run": 1,
+      "backend": "DXVK",
+      "workload": "lit",
+      "completion_saving_median_ms": 3.0597,
+      "p10_ms": 2.6652,
+      "p90_ms": 5.6245
+    },
+    {
+      "run": 1,
+      "backend": "DXVK",
+      "workload": "shadow",
+      "completion_saving_median_ms": 2.9849,
+      "p10_ms": 2.7854,
+      "p90_ms": 3.5529
+    },
+    {
+      "run": 2,
+      "backend": "Native D3D9",
+      "workload": "lit",
+      "completion_saving_median_ms": 2.6148,
+      "p10_ms": 2.4084,
+      "p90_ms": 2.864
+    },
+    {
+      "run": 2,
+      "backend": "Native D3D9",
+      "workload": "shadow",
+      "completion_saving_median_ms": 2.5947,
+      "p10_ms": 2.4337,
+      "p90_ms": 2.7428
+    },
+    {
+      "run": 2,
+      "backend": "DXVK",
+      "workload": "lit",
+      "completion_saving_median_ms": 2.9002,
+      "p10_ms": 2.6594,
+      "p90_ms": 3.5455
+    },
+    {
+      "run": 2,
+      "backend": "DXVK",
+      "workload": "shadow",
+      "completion_saving_median_ms": 2.9348,
+      "p10_ms": 2.7423,
+      "p90_ms": 3.1666
+    }
+  ],
+  "sources": {
+    "perf/tests/test_native_gpu_faults.c": "6af20d6ae5fbd0acf66efb04174493c03cf794e866f7cf6bf143540bab79ce0b",
+    "perf/tests/inst_gpu_fault_engine.c": "f6429c4f8aed57db301a2cf956b553c291597dc35b6ad361820405bcd3f9482f",
+    "perf/tests/inst_native_leader_engine.c": "08a182b4184f694e212ce9b417919fb8b8a1cce783990412deecbd8dd3e398c0",
+    "perf/tests/bench_native_group_gpu.c": "d475a00852a16e4adc33081e606346320b7abbc049925be99e557c3889bea4fe",
+    "perf/tests/bench_native_leader.c": "3240cd29f02139872f0e4875e4c3f13234585768c0b2e7f5c727bb5f9d4330f8",
+    "perf/tests/bench_retained.c": "b454bfb7532e6083364ce7b7fd1c38627b66b1581369ea66f04d1c980b18ee59",
+    "perf/tests/bench_material_queue.c": "2e15d112b0bdab3e6187fefb9f8e06d9060ea629b2f7329f1c25e28d2011df60",
+    "perf/tests/native_group_gpu_bridge.c": "790ab62645818378775cd28b7d4824f807076d76614af004b77554f19a94b3be",
+    "perf/tests/native_group_image.h": "2f804504e6244bc202dd96b4f88df71f7fbd65d343798fb6dbf312744924c881",
+    "perf/tests/native_mesh_image.h": "a4d587f4318913da1f0fe67e70e8cf4c3ff4308f16eba3052fa3cd5da551b6f8",
+    "perf/tests/material_fixture.c": "7e7b7e5d78459a5a0b7eeb70105984f6743ed9aaf1f56338ecf1504b1a365b09",
+    "perf/tests/timing_bulk_bench.c": "b2651023195165c67dc6b807e00ea45bc2fc7be08bfdfb30133417b19a39eda3",
+    "perf/tests/inst_dispatch_engine.c": "c660c852d46f7a70cc002dc6a462922058df1378f0dbdc1abc8c08dcb8d245eb",
+    "perf/tests/inst_retained_engine.c": "b1d3d466ca49a621626607ec32c0223d18bd6b6fa0cadce6fb2b9bea36481135",
+    "perf/src/inst.c": "cf48d58e4b1185cf8269fbb52cdd2a401ae39c6a90dbb0f5409922937b1e8d69",
+    "perf/src/timing.c": "a5bddd8f6c7afdf03e345a557f2a75a2b30cb17bfd6e836764b221f081a23596",
+    "perf/src/stubs.c": "5f9eb64ed0bad6f75ca60eca013eae4ad09aeb70d577a0b5b7582a8889e63fdc",
+    "perf/Makefile": "d7315ee29372427f3c3c48e7ca6e0cd44b2a10e1d0c44bce85a69255c68f8f7b",
+    "tools/test_native_gpu_faults.py": "6cfcb4782db72d5dfdda0ab15423d30fed0205060653bb43eac146e49e5a8e77",
+    "tools/test_group_contract.py": "83d296949d492571a63c825f8c7a7f4de0ba933485c4daacd4afb54e02f9e359",
+    "tools/test_mesh_draw_contract.py": "0d5d51695ff904a05a38001a5cf70ceaafd0fb8902e1833aba4db593348878af",
+    "perf/tests/inst_recovery_engine.c": "201bf9c97589dbfe1d90bcd0f6a55513b74fb190be221ad2c6cd3929325d88c4",
+    "perf/tests/inst_recovery_fault_engine.c": "84cea455bc694403ff846e2a608848d2a80e226e9afdc7562a83f73179d0a19d",
+    "perf/tests/test_native_gpu_recovery.c": "34e0d3b5dff56969ff7cb376327d43a376da98311d109ff2757e7a6bcaa1df28",
+    "tools/make_inst_recovery_source.py": "4b0939267fafc27d08a0ed17c73f8dabb0c8cef6c999637ddd4e44476f999254",
+    "tools/bench_native_group_gpu.py": "7ec90e390cc97316a7a8f4585e63e98076b63d99bc1302993f2e527b69ea3d9f"
+  },
+  "executables": {
+    "test_native_gpu_recovery.exe": "1de29645a027d9231c6fe7f0b7826d10ad07d0e5e59ecf3f06a7a533fad3753f",
+    "bench_native_gpu_recovery.exe": "5dd6912e05da3102dd1e797004c8f69d39b14f773d234d784fe4d99c7644c9c3"
+  },
+  "generated_source_sha256": "1ffe1ae51178626be81c144e7c4e4eff450ff718fb5f635a72490c7757439c99",
+  "recovery_object_sha256": "6f08aa979bc8907bb0366b59ac5676d3b3c7cb91097c3aecb6a02df8dde2c697",
+  "verification": {
+    "native-gpu-recovery-suite.txt": "97b17ed45f27cafa2a0feea240fc4fb385fdc8c957c74744fa73fd93d5dd0a44",
+    "native-gpu-recovery-audit-regression.txt": "fa77da5d342181dbb75fd3c54dbb6b10da3560ce9bcbf39a5dac5d75016a8dee"
+  },
+  "artifacts": {
+    "C:\\repositories\\sage-boost\\perf\\build\\bfme2perf.asi": "abb5e35d40e52abcc4190d264cb0d4cdb39173e073456608c7e14fa209426540",
+    "C:/Jogos/AgeoftheRing/rotwk/mss/bfme2perf.asi": "db65e51d42bb7f49947631a17b9aeebc0604f3cd9e2c055d8e8a35daf65408e5",
+    "C:/Jogos/AgeoftheRing/rotwk/mss/bfme2perf.ini": "79bbb612a6ce22e76f930e9334a6e650bc2c49c3d28260c6bc716c026da94c54"
+  },
+  "notes": [
+    "224 single pre-forward rejected batch operations plus eight leader bone-capture failures; output/depth, immediate state, successful API counts, ownership/ABI/scopes pass.",
+    "Ordinary DIPs include direct staged-palette recovery and subsequent native calls. The original counterexample audit remains separately reproducible.",
+    "Twelve broken controls rejected: count corruption, omitted replay, duplicate already-committed replay on each of four backend/workload combinations.",
+    "Four guarded warmups then 21 alternating-order samples, each averaging eight fenced regular/extra pairs. Two serial complete repeats; no concurrent tests during timing.",
+    "Skeletal leader/bulk candidate only; baseline follows current unmodified instancer. All normal joined native controls and verification windows pass.",
+    "Only our own source transformed into ignored build directory. Native bytes remain in private RAM. No production source, ASI build version, installed binary/INI or stable branch changes.",
+    "Transient pre-forward D3DERR_INVALIDCALL only. Persistent/multiple failures, errors after mutation, device loss/reset, rigid recovery and native source/state/lifetime/exception boundaries remain unqualified.",
+    "Lit and shadow are alternative full workloads; savings must not be added. Retains roughly 3 ms candidate saving, still short of roughly 8 ms needed. No gameplay FPS or installation qualification.",
+    "Initial recovery log passed before extra broken-replay controls and first-error logging were added; final log is authoritative."
+  ]
+}

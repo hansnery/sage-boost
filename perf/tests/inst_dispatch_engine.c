@@ -1,6 +1,9 @@
 /* Offline optimistic prototype. This translation unit is NEVER linked into
  * the ASI. Compile with the production flags so staging has its real cost. */
-#include "../src/inst.c"
+#ifndef PF_BENCH_INST_SOURCE
+#define PF_BENCH_INST_SOURCE "../src/inst.c"
+#endif
+#include PF_BENCH_INST_SOURCE
 
 /* After the regular path accepted the second member. Remaining records
  * borrow the group's method: no by-value temporary was constructed. The

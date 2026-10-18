@@ -6,6 +6,11 @@
 extern int bench_fault_batch_get(unsigned,unsigned);
 extern void bench_fault_reset(void);
 extern void bench_fault_device(void *);
+#ifdef PF_RECOVERY_CANDIDATE
+extern void bench_recovery_watch(void (*)(void),void (*)(void));
+extern unsigned bench_recovery_operation(void),bench_recovery_open(void);
+extern void bench_recovery_break(unsigned);
+#endif
 static void **ff_original;
 static void *ff_vtable[sizeof(IDirect3DDevice9Vtbl)/sizeof(void *)];
 static struct {void **vt;void *real;} ff_proxy;
@@ -42,6 +47,13 @@ static void ff_snapshot(FaultState *out)
 
 static int ff_reject(unsigned operation)
 {
+#ifdef PF_RECOVERY_CANDIDATE
+    if(ff_armed && !ff_forwarding && bench_recovery_operation()==15) {
+        REQUIRE(operation==PF_DEV_GET_VS_CONST_F && !ff_open);
+        if(ff_target_step==15 && !ff_injected) { ff_injected=1; return 1; }
+        return 0;
+    }
+#endif
     if(!ff_open || ff_forwarding) return 0;
     ff_step++;
     /* The one-stream fixture's native call order is an independent oracle. */
@@ -49,15 +61,20 @@ static int ff_reject(unsigned operation)
         PF_DEV_SET_STREAM,PF_DEV_SET_STREAM_FREQ,PF_DEV_SET_STREAM_FREQ,PF_DEV_SET_VS_CONST_F,
         PF_DEV_DRAW_INDEXED,PF_DEV_SET_STREAM_FREQ,PF_DEV_SET_STREAM_FREQ,PF_DEV_SET_STREAM,
         PF_DEV_SET_DECL,PF_DEV_SET_VS,PF_DEV_SET_VS_CONST_F};
+#ifdef PF_RECOVERY_CANDIDATE
+    if(bench_recovery_open()) {
+        ff_step=bench_recovery_operation();
+        if(ff_step>14) return 0; /* Individually replayed draws, separately counted. */
+    }
+#endif
     REQUIRE(ff_step<sizeof order/sizeof order[0] && operation==order[ff_step]);
     if(ff_batch==ff_target_batch && ff_step==ff_target_step && !ff_injected) {
         ff_injected=1; return 1;
     }
     return 0;
 }
-static void ff_end_operation(void)
+static void ff_close_batch(void)
 {
-    if(!ff_open || ff_forwarding || ff_step!=(ff_saved?14u:13u)) return;
     FaultState after={0}; ff_snapshot(&after);
     unsigned changed=0;
     const unsigned *a=(const unsigned *)&ff_before,*b=(const unsigned *)&after;
@@ -66,6 +83,29 @@ static void ff_end_operation(void)
     if(ff_batch==ff_target_batch) ff_bad_at_target=changed;
     ff_open=0; ff_batches++;
 }
+static void ff_end_operation(void)
+{
+#ifdef PF_RECOVERY_CANDIDATE
+    if(bench_recovery_open()) return;
+#endif
+    if(!ff_open || ff_forwarding || ff_step!=(ff_saved?14u:13u)) return;
+    ff_close_batch();
+}
+#ifdef PF_RECOVERY_CANDIDATE
+static void ff_recovery_begin(void)
+{
+    if(!ff_armed) return;
+    REQUIRE(!ff_open);
+    ff_open=1; ff_batch++; ff_step=0; ff_saved=1;
+    ff_snapshot(&ff_before);
+}
+static void ff_recovery_end(void)
+{
+    if(!ff_armed) return;
+    REQUIRE(ff_open && !ff_forwarding);
+    ff_close_batch();
+}
+#endif
 
 #define FF_CALL(slot,expr) do { \
     int reject=ff_reject(slot); HRESULT hr; \
@@ -99,9 +139,9 @@ static HRESULT WINAPI ff_set_constants(void *self,unsigned first,void *data,unsi
 static HRESULT WINAPI ff_draw(void *self,unsigned type,int base,unsigned first,unsigned vertices,
                                unsigned start,unsigned primitives)
 {
-    int instanced=ff_open && !ff_forwarding;
     unsigned frequency=1;
     HR(((pf_get_freq_fn)ff_original[PF_DEV_GET_STREAM_FREQ])(ff_real(self),0,&frequency));
+    int instanced=(frequency&PF_STREAM_INDEXED)!=0;
     int reject=ff_reject(PF_DEV_DRAW_INDEXED);
     HRESULT hr=D3DERR_INVALIDCALL;
     if(!reject) {
@@ -192,6 +232,9 @@ static void ff_validate(void)
     ff_vtable[PF_DEV_SET_STREAM]=ff_set_stream; ff_vtable[PF_DEV_SET_STREAM_FREQ]=ff_set_frequency;
     ff_vtable[PF_DEV_SET_VS_CONST_F]=ff_set_constants; ff_vtable[PF_DEV_DRAW_INDEXED]=ff_draw;
     ff_proxy.vt=ff_vtable; ff_proxy.real=g_dev; bench_fault_device(&ff_proxy);
+#ifdef PF_RECOVERY_CANDIDATE
+    bench_recovery_watch(ff_recovery_begin,ff_recovery_end);
+#endif
     /* Native DIP hook continues to this proxy, just like the batch's VT call. */
     pf_timing_set_next(PF_INST_DIP,ff_draw);
     /* Make stream binding failure observable rather than accidentally
@@ -211,20 +254,38 @@ static void ff_validate(void)
             printf("FAULT,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",extra,batch,step,
                     r.pixels,r.state,r.active,r.instances,r.native,r.attempts,r.suppressed,r.batches);
             loss+=r.pixels!=0; leaks+=r.state!=0; unsafe+=r.active && (r.pixels || r.state);
+#ifdef PF_RECOVERY_CANDIDATE
+            REQUIRE(!r.pixels && !r.state && !r.active && r.instances+r.native==25);
+#else
             /* The direct rejected-DIP counterexamples must be detected. */
             if(step==8) REQUIRE(r.pixels && !r.active && r.instances+r.native<25);
             if(step==4) REQUIRE(r.pixels);
             if(step==14) REQUIRE(r.state && r.active);
+#endif
             ff_fault_cases++;
         }
+#ifdef PF_RECOVERY_CANDIDATE
+        FaultResult r=ff_case(extra,1,1,15,reference,out);
+        printf("RECOVERY_CAPTURE,%u,%u,%u,%u,%u,%u\n",extra,r.pixels,r.state,r.active,r.instances,r.native);
+        REQUIRE(!r.pixels && !r.state && !r.active && !r.instances && r.native==25 && !r.suppressed);
+#endif
     }
+#ifdef PF_RECOVERY_CANDIDATE
+    REQUIRE(ff_fault_cases==56 && !loss && !leaks && !unsafe);
+    bench_recovery_watch(NULL,NULL);
+#else
     REQUIRE(ff_fault_cases==56 && loss && leaks && unsafe);
+#endif
     bench_fault_device(NULL);
     pf_timing_set_next(PF_INST_DIP,ff_original[PF_DEV_DRAW_INDEXED]);
     HR(IDirect3DStateBlock9_Apply(outer));
     IDirect3DVertexBuffer9_Release(ff_seed_vb); ff_seed_vb=NULL;
     bench_fault_reset();
+#ifdef PF_RECOVERY_CANDIDATE
+    printf("RECOVERY: %u batch faults plus two pre-deferral capture failures; %u changed outputs, %u state leaks, %u enabled with error\n",
+#else
     printf("FAULT AUDIT: %u injected cases; %u changed-output cases, %u immediate-state leaks, %u remained enabled with a detected error; current code intentionally not qualified\n",
+#endif
             ff_fault_cases,loss,leaks,unsafe);
 }
 static void ff_setup(void)
@@ -235,7 +296,14 @@ static void ff_setup(void)
 int main(int argc,char **argv)
 {
     setvbuf(stdout,NULL,_IONBF,0);
-    if(argc==11) { ff_negative=atoi(argv[10])!=0; argc--; }
+    if(argc==11) {
+        unsigned mode=(unsigned)atoi(argv[10]);
+        ff_negative=mode==1;
+#ifdef PF_RECOVERY_CANDIDATE
+        bench_recovery_break(mode);
+#endif
+        argc--;
+    }
     ng_after_setup=ff_setup;
     return group_gpu_main(argc,argv);
 }

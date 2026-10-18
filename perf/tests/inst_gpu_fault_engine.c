@@ -1,6 +1,9 @@
 /* Fault-audit accessors only. Never linked into the ASI. */
 #define PF_NATIVE_INST_ENTER fault_native_enter
-#include "inst_native_leader_engine.c"
+#ifndef PF_FAULT_ENGINE_SOURCE
+#define PF_FAULT_ENGINE_SOURCE "inst_native_leader_engine.c"
+#endif
+#include PF_FAULT_ENGINE_SOURCE
 static void *fault_device;
 void bench_fault_device(void *device) { fault_device=device; }
 

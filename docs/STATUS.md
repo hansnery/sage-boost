@@ -21,13 +21,35 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Offline skeletal GPU recovery (2026-10-18)
+
+- [Checked batch recovery](specs/2026-10-18-native-gpu-recovery.md) now
+  preserves output, immediate GPU state and exactly 25 units across all
+  224 earlier one-shot batch rejection cases, plus eight failures before
+  deferring the leader. Missing/duplicate replay and corrupt-count controls
+  are rejected on all four backend/workload combinations.
+- This candidate snapshots the leader's bone registers, checks setup and
+  restoration, and replays only unsubmitted staged poses with the original
+  shader. Successful batches are never replayed after restoration errors.
+  It is build-only; production `inst.c` still has the audited behavior below.
+- Two serial timing repeats retain 2.90-3.06 ms/pair on DXVK. Preserve 168
+  timing samples, 224 fault rows and source/binary/log hashes. This retains
+  the previous saving; it is not additive and still falls short of 60 FPS.
+- Full plugin suite and original four-case fault audit pass. Persistent or
+  multiple faults, device loss/reset, rigid recovery, native source/state/
+  lifetime/exception behavior remain unqualified. Next close native source
+  and engine-state reconciliation for replay and find the missing savings.
+- Built beta.3, installed 0.9.10 and INI hashes remain unchanged. No
+  installation or gameplay request; last measured cadence is still ~30.18/s.
+
 ## Native GPU fault audit (2026-10-18)
 
 - [Rejected-call audit](specs/2026-10-18-native-gpu-fault-audit.md) records
   224 observations across native D3D9/DXVK, lit/fresh shadows and regular/
   extra frames. Each 56-case set detects 28 changed outputs and 28 immediate
   state leaks; 52 remain enabled despite an observed error. Rejected DIPs
-  disable instancing but lose staged units. Recovery is not implemented.
+  disable instancing but lose staged units. This describes the unmodified
+  instancer; the later offline recovery candidate is summarized above.
 - Clean original/candidate images and counts match with separately placed
   meshes; immediate device-state snapshots catch leaks hidden by later
   restoration. Native ownership/ABI/scope checks and deliberately broken

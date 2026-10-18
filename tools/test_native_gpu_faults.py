@@ -14,6 +14,7 @@ from test_group_contract import verify as group_verify,write_manifest as group_m
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--self-test',action='store_true')
+    p.add_argument('--recovery',action='store_true',help='also reject omitted/duplicated fallback controls')
     p.add_argument('image',type=Path);p.add_argument('executable',type=Path)
     p.add_argument('fixture_args',nargs=argparse.REMAINDER)
     args=p.parse_args()
@@ -30,6 +31,11 @@ def main():
             control=subprocess.run(command+['1'],capture_output=True,text=True)
             assert control.returncode==1 and 'benchmark refused' in control.stderr,control
             print('Fault oracle: deliberately corrupted submitted-instance count rejected',flush=True)
+            if args.recovery:
+                for mode,name in ((2,'omitted replay'),(3,'duplicate committed replay')):
+                    control=subprocess.run(command+[str(mode)],capture_output=True,text=True)
+                    assert control.returncode==1 and 'benchmark refused' in control.stderr,control
+                    print('Recovery oracle:',name,'rejected',flush=True)
     return 0
 
 

@@ -31,7 +31,10 @@ static int eligible(void)
 {
     /* Preserve the original verification path for the whole open window.
      * Native group callbacks may observe a draw before the next member. */
-    return native_mesh && begin_callback && end_callback &&
+#ifndef PF_NATIVE_LEADER_EXTRA_GATE
+#define PF_NATIVE_LEADER_EXTRA_GATE 1
+#endif
+    return PF_NATIVE_LEADER_EXTRA_GATE && native_mesh && begin_callback && end_callback &&
            !*begin_callback && !*end_callback &&
            (g_extra || !g_verify || !g_window_open);
 }
@@ -72,6 +75,10 @@ static HRESULT WINAPI leader_skip(void *dev, unsigned type, int base,
 #endif
 void *PF_NATIVE_INST_ENTER(unsigned k, void **slot, void *next)
 {
+#ifdef PF_NATIVE_LEADER_CAPTURE_BEGIN
+    if (k==g_dip_site && g.mode==M_LEADER && g.armed && !g.dips)
+        PF_NATIVE_LEADER_CAPTURE_BEGIN();
+#endif
     if (k==g_mesh_site) {
         leader_slot=slot; leader_mesh=slot[-4];
         const unsigned char *model=*(const void *const *)(leader_mesh+PF_MESH_MODEL);
