@@ -23,6 +23,12 @@ ownership with deterministic COM lifetimes and is included in `make test`.
 on native D3D9 and DXVK using the local shaders. See
 `docs/specs/2026-10-18-instancing-stream-ownership.md`; neither starts the game.
 
+`make test-instsubmit` links the production checked submission object and
+checks persistent GPU rejection and partial ordinary replay results. The
+native/GPU recovery targets also link this same object. Runtime activation
+still needs the group bridge and failure policy; see
+`docs/specs/2026-10-18-checked-submission-core.md`.
+
 ## Executable research
 
 | script | what |
@@ -44,7 +50,7 @@ on native D3D9 and DXVK using the local shaders. See
 | `bench_native_leader.py` | verifies the same local mesh bodies and runs the real GPU/effect fixture through native mesh/draw/cleanup and production timing hooks. `make bench-native-leader` checks native D3D9/DXVK, lit/fresh shadows, callback and verification gates, model splits and earlier DIPs. Group loop and source/state helpers remain controlled; no game startup or installed hook. See `docs/specs/2026-10-18-native-mesh-gpu-screen.md`. |
 | `bench_native_group_gpu.py` | joins sixteen verified native group/event/method-chain and mesh/draw/cleanup bodies with actual timing hooks and the local effect/GPU fixture. `make bench-native-group-gpu` compares callback observations, partial groups, ownership, Begin failure and output, then measures serial native/DXVK pairs. Source/state helpers and GPU failure recovery remain open. See `docs/specs/2026-10-18-native-group-gpu-screen.md`. |
 | `test_native_gpu_faults.py` | audits one-shot API rejection through a separate device proxy in the joined native/GPU fixture. `make test-native-gpu-faults` records missing output and immediate-state leaks across four backend/workload cases and rejects a broken count oracle. A successful audit detects known defects; it does not mean recovery is fixed. No game startup or installed hook. See `docs/specs/2026-10-18-native-gpu-fault-audit.md`. |
-| `make_inst_recovery_source.py` | renames two definitions in our own `inst.c` into an ignored build-only copy, with unique-anchor checks and source/output hashes. The offline recovery engine substitutes checked submission and staged bone replay. `make test-native-gpu-recovery` uses the fault launcher with `--recovery` to require exact counts/state and matching output, including omitted/duplicate replay controls. `make bench-native-gpu-recovery` measures the guarded candidate. No production source or installed hook changes; see `docs/specs/2026-10-18-native-gpu-recovery.md`. |
+| `make_inst_recovery_source.py` | renames two definitions in our own `inst.c` into an ignored build-only copy, with unique-anchor checks and source/output hashes. Since beta.8 the offline adapter calls production `instsubmit.o` for checked submission and staged bone replay. `make test-native-gpu-recovery` uses the fault launcher with `--recovery` to require exact counts/state and matching output, including omitted/duplicate device-effect controls. `make bench-native-gpu-recovery` measures the guarded candidate. Runtime activation remains pending; see `docs/specs/2026-10-18-checked-submission-core.md`. |
 | `native_fx_state_contract.py`, `bench_native_fx_gpu.py` | verify and join native FX lifecycle/source selection and dirty-state application to the group/mesh GPU fixture. `make test-native-fx-state` checks both local images and altered-body controls; `make test-native-fx-recovery` checks 248 failures with device/effect/native-field snapshots and broken replay/offset controls; `make bench-native-fx-gpu` measures the final candidate serially. Sources/lifetimes remain controlled. See `docs/specs/2026-10-18-native-fx-gpu-integration.md`. |
 
 ## Maps, castles and AI bases (`.map`, `.bse`)

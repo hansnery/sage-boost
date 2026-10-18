@@ -1,0 +1,70 @@
+{
+  "kind": "Shared production checked submission core; runtime group activation pending",
+  "base_commit": "c25ecb144f719286f656433a1bed719b7a63a832",
+  "plugin_version": "0.9.11-beta.8",
+  "checked_module_linked_into_asi": true,
+  "runtime_instancer_uses_checked_module": false,
+  "result_contract_cases": 19,
+  "native_gpu_regressions": {
+    "aotr": {
+      "backend_workloads": 4,
+      "fallback_cases": 192,
+      "single_gpu_failures": 248,
+      "broken_device_effect_controls": 28
+    },
+    "rotwk": {
+      "backend_workloads": 4,
+      "fallback_cases": 192,
+      "single_gpu_failures": 248,
+      "broken_device_effect_controls": 28
+    }
+  },
+  "full_plugin_suite": "passed",
+  "compile_only_targets": [
+    "bench_native_insert_gpu.exe",
+    "test_native_gpu_faults.exe",
+    "test_native_gpu_recovery.exe"
+  ],
+  "instruction_check": [
+    "instsubmit.o 1023 instructions; no x87/SIMD/FP-control instructions",
+    "inst_native_fallback_engine.o 5409 instructions; no x87/SIMD/FP-control instructions"
+  ],
+  "limits": [
+    "No new timing or gameplay capture; last actual gameplay about 30.18 presentations/s",
+    "Core borrows objects owned by its caller; runtime group/lifetime/abandonment integration remains open",
+    "Partial replay and persistent restoration failures have explicit results, not an implemented runtime recovery policy",
+    "Negative modes live in the fixture device proxy, not the production algorithm",
+    "New normal/fault/recovery benchmark executables compiled only; eight native fallback/GPU workloads executed the shared object",
+    "Installed ASI and INI unchanged; no game or WorldBuilder launched"
+  ],
+  "sha256": {
+    "perf/Makefile": "0ae553e03814fdc1bba94a81b30c1119e156690f2a4bca0b71b752372939362b",
+    "perf/src/instsubmit.c": "419b97dd748333803acb9b90f0cea333ccc62e7caeed446bd70183615bc66423",
+    "perf/src/instsubmit.h": "0595f61ecb32a586e3349dae9060f9d161068e23a51f331e193e55ec23954fa6",
+    "perf/src/main.c": "5372025eb21940e56dfa6d6ea3013da0586688a66d8d9ee66b23fc315be704da",
+    "perf/src/version.rc": "f2e8682c62f0c4cd0faaf4f8b913e90cfdb237ce4d608bfa17e63418cc4afc71",
+    "perf/tests/test_instsubmit.c": "b1c57b4fec63eac28c153bc0793a21a9f2984f8b4169a7ce553b10faa7f6579b",
+    "perf/tests/inst_recovery_engine.c": "48df7256a87be5abc3d233bca23a461175add3cd2605e70f006c811aa224b03c",
+    "perf/tests/test_native_gpu_faults.c": "82a7b5d2a429d33f529f97f034b76c9e349b514d20a62f9c5ffd2132f5a281ec",
+    "perf/tests/test_load.c": "437836c19876a173791856d5d908165fe73bd8571bed53d53e8d587f58972883",
+    "perf/tests/inst_native_fallback_engine.c": "6e6eef9ec2b56872935fe8a90321122c81cea1f315897be648d4bc09519522e6",
+    "perf/build/bfme2perf.asi": "0fb6048a801d22d0b37e1daf24d1741a288b9de3afdb594b5c1f5d26eea3b68c",
+    "perf/build/instsubmit.o": "f90f195f108e703c2611dc175395f1e03378e667d096290b064e92a13927b5da",
+    "perf/build/inst_native_fallback_engine.o": "41a2d797c673bbb569f0973dc00d780d52461abd2bb53874e35ed665022f9b7a",
+    "perf/build/test_instsubmit.exe": "16bf3f6ff668f64f085c5e20d1528465e9183c883a675fb0dce1d23e45a439a8",
+    "perf/build/test_native_group_fallback.exe": "b7b41188bae7ebf5d621ba0205ae49152b9236a875ae89d88911bf845d0d8335",
+    "perf/build/bench_native_insert_gpu.exe": "7999042b8f1260202d11a9bfa080c6bbb1e3330f656700a9642e4f11e4678e19",
+    "perf/build/test_native_gpu_faults.exe": "ef1f1bd01e099539b96b47cfb860c67c9a6ba0e3d110485f3fdad72e17d15df8",
+    "perf/build/test_native_gpu_recovery.exe": "f68ab514d2f786dfbe788466a368cab9db13bdbfb9ecbd338d417d175ae9b046",
+    "perf/build/checked-submit-results.txt": "30e677761849d6be8d87e7583823e9a2167a8642469a10f8c3c137400516edd7",
+    "perf/build/checked-submit-native-aotr.txt": "ee5284d888654cdd1a15dc8efc0ebae9f8376f62c494c78ebfbc41df49843529",
+    "perf/build/checked-submit-native-rotwk.txt": "2df923d0bbd85b19456fd75a0864b0979621628660d663351fef9b524d6fcee5",
+    "perf/build/checked-submit-suite.txt": "c9908c98125c14624bf71a65abdb0a343893bd8a94a87b8ebac5829ab124e62f",
+    "perf/build/checked-submit-registers.txt": "85ca969f502106dfed46760627bce1b198112e9cb4c2acd111be5f704d702414",
+    "perf/build/checked-submit-adapters-build.txt": "bdc4a18ab030566c2798c347609ff1d3bf33d6df045a3bbc3c769ba938449ab1",
+    "C:/Jogos/AgeoftheRing/rotwk/game.dat": "035da15c626af6cd1663d1886deea605464ec6776f2c5f1d24570c2be6d73e61",
+    "C:/Jogos/AgeoftheRing/rotwk/game820.dat": "bcf4c85ec72ecb9eb95a844fc0072434fdcef49a5b2c59abb77ac04af29c277e",
+    "C:/Jogos/AgeoftheRing/rotwk/mss/bfme2perf.asi": "db65e51d42bb7f49947631a17b9aeebc0604f3cd9e2c055d8e8a35daf65408e5",
+    "C:/Jogos/AgeoftheRing/rotwk/mss/bfme2perf.ini": "79bbb612a6ce22e76f930e9334a6e650bc2c49c3d28260c6bc716c026da94c54"
+  }
+}

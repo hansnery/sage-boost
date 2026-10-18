@@ -7,6 +7,17 @@ Strike an item through, with the date, when it's done.
 
 ## Full-rate 60 FPS investigation (2026-10-17)
 
+- [x] 2026-10-18: beta.8 introduces one production checked submission object
+  shared by the ASI and native/GPU adapter. Nineteen direct result-contract
+  cases, both-image fallback/fault regressions and the full suite pass.
+  Deliberate broken controls live outside production in the device proxy.
+  See `specs/2026-10-18-checked-submission-core.md`; linked, not yet activated.
+- [ ] Connect the runtime group bridge/instancer to the shared transaction.
+  Require both complete submission and coherent state for recovered success;
+  handle partial replay and persistent restoration explicitly. Qualify
+  pre-Reset/abandonment cleanup before installation. Do not ship the offline
+  bridge's ExitProcess failure path.
+
 - [x] 2026-10-18: implement runtime discovery for the joined bulk-render
   boundaries: 36 hashed regions, 85 identities, 280 dependencies and six
   roots. Both private images pass 451 no-write refusals and coexistence with

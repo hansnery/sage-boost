@@ -21,6 +21,29 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Shared checked submission module built (2026-10-18)
+
+- Beta **0.9.11-beta.8** moves skeletal batch setup/restoration and ordinary
+  replay into `instsubmit.c`. The native/GPU adapter and plugin link the
+  same compiled object; the adapter no longer has its own transaction copy.
+  See [checked submission](specs/2026-10-18-checked-submission-core.md).
+- Results distinguish coherent device state from complete unit submission,
+  retain committed/replayed counts and identify the first failed operation.
+  Nineteen direct cases cover persistent restoration errors, partial replay,
+  bounds, null streams, multiple streams and nested-call refusal.
+- Both images pass 384 native fallback cases, 496 single-GPU-failure cases
+  and 56 deliberately broken device-effect controls across native D3D9/DXVK
+  lit/fresh-shadow workloads. The full plugin suite passes; remaining normal,
+  fault and recovery benchmark targets also compile with the shared object.
+- Production core and executed native fallback adapter instruction checks
+  find no x87/SIMD/FP-control instructions. Built ASI SHA256:
+  `0fb6048a801d22d0b37e1daf24d1741a288b9de3afdb594b5c1f5d26eea3b68c`.
+  Source/build/log hashes and test scope are preserved with the report.
+- The module is linked but the runtime instancer does not call it yet.
+  Integrate the verified native group bridge, caller ownership/cleanup and
+  incomplete/incoherent failure policy next. No installation or new timing;
+  last gameplay remains about 30.18 presentations/s, and 60 FPS is unproved.
+
 ## Captured stream buffer ownership fixed (2026-10-18)
 
 - Beta **0.9.11-beta.7** keeps the successful GetStreamSource reference

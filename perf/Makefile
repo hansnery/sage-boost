@@ -15,7 +15,7 @@ SRCS  := src/main.c src/log.c src/rt.c src/scan.c src/sites.c src/patch.c src/st
          src/timing.c src/presentgap.c src/csvrow.c src/clock.c src/reflect.c src/config.c src/uistate.c \
          src/inst.c src/declcache.c src/fpsites.c src/fps.c src/extraprofile.c src/fpsmath.c src/btnclock.c src/passflag.c \
          src/shadowpass.c src/spsites.c src/fxguard.c src/catchup.c src/cusites.c src/notice.c \
-         src/lights.c src/ltsites.c src/queueinsert.c src/nativecontract.c src/queuesort.c
+         src/lights.c src/ltsites.c src/queueinsert.c src/nativecontract.c src/queuesort.c src/instsubmit.c
 OBJS  := $(SRCS:src/%.c=$(BUILD)/%.o) $(BUILD)/version.o
 
 COMMON_FLAGS := -std=gnu11 -Wall -Wextra -Werror -DWIN32_LEAN_AND_MEAN -DUNICODE -D_UNICODE
@@ -83,6 +83,13 @@ bench-native-decode: $(BUILD)/bench_native_decode.exe
 	python ../tools/bench_native_decode.py "$(AOTR_DAT)" $< --self-test
 
 CONTRACT_OBJS := $(BUILD)/nativecontract.o $(BUILD)/scan.o $(BUILD)/patch.o
+$(BUILD)/test_instsubmit.exe: tests/test_instsubmit.c $(BUILD)/instsubmit.o src/instsubmit.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -static -o $@ $< $(BUILD)/instsubmit.o
+
+.PHONY: test-instsubmit
+test-instsubmit: $(BUILD)/test_instsubmit.exe
+	./$(BUILD)/test_instsubmit.exe
+
 $(BUILD)/test_inst_ownership.exe: tests/test_inst_ownership.c src/inst.c src/declcache.c src/*.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $< src/declcache.c
 
@@ -200,7 +207,7 @@ test: all $(BUILD)/test_row.exe $(BUILD)/test_reflect.exe $(BUILD)/test_config.e
       $(BUILD)/test_sites.exe $(BUILD)/test_hooks.exe $(BUILD)/test_fps.exe $(BUILD)/test_load.exe \
       $(BUILD)/test_inst.exe $(BUILD)/test_declcache.exe $(BUILD)/test_btn.exe $(BUILD)/test_shadowpass.exe \
       $(BUILD)/test_catchup.exe $(BUILD)/test_lights.exe $(BUILD)/test_extraprofile.exe $(BUILD)/test_presentgap.exe \
-      $(BUILD)/test_queueinsert.exe $(BUILD)/test_queuesort.exe $(BUILD)/test_inst_ownership.exe
+      $(BUILD)/test_queueinsert.exe $(BUILD)/test_queuesort.exe $(BUILD)/test_inst_ownership.exe $(BUILD)/test_instsubmit.exe
 	./$(BUILD)/test_row.exe
 	./$(BUILD)/test_reflect.exe
 	./$(BUILD)/test_btn.exe
@@ -222,6 +229,7 @@ test: all $(BUILD)/test_row.exe $(BUILD)/test_reflect.exe $(BUILD)/test_config.e
 	./$(BUILD)/test_declcache.exe
 	./$(BUILD)/test_inst.exe
 	./$(BUILD)/test_inst_ownership.exe
+	./$(BUILD)/test_instsubmit.exe
 	./$(BUILD)/test_shadowpass.exe
 	./$(BUILD)/test_catchup.exe
 	./$(BUILD)/test_lights.exe

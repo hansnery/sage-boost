@@ -11,9 +11,10 @@ extern void bench_fault_reset(void);
 extern void bench_fault_device(void *);
 extern void bench_fault_stock(unsigned);
 #ifdef PF_RECOVERY_CANDIDATE
+#include "../src/instsubmit.h"
 extern void bench_recovery_watch(void (*)(void),void (*)(void));
 extern unsigned bench_recovery_operation(void),bench_recovery_open(void);
-extern void bench_recovery_break(unsigned);
+static unsigned ff_corrupt_mode;
 #endif
 static void **ff_original;
 static void *ff_vtable[sizeof(IDirect3DDevice9Vtbl)/sizeof(void *)];
@@ -150,26 +151,50 @@ static HRESULT WINAPI ff_set_vs(void *self,void *value)
 static HRESULT WINAPI ff_set_decl(void *self,void *value)
 { FF_CALL(PF_DEV_SET_DECL,((pf_ptr_fn)ff_original[PF_DEV_SET_DECL])(ff_real(self),value)); }
 static HRESULT WINAPI ff_set_stream(void *self,unsigned stream,void *value,unsigned offset,unsigned stride)
-{ FF_CALL(PF_DEV_SET_STREAM,((pf_set_stream_fn)ff_original[PF_DEV_SET_STREAM])(ff_real(self),stream,value,offset,stride)); }
+{
+#ifdef PF_RECOVERY_CANDIDATE
+    /* Deliberate oracle corruption belongs to this proxy, never to the
+     * production transaction. Pretend the null-offset seed was applied. */
+    if(ff_corrupt_mode==4 && bench_recovery_operation()==PF_SUBMIT_SEED_NULL_STREAM) return S_OK;
+#endif
+    FF_CALL(PF_DEV_SET_STREAM,((pf_set_stream_fn)ff_original[PF_DEV_SET_STREAM])(ff_real(self),stream,value,offset,stride));
+}
 static HRESULT WINAPI ff_set_frequency(void *self,unsigned stream,unsigned value)
 { FF_CALL(PF_DEV_SET_STREAM_FREQ,((pf_set_freq_fn)ff_original[PF_DEV_SET_STREAM_FREQ])(ff_real(self),stream,value)); }
 static HRESULT WINAPI ff_set_constants(void *self,unsigned first,void *data,unsigned count)
-{ FF_CALL(PF_DEV_SET_VS_CONST_F,((pf_const_f_fn)ff_original[PF_DEV_SET_VS_CONST_F])(ff_real(self),first,data,count)); }
+{
+#ifdef PF_RECOVERY_CANDIDATE
+    if(ff_corrupt_mode==7 && bench_recovery_operation()==PF_SUBMIT_PENDING_RESTORE) return S_OK;
+#endif
+    FF_CALL(PF_DEV_SET_VS_CONST_F,((pf_const_f_fn)ff_original[PF_DEV_SET_VS_CONST_F])(ff_real(self),first,data,count));
+}
 static HRESULT WINAPI ff_draw(void *self,unsigned type,int base,unsigned first,unsigned vertices,
                                unsigned start,unsigned primitives)
 {
+#ifdef PF_RECOVERY_CANDIDATE
+    unsigned operation=bench_recovery_operation();
+    if((ff_corrupt_mode==2 && operation==PF_SUBMIT_REPLAY_DRAW) ||
+       (ff_corrupt_mode==5 && operation==PF_SUBMIT_PENDING_DRAW)) return S_OK;
+    unsigned copies=1+((ff_corrupt_mode==6 && operation==PF_SUBMIT_PENDING_DRAW) ||
+        (ff_corrupt_mode==3 && operation==PF_SUBMIT_DRAW && ff_target_step>=9 &&
+         ff_target_step<=14 && ff_batch==ff_target_batch));
+#else
+    unsigned copies=1;
+#endif
     unsigned frequency=1;
     HR(((pf_get_freq_fn)ff_original[PF_DEV_GET_STREAM_FREQ])(ff_real(self),0,&frequency));
     int instanced=(frequency&PF_STREAM_INDEXED)!=0;
     int reject=ff_reject(PF_DEV_DRAW_INDEXED);
     HRESULT hr=D3DERR_INVALIDCALL;
     if(!reject) {
-        ff_forwarding++;
-        hr=((pf_dip_fn)ff_original[PF_DEV_DRAW_INDEXED])(ff_real(self),type,base,first,vertices,start,primitives);
-        ff_forwarding--;
-        if(SUCCEEDED(hr)) {
-            if(instanced) ff_instances+=frequency&0x3fffffffu;
-            else ff_native_dips++;
+        for(unsigned i=0;i<copies;i++) {
+            ff_forwarding++;
+            hr=((pf_dip_fn)ff_original[PF_DEV_DRAW_INDEXED])(ff_real(self),type,base,first,vertices,start,primitives);
+            ff_forwarding--;
+            if(SUCCEEDED(hr)) {
+                if(instanced) ff_instances+=frequency&0x3fffffffu;
+                else ff_native_dips++;
+            }
         }
     }
     if(ff_negative && instanced) ff_instances++; /* Broken logical-count oracle control. */
@@ -349,7 +374,7 @@ int PF_NATIVE_FAULT_MAIN(int argc,char **argv)
         unsigned mode=(unsigned)atoi(argv[PF_FAULT_ARGUMENTS]);
         ff_negative=mode==1;
 #ifdef PF_RECOVERY_CANDIDATE
-        bench_recovery_break(mode);
+        ff_corrupt_mode=mode;
 #endif
         argc--;
     }
