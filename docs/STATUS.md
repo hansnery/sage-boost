@@ -21,6 +21,28 @@ files before relying on it.
 - Latest user constraint: request another gameplay test only after evidence
   of a significant improvement; no diagnostic-only install/test cycle.
 
+## Deferred units recovered at native fallback (2026-10-18)
+
+- [Native group fallback](specs/2026-10-18-native-group-fallback.md) resolves
+  zero bulk consumption with ordinary draws of pending staged units,
+  palette restoration and timing-marker cancellation. Completed batches
+  are not repeated; the current record and remaining group render natively.
+- Both images pass 384 fallback cases across native D3D9/DXVK lit/fresh
+  shadows, including partial writes, batch boundaries and following groups.
+  All 496 earlier single-GPU-failure cases and 56 broken controls pass.
+  Joined insertion/GPU regression and full plugin suite also pass.
+- Two shuffled-input DXVK repeats retain 7.20-7.53 ms savings per pair;
+  ordered input saves 5.89-6.16 ms in one sensitivity run. Preserve 384
+  fallback observations and 126 timings/hashes. This replaces the earlier
+  combined screen, not an additional saving or a gameplay FPS result.
+- No production/installed/INI changes. Last gameplay remains ~30.18/s.
+  Errors during ordinary replay, persistent/device-loss behavior, native
+  exceptions and source/lifetime/context limits remain unqualified.
+- Next audit the runtime boundaries and build signature-verified guards
+  for the qualified paths, preserving native ownership/method/pass limits
+  and callback/verification exclusions. Resolve device-failure behavior
+  before installing the complete improvement; 60 FPS is still unachieved.
+
 ## Native insertion joined to sorting and GPU rendering (2026-10-18)
 
 - [Insertion/GPU screen](specs/2026-10-18-native-insertion-gpu-screen.md)

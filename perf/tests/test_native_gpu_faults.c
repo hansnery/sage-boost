@@ -24,6 +24,8 @@ static unsigned ff_armed,ff_open,ff_batch,ff_step,ff_target_batch,ff_target_step
 static unsigned ff_injected,ff_saved,ff_forwarding,ff_instances,ff_native_dips;
 static unsigned ff_state_bad,ff_bad_at_target,ff_batches,ff_fault_cases;
 static unsigned ff_negative;
+static unsigned ff_allow_fallback;
+static unsigned ff_groups=1;
 static IDirect3DVertexBuffer9 *ff_seed_vb;
 typedef struct {
     unsigned vs,decl,vb[2],offset[2],stride[2],frequency[2],constants[256*4];
@@ -209,11 +211,14 @@ static FaultResult ff_case(unsigned extra,unsigned optimized,unsigned target_bat
     unsigned refs=g_method.refs;
     pf_timing_stats before,after; pf_timing_get_stats(&before);
     ff_armed=1;
-    ng_group_call(optimized?ng_hooked:ng_symbols[0],ng_renderer,records[0],records[0]+sizeof records[0]);
+    for(unsigned group=0;group<ff_groups;group++) {
+        ng_current_group=group;
+        ng_group_call(optimized?ng_hooked:ng_symbols[0],ng_renderer,records[group],records[group]+sizeof records[group]);
+    }
     ff_armed=0;
     pf_timing_get_stats(&after);
     REQUIRE(!ff_open && !ff_forwarding && !ng_group_abi_errors && g_method.refs==refs);
-    REQUIRE(after.stale_scopes==before.stale_scopes && after.scopes-before.scopes==(extra?0:26));
+    REQUIRE(after.stale_scopes==before.stale_scopes && after.scopes-before.scopes==(extra?0:26*ff_groups));
     REQUIRE(ff_injected==(target_step!=0));
     HR(IDirect3DDevice9_EndScene(g_dev)); drain(); read_pixels(out);
     result.state=ff_bad_at_target; result.active=pf_inst_active();
@@ -227,12 +232,12 @@ static FaultResult ff_case(unsigned extra,unsigned optimized,unsigned target_bat
 #ifdef PF_FAULT_STOCK_REFERENCE
     if(!optimized) { expected_active=0;expected_ordinary=25; }
 #endif
-    if(!target_step && (ff_state_bad || result.active!=expected_active || result.instances+result.native!=25 ||
-                       result.native!=expected_ordinary || result.pixels))
+    if(!target_step && (ff_state_bad || result.active!=expected_active || result.instances+result.native!=25*ff_groups ||
+                       (!ff_allow_fallback && result.native!=expected_ordinary) || result.pixels))
         fprintf(stderr,"clean fault control: optimized=%u state=%u active=%u instances=%u ordinary=%u pixels=%u\n",
                 optimized,ff_state_bad,result.active,result.instances,result.native,result.pixels);
-    if(!target_step) REQUIRE(!ff_state_bad && result.active==expected_active && result.instances+result.native==25 &&
-                            result.native==expected_ordinary && !result.pixels);
+    if(!target_step) REQUIRE(!ff_state_bad && result.active==expected_active && result.instances+result.native==25*ff_groups &&
+                            (ff_allow_fallback || result.native==expected_ordinary) && !result.pixels);
     bench_extra_mode(0); bench_fault_reset();
     return result;
 }
@@ -307,6 +312,9 @@ static void ff_validate(void)
     }
 #ifdef PF_RECOVERY_CANDIDATE
     REQUIRE(ff_fault_cases==56 && !loss && !leaks && !unsafe);
+#ifdef PF_FAULT_ADDITIONAL_CONTROLS
+    PF_FAULT_ADDITIONAL_CONTROLS();
+#endif
     bench_recovery_watch(NULL,NULL);
 #else
     REQUIRE(ff_fault_cases==56 && loss && leaks && unsafe);
@@ -328,7 +336,10 @@ static void ff_setup(void)
     validate_retained=ff_validate; benchmark_controls_only=1;
     comparison_name="native-gpu-fault-audit";
 }
-int main(int argc,char **argv)
+#ifndef PF_NATIVE_FAULT_MAIN
+#define PF_NATIVE_FAULT_MAIN main
+#endif
+int PF_NATIVE_FAULT_MAIN(int argc,char **argv)
 {
     setvbuf(stdout,NULL,_IONBF,0);
 #ifndef PF_FAULT_ARGUMENTS

@@ -61,6 +61,18 @@ unsigned bench_inst_bulk(const unsigned char *rec, const unsigned char *end, voi
     return bench_original_inst_bulk(rec,end,method);
 }
 
+int bench_native_bulk_cancel(void)
+{
+#ifdef PF_NATIVE_LEADER_CANCEL
+    if (!PF_NATIVE_LEADER_CANCEL()) return 0;
+#else
+    /* Legacy non-recovery fixtures keep their original batch flush. */
+    if (!draw_batch(1)) return 0;
+#endif
+    g.mode=M_STOCK;g.armed=0;g.reason=REASON(mismatch);
+    return 1;
+}
+
 static HRESULT WINAPI leader_skip(void *dev, unsigned type, int base,
                                   unsigned first, unsigned vertices,
                                   unsigned start, unsigned primitives)

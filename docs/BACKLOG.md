@@ -122,6 +122,15 @@ Strike an item through, with the date, when it's done.
   ordinary-rendering fallback, including any deferred leader and partial
   submission. Qualify source/lifetime/context boundaries and runtime
   signatures before promoting the combined candidate to an installed beta.
+- [x] 2026-10-18: ordinary replay at zero consumption preserves pending
+  units, committed batches, immediate state and scope counts. Both images
+  pass 384 zero/partial cases, 496 earlier GPU-failure cases and 56 broken
+  controls. Two DXVK repeats retain 7.20-7.53 ms/pair; ordered input saves
+  5.89-6.16 ms. See `specs/2026-10-18-native-group-fallback.md`.
+- [ ] Qualify errors during ordinary replay, persistent/device-loss paths,
+  native exceptions and source/resource lifetimes. Audit and implement the
+  signature-verified runtime boundaries for the qualified candidate before
+  installation; offline fallback does not complete the broader runtime gate.
 - [x] 2026-10-17: larger material-queue fixture passes native/DXVK fresh
   pose, material invalidation, regular/extra image and state checks.
 - [x] 2026-10-17: recollect material-queue timings with the game closed.

@@ -4,7 +4,8 @@
 #include "inst.h"
 extern int bench_native_bulk_matches(const unsigned char *,const unsigned char *,void *);
 extern unsigned bench_inst_bulk(const unsigned char *,const unsigned char *,void *);
-extern int bench_scope_bulk_begin(void),bench_scope_bulk_end(unsigned);
+extern int bench_scope_bulk_begin(void),bench_scope_bulk_end(unsigned),bench_scope_bulk_cancel(void);
+extern int bench_native_bulk_cancel(void);
 void *ng_group_resume,*ng_group_fallback;
 unsigned ng_group_abi_errors;
 static unsigned enabled,consumed,visits;
@@ -23,11 +24,18 @@ int bench_native_group_bulk(unsigned *regs)
        frame[-1]!=1 || frame[-9]!=1 || frame[-11]!=1 || regs[6]!=1 ||
        frame[-7]!=(unsigned)(current+PF_RECORD_SIZE) || *(const unsigned *)(first+4)!=1 ||
        !bench_native_bulk_matches(current,end,method)) return 0;
-    if(!bench_scope_bulk_begin()) ExitProcess(4);
+    if(!bench_scope_bulk_begin()) {
+        if(!bench_native_bulk_cancel()) ExitProcess(4);
+        return 0;
+    }
     unsigned n=bench_inst_bulk(current,end,method);
-    /* No production fallback claim: zero-consumption/failure after this
-     * preflight must fail the fixture until recovery has been proved. */
-    if(!n || n>(unsigned)(end-current)/PF_RECORD_SIZE || !bench_scope_bulk_end(n))
+    if(!n) {
+        if(!bench_scope_bulk_cancel() || !bench_native_bulk_cancel()) ExitProcess(4);
+        return 0;
+    }
+    /* Corrupt accounting or unrecoverable GPU failure remains a fixture
+     * failure, never silently accepted as ordinary fallback. */
+    if(n>(unsigned)(end-current)/PF_RECORD_SIZE || !bench_scope_bulk_end(n))
         ExitProcess(4);
     consumed+=n;
     frame[-7]=(unsigned)(current+n*PF_RECORD_SIZE);

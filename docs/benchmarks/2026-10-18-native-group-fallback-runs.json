@@ -1,0 +1,132 @@
+{
+  "kind": "offline deferred-leader/partial-batch fallback, not an installed implementation or FPS result",
+  "controls": [
+    {
+      "image": "aotr",
+      "cases": 192,
+      "previous_batch_faults": 224,
+      "capture_failures": 8,
+      "null_restore_failures": 16,
+      "negative_controls": 28
+    },
+    {
+      "image": "rotwk",
+      "cases": 192,
+      "previous_batch_faults": 224,
+      "capture_failures": 8,
+      "null_restore_failures": 16,
+      "negative_controls": 28
+    }
+  ],
+  "performance": {
+    "warmups": 4,
+    "samples_per_case": 21,
+    "fenced_pairs_per_sample": 8,
+    "records_per_frame": 7200,
+    "groups": 288,
+    "summaries": [
+      {
+        "run": 1,
+        "order": "random",
+        "workload": "lit",
+        "backend": "dxvk",
+        "saved_ms": 7.2157,
+        "p10_ms": 6.6335999999999995,
+        "p90_ms": 7.9126
+      },
+      {
+        "run": 1,
+        "order": "random",
+        "workload": "shadow",
+        "backend": "dxvk",
+        "saved_ms": 7.5277,
+        "p10_ms": 6.8405000000000005,
+        "p90_ms": 8.9254
+      },
+      {
+        "run": 2,
+        "order": "random",
+        "workload": "lit",
+        "backend": "dxvk",
+        "saved_ms": 7.2728,
+        "p10_ms": 6.732000000000001,
+        "p90_ms": 8.3783
+      },
+      {
+        "run": 2,
+        "order": "random",
+        "workload": "shadow",
+        "backend": "dxvk",
+        "saved_ms": 7.203,
+        "p10_ms": 6.8128,
+        "p90_ms": 8.4235
+      },
+      {
+        "run": 1,
+        "order": "ascending",
+        "workload": "lit",
+        "backend": "dxvk",
+        "saved_ms": 6.1563,
+        "p10_ms": 5.7595,
+        "p90_ms": 6.4848
+      },
+      {
+        "run": 1,
+        "order": "ascending",
+        "workload": "shadow",
+        "backend": "dxvk",
+        "saved_ms": 5.8855,
+        "p10_ms": 5.6747,
+        "p90_ms": 6.443600000000001
+      }
+    ]
+  },
+  "limits": [
+    "Stage refusal is controlled; native group/mesh/FX and actual GPU operations execute",
+    "Successful ordinary pending replay; API failure during that replay, persistent errors and device loss remain unqualified",
+    "Exceptions, source/lifetime/context guards and production signature/hook integration remain open",
+    "Only skeletal candidate uses ordinary cancellation replay; legacy fixture fallback uses its prior batch flush",
+    "No installation/INI/stable changes or gameplay evidence; combined timing replaces earlier screens"
+  ],
+  "sha256": {
+    "perf\\build\\native-fallback-timing-random-lit-1.txt": "73bbd364f3eb94d9c5bb254d625f88885247d4fbcaa279b7618b9b4a6046517e",
+    "perf\\build\\native-fallback-timing-random-shadow-1.txt": "2a0d81bf45534d1c7d2af3f22cf7b8cef7ed50d737903aa42a6b223c55443469",
+    "perf\\build\\native-fallback-timing-random-lit-2.txt": "aec068a986e87c935767ab6230038aea89e0d75e26ef57d28b5627393f8a4451",
+    "perf\\build\\native-fallback-timing-random-shadow-2.txt": "5c9785a6fc6d9727d0e09f6d33ce7f18a1daee92eda53091d36d0914c34b752e",
+    "perf\\build\\native-fallback-timing-ascending-lit-1.txt": "e9533302c9e805fa2ef6cd46e42dfff953fa368bcb0d5cf1e7593728e84c428e",
+    "perf\\build\\native-fallback-timing-ascending-shadow-1.txt": "ebf643197b92f84d900cf21e7923b00081460211861863ccfdbbe3558dd4dfeb",
+    "perf\\build\\native-fallback-final-aotr.txt": "55a87d92308b084ada2d4a152f403d4642fc4a334372cee80f012a2c664a459d",
+    "perf\\build\\native-fallback-final-rotwk.txt": "2df923d0bbd85b19456fd75a0864b0979621628660d663351fef9b524d6fcee5",
+    "perf\\Makefile": "a35b6bdcf374427696d695e85dda65f380c18dfa254110142e90ce6826ce7cc9",
+    "perf\\tests\\native_group_gpu_bridge.c": "d36929500f59d6e87fd308be5c753eab6402e190935761c4461d4c7ae5291941",
+    "perf\\tests\\inst_native_leader_engine.c": "5877394f82242ee290e63f5d1b5e6355dcb34c6ae6ef2e64b64a92dfd7eb8bab",
+    "perf\\tests\\inst_recovery_engine.c": "f4032783e1d4384108c13500eac15c66e95466a4bbc18c858183ce5cf8770659",
+    "perf\\tests\\timing_bulk_bench.c": "947eca4d3ca2a32d8b3bdde9d081eb5e58de3ff16e04b91422dd970f1f2f439d",
+    "perf\\tests\\test_native_gpu_faults.c": "ead373bf724f0b0a15944f7772672b299f40d41a329ebd273f22e0280577c5cd",
+    "perf\\tests\\inst_native_fallback_engine.c": "6e6eef9ec2b56872935fe8a90321122c81cea1f315897be648d4bc09519522e6",
+    "perf\\tests\\test_native_group_fallback.c": "2ba7187a9963dd6c12d18e0306b45ecf34617947d4624e4a6681d88544827ffc",
+    "tools\\test_native_group_fallback.py": "499e031da8ca3b4e899de2559db3a0d350dc613a0aa03ee84cc82419428bfdf6",
+    "perf\\tests\\bench_native_queue_gpu.c": "e9805e7be62799fb6b3fa23e8dfe4263306de8bc8a20b038b9b85b4c0fc3901d",
+    "perf\\tests\\bench_native_insert.c": "5fbfdb94854d73c72e64f55d52c25f0148dc86662ee517485ba39e98b75a23c9",
+    "perf\\tests\\bench_native_insert_gpu.c": "46e638263796ac6433f9f83238c65fa15c1c85b7ae7b75b64dad7e3abd8df74a",
+    "tools\\bench_native_insert_gpu.py": "3b32d00630332cb4e21471ce22c752be894403e858bc2c2ca1d8fc3509cf3542",
+    "perf\\build\\test_native_group_fallback.exe": "93c75069b626623950a5095aeea0cf30f9111ed152ca64366d56522873af36a1",
+    "perf\\build\\bench_native_insert_gpu.exe": "ce3fbae40cea2f350cf734ae3e29f01cf41391cb9df469934ade22f206ccdd5c",
+    "perf\\build\\native_group_gpu_bridge.o": "4063ff312474a3acaada2f20569ff008852d2f5a1b51565c9cc05b5ce361756d",
+    "perf\\build\\inst_recovery_engine.o": "8944a4368bf5e60dc49a41733fdf1f9c0ac34b63a010d16beabfb8e110bd18fa",
+    "perf\\build\\inst_native_fallback_engine.o": "9e959ea9ec6f7c3d19057217dde9e793b13cabba63d47d2775a39c1bb713c16a",
+    "perf\\build\\timing_bulk_bench.o": "ec7910b16cb955f302b555d5b0e971b4667fc92fecfa1a6cb5f22b963e12c875",
+    "perf\\build\\bfme2perf.asi": "abb5e35d40e52abcc4190d264cb0d4cdb39173e073456608c7e14fa209426540",
+    "perf\\build\\native-fallback-insertion-regression.txt": "30bb9b836ec166742e01623d750541d9da5c75dbc6a588d2c9309255353742b4",
+    "perf\\build\\native-fallback-suite.txt": "005174c755014c5169239bb5b9b7e730fe3de16e5fa83038b3ec751f9f318f88",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat": "035da15c626af6cd1663d1886deea605464ec6776f2c5f1d24570c2be6d73e61",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\game820.dat": "bcf4c85ec72ecb9eb95a844fc0072434fdcef49a5b2c59abb77ac04af29c277e",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big": "353c835b0e77387b322a094b62477b35c34e8e1cea6d75f5844a20b9e36b091b",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\d3dx9_27.dll": "a70d571cd675c97c9eeb4a234dba1d667ffb54ec3bb14defb36b3e2f605ae257",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll": "8094af5ee310714caebccaeee7769ffb08048503ba478b879edfef5f1a24fefe",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\d3d9.dll": "00bc142e98ddad1e334a4d88fa630038e092b0758b3d79e295172b181a4c772d",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\mss\\bfme2perf.asi": "db65e51d42bb7f49947631a17b9aeebc0604f3cd9e2c055d8e8a35daf65408e5",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\mss\\bfme2perf.ini": "79bbb612a6ce22e76f930e9334a6e650bc2c49c3d28260c6bc716c026da94c54",
+    "C:\\Windows\\SysWOW64\\d3d9.dll": "210e52314d24bdc8492e5185674626225af2c030ff51d13c01155aedb2d248ad"
+  }
+}

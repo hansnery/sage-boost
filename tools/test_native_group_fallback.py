@@ -1,0 +1,35 @@
+"""Check zero-consumption fallback with native group/mesh/FX and real GPU."""
+import argparse
+from pathlib import Path
+import subprocess
+import tempfile
+from test_mesh_draw_contract import BASELINE,Image,verify as mesh_verify,write_manifest as mesh_manifest
+from test_group_contract import verify as group_verify,write_manifest as group_manifest
+from native_fx_state_contract import verify as fx_verify,manifest as fx_manifest
+
+def main():
+    p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--self-test',action='store_true',help='reject broken count, batch recovery and pending replay controls')
+    p.add_argument('image',type=Path);p.add_argument('executable',type=Path)
+    p.add_argument('fixture_args',nargs=argparse.REMAINDER);a=p.parse_args()
+    reference,target=Image(BASELINE),Image(a.image)
+    meshes,table,_=mesh_verify(reference,target);_,groups=group_verify(reference,target)
+    fx=fx_verify(reference,target)
+    with tempfile.TemporaryDirectory(prefix='sage-native-fallback-') as folder:
+        mesh=Path(folder)/'mesh.txt';group=Path(folder)/'group.txt';effects=Path(folder)/'fx.txt'
+        mesh_manifest(mesh,meshes,table);group_manifest(group,groups);fx_manifest(effects,fx)
+        command=[str(a.executable.resolve()),*a.fixture_args,
+            str(a.image.resolve()),str(mesh),str(group),str(effects)]
+        result=subprocess.call(command)
+        if result:return result
+        if a.self_test:
+            for mode,name in ((1,'count corruption'),(2,'omitted batch replay'),(3,'duplicated committed batch'),
+                              (4,'missing stream-offset restore'),(5,'omitted pending replay'),
+                              (6,'duplicated pending replay'),(7,'missing palette restore')):
+                control=subprocess.run(command+[str(mode)],capture_output=True,text=True)
+                expected='!ff_state_bad && result.active==expected_active' if mode>=5 else 'benchmark refused'
+                assert control.returncode==1 and expected in control.stderr,control
+                print('Native fallback oracle:',name,'rejected',flush=True)
+        return 0
+
+if __name__=='__main__':raise SystemExit(main())

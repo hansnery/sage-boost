@@ -4,7 +4,9 @@
 #define PF_BENCH_INST_SOURCE "../build/inst_recovery_base.c"
 #define PF_NATIVE_LEADER_EXTRA_GATE g.skinned
 static void recovery_capture_begin(void);
+static int recovery_cancel_pending(void);
 #define PF_NATIVE_LEADER_CAPTURE_BEGIN recovery_capture_begin
+#define PF_NATIVE_LEADER_CANCEL recovery_cancel_pending
 #include "inst_native_leader_engine.c"
 
 static unsigned recovery_bones[MAX_REGS * 4], recovery_valid;
@@ -22,6 +24,9 @@ void bench_recovery_break(unsigned mode) { recovery_break=mode; }
 
 static int stage(const unsigned char *mesh)
 {
+#ifdef PF_NATIVE_STAGE_REJECT
+    if (g.mode==M_INST && PF_NATIVE_STAGE_REJECT(mesh)) return 0;
+#endif
     if (leader_enabled && g.skinned && g.mode==M_LEADER && !g.count) {
         const pf_inst_variant *v=&pf_inst_variants[g.variant];
         recovery_valid=0;
@@ -40,6 +45,45 @@ static int stage(const unsigned char *mesh)
         recovery_valid=1;
     }
     return unchecked_stage(mesh);
+}
+
+static int recovery_cancel_pending(void)
+{
+    unsigned n=g.count;
+    if (!n) return 1;
+    if (!recovery_valid || !g.skinned || g.model!=recovery_model ||
+        g.method!=recovery_method || g.ea_vs!=recovery_vs) return 0;
+    void **vt=PF_VT(g.dev);
+    const pf_inst_variant *v=&pf_inst_variants[g.variant];
+    pf_const_f_fn constants=(pf_const_f_fn)vt[PF_DEV_SET_VS_CONST_F];
+    pf_dip_fn draw=(pf_dip_fn)vt[PF_DEV_DRAW_INDEXED];
+    unsigned coherent=1;
+    g.count=0; /* This local replay now owns the unsubmitted staged units. */
+    recovery_open=1;
+    if (recovery_begin) recovery_begin();
+    HRESULT hr=S_OK;
+    for (unsigned i=0;i<n && recovery_break!=5;i++) {
+        recovery_op=20;
+        hr=constants(g.dev,(unsigned)v->roles[PF_ROLE_BONES],g_stage+i*g.stride*4,g.stride);
+        if (FAILED(hr)) {coherent=0;break;}
+        recovery_op=21;
+        hr=draw(g.dev,g.dip[0],(INT)g.dip[1],g.dip[2],g.dip[3],g.dip[4],g.dip[5]);
+        if (FAILED(hr)) {coherent=0;break;}
+        if (recovery_break==6 && !i)
+            draw(g.dev,g.dip[0],(INT)g.dip[1],g.dip[2],g.dip[3],g.dip[4],g.dip[5]);
+    }
+    recovery_op=22;
+    HRESULT restore=recovery_break==7?S_OK:
+        constants(g.dev,(unsigned)v->roles[PF_ROLE_BONES],recovery_bones,g.stride);
+    if (FAILED(restore)) {
+        restore=constants(g.dev,(unsigned)v->roles[PF_ROLE_BONES],recovery_bones,g.stride);
+        if (FAILED(restore)) coherent=0;
+    }
+    recovery_op=0;
+    if (recovery_end) recovery_end();
+    recovery_open=0;
+    if (!coherent) fail_session("pending ordinary replay failed",(unsigned)(FAILED(hr)?hr:restore));
+    return coherent;
 }
 
 static int draw_batch(int counted)

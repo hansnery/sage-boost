@@ -46,6 +46,25 @@ int bench_scope_bulk_end(unsigned attempted)
     return 1;
 }
 
+int bench_scope_bulk_cancel(void)
+{
+    if (!bulk_open || g_ssp!=bulk_depth+bulk_tracked ||
+        g_pass!=bulk_pass || pf_fps_in_extra()!=bulk_extra) return 0;
+    if (!bulk_extra) {
+        if (bulk_tracked) {
+            open_scope *o=&g_scopes[g_ssp-1];
+            if (o->self!=&bulk_identity || o->covering || o->outer_pass!=bulk_pass) return 0;
+            g_ssp--;
+        }
+        /* No logical mesh was consumed. Discard this attempted interval;
+         * the ordinary native event will account for that mesh instead. */
+        g_fx.markers--;
+        if (bulk_pass>=0) g_meshes[bulk_pass]--;
+    }
+    bulk_open=0;
+    return 1;
+}
+
 extern void bench_extra_mode(int);
 
 /* Outside measured workloads. One actual interval supplies both scope and
@@ -75,12 +94,23 @@ int bench_scope_bulk_check(void)
         if (name>=0 && pass>=0 &&
             (g_names[name].pass_calls[pass]-pcalls!=count ||
              g_names[name].pass_ticks[pass]-pticks0!=g_names[name].ticks-ticks0)) return 0;
+        markers=g_fx.markers; meshes=pass<0?0:g_meshes[pass]; before=g_stats;
+        if (!bench_scope_bulk_begin()) return 0;
+        calls=name<0?0:g_names[name].calls; ticks0=name<0?0:g_names[name].ticks;
+        if (!bench_scope_bulk_cancel() || bench_scope_bulk_cancel() || g_ssp ||
+            g_fx.markers!=markers || g_stats.scopes!=before.scopes ||
+            g_stats.stale_scopes!=before.stale_scopes ||
+            (pass>=0 && g_meshes[pass]!=meshes) ||
+            (name>=0 && (g_names[name].calls!=calls || g_names[name].ticks!=ticks0))) return 0;
     }
     /* A full scope stack must not pop or count an unrelated scope. */
     bench_extra_mode(0); g_detail=1; g_pass=PF_SCOPE_SHADOW; g_ssp=PF_SCOPE_STACK;
     unsigned scopes=g_stats.scopes, markers=g_fx.markers;
     if (!bench_scope_bulk_begin() || !bench_scope_bulk_end(25) ||
         g_ssp!=PF_SCOPE_STACK || g_stats.scopes!=scopes || g_fx.markers-markers!=25) return 0;
+    markers=g_fx.markers;
+    if (!bench_scope_bulk_begin() || !bench_scope_bulk_cancel() ||
+        g_ssp!=PF_SCOPE_STACK || g_stats.scopes!=scopes || g_fx.markers!=markers) return 0;
     g_ssp=saved_depth; g_pass=saved_pass; g_detail=saved_detail;
     return 1;
 }
