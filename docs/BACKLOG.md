@@ -36,6 +36,9 @@ Strike an item through, with the date, when it's done.
 - [ ] Prove native debug callback/group contracts, source callbacks,
   lifetimes and engine-state reconciliation for that combined candidate.
   No runtime event omission or installation is yet authorized by evidence.
+- [x] 2026-10-17: four native event bodies pass nine refusal controls and
+  80 callback/buffer/ABI cases on each image. Enclosing loop/SEH remains
+  outside this proof; see `specs/2026-10-17-native-event-contract.md`.
 - [ ] If clean measurements justify it, prove the native effect/group
   bridge, lifetimes, engine state and diagnostics before runtime promotion.
   Current persistent cache borrows fixed fixture objects only.

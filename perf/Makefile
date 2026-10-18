@@ -193,6 +193,14 @@ $(BUILD)/bench_dispatch.exe: tests/bench_dispatch.c tests/test_inst.c $(BUILD)/i
 
 .PHONY: bench-dispatch bench-ambient bench-retained bench-material-queue test-fx-lifecycle bench-scopes
 
+.PHONY: test-native-events
+$(BUILD)/test_native_events.exe: tests/test_native_events.c | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -static -o $@ $<
+
+test-native-events: $(BUILD)/test_native_events.exe
+	python ../tools/test_event_contract.py "$(AOTR_DAT)" --self-test --execute
+	python ../tools/test_event_contract.py "$(ROTWK_DAT)" --self-test --execute
+
 # Native wrapper correctness only: no GPU, scene, startup or timing claims.
 $(BUILD)/test_fx_lifecycle.exe: tests/test_fx_lifecycle.c | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -static -o $@ $<

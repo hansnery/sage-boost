@@ -38,6 +38,11 @@ files before relying on it.
   workloads, not additive). This merits native integration research, not
   installation: debug callback gates, group lifetimes, source callbacks and
   engine-state reconciliation remain unproved. Full plugin tests pass.
+- Native event groundwork: [four complete routine bodies](specs/2026-10-17-native-event-contract.md)
+  pass full-body/import/branch checks, nine refusal controls and 80 isolated
+  callback/buffer/ABI cases per local image. Active callbacks are observable
+  and require original events; the enclosing loop/SEH and ownership contract
+  still needs proof. No production event omission or installation.
 - Native integration groundwork: eight complete local FX wrapper bodies
   now pass 58 offline call-order/ABI cases on both executable images;
   altered-code refusal controls pass. [Contract and remaining limits](specs/2026-10-17-native-fx-lifecycle-audit.md).
