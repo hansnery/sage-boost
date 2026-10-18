@@ -11,6 +11,13 @@ static int narrow;
 static unsigned replay_draws, replay_meshes;
 static HRESULT (*record_material_mask)(IDirect3DDevice9 *);
 static void (*replay_marker_begin)(void),(*replay_marker_end)(void);
+static int (*replay_bulk_begin)(void),(*replay_bulk_end)(unsigned);
+
+void bench_retained_bulk_markers(int (*begin)(void),int (*end)(unsigned))
+{
+    replay_bulk_begin=begin;
+    replay_bulk_end=end;
+}
 
 void bench_retained_markers(void (*begin)(void),void (*end)(void))
 {
@@ -136,6 +143,7 @@ static int retained_draw(void)
 
 int bench_replay(unsigned index, const unsigned char *first, const unsigned char *end)
 {
+    unsigned attempted=0;
     if (index >= RETAINED_GROUPS || !blocks[index] || first >= end ||
         (end - first) % PF_RECORD_SIZE || g_failed)
         return 0;
@@ -152,6 +160,7 @@ int bench_replay(unsigned index, const unsigned char *first, const unsigned char
            FAILED(IDirect3DDevice9_SetStreamSource(dev,stream,g_ivb,g_ivb_off[g.stride]*4,4)) ||
            FAILED(IDirect3DDevice9_SetStreamSourceFreq(dev,stream,PF_STREAM_INSTANCE|1))) return 0;
     }
+    if(replay_bulk_begin && !replay_bulk_begin()) return 0;
     for (; first < end; first += PF_RECORD_SIZE) {
         const unsigned char *mesh = *(const unsigned char *const *)first;
         int valid;
@@ -160,8 +169,13 @@ int bench_replay(unsigned index, const unsigned char *first, const unsigned char
               *(const unsigned *)(mesh + PF_MESH_BASE_VERTEX)==g.base_vertex && stage(mesh);
         if(valid && (g.count==g.cap || first+PF_RECORD_SIZE==end)) valid=retained_draw();
         if(replay_marker_end) replay_marker_end();
-        if(!valid) return 0;
+        attempted++;
+        if(!valid) {
+            if(replay_bulk_end) replay_bulk_end(attempted);
+            return 0;
+        }
     }
+    if(replay_bulk_end && !replay_bulk_end(attempted)) return 0;
     if (!retained_draw()) return 0;
     g.mode = M_IDLE;
     return 1;

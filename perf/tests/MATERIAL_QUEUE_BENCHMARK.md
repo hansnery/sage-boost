@@ -142,3 +142,18 @@ supersede performance qualification of the original screen. Retaining
 lifecycle and marker work reduces DXVK gain to roughly 0.7-1.0 ms in the
 final repeat runs. No runtime cache is promoted. Fixed-object lifetime,
 native group behavior and engine state remain unproved.
+
+## Aggregate logical-mesh accounting experiment
+
+`MATERIAL_PROTOCOL=lifecycle-bulk-markers` retains the stronger lifecycle
+and key protocol but measures one staging/submission interval per hit and
+attributes its actual time to the logical mesh count. Native-style individual
+event copies are omitted only in this callback-free fixture. This is a
+different measurement boundary, not identical native event behavior.
+The test-only timing object preserves counts and per-pass totals; it is
+never linked into the ASI. Regular misses keep original per-member events.
+
+[Repeated results and native integration gates](../../docs/specs/2026-10-17-material-bulk-accounting-screen.md)
+show about 3.0-3.5 ms per modeled pair on DXVK. That qualifies further native
+research, not deployment. Source callbacks, lifetimes, native debug-event
+gates, engine state reconciliation and partial-failure recovery remain open.

@@ -224,8 +224,11 @@ $(BUILD)/bench_retained.exe: tests/bench_retained.c tests/bench_dispatch.c tests
 $(BUILD)/material_fixture.o: tests/material_fixture.c tests/shadow_fx/shadow_fx.c src/shadowfx_table.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -c -o $@ $<
 
-$(BUILD)/bench_material_queue.exe: tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/material_fixture.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(DISPATCH_OBJS) src/*.h
-	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/material_fixture.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(filter-out $(BUILD)/fps.o,$(DISPATCH_OBJS))
+$(BUILD)/timing_bulk_bench.o: tests/timing_bulk_bench.c src/timing.c src/*.h | $(BUILD)
+	$(CC) $(CFLAGS) -Isrc -c -o $@ $<
+
+$(BUILD)/bench_material_queue.exe: tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/material_fixture.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/material_fixture.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
 
 RETAINED_MASK ?= narrow
 MATERIAL_CHURN ?=

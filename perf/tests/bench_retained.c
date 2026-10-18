@@ -24,6 +24,7 @@ static void (*validate_retained)(void);
 static unsigned (*cached_regular)(void);
 static unsigned (*cached_extra)(void);
 static unsigned validate_markers;
+static void (*validate_accounting)(void);
 static void (*prepare_sample)(unsigned, unsigned);
 
 static void retained_workload(void)
@@ -154,6 +155,7 @@ static int retained_benchmark(int argc, char **argv)
     unsigned r, m, i, covered = 0, moved = 0;
     REQUIRE(bench_no_game());
     setup(argc, argv);
+    if(validate_accounting) validate_accounting();
     REQUIRE(!bench_replay(288,records[0],records[0]+sizeof records[0]));
     REQUIRE(!bench_replay(0,records[0],records[0]+sizeof records[0]));
     bench_retained_kind(argc > 4 && !strcmp(argv[4],"narrow"));

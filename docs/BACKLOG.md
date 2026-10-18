@@ -29,9 +29,13 @@ Strike an item through, with the date, when it's done.
 - [x] 2026-10-17: three guarded CPU marker runs, 315 samples preserved;
   about 1.95 ms total marker work per modeled regular/extra pair. See
   `specs/2026-10-17-marker-cpu-screen.md`. No installed Detail change.
-- [ ] Screen aggregate batch accounting with material reuse; retain mesh
-  counts and measured work, document changed interval boundaries, and prove
-  the native debug contract before any runtime omission of events.
+- [x] 2026-10-17: screen aggregate accounting with material reuse; 420 clean
+  samples retain mesh counts and measured work. DXVK savings ~3.0-3.5 ms
+  per modeled pair; changed interval boundaries documented in
+  `specs/2026-10-17-material-bulk-accounting-screen.md`.
+- [ ] Prove native debug callback/group contracts, source callbacks,
+  lifetimes and engine-state reconciliation for that combined candidate.
+  No runtime event omission or installation is yet authorized by evidence.
 - [ ] If clean measurements justify it, prove the native effect/group
   bridge, lifetimes, engine state and diagnostics before runtime promotion.
   Current persistent cache borrows fixed fixture objects only.

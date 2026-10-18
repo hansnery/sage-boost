@@ -1,0 +1,68 @@
+{
+  "parent_commit": "67cea04",
+  "runs": [
+    {
+      "log": "material-bulk-10-2.txt",
+      "sha256": "0abe6781de03a061a91fe9840ffc914dc567a52109a3c4aa2eacdc5bb76636d5",
+      "samples": 84,
+      "log_mtime_utc": "2026-10-18T05:42:30.501648+00:00"
+    },
+    {
+      "log": "material-bulk-10-3.txt",
+      "sha256": "362713711a771de87a9c9dd215506a1956267ac141197071458004d886fbc41c",
+      "samples": 84,
+      "log_mtime_utc": "2026-10-18T05:43:16.298425+00:00"
+    },
+    {
+      "log": "material-bulk-10-4.txt",
+      "sha256": "403b6d9e2633cfa51b87fe3ea2778b883151ba3744be6c4b5d9f3ca9bb45fa2f",
+      "samples": 84,
+      "log_mtime_utc": "2026-10-18T05:43:49.614232+00:00"
+    },
+    {
+      "log": "material-bulk-0-1.txt",
+      "sha256": "bb521819a311bfa32442c6939f006ea43eee9af9e580d84d485d28bb3f2a7dec",
+      "samples": 84,
+      "log_mtime_utc": "2026-10-18T05:44:35.526053+00:00"
+    },
+    {
+      "log": "material-bulk-100-1.txt",
+      "sha256": "c00a31addb913a72b3cbe8bb03a6b1e79a43689492ba6559dcf079d5fed57fa1",
+      "samples": 84,
+      "log_mtime_utc": "2026-10-18T05:44:56.783177+00:00"
+    }
+  ],
+  "sources": {
+    "perf/tests/bench_material_queue.c": "349db839fff82ec8298a98527e656b34fc7fea965280994e79f9748ee8d3b919",
+    "perf/tests/bench_retained.c": "ed6f7724686da1acf48253ecfa4148a0af05eb1f5022eec114915f38c7e12977",
+    "perf/tests/material_fixture.c": "51bbaf9ec354b34fa9f015651f5218b3322dc0821471395f236f0e9325edfbbf",
+    "perf/tests/inst_retained_engine.c": "4187c81c9445633952cb7d04e51ac26a3ab43d41df843cfbe70f9e2bb179f8ed",
+    "perf/tests/timing_bulk_bench.c": "b2651023195165c67dc6b807e00ea45bc2fc7be08bfdfb30133417b19a39eda3",
+    "perf/Makefile": "e064eff48eed1151fd5ab811fa186b98c4b295a39bea70626ca01ccf057e0abc"
+  },
+  "executable_sha256": "e64b8cf7cf2d5fe47a0f02915a8ccf1acc31b94b7eeb73e8032f842e09985f83",
+  "excluded": [
+    {
+      "log": "material-bulk-10-1.txt",
+      "sha256": "3254ff9b01d13efe858e1081bbf27b6f01ece16674f267fb7d3671ef83c118cd",
+      "samples": 0,
+      "reason": "Accounting preflight ran before the fixture established its main render thread; fixed via normal display hook before sampling."
+    }
+  ],
+  "notes": [
+    "Timestamps are log modification times, not precise run start times.",
+    "All clean cases passed the game-process guard, image/state/count and extra-invalidation controls.",
+    "Bulk mode counts logical meshes and measures one aggregate interval per replay group. Native individual events are not equivalent.",
+    "100 percent churn invalidates every regular group; the following extra can hit again. Extra-only invalidation is a separate correctness test.",
+    "No native group bridge, callback gate, lifetime or saved-game FPS proof."
+  ],
+  "regression_control": {
+    "log": "material-bulk-original-markers-check.txt",
+    "sha256": "09140f86741ef2e0eae8e4fc85a7ae27731973d01cb83105f877688ea08f1248",
+    "samples": 84
+  },
+  "suite_log": {
+    "log": "material-bulk-suite.txt",
+    "sha256": "a95a1e117e50b63eb9a5ff83c7aa369ae1d5a70f628d9c58ce24c9678b422dc9"
+  }
+}

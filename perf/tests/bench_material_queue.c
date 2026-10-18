@@ -18,11 +18,23 @@ extern HRESULT material_fixture_mask(IDirect3DDevice9 *);
 extern unsigned material_fixture_state(IDirect3DDevice9 *,unsigned *,unsigned);
 extern void bench_retained_material_mask(HRESULT (*)(IDirect3DDevice9 *));
 extern void bench_retained_markers(void (*)(void),void (*)(void));
+extern void bench_retained_bulk_markers(int (*)(void),int (*)(unsigned));
+extern int bench_scope_bulk_begin(void),bench_scope_bulk_end(unsigned),bench_scope_bulk_check(void);
 static unsigned char material_keys[GROUPS][8192];
 static unsigned material_sizes[GROUPS];
 static unsigned persistent_churn;
 static unsigned persistent_hits,persistent_misses;
 static unsigned preserve_lifecycle;
+static void accounting_init(void) {}
+static void check_bulk_accounting(void)
+{
+    /* Establish the main render thread through its normal entry hook. */
+    pf_timing_set_next(PF_DISPLAY_DRAW,accounting_init);
+    ((void (*)(void))pf_enter_stubs[PF_DISPLAY_DRAW])();
+    pf_timing_set_next(PF_DISPLAY_DRAW,retained_workload);
+    REQUIRE(bench_scope_bulk_check());
+    puts("BULK ACCOUNTING: logical counts, pass totals, detail/extra modes, stack capacity and interval checks passed");
+}
 static char material_runtime[MAX_PATH];
 static char replay_event[320];
 
@@ -233,7 +245,7 @@ int main(int argc,char **argv)
         printf("PERSISTENT material cache, %u percent selected groups alternate inputs each pair\n",persistent_churn);
     }
     if(argc>6) {
-        REQUIRE(argc==7 && (!strcmp(argv[6],"lifecycle") || !strcmp(argv[6],"lifecycle-markers")));
+        REQUIRE(argc==7 && (!strcmp(argv[6],"lifecycle") || !strcmp(argv[6],"lifecycle-markers") || !strcmp(argv[6],"lifecycle-bulk-markers")));
         preserve_lifecycle=1;
         cached_extra=persistent_regular;
         puts("LIFECYCLE: real Begin/End on each hit; prepare and validate inputs again in extras");
@@ -241,6 +253,11 @@ int main(int argc,char **argv)
             validate_markers=1;
             bench_retained_markers(replay_marker_begin,replay_marker_end);
             puts("MARKERS: identical per-mesh labels, entry/exit hooks, copies and scope accounting on replay");
+        } else if(!strcmp(argv[6],"lifecycle-bulk-markers")) {
+            validate_markers=1;
+            bench_retained_bulk_markers(bench_scope_bulk_begin,bench_scope_bulk_end);
+            validate_accounting=check_bulk_accounting;
+            puts("BULK MARKERS: logical mesh counts and one measured aggregate interval; no native debug callbacks in fixture");
         }
     }
     int result=retained_benchmark(argc,argv);

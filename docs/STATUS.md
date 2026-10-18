@@ -32,7 +32,12 @@ files before relying on it.
   now measures about 1.95 ms for all marker work per modeled regular/extra
   pair, including about 1.29 ms above unhooked modeled copies. Next screen
   aggregate batch accounting with the cache, preserving mesh counts and
-  measured work; individual debug callback semantics remain a native gate.
+  measured work. The [combined aggregate-accounting screen](specs/2026-10-17-material-bulk-accounting-screen.md)
+  now passes repeated native/DXVK image/state/count checks and saves
+  3.42-3.53 ms lit or 3.03-3.06 ms shadow per modeled pair on DXVK (separate
+  workloads, not additive). This merits native integration research, not
+  installation: debug callback gates, group lifetimes, source callbacks and
+  engine-state reconciliation remain unproved. Full plugin tests pass.
 - Native integration groundwork: eight complete local FX wrapper bodies
   now pass 58 offline call-order/ABI cases on both executable images;
   altered-code refusal controls pass. [Contract and remaining limits](specs/2026-10-17-native-fx-lifecycle-audit.md).
