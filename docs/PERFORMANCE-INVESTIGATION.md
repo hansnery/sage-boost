@@ -20,7 +20,8 @@ This is the concise outcome record. [STATUS.md](STATUS.md) retains the
 chronology; the linked reports retain measurements, controls and provenance.
 Read this before reviving an old approach. The latest gameplay evidence is
 from **0.9.11-beta.13**. Beta.14's paired-cadence adapter now passes offline
-qualification; see STATUS.md for installation. Worker experiments remain
+qualification and is installed for Hans's test; see STATUS.md and the
+[installation receipt](benchmarks/2026-10-19-paired-cadence-install.json). Worker experiments remain
 offline harnesses, not installed game features.
 
 ## New candidate awaiting gameplay: paired cadence (beta.14)

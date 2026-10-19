@@ -19,6 +19,10 @@ Strike an item through, with the date, when it's done.
   adapter tests and the full suite pass; bounded probes recover after a
   transient and rest after three persistent failures.
   [Report](benchmarks/2026-10-19-paired-cadence-runtime.json).
+- [x] 2026-10-19: commit/push and install beta.14, retaining every original
+  INI byte and adding only PairPacing=1. Back up beta.13/settings/captures
+  and update the existing test shortcut's pins. CheckOnly passes; no game
+  launched. [Receipt](benchmarks/2026-10-19-paired-cadence-install.json).
 - [ ] Capture beta.14 in the settled heavy save for at least 60 seconds,
   including FrameView, pacing, fresh shadows and game-speed/input checks.
   Qualify matching-beta multiplayer separately. Virtual test timings are

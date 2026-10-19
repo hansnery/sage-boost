@@ -1,0 +1,64 @@
+{
+    "date":  "2026-10-19T00:30:41.0427905-07:00",
+    "version":  "0.9.11-beta.14",
+    "source_commit":  "f6ebb2274708602be2c35e64a6b5932d4356eb96",
+    "branch":  "codex/perf-beta",
+    "backup":  "C:\\Users\\Hans\\AppData\\Local\\Temp\\bfme2perf-0.9.11-beta.13-installed-20261019-003039",
+    "backed_up_files":  [
+                            {
+                                "name":  "bfme2perf.asi",
+                                "sha256":  "976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd"
+                            },
+                            {
+                                "name":  "bfme2perf.ini",
+                                "sha256":  "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b"
+                            },
+                            {
+                                "name":  "bfme2perf.log",
+                                "sha256":  "4319c71110e736df7e18fb714f77e254c9d31e9702a2888cf98919f52a60a637"
+                            },
+                            {
+                                "name":  "bfme2perf_scopes.csv",
+                                "sha256":  "0a6d6cddb5098519378bf1dd84d430bfbfa8cc17abdba8cb26b1da718c7b718b"
+                            },
+                            {
+                                "name":  "bfme2perf_timing.csv",
+                                "sha256":  "a2bbaff08a7f5793e235eb5b34471ea9a280d96335c794ebeca588a1a64510b6"
+                            },
+                            {
+                                "name":  "Realms - sage-boost beta test.lnk",
+                                "sha256":  "5fe5df3b7faef4e7afadf815915199040715cb51f74684020cb5160e73905ee1"
+                            }
+                        ],
+    "build_sha256":  "320f99d66269265c069388bc0231233e0ce234d26e78adad36a20bca9a9ba630",
+    "installed_sha256":  "320f99d66269265c069388bc0231233e0ce234d26e78adad36a20bca9a9ba630",
+    "previous_plugin_sha256":  "976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd",
+    "ini_before_sha256":  "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b",
+    "ini_after_sha256":  "ccc962baba6d8d5ba5d928dae7cc134b641c13d2d2edc7d15b6a2a2d3bd76575",
+    "all_original_ini_bytes_preserved_as_prefix":  true,
+    "new_setting":  "[Experimental] PairPacing=1",
+    "existing_preferences_preserved":  [
+                                           "MaxFPS=120",
+                                           "FrameSmoothing=3",
+                                           "ShadowInterval=1",
+                                           "ExtraFrameShadows=1",
+                                           "ReflectionInterval=2",
+                                           "ExtraFrameReflections absent (default 0)",
+                                           "Instancing=1",
+                                           "QueueInsert=1",
+                                           "QueueSort=1",
+                                           "BulkRender=1",
+                                           "ShadowPassVerify=1",
+                                           "CatchUp Enabled=1"
+                                       ],
+    "full_suite_exit_code":  0,
+    "full_suite_sha256":  "343d515e3a431700f8d621856831361f79de7275d1c45f2e694e9bad03a221d7",
+    "runtime_report_sha256":  "169de0ddbbe16a7737724d307ab380ba569900dfe2fa70c7127859d939453fa7",
+    "shortcut":  "C:\\Users\\Hans\\Desktop\\Realms - sage-boost beta test.lnk",
+    "shortcut_sha256":  "e39807e1fd4317fc4eb0cd2c4346d186d12642b49820d1df132719052fa94787",
+    "shortcut_arguments":  "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File \"C:\\repositories\\sage-boost\\tools\\launch_perf_beta.ps1\" -GameDir \"C:\\Jogos\\AgeoftheRing\\rotwk\" -ModDir \"C:\\Program Files (x86)\\Realms in Exile Nightly\\realms_nightly\" -ExpectedPerfSha256 \"320f99d66269265c069388bc0231233e0ce234d26e78adad36a20bca9a9ba630\" -ExpectedIniSha256 \"ccc962baba6d8d5ba5d928dae7cc134b641c13d2d2edc7d15b6a2a2d3bd76575\"",
+    "check_only_output":  "Beta binary, settings, game path and mod path verified. Nothing launched.",
+    "game_or_launcher_launched":  false,
+    "stable_or_launcher_release_changed":  false,
+    "gameplay_target_verified":  false
+}

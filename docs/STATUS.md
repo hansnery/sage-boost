@@ -36,7 +36,27 @@ These are controlled virtual timings, not game FPS. No game was launched.
 Normal gameplay speed/input, matching-beta multiplayer and the settled
 heavy-scene 59/s target still require Hans's test. See
 [behavior and limits](specs/2026-10-19-paired-cadence-runtime.md).
-Installation and shortcut verification will be recorded separately below.
+Committed and pushed as `f6ebb22` on `codex/perf-beta`, then installed with
+`PairPacing=1`. Build and installed SHA-256 both equal
+`320f99d66269265c069388bc0231233e0ce234d26e78adad36a20bca9a9ba630`.
+Every original INI byte remains an unchanged prefix; only the commented
+experimental section was appended. In particular `MaxFPS=120`, fresh-shadow
+settings and `ReflectionInterval=2` remain unchanged.
+
+Backup of beta.13, INI, logs/CSVs and the old shortcut:
+`C:\Users\Hans\AppData\Local\Temp\bfme2perf-0.9.11-beta.13-installed-20261019-003039`.
+The existing desktop **Realms - sage-boost beta test** shortcut now pins
+the new binary and INI hashes. Its helper passes `-CheckOnly`; nothing was
+launched. The first install attempt stopped before any mutation because
+`Get-FileHash` was unavailable in Windows PowerShell; the completed attempt
+used .NET SHA-256. [Installation receipt](benchmarks/2026-10-19-paired-cadence-install.json).
+
+Morning test: use that desktop shortcut, since the regular launcher can
+replace a development build. Load the troop-heavy save, allow loading to
+settle, then record at least 60 unpaused seconds with FrameView and a fixed
+camera. Afterwards check ordinary camera/input behavior, unit movement and
+fresh moving shadows. Close the game before capturing the log/CSVs. The
+target is still pending; this local test is not launcher publication.
 
 ### Paired-cadence policy screen (2026-10-18)
 

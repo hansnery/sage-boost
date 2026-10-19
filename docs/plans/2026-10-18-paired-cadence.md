@@ -37,6 +37,9 @@ No runtime integration or installation follows from the model alone.
   production hooks, pause/loading gates, diagnostics and fallback; run the
   full plugin suite before any installation. Both pass; see the
   [runtime report](../benchmarks/2026-10-19-paired-cadence-runtime.json).
+- [x] Commit/push and install the qualified beta.14 with backup, preserved
+  settings, matching hashes and a checked user-invoked test shortcut.
+  [Receipt](../benchmarks/2026-10-19-paired-cadence-install.json).
 - [ ] Verify the settled heavy-scene target and matching-beta multiplayer
   in game. No offline result completes this requirement.
 
