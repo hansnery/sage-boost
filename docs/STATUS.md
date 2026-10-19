@@ -37,6 +37,14 @@ the initial failure. No test tolerance or legacy interpolation code changed.
 Local deployment follows a backup and exact INI/hash verification. Published
 beta.14 and Stable remain unchanged; gameplay qualification remains open.
 
+Installed from `27d4e1f` after confirming the game/launcher were closed.
+Build and installed SHA-256 match
+`6be4b0434f4db825d17d12809d66947442e8c63b704d866399a6e66cbbfae6ba`.
+The INI is byte-identical; beta.16, its INI/logs and the old shortcut are in
+`%TEMP%\bfme2perf-beta16-before-beta17-20261019-132723`. The desktop beta-test
+shortcut now pins beta.17 and passes CheckOnly. No game was launched.
+[Installation receipt](benchmarks/2026-10-19-beta17-install.json).
+
 ### Beta.16 intermittent recovery fix (2026-10-19)
 
 Follow-up offline screening reproduces another credit reset: intermittent
