@@ -21,8 +21,8 @@ and multiplayer qualification remain unmet.
 Hans explicitly accepts the near-60 result as a milestone and asks to pursue
 120 FPS and another substantial breakthrough. The historical 59/s acceptance
 record remains unproven, but is no longer a gate for moving forward or a
-reason to keep requesting near-60 tests. Preserve beta.17 as the installed
-baseline while screening larger rendering changes. The first new screen
+reason to keep requesting near-60 tests. Beta.17 remains the installed
+baseline while the next scheduler candidate is qualified. The first new screen
 measures capture-once/replay-three, with complete capture costs and fresh
 poses/shadows: [design](specs/2026-10-19-120fps-retained-screen-design.md),
 [plan](plans/2026-10-19-120fps-retained-screen.md).
@@ -51,6 +51,31 @@ explicit restoration fixed the test without relaxing any check.
 [Design and decision](specs/2026-10-19-palette-texture-design.md),
 [report](benchmarks/2026-10-19-palette-texture.json).
 No new installed build or gameplay test is justified by either screen.
+
+### Beta.18 sequential extras candidate (2026-10-19)
+
+The next change targets scheduling headroom. The old multi-extra policy
+reserved the recent worst-case cost for every extra upfront. Beta.18 selects
+an opportunity ceiling using typical preceding costs, then checks the full
+conservative cost again before every draw. A cheap completion can make a
+second or third extra possible. Every extra retains fresh shadows; the
+one-extra default, native deadlines, state guards and recovery remain intact.
+
+Production-adapter variable-cost cases improve from 1,800 to 3,600 extras
+over 1,800 ordinary updates, or from 1,800-3,060 to 5,236 with cheaper work.
+The expensive case remains at 1,800. All twelve cases preserve each native
+deadline and shadow/reflection counts. These are controlled scheduling
+results, not gameplay FPS. The pure policy passes 126,745 checks.
+[Design and results](specs/2026-10-19-sequential-extras-design.md),
+[local beta notes](releases/perf-0.9.11-beta.18.md).
+
+The initial full suite passed the runtime checks but failed the loader's
+outdated beta.17 version assertion. After correcting that expected version,
+the full suite passes, as does the six-object integer instruction audit.
+The report rejects both an incomplete matrix and the original failed suite.
+[Qualification report](benchmarks/2026-10-19-sequential-runtime.json).
+The evidence supports a local beta with PairMaxExtras=3 after a full backup
+and hash/shortcut verification. Public launcher Stable/beta.14 remain unchanged.
 
 ### Beta.17 budget-gap recovery (2026-10-19)
 

@@ -12,16 +12,16 @@ Execute inline under Hans's standing preapproval; no delegation needed.
 
 - [x] Review captured costs and reproduce the upfront-reservation limitation
   with an explicitly controlled model; do not call it captured gameplay.
-- [ ] Add focused policy tests for the 12/7/12 ms case, every fractional clock
+- [x] Add focused policy tests for the 12/7/12 ms case, every fractional clock
   phase, constant-expensive work, new expensive samples, late wakes, sequence
   and clock wrap, and equivalence with the old one-extra path.
-- [ ] Implement the two policy functions in `perf/src/pairpace.{c,h}`. Choose
+- [x] Implement the two policy functions in `perf/src/pairpace.{c,h}`. Choose
   an opportunity ceiling using averages, but leave `pf_pair_claim` unchanged.
   Guard all integer bounds and prohibit repeated quota enlargement.
-- [ ] Integrate in `perf/src/fps.c`; extend `test_pair_runtime.c` with actual
+- [x] Integrate in `perf/src/fps.c`; extend `test_pair_runtime.c` with actual
   adapter cost variation, first/second stalls, eligibility loss and recovery.
   Bump the plugin/resource version only when integrating the qualified change.
-- [ ] Run focused policy/runtime tests, the full plugin suite and integer
+- [x] Run focused policy/runtime tests, the full plugin suite and integer
   instruction audit. Preserve failures and report modeled pacing/counts.
 - [ ] Commit/push explicit changes. Decide whether the evidence justifies a
   local beta with PairMaxExtras=3; preserve all existing INI values and back up

@@ -58,6 +58,27 @@ void pf_pair_limit(pf_pairpace *p, unsigned now, unsigned expected, unsigned lim
     }
 }
 
+void pf_pair_limit_sequential(pf_pairpace *p, unsigned now, unsigned expected,
+                              unsigned average, unsigned limit)
+{
+    int remaining;
+    if (!p->active || p->used || p->limited) return;
+    p->limited = 1;
+    if (limit < 2 || limit > 3 || !expected || expected > p->period ||
+        !average || average > expected) return;
+    remaining = (int)(p->deadline - now);
+    while (limit > 1) {
+        /* Average only selects opportunities, never admits a draw. After a
+         * cheap completion the next draw can fit the unchanged worst-case
+         * claim; after a slow completion that opportunity is discarded. */
+        if ((int)((limit - 1u) * average + expected + PF_PAIR_RESERVE_US) <= remaining) {
+            p->quota = limit;
+            return;
+        }
+        limit--;
+    }
+}
+
 static int fits(const pf_pairpace *p, unsigned now, unsigned expected)
 {
     int remaining;
@@ -103,6 +124,32 @@ int pf_pair_plan(const pf_pairpace *p, unsigned now, unsigned expected,
     if (start + average < p->period / 8u)
         return 0; /* Avoid an immediate repeat with no useful separation. */
     *delay = start;
+    return 1;
+}
+
+int pf_pair_plan_sequential(const pf_pairpace *p, unsigned now, unsigned expected,
+                            unsigned average, unsigned *delay)
+{
+    unsigned pending, ideal, latest;
+    int remaining, target, slack;
+    if (p->quota <= 1)
+        return pf_pair_plan(p, now, expected, average, delay);
+    if (!delay || !fits(p, now, expected) || !average || average > expected)
+        return 0;
+    pending = p->quota - p->used;
+    remaining = (int)(p->deadline - now);
+    while (pending > 1 &&
+           (int)((pending - 1u) * average + expected + PF_PAIR_RESERVE_US) > remaining)
+        pending--;
+    slack = remaining - (int)((pending - 1u) * average + expected + PF_PAIR_RESERVE_US);
+    target = (int)(p->period * (p->used + 1u) / (p->quota + 1u)) -
+             (int)average - (int)(now - p->observed);
+    ideal = target > 0 ? (unsigned)target : 0;
+    /* Fine-clock pacing can cross the native clock's unknown fractional
+     * phase. Preserve this millisecond in addition to the claim reserve;
+     * otherwise a cheap first draw can lose an affordable second claim. */
+    latest = slack > 1000 ? (unsigned)slack - 1000u : 0;
+    *delay = ideal < latest ? ideal : latest;
     return 1;
 }
 

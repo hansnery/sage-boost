@@ -12,6 +12,7 @@ static unsigned char logic_data[128], ui_data[32], limit_on = 1;
 static void *ui_ptr = ui_data;
 static int in_game = 1;
 static unsigned frame_extra_no, slow_on, fail_on, gate_after;
+static unsigned periodic_spike_every, periodic_spike_us;
 
 static unsigned runtime_fine(void)
 {
@@ -37,7 +38,9 @@ static void runtime_extra(int on)
         if (frame_extra_no == fail_on) g_misbehave = 1;
     }
     if (!on) {
-        run_us += frame_extra_no == slow_on ? 30000u : extra_us;
+        unsigned actual = periodic_spike_every && (sim_draws + 1) % periodic_spike_every == 0 ?
+                          periodic_spike_us : extra_us;
+        run_us += frame_extra_no == slow_on ? 30000u : actual;
         sim_draws++;
         if (frame_extra_no == gate_after) ui_data[8] = 1;
     }
@@ -117,6 +120,7 @@ static void setup_runtime_limit(int paired, unsigned max_fps, unsigned limit)
     run_us = 1000000u;
     sim_sequence = sim_draws = cut_waits = 0;
     frame_extra_no = slow_on = fail_on = gate_after = 0;
+    periodic_spike_every = periodic_spike_us = 0;
 }
 
 static void setup_runtime(int paired) { setup_runtime_limit(paired, 60, 1); }
@@ -451,8 +455,45 @@ static void recovery_budget_gaps(void)
     puts("recovery budget gaps: no unaffordable draws, later recovery, bounded failures");
 }
 
+static void sequential_cost_variation(void)
+{
+    const unsigned cases[][4] = {{12000, 7000, 12000, 3300},
+                                 {6000, 4000, 12000, 4800},
+                                 {18000, 8900, 14000, 1700}};
+    for (unsigned c = 0; c < 3; c++) for (unsigned phase = 0; phase < 4; phase++) {
+        pf_fps_row row;
+        unsigned regular = cases[c][0] + phase * 233;
+        setup_runtime_limit(1, 120, 3);
+        extra_us = cases[c][1];
+        periodic_spike_every = 64;
+        periodic_spike_us = cases[c][2];
+        for (unsigned i = 0; i < 120; i++) runtime_frame(regular, 33);
+        unsigned before = sim_draws;
+        unsigned long long start = run_us;
+        pf_fps_take_row(&row);
+        for (unsigned i = 0; i < 1800; i++) {
+            runtime_frame(regular, 33);
+            CHECK(runtime_time() - g_frame_start == 33,
+                  "sequential cost variation missed an individual native deadline");
+        }
+        pf_fps_take_row(&row);
+        printf("sequential variable cost case=%u phase=%u: %u extras, %u late, %llu us, max gap %u us\n",
+               c, phase, sim_draws - before, row.late, run_us - start, row.gap_max_us);
+        CHECK(sim_draws - before > cases[c][3] && !row.late && !pf_fps_stopped(),
+              "recent cost maxima blocked sequential opportunities");
+        CHECK(run_us - start >= 59390000ull && run_us - start <= 59410000ull,
+              "sequential cost variation changed ordinary cadence");
+        CHECK(row.gap_max_us < 33000, "sequential pacing left a full native-frame gap");
+        CHECK(row.shadows == row.extra && row.reflections == row.extra &&
+              g_client_obj.frame == sim_sequence && g_seed == 17 &&
+              !g_views_ran && !g_particles_ran && g_camera_obj.m[3] == 123.f,
+              "sequential cost variation changed guarded state/passes");
+    }
+}
+
 int main(void)
 {
+    sequential_cost_variation();
     recovery_budget_gaps();
     intermittent_recovery();
     recovery_credit_gates();

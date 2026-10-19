@@ -29,11 +29,20 @@ void pf_pair_begin(pf_pairpace *p, unsigned sequence, unsigned now,
  * Multiple extras require all costs plus reserves to fit without borrowing;
  * repeated calls cannot enlarge the allowance. Invalid limits keep one. */
 void pf_pair_limit(pf_pairpace *p, unsigned now, unsigned expected, unsigned limit);
+/* Select an opportunity ceiling using typical preceding costs, while every
+ * actual claim still requires expected + reserve. No multi-draw borrowing. */
+void pf_pair_limit_sequential(pf_pairpace *p, unsigned now, unsigned expected,
+                              unsigned average, unsigned limit);
 /* Returns 1 and a delay before one extra draw, or 0 without changing delay.
  * expected is a conservative complete extra-draw cost; average predicts
  * presentation time. Calling plan does not consume the frame's allowance. */
 int pf_pair_plan(const pf_pairpace *p, unsigned now, unsigned expected,
                  unsigned average, unsigned *delay);
+/* Reconsider remaining opportunities after each completed draw. One-extra
+ * pacing is identical to pf_pair_plan; multiple extras retain a native-clock
+ * millisecond outside optional pacing to avoid losing the next claim. */
+int pf_pair_plan_sequential(const pf_pairpace *p, unsigned now, unsigned expected,
+                            unsigned average, unsigned *delay);
 /* Recheck after pacing and consume one draw before invoking it. */
 int pf_pair_claim(pf_pairpace *p, unsigned now, unsigned expected);
 /* End the native wait only when the absolute schedule has been reached.

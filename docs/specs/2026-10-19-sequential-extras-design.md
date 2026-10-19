@@ -64,3 +64,41 @@ Stable/Beta releases. Any local opt-in to PairMaxExtras=3 must back up ASI,
 INI/logs/shortcut, preserve all existing preferences, pin the new hashes and
 run the shortcut's CheckOnly mode; never launch the game. Installation is not
 a claim of a 120 FPS result, which still requires gameplay evidence.
+
+## Runtime results
+
+The actual production adapter now passes the variable-cost screen. Across
+four fractional phases, the 12 ms ordinary / 7 ms typical / 12 ms occasional
+extra case increases from 1,800 to 3,600 extras per 1,800 native updates.
+Maximum modeled presentation gaps decrease from 19.77 ms to 18.94-19.01 ms.
+With 6 ms ordinary / 4 ms typical / 12 ms occasional extras, counts increase
+from 1,800-3,060 to 5,236; maximum gaps decrease from 28.46-28.56 ms to
+16.74-16.81 ms. The 18 ms ordinary / 8.9 ms typical / 14 ms occasional case
+retains 1,800 extras and the same pacing. Each workload injects the expensive
+draw every 64 extras. These are separately controlled timelines, not identical
+per-native-frame cost traces or measured GPU work.
+
+Every measured native frame finishes on its original 33 ms native-clock
+deadline. Each 1,800-update run lasts about 59.4 virtual seconds; fractional
+fine-clock endpoints differ by less than 0.1 ms. No late prediction or state
+failure occurs in these cases, and fresh-shadow/reflection counts equal extra
+draw counts. Existing deliberately injected fault/recovery cases still pass.
+The pure policy adds 126,745 checks, including all 1,000 fractional phases,
+clock wrapping, late wakeups, changed estimates and one-extra equivalence.
+
+The comparison uses the same fixture linked to `fps.c` from `ad14053`. Its
+eight expected count failures reproduce the limitation; other checks pass.
+Keep `perf/build/sequential-runtime-before-matrix.log` and its adapter source
+and executable. The initial full-suite run reaches and passes the runtime
+matrix, then fails because `test_load.c` still expects beta.17 instead of
+beta.18. That assertion was updated to the new exact version, without weakening
+the test. Preserve `perf/build/beta18-full-suite.log`; the corrected full suite
+passes with exit 0 in `beta18-full-suite-corrected-version.log`. All six
+integer objects pass the instruction audit. The report parser also rejects
+an incomplete matrix and the original failed full-suite log.
+[Machine-readable qualification](../benchmarks/2026-10-19-sequential-runtime.json).
+
+The controlled totals correspond to roughly 91 and 118 presentations/s in
+the first two cases. They are not forecasts for Hans's scene. This qualifies
+an opportunity to test a substantial scheduler change, while the unchanged
+expensive case still demonstrates the need to reduce actual rendering work.

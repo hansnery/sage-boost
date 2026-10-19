@@ -1,0 +1,459 @@
+{
+  "version": "0.9.11-beta.18",
+  "kind": "production adapter correctness test with controlled virtual timing",
+  "gameplay_target_verified": false,
+  "plugin_sha256": "da6a45e616653ba9d4496f88631c969ca7614207998e69f93bad5134267dc111",
+  "fixture_sha256": "320e631a1576371f9726eeab8c209f35614c05303db1b809de952ffa07462f65",
+  "sources": {
+    "perf/src/fps.c": "be24fbd674a0eefcbf304df722a41cc121cff28ccd1c5cd3f85aa07cc8504a42",
+    "perf/src/fps.h": "2152bcace057bf98b3efa77df4a73f2897685a10eecb42645570328f46a48b8c",
+    "perf/src/pairpace.c": "05aac61dc29dba8463a251fddee8af5fe47fa9d72af4e5bc10886a7c878c378b",
+    "perf/src/pairpace.h": "e186454bd4c2606e8746ad67ddea398ed992e8ee2b0843dd7ef9b293e7057c3a",
+    "perf/src/catchup.c": "f784a2afa7fbddd5f48f7beaa2df35ac89790f50d849bf0c05e2f2fcb2c1cc07",
+    "perf/src/catchup.h": "313504c392567003e2d6eb267cee2861e8161daac63b545e0571d4ab8655f8a3",
+    "perf/src/config.c": "deeacb1a8639200b80fd33847338ebb3e60e7ccfc1e85807a1a7158c747d27bb",
+    "perf/src/config.h": "168d2acb3d838548870e29827e838e381b39b258fec0e77c2d49ceda6405b85e",
+    "perf/src/main.c": "3af40b056b81bc80af84c3bbc6d8fa29771c66299d2046eeb7bc0736296115b3",
+    "perf/src/version.rc": "f60e237c7bbb2903635f09cfaafcf5a0ee456e77d5bb4ace834a15b3666a8f84",
+    "perf/tests/test_pair_runtime.c": "ca687fb11fbb823f8d8b39125f9e5d6f1654a348d44885c5cd59ae7ecbbfe120",
+    "perf/tests/test_pair_sequential.c": "d22f2145f0d191b115d4811c542b1b3b63df7912f58142dec93c9249a7f2ff42",
+    "perf/tests/test_load.c": "a028b3d81b92071eb6388d9a60ac42dbbba27fb988842a1518f84ef4de22de68",
+    "perf/tests/test_fps.c": "dcd2e8249f36ec17f5f6bac94a08404c46be0db0edeb2a4162db68b257e0ed31",
+    "perf/tests/test_config.c": "df196a87a8a527283567a210d1265459ee37443b540f70a7d7d0925358cbe064",
+    "perf/bfme2perf.ini": "3145b333c219285de0c13ead7109535e12c1e97962cd25bcab344f29a88e5ef9",
+    "tools/test_pair_runtime.py": "b3a981ac995070b50c8d8d61e74ec3631c7a5b273d6eb2fa1e118b70738b206d",
+    "perf/Makefile": "9eeba52acf41cbfcc959488c8cb4a7aa7601a30786c361c01ba84e09ff88e150"
+  },
+  "integer_object_audit": {
+    "fps": {
+      "sha256": "2b6f4d2cbf761c514291ccfe139244d73a9549f2eb499125fda3bf8a1b563a11",
+      "instructions_checked": 4718,
+      "forbidden_fp_instructions": []
+    },
+    "pairpace": {
+      "sha256": "355210e86f686b9de1bec96e44d6762f5209ef7b061cf82dc1fb25d57bea537d",
+      "instructions_checked": 503,
+      "forbidden_fp_instructions": []
+    },
+    "catchup": {
+      "sha256": "36cc28bde9717dd25fb4de46a2b635bc4f82bf88a4a001972bf4685a9c7b7756",
+      "instructions_checked": 1399,
+      "forbidden_fp_instructions": []
+    },
+    "config": {
+      "sha256": "39e5b0d41bffd2357143904ddf590029a528b14a27704e70f37956a5c62be90b",
+      "instructions_checked": 887,
+      "forbidden_fp_instructions": []
+    },
+    "main": {
+      "sha256": "c25f25f0705e1b8e69a37a1db33663b8adad05a1f16eaff7ed90f2987a8918c4",
+      "instructions_checked": 1849,
+      "forbidden_fp_instructions": []
+    },
+    "stubs": {
+      "sha256": "b6629e027c2d493891fe24431b50deacce67bfb18c9b2162059c40ca49d732cf",
+      "instructions_checked": 333,
+      "forbidden_fp_instructions": []
+    }
+  },
+  "full_suite_log": {
+    "path": "perf\\build\\beta18-full-suite-corrected-version.log",
+    "sha256": "1e2fd727c78f73a0b9d3d5d99ce13998b0cbb979dc654bdc58c08ce3554ba1a0",
+    "required_markers_present": true,
+    "failure_markers": false
+  },
+  "closed_loop_cases": [
+    {
+      "paired": 0,
+      "regular_cost_us": 19854,
+      "jitter": 0,
+      "ordinary_updates": 1800,
+      "extra_draws": 0,
+      "virtual_elapsed_us": 59400020,
+      "shortened_waits": 0,
+      "late_predictions": 0
+    },
+    {
+      "paired": 1,
+      "regular_cost_us": 19854,
+      "jitter": 0,
+      "ordinary_updates": 1800,
+      "extra_draws": 1800,
+      "virtual_elapsed_us": 59400000,
+      "shortened_waits": 0,
+      "late_predictions": 0
+    },
+    {
+      "paired": 1,
+      "regular_cost_us": 19854,
+      "jitter": 1,
+      "ordinary_updates": 1800,
+      "extra_draws": 1800,
+      "virtual_elapsed_us": 59401890,
+      "shortened_waits": 899,
+      "late_predictions": 0
+    }
+  ],
+  "intermittent_recovery": {
+    "ordinary_updates": 1800,
+    "extra_draws": 1741,
+    "probes": 1,
+    "late_predictions": 0,
+    "virtual_elapsed_us": 59400015
+  },
+  "recovery_budget_gap_cases_passed": true,
+  "adaptive_cases": [
+    {
+      "max_fps": 120,
+      "pair_max_extras": 3,
+      "regular_cost_us": 6000,
+      "extra_cost_us": 4000,
+      "ordinary_updates": 1800,
+      "extra_draws": 5400,
+      "virtual_elapsed_us": 59400000,
+      "gap_max_us": 8770,
+      "late_predictions": 0,
+      "modeled_presentations_per_second": 121.21212121212122
+    },
+    {
+      "max_fps": 120,
+      "pair_max_extras": 1,
+      "regular_cost_us": 6000,
+      "extra_cost_us": 4000,
+      "ordinary_updates": 1800,
+      "extra_draws": 1800,
+      "virtual_elapsed_us": 59400000,
+      "gap_max_us": 16520,
+      "late_predictions": 0,
+      "modeled_presentations_per_second": 60.60606060606061
+    },
+    {
+      "max_fps": 90,
+      "pair_max_extras": 3,
+      "regular_cost_us": 6000,
+      "extra_cost_us": 4000,
+      "ordinary_updates": 1800,
+      "extra_draws": 3600,
+      "virtual_elapsed_us": 59400000,
+      "gap_max_us": 11020,
+      "late_predictions": 0,
+      "modeled_presentations_per_second": 90.9090909090909
+    },
+    {
+      "max_fps": 60,
+      "pair_max_extras": 3,
+      "regular_cost_us": 6000,
+      "extra_cost_us": 4000,
+      "ordinary_updates": 1800,
+      "extra_draws": 1800,
+      "virtual_elapsed_us": 59400000,
+      "gap_max_us": 16520,
+      "late_predictions": 0,
+      "modeled_presentations_per_second": 60.60606060606061
+    },
+    {
+      "max_fps": 120,
+      "pair_max_extras": 3,
+      "regular_cost_us": 12000,
+      "extra_cost_us": 7000,
+      "ordinary_updates": 1800,
+      "extra_draws": 3600,
+      "virtual_elapsed_us": 59400000,
+      "gap_max_us": 14210,
+      "late_predictions": 0,
+      "modeled_presentations_per_second": 90.9090909090909
+    },
+    {
+      "max_fps": 120,
+      "pair_max_extras": 3,
+      "regular_cost_us": 18000,
+      "extra_cost_us": 8900,
+      "ordinary_updates": 1800,
+      "extra_draws": 1800,
+      "virtual_elapsed_us": 59400000,
+      "gap_max_us": 19310,
+      "late_predictions": 0,
+      "modeled_presentations_per_second": 60.60606060606061
+    }
+  ],
+  "sequential_variable_cost_cases": [
+    {
+      "case": 0,
+      "fractional_phase": 0,
+      "extra_draws": 3600,
+      "late_predictions": 0,
+      "virtual_elapsed_us": 59400000,
+      "gap_max_us": 19010,
+      "ordinary_updates": 1800,
+      "modeled_presentations_per_second": 90.9090909090909
+    },
+    {
+      "case": 0,
+      "fractional_phase": 1,
+      "extra_draws": 3600,
+      "late_predictions": 0,
+      "virtual_elapsed_us": 59400000,
+      "gap_max_us": 18943,
+      "ordinary_updates": 1800,
+      "modeled_presentations_per_second": 90.9090909090909
+    },
+    {
+      "case": 0,
+      "fractional_phase": 2,
+      "extra_draws": 3600,
+      "late_predictions": 0,
+      "virtual_elapsed_us": 59400000,
+      "gap_max_us": 18976,
+      "ordinary_updates": 1800,
+      "modeled_presentations_per_second": 90.9090909090909
+    },
+    {
+      "case": 0,
+      "fractional_phase": 3,
+      "extra_draws": 3600,
+      "late_predictions": 0,
+      "virtual_elapsed_us": 59400000,
+      "gap_max_us": 19009,
+      "ordinary_updates": 1800,
+      "modeled_presentations_per_second": 90.9090909090909
+    },
+    {
+      "case": 1,
+      "fractional_phase": 0,
+      "extra_draws": 5236,
+      "late_predictions": 0,
+      "virtual_elapsed_us": 59400020,
+      "gap_max_us": 16810,
+      "ordinary_updates": 1800,
+      "modeled_presentations_per_second": 118.45113856864022
+    },
+    {
+      "case": 1,
+      "fractional_phase": 1,
+      "extra_draws": 5236,
+      "late_predictions": 0,
+      "virtual_elapsed_us": 59399960,
+      "gap_max_us": 16743,
+      "ordinary_updates": 1800,
+      "modeled_presentations_per_second": 118.4512582163355
+    },
+    {
+      "case": 1,
+      "fractional_phase": 2,
+      "extra_draws": 5236,
+      "late_predictions": 0,
+      "virtual_elapsed_us": 59400090,
+      "gap_max_us": 16776,
+      "ordinary_updates": 1800,
+      "modeled_presentations_per_second": 118.45099897996788
+    },
+    {
+      "case": 1,
+      "fractional_phase": 3,
+      "extra_draws": 5236,
+      "late_predictions": 0,
+      "virtual_elapsed_us": 59399940,
+      "gap_max_us": 16809,
+      "ordinary_updates": 1800,
+      "modeled_presentations_per_second": 118.45129809895431
+    },
+    {
+      "case": 2,
+      "fractional_phase": 0,
+      "extra_draws": 1800,
+      "late_predictions": 0,
+      "virtual_elapsed_us": 59400000,
+      "gap_max_us": 24110,
+      "ordinary_updates": 1800,
+      "modeled_presentations_per_second": 60.60606060606061
+    },
+    {
+      "case": 2,
+      "fractional_phase": 1,
+      "extra_draws": 1800,
+      "late_predictions": 0,
+      "virtual_elapsed_us": 59400000,
+      "gap_max_us": 24143,
+      "ordinary_updates": 1800,
+      "modeled_presentations_per_second": 60.60606060606061
+    },
+    {
+      "case": 2,
+      "fractional_phase": 2,
+      "extra_draws": 1800,
+      "late_predictions": 0,
+      "virtual_elapsed_us": 59400000,
+      "gap_max_us": 24076,
+      "ordinary_updates": 1800,
+      "modeled_presentations_per_second": 60.60606060606061
+    },
+    {
+      "case": 2,
+      "fractional_phase": 3,
+      "extra_draws": 1800,
+      "late_predictions": 0,
+      "virtual_elapsed_us": 59400000,
+      "gap_max_us": 24109,
+      "ordinary_updates": 1800,
+      "modeled_presentations_per_second": 60.60606060606061
+    }
+  ],
+  "sequential_previous_adapter": {
+    "path": "perf\\build\\sequential-runtime-before-matrix.log",
+    "sha256": "7160c23a2b8312a1830b85f814c98ab1d1e74dc080ed689d4aec5b4cfc1d60d8",
+    "cases": [
+      {
+        "case": 0,
+        "fractional_phase": 0,
+        "extra_draws": 1800,
+        "late_predictions": 0,
+        "virtual_elapsed_us": 59400000,
+        "gap_max_us": 19770,
+        "ordinary_updates": 1800,
+        "modeled_presentations_per_second": 60.60606060606061
+      },
+      {
+        "case": 0,
+        "fractional_phase": 1,
+        "extra_draws": 1800,
+        "late_predictions": 0,
+        "virtual_elapsed_us": 59400000,
+        "gap_max_us": 19770,
+        "ordinary_updates": 1800,
+        "modeled_presentations_per_second": 60.60606060606061
+      },
+      {
+        "case": 0,
+        "fractional_phase": 2,
+        "extra_draws": 1800,
+        "late_predictions": 0,
+        "virtual_elapsed_us": 59400000,
+        "gap_max_us": 19770,
+        "ordinary_updates": 1800,
+        "modeled_presentations_per_second": 60.60606060606061
+      },
+      {
+        "case": 0,
+        "fractional_phase": 3,
+        "extra_draws": 1800,
+        "late_predictions": 0,
+        "virtual_elapsed_us": 59400000,
+        "gap_max_us": 19770,
+        "ordinary_updates": 1800,
+        "modeled_presentations_per_second": 60.60606060606061
+      },
+      {
+        "case": 1,
+        "fractional_phase": 0,
+        "extra_draws": 1800,
+        "late_predictions": 0,
+        "virtual_elapsed_us": 59400000,
+        "gap_max_us": 28560,
+        "ordinary_updates": 1800,
+        "modeled_presentations_per_second": 60.60606060606061
+      },
+      {
+        "case": 1,
+        "fractional_phase": 1,
+        "extra_draws": 1800,
+        "late_predictions": 0,
+        "virtual_elapsed_us": 59400000,
+        "gap_max_us": 28493,
+        "ordinary_updates": 1800,
+        "modeled_presentations_per_second": 60.60606060606061
+      },
+      {
+        "case": 1,
+        "fractional_phase": 2,
+        "extra_draws": 3060,
+        "late_predictions": 0,
+        "virtual_elapsed_us": 59400000,
+        "gap_max_us": 28526,
+        "ordinary_updates": 1800,
+        "modeled_presentations_per_second": 81.81818181818181
+      },
+      {
+        "case": 1,
+        "fractional_phase": 3,
+        "extra_draws": 2565,
+        "late_predictions": 0,
+        "virtual_elapsed_us": 59400000,
+        "gap_max_us": 28459,
+        "ordinary_updates": 1800,
+        "modeled_presentations_per_second": 73.48484848484848
+      },
+      {
+        "case": 2,
+        "fractional_phase": 0,
+        "extra_draws": 1800,
+        "late_predictions": 0,
+        "virtual_elapsed_us": 59400000,
+        "gap_max_us": 24110,
+        "ordinary_updates": 1800,
+        "modeled_presentations_per_second": 60.60606060606061
+      },
+      {
+        "case": 2,
+        "fractional_phase": 1,
+        "extra_draws": 1800,
+        "late_predictions": 0,
+        "virtual_elapsed_us": 59400000,
+        "gap_max_us": 24143,
+        "ordinary_updates": 1800,
+        "modeled_presentations_per_second": 60.60606060606061
+      },
+      {
+        "case": 2,
+        "fractional_phase": 2,
+        "extra_draws": 1800,
+        "late_predictions": 0,
+        "virtual_elapsed_us": 59400000,
+        "gap_max_us": 24076,
+        "ordinary_updates": 1800,
+        "modeled_presentations_per_second": 60.60606060606061
+      },
+      {
+        "case": 2,
+        "fractional_phase": 3,
+        "extra_draws": 1800,
+        "late_predictions": 0,
+        "virtual_elapsed_us": 59400000,
+        "gap_max_us": 24109,
+        "ordinary_updates": 1800,
+        "modeled_presentations_per_second": 60.60606060606061
+      }
+    ],
+    "adapter_source_commit": "ad14053",
+    "adapter_source_sha256": "7dea9f06f4e81e8ecb0f6e0f8eff1d32657699d7a9e6c5301ce4ed873d6b61b0",
+    "fixture_sha256": "6b6a77467848cec3284afcba0fc176e750c6bb4b7af01f2183931e64cbb0dcbf",
+    "expected_failures": 8
+  },
+  "changing_period_case": {
+    "ordinary_updates": 6000,
+    "extra_draws": 18000,
+    "virtual_elapsed_us": 203996950
+  },
+  "raw_output": "recovery from a learned floor above the entire frame budget\nsequential variable cost case=0 phase=0: 3600 extras, 0 late, 59400000 us, max gap 19010 us\nsequential variable cost case=0 phase=1: 3600 extras, 0 late, 59400000 us, max gap 18943 us\nsequential variable cost case=0 phase=2: 3600 extras, 0 late, 59400000 us, max gap 18976 us\nsequential variable cost case=0 phase=3: 3600 extras, 0 late, 59400000 us, max gap 19009 us\nsequential variable cost case=1 phase=0: 5236 extras, 0 late, 59400020 us, max gap 16810 us\nsequential variable cost case=1 phase=1: 5236 extras, 0 late, 59399960 us, max gap 16743 us\nsequential variable cost case=1 phase=2: 5236 extras, 0 late, 59400090 us, max gap 16776 us\nsequential variable cost case=1 phase=3: 5236 extras, 0 late, 59399940 us, max gap 16809 us\nsequential variable cost case=2 phase=0: 1800 extras, 0 late, 59400000 us, max gap 24110 us\nsequential variable cost case=2 phase=1: 1800 extras, 0 late, 59400000 us, max gap 24143 us\nsequential variable cost case=2 phase=2: 1800 extras, 0 late, 59400000 us, max gap 24076 us\nsequential variable cost case=2 phase=3: 1800 extras, 0 late, 59400000 us, max gap 24109 us\nrecovery budget gaps: no unaffordable draws, later recovery, bounded failures\nintermittent recovery: 1741 extras, 1 probe, 0 late, 59400015 us\nrecovery credit: pause, scrolling and placement reset eligibility\nadaptive policy: deadline, anchor, wrap and quota boundaries checked\nadaptive max=120 limit=3 regular=6000 cost=4000: 1800 ordinary, 5400 extra, 59400000 us, max gap 8770 us, 0 late\nadaptive max=120 limit=1 regular=6000 cost=4000: 1800 ordinary, 1800 extra, 59400000 us, max gap 16520 us, 0 late\nadaptive max=90 limit=3 regular=6000 cost=4000: 1800 ordinary, 3600 extra, 59400000 us, max gap 11020 us, 0 late\nadaptive max=60 limit=3 regular=6000 cost=4000: 1800 ordinary, 1800 extra, 59400000 us, max gap 16520 us, 0 late\nadaptive max=120 limit=3 regular=12000 cost=7000: 1800 ordinary, 3600 extra, 59400000 us, max gap 14210 us, 0 late\nadaptive max=120 limit=3 regular=18000 cost=8900: 1800 ordinary, 1800 extra, 59400000 us, max gap 19310 us, 0 late\nadaptive second-draw spike/recovery/cost/state guards: checked\nadaptive changing-period updates: 6000 ordinary, 18000 extra, 203996950 us, 0 late\nadapter paired=0 regular=19854 jitter=0: 1800 ordinary, 0 extra, 59400020 us, 0 shortened waits, 0 late, stop=none\nadapter paired=1 regular=19854 jitter=0: 1800 ordinary, 1800 extra, 59400000 us, 0 shortened waits, 0 late, stop=none\nadapter paired=1 regular=19854 jitter=1: 1800 ordinary, 1800 extra, 59401890 us, 899 shortened waits, 0 late, stop=none\nadapter persistent cost: 5 extra, 3 probes, 3 failed, resting=three paired recovery probes exceeded their debt allowance\nadapter recovery: 211 extra draws after the spike, 1 late, 9932983 us for 301 updates\npaired runtime adapter: PASS (0 failures)\nsequential policy: 126745 checks, 0 failures",
+  "coverage": [
+    "Production fps/catch-up/pairpace object files, not alternate implementations",
+    "One pacing owner, real saved wait-threshold adapter and exact ordinary update count",
+    "Held view/particle updates, unchanged camera, fresh shadow calls, preserved reflection option",
+    "Pause, shell, minimization, screenshots, placement, scrolling and frames without a wait",
+    "Native period change and logic-random, engine-counter, client-frame and camera failure guards",
+    "One transient recovery with a more expensive ordinary reference draw",
+    "Persistent expensive draws: at most five draws, three failed bounded probes, then rest",
+    "Adaptive one/two/three draws, MaxFPS ceiling, shared deadline, repeated observations and clock wrap",
+    "Second-draw cost/state failures, UI eligibility lost after first draw and later recovery",
+    "6000 changing native periods with preserved ordinary cadence",
+    "Sequential variable-cost workloads at four fractional phases, each native deadline checked",
+    "Pure policy: 1000 fractional phases, native-clock wrap, delayed wakes and one-extra equivalence"
+  ],
+  "limits": [
+    "No game, game entry point, native update, GPU scene, Present or multiplayer peer executes.",
+    "Draw costs and the timeline are controlled fixture inputs; these rates are not measured gameplay FPS.",
+    "The hook adapter is called through its C interface; unchanged assembly/site behavior is checked by the full existing hook/site suite.",
+    "Shadow invocation is checked here; pixel correctness relies on the unchanged rendering path and prior GPU qualification.",
+    "Matching-beta multiplayer, real game speed/input behavior and heavy-scene 120 FPS still require gameplay capture.",
+    "120 is a controlled timing result. Expensive inputs still fall back to one extra; actual heavy-scene 120 FPS is not achieved."
+  ]
+}

@@ -19,6 +19,9 @@ def main():
     parser.add_argument("--objdump", default="objdump")
     parser.add_argument("--suite-log", type=Path)
     parser.add_argument("--run-log", type=Path, help="Parse an already completed fixture/suite run")
+    parser.add_argument("--sequential-before", type=Path,
+                        help="Same cost-variation fixture linked to the previous runtime adapter")
+    parser.add_argument("--sequential-before-commit", help="Commit providing the comparison fps.c")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     output = args.run_log.read_text(errors="replace") if args.run_log else subprocess.run(
@@ -63,6 +66,41 @@ def main():
     period_case = re.search(r"adaptive changing-period updates: 6000 ordinary, (\d+) extra, (\d+) us, 0 late", output)
     assert period_case and int(period_case.group(1)) >= 12000
     assert "adaptive second-draw spike/recovery/cost/state guards: checked" in output
+    def sequential_rows(log):
+        pattern = (r"sequential variable cost case=(\d) phase=(\d): (\d+) extras, (\d+) late, "
+                   r"(\d+) us, max gap (\d+) us")
+        found = [dict(zip(["case", "fractional_phase", "extra_draws", "late_predictions",
+                          "virtual_elapsed_us", "gap_max_us"], map(int, m.groups())))
+                 for m in re.finditer(pattern, log)]
+        assert [(r["case"], r["fractional_phase"]) for r in found] == [
+            (c, p) for c in range(3) for p in range(4)]
+        for row in found:
+            assert row["late_predictions"] == 0 and 59390000 <= row["virtual_elapsed_us"] <= 59410000
+            assert row["gap_max_us"] < 33000
+            row["ordinary_updates"] = 1800
+            row["modeled_presentations_per_second"] = 1e6 * (1800 + row["extra_draws"]) / row["virtual_elapsed_us"]
+        return found
+    sequential = sequential_rows(output)
+    assert all(r["extra_draws"] > [3300, 4800, 1700][r["case"]] for r in sequential)
+    sequential_before = None
+    if args.sequential_before:
+        assert args.sequential_before_commit
+        comparison = args.sequential_before.parent / "fps-before-sequential.c"
+        prior_source = subprocess.run(
+            ["git", "show", f"{args.sequential_before_commit}:perf/src/fps.c"],
+            cwd=ROOT, capture_output=True, check=True).stdout
+        assert comparison.read_bytes() == prior_source
+        before = args.sequential_before.read_text(errors="replace")
+        assert "paired runtime adapter: FAIL (8 failures)" in before
+        failures = [line for line in before.splitlines() if "FAIL tests/" in line]
+        assert len(failures) == 8 and all(
+            line.endswith("recent cost maxima blocked sequential opportunities") for line in failures)
+        sequential_before = {"path": str(args.sequential_before),
+                             "sha256": sha(args.sequential_before), "cases": sequential_rows(before),
+                             "adapter_source_commit": args.sequential_before_commit,
+                             "adapter_source_sha256": sha(comparison),
+                             "fixture_sha256": sha(args.sequential_before.parent / "test-pair-before-sequential.exe"),
+                             "expected_failures": 8}
     objects = {}
     for name in ["fps", "pairpace", "catchup", "config", "main", "stubs"]:
         path = ROOT / f"perf/build/{name}.o"
@@ -79,13 +117,15 @@ def main():
     paths = ["perf/src/fps.c", "perf/src/fps.h", "perf/src/pairpace.c", "perf/src/pairpace.h",
              "perf/src/catchup.c", "perf/src/catchup.h", "perf/src/config.c", "perf/src/config.h",
              "perf/src/main.c", "perf/src/version.rc", "perf/tests/test_pair_runtime.c",
+             "perf/tests/test_pair_sequential.c", "perf/tests/test_load.c",
              "perf/tests/test_fps.c", "perf/tests/test_config.c", "perf/bfme2perf.ini",
-             "tools/test_pair_runtime.py"]
+             "tools/test_pair_runtime.py", "perf/Makefile"]
     suite = None
     if args.suite_log:
         log = args.suite_log.read_text(errors="replace")
         for marker in ["OK: config tests passed", "paired runtime adapter: PASS (0 failures)",
-                       "OK: catch-up tests passed", "OK: light tests passed"]:
+                       "OK: catch-up tests passed", "OK: light tests passed",
+                       "sequential policy: 126745 checks, 0 failures"]:
             assert marker in log, marker
         assert "FAIL tests/" not in log and "mingw32-make: ***" not in log
         suite = {"path": str(args.suite_log), "sha256": sha(args.suite_log),
@@ -107,11 +147,14 @@ def main():
                                   "virtual_elapsed_us": int(intermittent.group(2))},
         "recovery_budget_gap_cases_passed": True,
         "adaptive_cases": adaptive,
+        "sequential_variable_cost_cases": sequential,
+        "sequential_previous_adapter": sequential_before,
         "changing_period_case": {"ordinary_updates": 6000,
                                  "extra_draws": int(period_case.group(1)),
                                  "virtual_elapsed_us": int(period_case.group(2))},
         "raw_output": '\n'.join(line for line in output.splitlines()
-                                if line.startswith(('adaptive ', 'adapter ', 'intermittent ', 'recovery ', 'paired runtime adapter:'))),
+                                if line.startswith(('adaptive ', 'adapter ', 'intermittent ', 'recovery ',
+                                                    'sequential ', 'paired runtime adapter:'))),
         "coverage": [
             "Production fps/catch-up/pairpace object files, not alternate implementations",
             "One pacing owner, real saved wait-threshold adapter and exact ordinary update count",
@@ -123,14 +166,16 @@ def main():
             "Adaptive one/two/three draws, MaxFPS ceiling, shared deadline, repeated observations and clock wrap",
             "Second-draw cost/state failures, UI eligibility lost after first draw and later recovery",
             "6000 changing native periods with preserved ordinary cadence",
+            "Sequential variable-cost workloads at four fractional phases, each native deadline checked",
+            "Pure policy: 1000 fractional phases, native-clock wrap, delayed wakes and one-extra equivalence",
         ],
         "limits": [
             "No game, game entry point, native update, GPU scene, Present or multiplayer peer executes.",
             "Draw costs and the timeline are controlled fixture inputs; these rates are not measured gameplay FPS.",
             "The hook adapter is called through its C interface; unchanged assembly/site behavior is checked by the full existing hook/site suite.",
             "Shadow invocation is checked here; pixel correctness relies on the unchanged rendering path and prior GPU qualification.",
-            "Matching-beta multiplayer, real game speed/input behavior and the settled heavy-scene 59/s target still require gameplay capture.",
-            "120 is a controlled timing result. The heavier input falls back to one extra; actual heavy-scene 120 FPS is not achieved.",
+            "Matching-beta multiplayer, real game speed/input behavior and heavy-scene 120 FPS still require gameplay capture.",
+            "120 is a controlled timing result. Expensive inputs still fall back to one extra; actual heavy-scene 120 FPS is not achieved.",
         ],
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)

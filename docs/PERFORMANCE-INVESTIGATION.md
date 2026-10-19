@@ -21,9 +21,14 @@ or insufficient outcomes below; beta.14 does not retroactively qualify them.
 This is the concise outcome record. [STATUS.md](STATUS.md) retains the
 chronology; the linked reports retain measurements, controls and provenance.
 Read this before reviving an old approach. Subsequent beta.16 captures and
-the current beta.17 installation are recorded in STATUS.md and the
-[installation receipt](benchmarks/2026-10-19-beta17-install.json). Worker experiments remain
+later local installations are recorded in [STATUS.md](STATUS.md). Worker experiments remain
 offline harnesses, not installed game features.
+
+The latest beta.18 candidate rechecks extra-frame opportunities after each
+completed draw. Controlled production-adapter tests admit more extras with
+variable costs, while the expensive case remains unchanged. It does not
+reduce rendering cost or establish 120 FPS in the heavy save. See the
+[sequential-admission qualification](specs/2026-10-19-sequential-extras-design.md).
 
 ## First partial gameplay success: paired cadence (beta.14)
 

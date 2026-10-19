@@ -1333,8 +1333,11 @@ static void pair_wait(void **slot, const unsigned *engine, unsigned period_ms)
     }
     if (!g_pair.used && !g_paused && !g_pair_attempted) {
         g_pair_attempted = 1;
-        pf_pair_limit(&g_pair, now, expected_cost(),
-                      g_pair_good_samples >= 8 ? g_pair_limit : 1);
+        expected = expected_cost();
+        avg = g_cost_avg_us ? g_cost_avg_us : expected;
+        if (avg > expected) avg = expected;
+        pf_pair_limit_sequential(&g_pair, now, expected, avg,
+                                 g_pair_good_samples >= 8 ? g_pair_limit : 1);
         while (g_pair.used < g_pair.quota && !g_paused && !g_stopped) {
             now = g_time() * 1000u;
             probe = 0;
@@ -1342,7 +1345,7 @@ static void pair_wait(void **slot, const unsigned *engine, unsigned period_ms)
             guess = cost_is_guess();
             avg = g_cost_avg_us ? g_cost_avg_us : expected;
             if (avg > expected) avg = expected;
-            planned = pf_pair_plan(&g_pair, now, expected, avg, &delay);
+            planned = pf_pair_plan_sequential(&g_pair, now, expected, avg, &delay);
             if (!planned && !g_pair.used) {
                 /* A regular draw includes work the checked extra path holds.
                  * Prefer its own established successful cost. Requiring the

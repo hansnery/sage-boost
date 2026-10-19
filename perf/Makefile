@@ -218,6 +218,13 @@ $(BUILD)/test_pairpace.exe: tests/test_pairpace.c $(BUILD)/pairpace.o src/fps.c 
 test-pairpace: $(BUILD)/test_pairpace.exe
 	python ../tools/test_pairpace.py --executable $< --output $(BUILD)/pairpace-screen.json
 
+$(BUILD)/test_pair_sequential.exe: tests/test_pair_sequential.c $(BUILD)/pairpace.o src/pairpace.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c %.o,$^)
+
+.PHONY: test-pair-sequential
+test-pair-sequential: $(BUILD)/test_pair_sequential.exe
+	./$(BUILD)/test_pair_sequential.exe
+
 PAIR_RUNTIME_OBJS := $(addprefix $(BUILD)/,fps.o pairpace.o uistate.o extraprofile.o stubs.o log.o \
                                          fpsmath.o btnclock.o scan.o catchup.o notice.o)
 $(BUILD)/test_pair_runtime.exe: tests/test_pair_runtime.c tests/test_fps.c $(PAIR_RUNTIME_OBJS) src/*.h | $(BUILD)
@@ -259,7 +266,7 @@ test: all test-bulk-lifetime test-bulk-install $(BUILD)/test_row.exe $(BUILD)/te
       $(BUILD)/test_inst.exe $(BUILD)/test_declcache.exe $(BUILD)/test_btn.exe $(BUILD)/test_shadowpass.exe \
       $(BUILD)/test_catchup.exe $(BUILD)/test_lights.exe $(BUILD)/test_extraprofile.exe $(BUILD)/test_presentgap.exe \
       $(BUILD)/test_queueinsert.exe $(BUILD)/test_queuesort.exe $(BUILD)/test_inst_ownership.exe $(BUILD)/test_instsubmit.exe \
-      $(BUILD)/test_inst_verify_policy.exe $(BUILD)/test_pair_runtime.exe
+      $(BUILD)/test_inst_verify_policy.exe $(BUILD)/test_pair_runtime.exe $(BUILD)/test_pair_sequential.exe
 	./$(BUILD)/test_row.exe
 	./$(BUILD)/test_reflect.exe
 	./$(BUILD)/test_btn.exe
@@ -277,6 +284,7 @@ test: all test-bulk-lifetime test-bulk-install $(BUILD)/test_row.exe $(BUILD)/te
 	./$(BUILD)/test_fps.exe
 	./$(BUILD)/test_pair_runtime.exe
 	./$(BUILD)/test_load.exe "$(BUILD)/bfme2perf.asi"
+	./$(BUILD)/test_pair_sequential.exe
 	./$(BUILD)/test_presentgap.exe
 	./$(BUILD)/test_extraprofile.exe
 	./$(BUILD)/test_declcache.exe
