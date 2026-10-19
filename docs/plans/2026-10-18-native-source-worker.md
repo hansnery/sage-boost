@@ -303,16 +303,26 @@ Only producer command capture may overlap startup; native/direct paths keep
 their existing behavior. Final frame completion still waits for all queued
 commands and GPU work, and ownership modes change only after completion.
 
-- [ ] Add an optional fixture with owned frame sequence IDs. Require start,
+- [x] Add an optional fixture with owned frame sequence IDs. Require start,
   command batches and finish to agree on the current frame; reject stale
   commands and an incorrect owner before drawing.
-- [ ] Hold the worker before frame setup and prove the producer completes
+- [x] Hold the worker before frame setup and prove the producer completes
   first-group effect/palette capture before releasing it. Compare regular,
   extra, changed-material and failed-Begin images/state, including checked
   first-batch recovery and the existing callback/size controls.
-- [ ] Rotate seven complete timing paths: native bulk, direct capture, new
+- [x] Rotate seven complete timing paths: native bulk, direct capture, new
   asynchronous start, original worker, prior bulk worker, prior first-batch
   worker and merged synchronous start. Preserve all queue waits/GPU drains.
-- [ ] Run both images/backends and regress the previous first-batch fixture;
+- [x] Run both images/backends and regress the previous first-batch fixture;
   record sources, logs and rejected controls. Promote no runtime change from
   a small or inconsistent synthetic delta.
+
+The full comparison passes 720 main/size/handoff image-state cases, 64
+shader recoveries, 48 held-worker probes and 120 deliberate faults. Previous
+first-batch regression checks pass another 132 main/size cases, eight
+recoveries and 26 faults. The interrupted attempt is retained separately
+and excluded from all final timings. Native D3D9 saves 0.35-1.23 ms/pair
+versus the prior worker; DXVK ranges from a 0.82 ms regression to a 0.91 ms
+saving. No runtime promotion or installation follows. Preserve
+`../benchmarks/2026-10-18-group-frame-start.json` and the completion-boundary
+audit in the companion spec before considering overlap across frames.

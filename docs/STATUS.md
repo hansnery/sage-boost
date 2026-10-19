@@ -58,7 +58,7 @@ Accelerator has now run in isolated offline harnesses (below).
   resolve a reproducible multiplayer divergence only after one is observed.
   No promised FPS gain, deployment or new gameplay request from this review.
 
-### Frame-start handoff experiment: validation pending (2026-10-18)
+### Frame-start handoff experiment: no consistent DXVK gain (2026-10-18)
 
 The worktree contains an optional `bench_group_start.exe` / `--frame-start`
 comparison of the existing two synchronous messages, a merged synchronous
@@ -66,19 +66,37 @@ start and an asynchronous start that claims GPU ownership on the worker.
 Owned frame IDs guard start, command batches and completion. Final GPU drain
 is retained; ownership modes change only with the prior frame complete.
 
-One DXVK/lit pilot passes 48 main image/state cases, the existing size and
-recovery checks, 12 additional handoff image/state cases, six held-worker
-capture probes and four further shader-failure recoveries. The probe holds
-the worker before device setup while the producer completes first-group
-effect/palette capture. The pilot is **0.215 ms slower per pair** than the
-previous first-batch worker; it does not establish a speedup. Preserve the
-[pilot](benchmarks/2026-10-18-group-frame-start-pilot.json).
+Both images/backends pass **384 main, 240 size and 96 handoff image/state
+cases**, 64 shader-failure recoveries and 48 held-worker capture probes.
+The probe holds the worker before device setup while the producer completes
+first-group effect/palette capture. All 120 deliberate faults are rejected,
+including eight missing-owner and eight stale-frame cases. Lit pixels/state
+are exact; shadow depth differs by at most 1/2^24 within the existing
+tolerance. The previous first-batch path retains 132 main/size cases, eight
+recoveries and 26 rejected faults.
 
-The full matrix did not start: its guard found the user's running game and
-launcher. No benchmark process is still running. Both images/backends, new
-missing-claim/stale-frame faults and the previous first-batch regression
-remain pending. Continue after the process guard clears; the closure/context
-questions are already pending with the user. No install or settings change.
+The 96 rotated timing rows include all startup, queue and GPU-completion
+costs. Compared with the prior first-batch worker, native D3D9 saves a paired
+median **0.35-1.23 ms per regular/extra pair**. DXVK ranges from a **0.82 ms
+regression to a 0.91 ms saving**; against native bulk its range is a 0.86 ms
+regression to a 0.94 ms saving. This does not establish a consistent gain for
+the installed backend. Do not promote this startup change by itself.
+
+The [full report](benchmarks/2026-10-18-group-frame-start.json) preserves
+sources, logs, 313,080 restoration checks and the separately excluded attempt
+that stopped when a new game session appeared. The earlier
+[pilot](benchmarks/2026-10-18-group-frame-start-pilot.json) remains historical.
+The final isolated comparison and regression completed successfully; no
+benchmark remains running and Hans has been told he can reopen the game.
+Installed beta.13 and INI hashes are unchanged. No install or new gameplay
+test follows.
+
+The remaining completion wait serializes frames. Before any experiment with
+overlap across frames, give each frame owned results/resources, keep modes
+fixed while work is pending, and compare equal final GPU-completion work
+against native bulk. Full scene/Present and live error/resource/lifecycle
+contracts remain unqualified; see the completion-boundary audit in
+`specs/2026-10-18-native-source-worker.md`.
 
 ### First-unit batching in the independent worker (2026-10-18)
 
@@ -107,9 +125,9 @@ faults, six real resets and two zero-reference final releases. The submission
 unit test passes 19 cases. Production sources, installed beta.13 and INI
 hashes remain unchanged. No installation or gameplay request follows.
 
-Next measure redundant ownership/frame-start handoffs without excluding
-completion costs. Fixed resources and warm effects still leave live resource
-lifetime, deferred errors, cold effects and whole-scene/Present unqualified.
+The frame-start comparison above completes the redundant handoff screen.
+Fixed resources and warm effects still leave live resource lifetime,
+deferred errors, cold effects and whole-scene/Present unqualified.
 
 ### Qualified bulk capture (2026-10-18)
 
@@ -560,8 +578,9 @@ local time. Beta.13 and its INI hashes still match. Exploratory seconds
 29.9167/s**, with pooled p50 `(25, 33.334] ms` and p95 `(33.334, 50] ms`.
 All 26 complete nonempty 60-second windows in that snapshot remain below
 59/s (29.92-36.83/s). Each includes zero-logic-tick seconds 61..63, so none
-is a confirmed settled, unpaused benchmark. Later high-rate rows have fewer
-visible meshes; the exact scenario is awaiting the user's clarification.
+is a confirmed settled, unpaused benchmark. Hans confirms the later high-rate
+readings came from a lighter scene or different match. They do not establish
+performance in the requested troop-heavy save.
 
 That diagnostic window averages 22.563 ms per normal update and 15.037 ms
 in rendering, with 11.384 ms idle per wait. It records 1,244 cost blocks,
@@ -571,6 +590,25 @@ Bulk counts demonstrate the installed path is in use, not an A/B gain.
 See the [live snapshot report](benchmarks/2026-10-18-beta13-live-gameplay-check.json).
 No GPU benchmark ran alongside this game. This does not meet the objective
 or replace a user-confirmed capture of the troop-heavy scenario.
+
+Hans subsequently reports **"Still 30"** in a new session. The closed-session
+copy retains the exact beta.13/INI hashes. Its latest complete nonempty
+60-second interval with positive logic ticks in every row (84..143) records
+**1,927 presentation calls / 60 nominal seconds = 32.1167/s**. Both eligible
+windows remain below target (32.12-33.03/s); visible workload changes within
+them, and the precise save/scene is unconfirmed. Pooled gap p50 remains
+`(25, 33.334] ms`, p95 `(33.334, 50] ms`.
+
+The new interval averages 19.854 ms per normal update, 14.150 ms in rendering
+and 12.998 ms idle per wait. There are 1,155 cost blocks, 55 catch-up blocks
+and no pause/stop blocks. All 113 extras have completed shadow profiles;
+regular shadow skips and verification-error counters are zero. The retained
+extra cost is 10.819 ms through seconds 87..125 and 12.849 ms in 129..143,
+with no extras in either span. It is often below the native-draw reference,
+so this capture does not establish a stale maximum above that reference.
+Row averages cannot reconstruct individual admission decisions. See the
+[new session report](benchmarks/2026-10-18-beta13-still30-gameplay-check.json).
+No runtime or setting change follows from this diagnostic result.
 
 The user reports high initial FPS followed by a drop to 30. This new run
 loads **0.9.11-beta.13**, with the tested ASI and intended INI hashes above;

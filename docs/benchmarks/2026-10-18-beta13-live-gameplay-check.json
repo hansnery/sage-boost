@@ -110,7 +110,7 @@
     "Simulation/network/input/camera invariants require separate evidence.",
     "Copied during a user-launched game; this snapshot is not a closed-session receipt.",
     "Zero logic ticks at seconds 61..63 are consistent with a pause/inactive simulation. No eligible nonempty window in this snapshot has positive logic ticks in every row.",
-    "Visible mesh counts range widely. Later high-rate rows contain fewer meshes and do not prove the troop-heavy target.",
+    "Hans confirms the later high-rate readings came from a lighter scene or different match; they do not demonstrate the troop-heavy target.",
     "No controlled beta.11/beta.13 comparison or disabled-bulk control was performed.",
     "Scheduling and render scopes overlap; row-average costs do not reconstruct individual admission decisions."
   ],
@@ -500,5 +500,10 @@
   },
   "goal_achieved": false,
   "scenario_confirmed": false,
-  "frameview_capture_available": false
+  "frameview_capture_available": false,
+  "user_context": {
+    "high_rate_scene": "A lighter scene or different match",
+    "troop_heavy_target_confirmed": false,
+    "source": "User reply to the question about high beta.13 presentation readings"
+  }
 }

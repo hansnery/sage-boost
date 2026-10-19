@@ -136,13 +136,17 @@ Strike an item through, with the date, when it's done.
   25-unit group. Versus native bulk, native D3D9 saves 1.67-3.20 ms/pair;
   DXVK ranges from a 0.26 ms regression to a 0.55 ms saving. No install.
   See `benchmarks/2026-10-18-group-first-batch.json`.
-- [ ] Test redundant frame-start/ownership synchronization while preserving
-  FIFO ordering, GPU ownership, failure controls and all completion work.
-  The optional merged/asynchronous prototype passes one DXVK/lit pilot,
-  including held-worker capture, but is 0.215 ms slower per pair than the
-  previous first-batch worker. Full matrix/new faults/regression remain
-  pending after the game reopened; see
-  `benchmarks/2026-10-18-group-frame-start-pilot.json`.
+- [x] 2026-10-18: test merged synchronous/asynchronous frame starts while
+  preserving FIFO ordering, owned frame IDs and final GPU completion.
+  Both images/backends pass 720 main/size/handoff image-state cases, 64
+  shader-failure recoveries, 48 held-worker capture probes and 120 faults.
+  The previous first-batch regression also passes. DXVK ranges from a
+  0.82 ms regression to a 0.91 ms saving per pair versus the prior worker;
+  no consistent installed-backend gain or runtime promotion. See
+  `benchmarks/2026-10-18-group-frame-start.json`.
+- [ ] Qualify owned per-frame results/resources and an equal-completion
+  comparison before attempting overlap across frames. Merely removing the
+  current finish wait would race shared frame IDs, results and resource checks.
   The changed flags=7 Begin contract, deferred driver errors, cold effects,
   live resources and whole scene/Present remain unqualified.
 - [x] 2026-10-18: back up a second launcher replacement of beta.13 by

@@ -1,0 +1,192 @@
+{
+  "window": {
+    "start_s": 84,
+    "end_s_exclusive": 144,
+    "nominal_seconds": 60,
+    "at_least_60_seconds": true
+  },
+  "presentation_calls": 1927,
+  "presentation_calls_per_nominal_second": 32.11666666666667,
+  "nominal_rate_at_least_59": false,
+  "rate_bounds_from_timestamp_quantization": {
+    "lower": 31.59016393442623,
+    "upper": 32.66101694915254
+  },
+  "per_row_calls": {
+    "min": 29,
+    "max": 70
+  },
+  "regular_frame_updates": 1817,
+  "extra_frames": 113,
+  "pacing": {
+    "gaps": 1927,
+    "histogram_counts": {
+      "present_gap_le_8333us": 4,
+      "present_gap_le_12500us": 36,
+      "present_gap_le_16667us": 95,
+      "present_gap_le_20000us": 81,
+      "present_gap_le_25000us": 88,
+      "present_gap_le_33334us": 782,
+      "present_gap_le_50000us": 823,
+      "present_gap_le_100000us": 17,
+      "present_gap_le_200000us": 1,
+      "present_gap_le_500000us": 0,
+      "present_gap_le_1000000us": 0,
+      "present_gap_over_1000000us": 0
+    },
+    "p50": {
+      "lower_exclusive_ms": 25.0,
+      "upper_ms": 33.334
+    },
+    "p95": {
+      "lower_exclusive_ms": 33.334,
+      "upper_ms": 50.0
+    },
+    "fraction_over_25_ms": 0.8422418266735859,
+    "fraction_over_50_ms": 0.00934094447327452
+  },
+  "shadows": {
+    "extra_draw_calls": 113,
+    "extra_completed_pass_samples": 113,
+    "valid_extra_profiles": 113,
+    "invalid_extra_profiles": 0,
+    "regular_shadow_skips": 0,
+    "extra_counts_match_each_row": true
+  },
+  "verification_failures": {
+    "verify_bad": 0,
+    "shadow_verify_bad": 0,
+    "spv_bad": 0,
+    "lt_verify_bad": 0
+  },
+  "bulk_coverage": {
+    "available": true,
+    "instrumented_rows": 60,
+    "selected_rows": 60,
+    "regular": {
+      "consumed_followers_by_method_count": {
+        "1": 3694947,
+        "2": 2621771,
+        "3": 74296,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      },
+      "consumed_followers": 6391014,
+      "multi_method_followers": 2696067,
+      "multi_method_fraction": 0.42185277641388363,
+      "frame_denominator": 1817,
+      "consumed_followers_per_frame": 3517.3439735828288
+    },
+    "extra": {
+      "consumed_followers_by_method_count": {
+        "1": 50081,
+        "2": 56920,
+        "3": 1413,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      },
+      "consumed_followers": 108414,
+      "multi_method_followers": 58333,
+      "multi_method_fraction": 0.5380578154112937,
+      "frame_denominator": 113,
+      "consumed_followers_per_frame": 959.4159292035398
+    },
+    "limits": [
+      "Consumed follower records across render passes; not unique units or successful draws.",
+      "Deferred leaders are excluded; no total eligible-record denominator is recorded.",
+      "Regular per-frame values include updates whose render was skipped.",
+      "Method counts measure use of the path, not time saved or FPS gained."
+    ]
+  },
+  "limits": [
+    "Completed flip-enabled EndScene calls; not measured display refresh or GPU success.",
+    "Row timestamps quantize duration; reported FPS uses the nominal interval.",
+    "Percentiles are pooled histogram bounds, not exact gaps or averaged row percentiles.",
+    "The first gap may begin before the selected interval.",
+    "Matching shadow counts do not prove correct pixels or per-frame correspondence.",
+    "Confirm the saved-game scene, loaded version/settings, visual output and runtime log.",
+    "Simulation/network/input/camera invariants require separate evidence.",
+    "The user reported Still 30 for this session; its exact scene/save was not identified. The lighter-scene clarification applied to the preceding session.",
+    "The capture was copied after the process guard cleared, and all three hashes match the earlier live snapshot. No isolated GPU benchmark ran alongside this game.",
+    "Only two eligible complete positive-logic/nonempty windows exist; the visible mesh count and presentation rate change within them. Neither proves the requested settled troop-heavy test.",
+    "Overlapping timing scopes and row averages do not reconstruct individual admission decisions. Recorded cost blocks support insufficient headroom, not an exact sum of independent frame costs.",
+    "The previously measured maximum extra cost remains below the native-draw reference in many blocked rows. This is not evidence of an excessively high stale maximum relative to that reference.",
+    "No controlled installed-build comparison, runtime modification, INI change or multiplayer validation was performed."
+  ],
+  "selection": "Latest complete nonempty 60-second window with positive logic ticks in every row; all eligible windows are reported. Positive ticks do not prove a settled or unchanged scene.",
+  "eligible_nonempty_positive_logic_windows": [
+    {
+      "start_s": 83,
+      "nominal_rate": 33.03333333333333
+    },
+    {
+      "start_s": 84,
+      "nominal_rate": 32.11666666666667
+    }
+  ],
+  "frame_weighted_metrics": {
+    "frame_avg_ms": 19.854456246560265,
+    "logic_ms": 1.5697154650522842,
+    "render_ms": 14.149733626857456,
+    "shadow_ms": 6.2156086956521746,
+    "fx_batch_ms": 9.165151898734177,
+    "fx_mesh_ms": 4.323527793065493,
+    "inst_meshes": 4095.266923500275
+  },
+  "idle_ms_per_wait": 12.997972174900625,
+  "blockers": {
+    "fps_block_cost": 1155,
+    "fps_block_catchup": 55,
+    "fps_block_pause": 0,
+    "fps_block_stop": 0,
+    "fps_probe_attempts": 0,
+    "skipped_draws": 3
+  },
+  "zero_logic_tick_seconds": [],
+  "loaded_version": "bfme2perf 0.9.11-beta.13",
+  "activation": [
+    "render: QueueInsert=1: applied",
+    "render: QueueSort=1: applied",
+    "render: BulkRender=1: guarded native group batching enabled"
+  ],
+  "capture": {
+    "directory": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-beta13-still30-closed-4v1dqbgt",
+    "captured_utc": "2026-10-19T05:15:43.751149+00:00",
+    "copied_files_sha256": {
+      "bfme2perf.log": "34eacd9aaf9fe883c8ce61eea7476a8a2c2ca89fd84d098f1b6bc2ac21ad5919",
+      "bfme2perf_timing.csv": "e54569755bbbffaa7a5280afae3c07402d4fe7ee1ab281aa2d6d73e7e503ea26",
+      "bfme2perf_scopes.csv": "d0bf1cab8881dcfd24dd661b6fdd53069b5976b9cb26b5f93481d626881f2352"
+    },
+    "installed_sha256": {
+      "C:\\Jogos\\AgeoftheRing\\rotwk\\mss\\bfme2perf.asi": "976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd",
+      "C:\\Jogos\\AgeoftheRing\\rotwk\\mss\\bfme2perf.ini": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b"
+    },
+    "user_report": "Still 30",
+    "guard_before_after": "clear",
+    "captured_while_game_may_be_running": false
+  },
+  "installed_sha256": {
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\mss\\bfme2perf.asi": "976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\mss\\bfme2perf.ini": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b"
+  },
+  "user_report": "Still 30",
+  "goal_achieved": false,
+  "scenario_confirmed": false,
+  "frameview_capture_available": false,
+  "extra_cost_observations": {
+    "seconds_87_to_125": {
+      "extra_frames": 0,
+      "retained_expected_cost_ms": [
+        10.819
+      ]
+    },
+    "seconds_129_to_143": {
+      "extra_frames": 0,
+      "retained_expected_cost_ms": [
+        12.849
+      ]
+    }
+  }
+}

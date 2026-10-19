@@ -619,12 +619,59 @@ compare both merged modes after direct rendering, regular/extra and changed
 material phases, a failed native Begin, and first-batch shader recovery.
 Two new faults omit the ownership claim or publish a stale frame ID.
 
-One positive DXVK/lit pilot passes the held-worker and image/state checks,
-but its asynchronous start is 0.215 ms slower per pair than the previous
-first-batch worker. The seven-way timings retain the native baseline and
-both older worker variants. Both-image/backend coverage, the two new fault
-processes and the previous-build regression remain pending because the
-game reopened before the full matrix started. The
-[pilot receipt](../benchmarks/2026-10-18-group-frame-start-pilot.json) preserves
-this incomplete state; it is not a performance qualification or runtime
-change.
+The first positive DXVK/lit pilot passed, but was 0.215 ms slower per pair
+than the previous first-batch worker. Its
+[receipt](../benchmarks/2026-10-18-group-frame-start-pilot.json) remains
+historical. A later full-matrix attempt stopped when a new game session
+appeared; all its timing samples are excluded from the final comparison.
+
+The completed isolated matrix passes 384 main, 240 size and 96 handoff
+image/state cases on both local images/backends, with 64 shader-failure
+recoveries and 48 held-worker capture probes. All 120 faults are rejected,
+including eight missing-owner and eight stale-frame cases. The prior
+first-batch path preserves 132 main/size cases and eight recoveries while
+rejecting 26 faults. Lit pixels/state remain exact, and shadow differences
+remain at most 1/2^24 within the existing tolerance.
+
+The 96 seven-way timing rows retain every frame's final GPU drain. Against
+the prior first-batch worker, paired median savings are 0.35-1.23 ms/pair on
+native D3D9 but -0.82 to +0.91 ms on DXVK. Against native bulk, DXVK ranges
+from -0.86 to +0.94 ms. This is not a consistent gain for the user's backend
+and does not justify standalone runtime promotion. Preserve the
+[full report](../benchmarks/2026-10-18-group-frame-start.json), including
+hashes and excluded-run provenance. Installed beta.13 and INI are unchanged;
+no gameplay FPS or multiplayer qualification follows.
+
+### Completion boundary audit
+
+The group fixture currently serializes complete frames. `gc_frame` sends
+`GC_FINISH` with a wait, and `gc_execute` restores caller state, calls
+EndScene and runs `drain` before signaling completion. `drain` issues an
+event query and polls GetData with FLUSH until S_OK. Merged startup therefore
+tests overlap within a frame, not preparation of the next frame while the
+previous one finishes. No Present or whole-game scene is included.
+
+Removing the finish wait alone would violate the fixture's contracts:
+
+- `gc_mode` may change only with an idle queue, and the producer currently
+  reads the worker's active/completed frame IDs after that wait.
+- Pixel/state output and successful-draw/recovery counts occupy shared
+  globals. A later frame could overwrite an earlier frame's result before
+  the producer checks it.
+- End-of-frame resource checks currently require zero queued COM references.
+  Preparing another frame would legitimately retain references past that
+  point; checks must instead belong to an owned frame or a drained batch.
+- The producer's frame setup calls `pose` and
+  `material_fixture_verify_end`. Their complete effects, including shared
+  fixture state, must be separated from worker-owned state before overlap.
+
+A future bounded-frame experiment needs owned per-frame requests/results,
+fixed ownership mode while frames are pending, and explicit collection
+before slot reuse, ownership changes or teardown. First compare equal work
+with a final GPU drain after the complete measured batch on every path,
+including native bulk. Keep the old per-frame-drained comparison as a
+control so a gain from changing the completion policy is not attributed to
+threading. Validate each intermediate frame's fresh lit/shadow output and
+ordering separately; a final matching image can conceal a dropped frame.
+This is an audited next boundary, not an implemented pipeline or a claim
+that the game's simulation can overlap rendering safely.
