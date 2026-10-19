@@ -4,6 +4,7 @@
 #include "shadow_fx/shadow_fx.c"
 #undef main
 #include "effect_filter_bench.h"
+#include "source_packet.h"
 
 #define REQUIRE(c) do { if(!(c)) { fprintf(stderr,"material fixture refused %s:%d: %s\n",__FILE__,__LINE__,#c); exit(1); } } while(0)
 #define HR(c) REQUIRE(SUCCEEDED(c))
@@ -42,6 +43,28 @@ static unsigned clock_override;
 static float clock_value;
 static DWORD entry_render_states[256];
 static unsigned filter_mode;
+static const source_matrix_command *captured_sources;
+static unsigned captured_groups;
+static int captured_wrong_setter;
+static D3DXHANDLE captured_handles[3];
+static const float (*source_reference)[16];
+
+void material_fixture_source_seed(float out[3][16])
+{
+    const char *names[3]={"World","View","Projection"};
+    for(unsigned i=0;i<3;i++) {
+        captured_handles[i]=F(GetParameterByName,NULL,names[i]);REQUIRE(captured_handles[i]);
+        HR(F(GetValue,captured_handles[i],out[i],64));
+    }
+}
+
+void material_fixture_source_packets(const source_matrix_command *values,unsigned groups,int wrong)
+{
+    captured_sources=values;captured_groups=groups;captured_wrong_setter=wrong;
+}
+
+void material_fixture_source_reference(const float (*values)[16])
+{ source_reference=values; }
 
 void material_fixture_filter(unsigned mode)
 {
@@ -165,6 +188,18 @@ void material_fixture_sources(unsigned group)
     HR(F(SetValue,diffuse_handle,diffuse,sizeof diffuse));
     HR(F(SetTexture,texture_handle,(IDirect3DBaseTexture9 *)textures[(group+delta)&1]));
     if(clock_override) HR(F(SetFloat,clock_handle,clock_value));
+    if(source_reference)for(unsigned i=0;i<3;i++)
+        HR(F(SetValue,captured_handles[i],source_reference[i],64));
+    if(captured_sources) {
+        REQUIRE(group<captured_groups);
+        for(unsigned i=0;i<3;i++) {
+            const source_matrix_command *command=&captured_sources[group*3+i];
+            REQUIRE(command->semantic==i && command->transpose==1 && captured_handles[i]);
+            D3DXMATRIX matrix;memcpy(&matrix,command->value,sizeof matrix);
+            if(captured_wrong_setter)HR(F(SetMatrix,captured_handles[i],&matrix));
+            else HR(F(SetMatrixTranspose,captured_handles[i],&matrix));
+        }
+    }
 }
 static void prepare(unsigned group)
 {

@@ -2,12 +2,24 @@
  * no game callback or borrowed engine object crosses the queue. */
 #define PF_MATERIAL_MAIN unused_material_benchmark_main
 #include "bench_material_queue.c"
+#ifdef PF_NATIVE_SOURCE_WORKER
+#include "source_packet.h"
+#endif
 
 #define WORKER_SLOTS 2
 #define WORKER_JOBS 8
 #define WORKER_STATE_WORDS 1300
+#ifdef PF_NATIVE_SOURCE_WORKER
+#define WORKER_ORACLES 4
+#else
+#define WORKER_ORACLES 3
+#endif
 typedef struct {
     unsigned sequence,epoch,clock,extra,check,oracle;
+#ifdef PF_NATIVE_SOURCE_WORKER
+    unsigned source_phase;
+    source_matrix_command sources[GROUPS*3];
+#endif
     float palettes[GROUPS*GROUP_SIZE][BONES][8];
 } render_packet;
 enum { SLOT_FREE, SLOT_WRITING, SLOT_READY, SLOT_READING, SLOT_DONE };
@@ -29,7 +41,11 @@ static unsigned integrity_checks=1;
 static int worker_argc;
 static char **worker_argv;
 static DWORD render_thread;
-static unsigned reference[3][RT*RT],reference_state[3][WORKER_STATE_WORDS],state_words[3];
+#ifdef PF_NATIVE_SOURCE_WORKER
+static float source_seed[2][3][16];
+static int wrong_source_setter,stale_source_values;
+#endif
+static unsigned reference[WORKER_ORACLES][RT*RT],reference_state[WORKER_ORACLES][WORKER_STATE_WORDS],state_words[WORKER_ORACLES];
 
 static unsigned packet_hash(const void *bytes,unsigned n)
 {
@@ -76,9 +92,15 @@ static void render_packet_owned(const render_packet *p,unsigned *pixels,unsigned
     else for(unsigned i=0;i<GROUPS*GROUP_SIZE;i++)for(unsigned b=0;b<BONES;b++)
         memcpy(many_pivots[i]+g_bonemap[b]*0x58+0x30,p->palettes[i][b],28);
     material_fixture_epoch(p->epoch);material_fixture_clock(p->clock);
+#ifdef PF_NATIVE_SOURCE_WORKER
+    material_fixture_source_packets(p->sources,GROUPS,wrong_source_setter);
+#endif
     pair_optimized=0;retain_now=0;dispatch_bulk_now=1;
     unsigned refs=g_method.refs;
     frame_draw(p->extra,0,pixels);drain();
+#ifdef PF_NATIVE_SOURCE_WORKER
+    material_fixture_source_packets(NULL,0,0);
+#endif
     REQUIRE(g_method.refs==refs);
 }
 
@@ -94,6 +116,12 @@ static void initialize_worker(void)
     baseline_bulk_enabled=1;dispatch_scope_begin=bench_scope_bulk_begin;
     dispatch_scope_end=bench_scope_bulk_end;
     setup(worker_argc,worker_argv);pf_timing_set_detail(1);
+#ifdef PF_NATIVE_SOURCE_WORKER
+    material_fixture_source_seed(source_seed[0]);
+    memcpy(source_seed[1],source_seed[0],sizeof source_seed[0]);
+    source_seed[1][0][12]+=.25f;source_seed[1][1][12]+=.125f;
+    source_seed[1][2][0]*=.8f;source_seed[1][2][5]*=.9f;source_seed[1][2][12]+=.1f;
+#endif
     for(unsigned phase=0;phase<2;phase++) {
         pose(phase);
         for(unsigned i=0;i<GROUPS*GROUP_SIZE;i++)for(unsigned b=0;b<BONES;b++) {
@@ -101,12 +129,24 @@ static void initialize_worker(void)
             templates[phase][i][b][7]=0;
         }
     }
-    for(unsigned c=0;c<3;c++) {
+    for(unsigned c=0;c<WORKER_ORACLES;c++) {
         deterministic_state();pose(c!=0);
-        material_fixture_epoch(c==2);material_fixture_clock(c==2?33:0);
+        material_fixture_epoch(c>=2);material_fixture_clock(c>=2?33:0);
+#ifdef PF_NATIVE_SOURCE_WORKER
+        /* Independent reference uses ordinary SetValue, not the packet
+         * sink or transposed replay path being checked. */
+        material_fixture_source_reference(c==3?source_seed[1]:NULL);
+#endif
         pair_optimized=0;retain_now=0;dispatch_bulk_now=1;
         frame_draw(c!=0,0,reference[c]);state_words[c]=backend_state(reference_state[c]);
     }
+#ifdef PF_NATIVE_SOURCE_WORKER
+    material_fixture_source_reference(NULL);
+    unsigned changed_sources=0;
+    for(unsigned i=0;i<RT*RT;i++)changed_sources+=reference[2][i]!=reference[3][i];
+    REQUIRE(changed_sources>100);
+    printf("SOURCE ORACLE: changed matrices alter %u pixels, hash=%08X\n",changed_sources,packet_hash(reference[3],sizeof reference[3]));
+#endif
     unsigned covered=0,moved=0,material=0;
     for(unsigned i=0;i<RT*RT;i++) {
         covered+=reference[0][i]!=(shadow_mode?PF_DEPTH_CLEAR:0);
@@ -144,7 +184,7 @@ static DWORD WINAPI worker_main(void *unused)
             static unsigned pixels[RT*RT],state[WORKER_STATE_WORDS];
             render_packet_owned(p,p->check?pixels:NULL,slot->direct);
             if(p->check) {
-                REQUIRE(p->oracle<3);
+                REQUIRE(p->oracle<WORKER_ORACLES);
                 unsigned n=backend_state(state);
                 REQUIRE(!memcmp(pixels,reference[p->oracle],sizeof pixels));
                 REQUIRE(n==state_words[p->oracle] && !memcmp(state,reference_state[p->oracle],n*4));
@@ -166,6 +206,11 @@ static void prepare(unsigned extra,unsigned epoch,unsigned clock,unsigned check,
 {
     scratch.sequence=submitted+1;scratch.extra=extra;scratch.epoch=epoch;scratch.clock=clock;
     scratch.check=check;scratch.oracle=oracle;
+#ifdef PF_NATIVE_SOURCE_WORKER
+    scratch.source_phase=check?(oracle==3):(epoch&1);
+    unsigned phase=stale_source_values?0:scratch.source_phase;
+    for(unsigned group=0;group<GROUPS;group++)native_source_capture(source_seed[phase],&scratch.sources[group*3]);
+#endif
     if(!direct)memcpy(scratch.palettes,templates[extra!=0],sizeof scratch.palettes);
 }
 
@@ -201,8 +246,8 @@ static void collect(unsigned expect_rejected,long long *worker,long long *queue)
 
 static void ownership_controls(void)
 {
-    for(unsigned c=0;c<3;c++) {
-        REQUIRE(ResetEvent(consume_gate));prepare(c!=0,c==2,c==2?33:0,1,c,0);publish(0,0);
+    for(unsigned c=0;c<WORKER_ORACLES;c++) {
+        REQUIRE(ResetEvent(consume_gate));prepare(c!=0,c>=2,c>=2?33:0,1,c,0);publish(0,0);
         memset(&scratch,0xA5,sizeof scratch);REQUIRE(SetEvent(consume_gate));collect(0,NULL,NULL);
     }
     REQUIRE(ResetEvent(consume_gate));prepare(0,0,0,1,0,0);publish(1,0);
@@ -212,7 +257,7 @@ static void ownership_controls(void)
     REQUIRE(!next_free()); /* Both slots owned: a third publication is refused. */
     memset(&scratch,0xA5,sizeof scratch);REQUIRE(SetEvent(consume_gate));
     collect(0,NULL,NULL);collect(0,NULL,NULL);REQUIRE(next_free());
-    puts("OWNERSHIP: five exact image/state comparisons survive scratch overwrite; deliberate borrowed-buffer control rejected; two-slot backpressure and recovery pass");
+    printf("OWNERSHIP: %u exact image/state comparisons survive scratch overwrite; deliberate borrowed-buffer control rejected; two-slot backpressure and recovery pass\n",WORKER_ORACLES+2);
 }
 
 static void worker_sample(unsigned mode,unsigned round,double result[5])
@@ -239,9 +284,19 @@ static void worker_sample(unsigned mode,unsigned round,double result[5])
 
 int main(int argc,char **argv)
 {
+#ifdef PF_NATIVE_SOURCE_WORKER
+    REQUIRE((argc==7 || argc==8) && bench_no_game());
+    REQUIRE(!strcmp(argv[4],"checked") || !strcmp(argv[4],"owned"));
+    integrity_checks=!strcmp(argv[4],"checked");
+    if(argc==8) {
+        REQUIRE(!strcmp(argv[7],"wrong-setter") || !strcmp(argv[7],"stale-source"));
+        wrong_source_setter=!strcmp(argv[7],"wrong-setter");stale_source_values=!strcmp(argv[7],"stale-source");
+    }
+#else
     REQUIRE((argc==4 || argc==5) && bench_no_game());
-    REQUIRE(!strcmp(argv[3],"lit") || !strcmp(argv[3],"shadow"));
     if(argc==5){REQUIRE(!strcmp(argv[4],"checked") || !strcmp(argv[4],"owned"));integrity_checks=!strcmp(argv[4],"checked");}
+#endif
+    REQUIRE(!strcmp(argv[3],"lit") || !strcmp(argv[3],"shadow"));
     worker_argc=argc;worker_argv=argv;
     available=CreateSemaphoreW(NULL,0,WORKER_SLOTS,NULL);
     initialized=CreateEventW(NULL,TRUE,FALSE,NULL);consume_gate=CreateEventW(NULL,TRUE,TRUE,NULL);
@@ -249,9 +304,17 @@ int main(int argc,char **argv)
     for(unsigned i=0;i<WORKER_SLOTS;i++){slots[i].done=CreateEventW(NULL,FALSE,FALSE,NULL);REQUIRE(slots[i].done);}
     HANDLE worker=CreateThread(NULL,0,worker_main,NULL,0,NULL);REQUIRE(worker);
     REQUIRE(WaitForSingleObject(initialized,60000)==WAIT_OBJECT_0);
-    REQUIRE(render_thread!=GetCurrentThreadId());ownership_controls();
+    REQUIRE(render_thread!=GetCurrentThreadId());
+#ifdef PF_NATIVE_SOURCE_WORKER
+    native_source_capture_init(argv[5],argv[6],material_runtime);
+#endif
+    ownership_controls();
     printf("PACKET: %u bytes, %u owned slots; timed checksums=%u, all copies included; all GPU/resource calls stay on worker\n",(unsigned)sizeof(render_packet),WORKER_SLOTS,integrity_checks);
+#ifdef PF_NATIVE_SOURCE_WORKER
+    puts("LIMITS: three native matrix sources on producer; immutable palette templates, synthetic single-pass geometry, bulk-after-second prototype; no live engine lifetimes, terrain/reflections/Present, artificial logic workload or gameplay FPS");
+#else
     puts("LIMITS: immutable fixture templates, synthetic single-pass geometry, bulk-after-second prototype; no native capture, terrain/reflections/Present, artificial logic workload or gameplay FPS");
+#endif
     puts("round,direct_prepare_ms,serial_prepare_ms,pipeline_prepare_ms,direct_wait_ms,serial_wait_ms,pipeline_wait_ms,direct_complete_ms,serial_complete_ms,pipeline_complete_ms,direct_worker_ms,serial_worker_ms,pipeline_worker_ms,direct_queue_ms,serial_queue_ms,pipeline_queue_ms,saved_vs_direct_ms,saved_vs_serial_ms");
     double saving[21],serial_saving[21];
     static const unsigned order[6][3]={{0,1,2},{2,1,0},{1,2,0},{0,2,1},{1,0,2},{2,0,1}};
@@ -273,5 +336,10 @@ int main(int argc,char **argv)
     DWORD code;REQUIRE(GetExitCodeThread(worker,&code) && !code);CloseHandle(worker);
     for(unsigned i=0;i<WORKER_SLOTS;i++)CloseHandle(slots[i].done);
     CloseHandle(available);CloseHandle(initialized);CloseHandle(consume_gate);
+#ifdef PF_NATIVE_SOURCE_WORKER
+    unsigned captured=native_source_capture_calls();REQUIRE(captured==submitted*GROUPS*3);
+    printf("CAPTURE: %u native matrix callbacks, provider storage poisoned before publication; copied typed setters only\n",captured);
+    native_source_capture_close();
+#endif
     REQUIRE(bench_no_game());return 0;
 }

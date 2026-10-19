@@ -42,6 +42,13 @@ Strike an item through, with the date, when it's done.
   results, effect identity changes and unsupported/failing work explicitly.
   Live device/window/Reset ownership, full scene/Present and multiplayer
   remain unproved. Do not move live engine callbacks onto the worker.
+- [x] 2026-10-18: qualify three native matrix-source families across the
+  worker packet boundary on both images. Pass 96 exact image/state cases,
+  changed-source and poisoning controls; reject eight deliberate setter/
+  stale-value faults. Preserve 168 samples in
+  `benchmarks/2026-10-18-native-source-worker.json`. Preparation costs
+  0.52-0.55 ms/pair before waits, but shadow completion shows no repeatable
+  gain. This does not close the broader capture/lifetime item above.
 - [x] 2026-10-18: back up a second launcher replacement of beta.13 by
   0.9.10, restore the identical tested binary and only the three missing beta
   keys, and verify the shortcut with CheckOnly. No game launched; see

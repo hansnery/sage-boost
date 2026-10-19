@@ -48,6 +48,38 @@ Accelerator has now run in isolated offline harnesses (below).
   resolve a reproducible multiplayer divergence only after one is observed.
   No promised FPS gain, deployment or new gameplay request from this review.
 
+### Native source capture into worker packets (2026-10-18)
+
+The offline worker now receives actual native world/view/projection callback
+results as copied typed commands. Callbacks run on the producer; only the
+worker owns effect handles and issues GPU work. The fixture poisons provider
+storage before publication and scratch storage after it, checks changed
+matrix generations against an independent reference, and rejects deliberate
+wrong-setter and stale-source faults.
+
+Both executable variants pass lit/shadow checks twice: **96 exact image/state
+cases**, eight deliberate output faults, 16 borrowed-buffer refusals, 16
+queue-capacity/recovery controls and 16 executable-contract refusals. Each
+successful run executes 509,760 native matrix callbacks. The original worker
+also passes 20 image/state regression cases with unchanged reference hashes.
+The [report](benchmarks/2026-10-18-native-source-worker.json) retains 168
+three-mode timing samples and earlier superseded pilot provenance.
+
+Producer preparation takes **0.5218-0.5536 ms per synthetic pair**, excluding
+5.4178-6.0864 ms collection/backpressure in the saturated workload. Paired
+completion savings versus the direct fixture are 0.0687-0.3292 ms lit and
+-0.4462 to +0.0966 ms shadow. This is a qualified slice of capture, without a
+substantial repeatable speedup or a gameplay FPS result. Matrices and poses
+still originate in controlled fixtures; other source families, native object
+and resource lifetimes, effect identity/Begin results and live device/Reset
+ownership remain open. See the
+[scope and reproduction](specs/2026-10-18-native-source-worker.md).
+
+The complete `perf/` test suite passes. No runtime change, installation or
+new gameplay request. Installed beta.13
+and INI hashes still match the restoration receipt. Continue the threading
+integration; sustained 60 FPS remains unproved.
+
 ### Owned render-batch worker (2026-10-18)
 
 An independently written offline worker now owns all effect/state/GPU calls
