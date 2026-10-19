@@ -23,10 +23,19 @@ Strike an item through, with the date, when it's done.
   INI byte and adding only PairPacing=1. Back up beta.13/settings/captures
   and update the existing test shortcut's pins. CheckOnly passes; no game
   launched. [Receipt](benchmarks/2026-10-19-paired-cadence-install.json).
-- [ ] Capture beta.14 in the settled heavy save for at least 60 seconds,
-  including FrameView, pacing, fresh shadows and game-speed/input checks.
-  Qualify matching-beta multiplayer separately. Virtual test timings are
-  not measured gameplay FPS; the target remains unmet.
+- [x] 2026-10-19: preserve beta.14's first user-confirmed heavy-scene gain,
+  around 55 FPS. The densest complete positive-logic/nonempty 60-second
+  capture window averages 51.5833 presentation calls/s with 1,295 extras
+  and matching fresh-shadow counts. See the
+  [capture report](benchmarks/2026-10-19-beta14-gameplay-check.json).
+- [ ] Reach and verify sustained 59/s in the settled heavy save, including
+  FrameView, pacing, fresh shadows and game-speed/input checks. The new
+  capture varies in complexity and still has cost/backoff blocks. Qualify
+  matching-beta multiplayer separately; the full target remains unmet.
+- [ ] Investigate 90/120 feasibility after preserving the beta.14 checkpoint.
+  Paired mode currently permits only one extra per native update; three are
+  needed for about 120. Raising the limit alone cannot fit the measured
+  heavy-scene costs. Keep full-rate shadows and normal gameplay behavior.
 
 - [x] 2026-10-18: execute native float/uint/ushort/byte duration conversions
   with explicit fixture dependencies on both images. Confirm rate-setter

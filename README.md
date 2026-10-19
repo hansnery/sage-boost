@@ -99,8 +99,10 @@ update and repays small deadline overruns in later waits. It requires
 `MaxFPS>=60`, `FrameSmoothing=3`, `ShadowInterval=1` and
 `ExtraFrameShadows=1`; reflection preferences remain unchanged. Missing
 requirements leave the old scheduler active. The default is `PairPacing=0`.
-Offline adapter tests pass, but gameplay FPS and matching-beta multiplayer
-still need in-game verification. This is not a launcher/stable release.
+Offline adapter tests pass. Hans reports around 55 FPS in the heavy scene;
+the copied capture supports improvement, but a settled 59/s result and
+matching-beta multiplayer remain unverified. This is not a launcher/stable
+release. See the [gameplay report](docs/benchmarks/2026-10-19-beta14-gameplay-check.json).
 See the [behavior and verification limits](docs/specs/2026-10-19-paired-cadence-runtime.md).
 
 1. Copy `bfme2perf.asi` and `bfme2perf.ini` into the `mss\` folder next to

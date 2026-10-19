@@ -1,0 +1,513 @@
+{
+  "window": {
+    "start_s": 220,
+    "end_s_exclusive": 280,
+    "nominal_seconds": 60,
+    "at_least_60_seconds": true
+  },
+  "presentation_calls": 3095,
+  "presentation_calls_per_nominal_second": 51.583333333333336,
+  "nominal_rate_at_least_59": false,
+  "rate_bounds_from_timestamp_quantization": {
+    "lower": 50.73770491803279,
+    "upper": 52.45762711864407
+  },
+  "per_row_calls": {
+    "min": 25,
+    "max": 72
+  },
+  "regular_frame_updates": 1807,
+  "extra_frames": 1295,
+  "pacing": {
+    "gaps": 3095,
+    "histogram_counts": {
+      "present_gap_le_8333us": 12,
+      "present_gap_le_12500us": 168,
+      "present_gap_le_16667us": 1119,
+      "present_gap_le_20000us": 987,
+      "present_gap_le_25000us": 315,
+      "present_gap_le_33334us": 316,
+      "present_gap_le_50000us": 166,
+      "present_gap_le_100000us": 10,
+      "present_gap_le_200000us": 1,
+      "present_gap_le_500000us": 1,
+      "present_gap_le_1000000us": 0,
+      "present_gap_over_1000000us": 0
+    },
+    "p50": {
+      "lower_exclusive_ms": 16.667,
+      "upper_ms": 20.0
+    },
+    "p95": {
+      "lower_exclusive_ms": 33.334,
+      "upper_ms": 50.0
+    },
+    "fraction_over_25_ms": 0.15961227786752827,
+    "fraction_over_50_ms": 0.0038772213247172858
+  },
+  "shadows": {
+    "extra_draw_calls": 1295,
+    "extra_completed_pass_samples": 1295,
+    "valid_extra_profiles": 1295,
+    "invalid_extra_profiles": 0,
+    "regular_shadow_skips": 0,
+    "extra_counts_match_each_row": true
+  },
+  "verification_failures": {
+    "verify_bad": 0,
+    "shadow_verify_bad": 0,
+    "spv_bad": 0,
+    "lt_verify_bad": 0
+  },
+  "bulk_coverage": {
+    "available": true,
+    "instrumented_rows": 60,
+    "selected_rows": 60,
+    "regular": {
+      "consumed_followers_by_method_count": {
+        "1": 8001606,
+        "2": 5397565,
+        "3": 2465,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      },
+      "consumed_followers": 13401636,
+      "multi_method_followers": 5400030,
+      "multi_method_fraction": 0.4029381188983196,
+      "frame_denominator": 1807,
+      "consumed_followers_per_frame": 7416.511344770338
+    },
+    "extra": {
+      "consumed_followers_by_method_count": {
+        "1": 3409071,
+        "2": 3441148,
+        "3": 1021,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      },
+      "consumed_followers": 6851240,
+      "multi_method_followers": 3442169,
+      "multi_method_fraction": 0.5024154751548625,
+      "frame_denominator": 1295,
+      "consumed_followers_per_frame": 5290.532818532819
+    },
+    "limits": [
+      "Consumed follower records across render passes; not unique units or successful draws.",
+      "Deferred leaders are excluded; no total eligible-record denominator is recorded.",
+      "Regular per-frame values include updates whose render was skipped.",
+      "Method counts measure use of the path, not time saved or FPS gained."
+    ]
+  },
+  "limits": [
+    "Completed flip-enabled EndScene calls; not measured display refresh or GPU success.",
+    "Row timestamps quantize duration; reported FPS uses the nominal interval.",
+    "Percentiles are pooled histogram bounds, not exact gaps or averaged row percentiles.",
+    "The first gap may begin before the selected interval.",
+    "Matching shadow counts do not prove correct pixels or per-frame correspondence.",
+    "Confirm the saved-game scene, loaded version/settings, visual output and runtime log.",
+    "Simulation/network/input/camera invariants require separate evidence.",
+    "The user confirms a heavy-scene improvement, but no fixed-camera interval or raw FrameView trace was supplied.",
+    "The chosen window includes a short slowdown at second 224 and changing visible mesh counts. It is not a verified settled 59/s result.",
+    "Later high-rate windows have much lower visible mesh counts and must not substitute for the heavy scenario.",
+    "Different captures are not a controlled same-save A/B; no exact percentage improvement is claimed.",
+    "The 120 FPS cost arithmetic combines ordinary-work averages and conditionally admitted extra draws across a changing scene. It is only a budget illustration, not a replay or predicted FPS.",
+    "No new binary, installed INI change, game launch or multiplayer validation was performed for this report."
+  ],
+  "user_report": "Definitely more than 30 in the heavy scene; around 55 FPS; user confirms improvement.",
+  "loaded_version": "0.9.11-beta.14",
+  "source_commit": "f6ebb2274708602be2c35e64a6b5932d4356eb96",
+  "capture": {
+    "directory": "C:\\repositories\\sage-boost\\perf\\build\\captures\\beta14-user55-20261019-092345",
+    "hashes": {
+      "bfme2perf.ini": "ccc962baba6d8d5ba5d928dae7cc134b641c13d2d2edc7d15b6a2a2d3bd76575",
+      "bfme2perf.log": "0779dbe66c2061228e147452e3b9a36e5fc93795092cff71a264c6b13a9c52e2",
+      "bfme2perf_timing.csv": "8d589ff6974d0fdce56df8325f88341d7579ac1a05a55aec80c6c32bf8db151a",
+      "bfme2perf_scopes.csv": "605f24a39ee7ff31dd89c2bbbca732a39c11fa2202ed0108fc39f765ea876124",
+      "installed_binary": "320f99d66269265c069388bc0231233e0ce234d26e78adad36a20bca9a9ba630"
+    }
+  },
+  "captured_with_game_and_launcher_closed": true,
+  "installed_binary_and_ini_match_beta14_receipt": true,
+  "scenario": {
+    "heavy_scene_reported_by_user": true,
+    "exact_interval_identified_by_user": false,
+    "frameview_raw_capture_available": false,
+    "settled_fixed_scene_verified": false
+  },
+  "selection": "Complete 60-second window with positive logic ticks and nonzero instanced meshes in every row, maximizing frame-weighted instanced-mesh count (not presentation rate). This is also the earliest eligible window; no claim that the mesh proxy proves constant scene complexity.",
+  "eligible_windows": [
+    {
+      "start_s": 220,
+      "presentation_calls_per_nominal_second": 51.583333333333336,
+      "frame_weighted_instanced_meshes": 7874.510791366906
+    },
+    {
+      "start_s": 221,
+      "presentation_calls_per_nominal_second": 51.78333333333333,
+      "frame_weighted_instanced_meshes": 7840.127836192584
+    },
+    {
+      "start_s": 222,
+      "presentation_calls_per_nominal_second": 52.05,
+      "frame_weighted_instanced_meshes": 7800.44407530454
+    },
+    {
+      "start_s": 223,
+      "presentation_calls_per_nominal_second": 52.416666666666664,
+      "frame_weighted_instanced_meshes": 7756.686773657997
+    },
+    {
+      "start_s": 224,
+      "presentation_calls_per_nominal_second": 52.71666666666667,
+      "frame_weighted_instanced_meshes": 7713.454897620365
+    },
+    {
+      "start_s": 225,
+      "presentation_calls_per_nominal_second": 53.3,
+      "frame_weighted_instanced_meshes": 7663.373487348735
+    },
+    {
+      "start_s": 226,
+      "presentation_calls_per_nominal_second": 53.7,
+      "frame_weighted_instanced_meshes": 7504.656215621562
+    },
+    {
+      "start_s": 227,
+      "presentation_calls_per_nominal_second": 54.05,
+      "frame_weighted_instanced_meshes": 7348.781628162817
+    },
+    {
+      "start_s": 228,
+      "presentation_calls_per_nominal_second": 54.233333333333334,
+      "frame_weighted_instanced_meshes": 7190.332783278328
+    },
+    {
+      "start_s": 229,
+      "presentation_calls_per_nominal_second": 54.4,
+      "frame_weighted_instanced_meshes": 7028.460946094609
+    },
+    {
+      "start_s": 230,
+      "presentation_calls_per_nominal_second": 54.6,
+      "frame_weighted_instanced_meshes": 6871.167216721672
+    },
+    {
+      "start_s": 231,
+      "presentation_calls_per_nominal_second": 54.9,
+      "frame_weighted_instanced_meshes": 6708.75797579758
+    },
+    {
+      "start_s": 232,
+      "presentation_calls_per_nominal_second": 55.18333333333333,
+      "frame_weighted_instanced_meshes": 6503.02089059923
+    },
+    {
+      "start_s": 233,
+      "presentation_calls_per_nominal_second": 55.55,
+      "frame_weighted_instanced_meshes": 6300.3861386138615
+    },
+    {
+      "start_s": 234,
+      "presentation_calls_per_nominal_second": 55.96666666666667,
+      "frame_weighted_instanced_meshes": 6103.917491749175
+    },
+    {
+      "start_s": 235,
+      "presentation_calls_per_nominal_second": 56.65,
+      "frame_weighted_instanced_meshes": 5902.148982957669
+    },
+    {
+      "start_s": 236,
+      "presentation_calls_per_nominal_second": 56.916666666666664,
+      "frame_weighted_instanced_meshes": 5707.73446948873
+    },
+    {
+      "start_s": 237,
+      "presentation_calls_per_nominal_second": 57.016666666666666,
+      "frame_weighted_instanced_meshes": 5512.669416941694
+    },
+    {
+      "start_s": 238,
+      "presentation_calls_per_nominal_second": 57.25,
+      "frame_weighted_instanced_meshes": 5323.956545654565
+    },
+    {
+      "start_s": 239,
+      "presentation_calls_per_nominal_second": 57.46666666666667,
+      "frame_weighted_instanced_meshes": 5134.611874656404
+    },
+    {
+      "start_s": 240,
+      "presentation_calls_per_nominal_second": 57.61666666666667,
+      "frame_weighted_instanced_meshes": 4946.493399339934
+    },
+    {
+      "start_s": 241,
+      "presentation_calls_per_nominal_second": 57.75,
+      "frame_weighted_instanced_meshes": 4767.66501650165
+    },
+    {
+      "start_s": 242,
+      "presentation_calls_per_nominal_second": 57.93333333333333,
+      "frame_weighted_instanced_meshes": 4587.888888888889
+    },
+    {
+      "start_s": 243,
+      "presentation_calls_per_nominal_second": 58.1,
+      "frame_weighted_instanced_meshes": 4417.806380638064
+    },
+    {
+      "start_s": 244,
+      "presentation_calls_per_nominal_second": 58.083333333333336,
+      "frame_weighted_instanced_meshes": 4251.403740374038
+    },
+    {
+      "start_s": 245,
+      "presentation_calls_per_nominal_second": 58.18333333333333,
+      "frame_weighted_instanced_meshes": 4086.142385926333
+    },
+    {
+      "start_s": 246,
+      "presentation_calls_per_nominal_second": 58.2,
+      "frame_weighted_instanced_meshes": 3927.0335533553357
+    },
+    {
+      "start_s": 247,
+      "presentation_calls_per_nominal_second": 58.36666666666667,
+      "frame_weighted_instanced_meshes": 3782.1325632563257
+    },
+    {
+      "start_s": 248,
+      "presentation_calls_per_nominal_second": 58.43333333333333,
+      "frame_weighted_instanced_meshes": 3637.1985698569856
+    },
+    {
+      "start_s": 249,
+      "presentation_calls_per_nominal_second": 58.55,
+      "frame_weighted_instanced_meshes": 3490.1958195819584
+    },
+    {
+      "start_s": 250,
+      "presentation_calls_per_nominal_second": 58.583333333333336,
+      "frame_weighted_instanced_meshes": 3350.5753575357535
+    },
+    {
+      "start_s": 251,
+      "presentation_calls_per_nominal_second": 58.733333333333334,
+      "frame_weighted_instanced_meshes": 3217.5885588558854
+    },
+    {
+      "start_s": 252,
+      "presentation_calls_per_nominal_second": 58.733333333333334,
+      "frame_weighted_instanced_meshes": 3083.272277227723
+    },
+    {
+      "start_s": 253,
+      "presentation_calls_per_nominal_second": 58.733333333333334,
+      "frame_weighted_instanced_meshes": 2957.727722772277
+    },
+    {
+      "start_s": 254,
+      "presentation_calls_per_nominal_second": 59.35,
+      "frame_weighted_instanced_meshes": 2836.605610561056
+    },
+    {
+      "start_s": 255,
+      "presentation_calls_per_nominal_second": 59.88333333333333,
+      "frame_weighted_instanced_meshes": 2719.980208905992
+    },
+    {
+      "start_s": 256,
+      "presentation_calls_per_nominal_second": 60.13333333333333,
+      "frame_weighted_instanced_meshes": 2607.2699285321605
+    },
+    {
+      "start_s": 257,
+      "presentation_calls_per_nominal_second": 60.166666666666664,
+      "frame_weighted_instanced_meshes": 2498.82398239824
+    },
+    {
+      "start_s": 258,
+      "presentation_calls_per_nominal_second": 60.25,
+      "frame_weighted_instanced_meshes": 2397.3553355335534
+    },
+    {
+      "start_s": 259,
+      "presentation_calls_per_nominal_second": 60.3,
+      "frame_weighted_instanced_meshes": 2297.482682792743
+    },
+    {
+      "start_s": 260,
+      "presentation_calls_per_nominal_second": 60.3,
+      "frame_weighted_instanced_meshes": 2196.013201320132
+    },
+    {
+      "start_s": 261,
+      "presentation_calls_per_nominal_second": 60.31666666666667,
+      "frame_weighted_instanced_meshes": 2102.052805280528
+    },
+    {
+      "start_s": 262,
+      "presentation_calls_per_nominal_second": 60.35,
+      "frame_weighted_instanced_meshes": 2009.8499175371082
+    },
+    {
+      "start_s": 263,
+      "presentation_calls_per_nominal_second": 60.36666666666667,
+      "frame_weighted_instanced_meshes": 1915.862486248625
+    },
+    {
+      "start_s": 264,
+      "presentation_calls_per_nominal_second": 60.5,
+      "frame_weighted_instanced_meshes": 1826.885588558856
+    },
+    {
+      "start_s": 265,
+      "presentation_calls_per_nominal_second": 60.5,
+      "frame_weighted_instanced_meshes": 1737.9021440351842
+    },
+    {
+      "start_s": 266,
+      "presentation_calls_per_nominal_second": 60.46666666666667,
+      "frame_weighted_instanced_meshes": 1648.6006600660066
+    },
+    {
+      "start_s": 267,
+      "presentation_calls_per_nominal_second": 60.63333333333333,
+      "frame_weighted_instanced_meshes": 1563.9141914191418
+    },
+    {
+      "start_s": 268,
+      "presentation_calls_per_nominal_second": 60.63333333333333,
+      "frame_weighted_instanced_meshes": 1482.148514851485
+    },
+    {
+      "start_s": 269,
+      "presentation_calls_per_nominal_second": 60.766666666666666,
+      "frame_weighted_instanced_meshes": 1403.4661902144035
+    },
+    {
+      "start_s": 270,
+      "presentation_calls_per_nominal_second": 60.75,
+      "frame_weighted_instanced_meshes": 1324.6743674367438
+    },
+    {
+      "start_s": 271,
+      "presentation_calls_per_nominal_second": 60.63333333333333,
+      "frame_weighted_instanced_meshes": 1249.5258525852585
+    },
+    {
+      "start_s": 272,
+      "presentation_calls_per_nominal_second": 60.68333333333333,
+      "frame_weighted_instanced_meshes": 1176.6129741616273
+    },
+    {
+      "start_s": 273,
+      "presentation_calls_per_nominal_second": 60.75,
+      "frame_weighted_instanced_meshes": 1174.3608360836083
+    },
+    {
+      "start_s": 274,
+      "presentation_calls_per_nominal_second": 60.75,
+      "frame_weighted_instanced_meshes": 1180.928492849285
+    },
+    {
+      "start_s": 275,
+      "presentation_calls_per_nominal_second": 60.8,
+      "frame_weighted_instanced_meshes": 1188.3040131940627
+    },
+    {
+      "start_s": 276,
+      "presentation_calls_per_nominal_second": 60.6,
+      "frame_weighted_instanced_meshes": 1170.1996699669967
+    },
+    {
+      "start_s": 277,
+      "presentation_calls_per_nominal_second": 60.78333333333333,
+      "frame_weighted_instanced_meshes": 1107.5594059405942
+    },
+    {
+      "start_s": 278,
+      "presentation_calls_per_nominal_second": 61.11666666666667,
+      "frame_weighted_instanced_meshes": 1040.6122112211222
+    },
+    {
+      "start_s": 279,
+      "presentation_calls_per_nominal_second": 61.166666666666664,
+      "frame_weighted_instanced_meshes": 975.0692688290269
+    },
+    {
+      "start_s": 280,
+      "presentation_calls_per_nominal_second": 61.18333333333333,
+      "frame_weighted_instanced_meshes": 910.2343234323432
+    },
+    {
+      "start_s": 281,
+      "presentation_calls_per_nominal_second": 61.46666666666667,
+      "frame_weighted_instanced_meshes": 850.7293729372938
+    },
+    {
+      "start_s": 282,
+      "presentation_calls_per_nominal_second": 61.583333333333336,
+      "frame_weighted_instanced_meshes": 791.3771302913689
+    },
+    {
+      "start_s": 283,
+      "presentation_calls_per_nominal_second": 61.483333333333334,
+      "frame_weighted_instanced_meshes": 731.030803080308
+    },
+    {
+      "start_s": 284,
+      "presentation_calls_per_nominal_second": 61.78333333333333,
+      "frame_weighted_instanced_meshes": 674.4961496149615
+    }
+  ],
+  "frame_weighted_metrics": {
+    "frame_avg_ms": 18.01294355285003,
+    "logic_ms": 2.9672042058660764,
+    "render_ms": 10.314990038738241,
+    "shadow_ms": 4.95884449363586,
+    "fx_batch_ms": 4.011156613171002,
+    "fx_mesh_ms": 1.9955871610403983,
+    "inst_meshes": 7874.510791366906
+  },
+  "extra_draw_mean_ms": 8.85741081081081,
+  "extra_shadow_pass_mean_ms": 3.7075822393822397,
+  "blockers": {
+    "fps_block_cost": 426,
+    "fps_block_catchup": 44,
+    "fps_block_pause": 26,
+    "fps_block_stop": 0,
+    "fps_probe_attempts": 0,
+    "extra_late": 1,
+    "skipped_draws": 7
+  },
+  "cadence": {
+    "ordinary_updates_per_nominal_second": 30.116666666666667,
+    "logic_ticks": 362,
+    "zero_logic_rows": []
+  },
+  "activation": [
+    "experimental: PairPacing=1: one extra draw per native update, at most 4 ms predicted debt; later waits repay it; fresh shadows, reflection preferences retained; matching-beta multiplayer and gameplay FPS unqualified"
+  ],
+  "full_capture_late_messages": [
+    "fps: a game frame was 13 ms late after an extra frame of 24203 us (expected 10134 us); extra frames paused for 1000 ms, not counted (grace period) (0 ms late in the last minute counted)",
+    "fps: a game frame was 5 ms late after an extra frame of 21277 us (expected 15375 us); extra frames paused for 1000 ms (5 ms late in the last minute counted), more since the last line",
+    "fps: a game frame was 15 ms late after an extra frame of 26572 us (expected 10721 us); extra frames paused for 1000 ms (20 ms late in the last minute counted)",
+    "fps: a game frame was 8 ms late after an extra frame of 18701 us (expected 4045 us); extra frames paused for 1000 ms (23 ms late in the last minute counted)",
+    "fps: a game frame was 22 ms late after an extra frame of 34641 us (expected 2051 us); extra frames paused for 1000 ms (30 ms late in the last minute counted)"
+  ],
+  "goal_achieved": false,
+  "120_fps_assessment": {
+    "current_paired_max_extra_draws_per_native_update": 1,
+    "native_period_in_log_ms": 33,
+    "paired_ceiling_calls_per_second_at_33ms": 60.60606060606061,
+    "extra_draws_per_ordinary_update_for_approximately_120": 3,
+    "120fps_average_frame_budget_ms": 8.333333333333334,
+    "illustrative_regular_plus_three_extras_ms": 44.58517598528246,
+    "illustrative_extra_budget_with_regular_cost_unchanged_ms": 4.995685482383323,
+    "is_gameplay_forecast": false
+  }
+}

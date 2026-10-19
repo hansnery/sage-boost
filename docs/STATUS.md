@@ -10,10 +10,46 @@ files before relying on it.
 For the consolidated outcome of the unsuccessful 60 FPS attempts, read
 [Performance investigation: what did not deliver the target](PERFORMANCE-INVESTIGATION.md).
 It separates gameplay results, offline regressions, insufficient synthetic
-gains and untested alternatives. No meaningful FPS improvement in Hans's
-troop-heavy scene has been demonstrated; the target remains unmet.
+gains and untested alternatives. On October 19 Hans reported the first clear
+heavy-scene improvement with beta.14, around 55 FPS. The settled 59/s target
+and multiplayer qualification remain unmet.
 
 ## Next target: 60 visual FPS with shadows at 60 (2026-10-17)
+
+### First user-confirmed heavy-scene improvement (2026-10-19)
+
+Hans reports definitely exceeding 30 FPS in the heavy scene, around 55 FPS,
+and asks to commit/push the result and assess 120 FPS. Beta.14's implementation
+was already committed/pushed as `f6ebb22`; this checkpoint records gameplay
+evidence without changing the installed binary or preferences.
+
+The game and launcher were closed when the new capture was copied. Its log
+confirms beta.14 with PairPacing=1; binary and INI hashes match the installation
+receipt. Seconds 220..279 contain 3,095 completed presentation calls, or
+51.5833 per nominal second, with 1,807 ordinary updates and 1,295 extras.
+This is the complete positive-logic/nonempty window with the highest
+frame-weighted instanced-mesh count, not the fastest window. Mesh counts
+change and second 224 has a slowdown, so it is not a verified settled test.
+Later faster windows have much less visible geometry. The raw FrameView
+trace and exact scene timestamps were not supplied.
+
+Pacing p50 lies in (16.667, 20] ms and p95 in (33.334, 50] ms. Every counted
+extra has a shadow call and completed shadow sample; no regular shadow skips
+or sampled verification failures occur. There are 426 cost blocks, 44
+catch-up blocks and 26 backoff blocks, with one late extra. Ordinary updates
+average 30.1167/s. These counters do not independently prove correct pixels,
+unchanged game speed/input behavior or multiplayer sync.
+[Capture, selection and limits](benchmarks/2026-10-19-beta14-gameplay-check.json).
+
+For 120 FPS, paired mode's current one-extra limit must change: at the
+logged 33 ms native period its ceiling is about 60.6/s, even with MaxFPS=120.
+Approximately 120 needs three extras per ordinary update. In this changing
+window ordinary work averages 18.01 ms and admitted extras 8.86 ms, including
+3.71 ms of shadow work. Illustratively, 18.01 + 3*8.86 = 44.59 ms exceeds a
+33 ms period; keeping ordinary work fixed would leave about 5 ms per extra.
+These aggregate costs are not a prediction or paired trace. Stabilize 60
+and reduce rendering cost before qualifying an adaptive 90/120 path; do not
+raise the limit alone or reduce shadow quality. No 120 FPS build is installed.
 
 ### Paired-cadence runtime beta.14 (2026-10-19)
 

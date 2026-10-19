@@ -4,27 +4,27 @@ Evidence through 2026-10-19. Initially consolidated from development commit
 `79d58c5`; subsequent experiments cite their own reports below.
 Written at Hans's request after repeated reports of approximately 30 FPS.
 
-**We have not demonstrated a meaningful FPS improvement in Hans's troop-heavy
-scene, and we have not achieved the 60 FPS target.** Hans sometimes reported
-smoother movement, but FrameView still showed a maximum of about 30 FPS in
-the reported heavy tests. Offline improvements and passing correctness tests
-have not translated into a demonstrated gameplay result.
+**Beta.14 is the first user-confirmed heavy-scene improvement, around 55 FPS;
+the sustained 60 FPS target remains unmet.** Earlier builds sometimes felt
+smoother but remained around 30 in Hans's heavy tests. The new copied capture
+supports a real increase in presentation calls. It does not establish a
+fixed-scene 59/s result, an exact A/B gain or matching-beta multiplayer sync.
 
 There is no controlled same-save before/after measurement that establishes
 the size or cause of a gameplay improvement. That does not prove every
 optimization is useless; it means we cannot claim the requested improvement.
 The many intermediate builds and benchmark qualifications are not separate
-successful optimizations or separate gameplay tests.
+successful optimizations or separate gameplay tests. Preserve their failed
+or insufficient outcomes below; beta.14 does not retroactively qualify them.
 
 This is the concise outcome record. [STATUS.md](STATUS.md) retains the
 chronology; the linked reports retain measurements, controls and provenance.
 Read this before reviving an old approach. The latest gameplay evidence is
-from **0.9.11-beta.13**. Beta.14's paired-cadence adapter now passes offline
-qualification and is installed for Hans's test; see STATUS.md and the
+from **0.9.11-beta.14**, whose paired-cadence adapter is installed; see STATUS.md and the
 [installation receipt](benchmarks/2026-10-19-paired-cadence-install.json). Worker experiments remain
 offline harnesses, not installed game features.
 
-## New candidate awaiting gameplay: paired cadence (beta.14)
+## First partial gameplay success: paired cadence (beta.14)
 
 The new policy relaxes the old per-frame admission margin and repays small
 overruns by shortening later waits. It adds at most one extra draw per
@@ -36,10 +36,24 @@ Production-object tests admit 1,800 extra draws in a controlled workload
 where legacy admission allows none, preserving 1,800 ordinary updates in
 about 59.4 virtual seconds. Tests also cover jitter, transient recovery,
 persistent overload, eligibility and ownership. The full suite passes.
-There is no gameplay result or FPS forecast from these tests; the earlier,
+Those tests alone provide no gameplay result or FPS forecast; the earlier,
 heavier cost model does not sustain 60.6 even with this policy. See the
 [runtime report](benchmarks/2026-10-19-paired-cadence-runtime.json) and
 [verification limits](specs/2026-10-19-paired-cadence-runtime.md).
+
+Hans subsequently reports around 55 FPS in the heavy scene. The copied
+capture's densest complete positive-logic/nonempty 60-second window contains
+3,095 presentation calls (51.5833/s) and 1,295 extras with matching fresh-shadow
+counts. Pacing p50 is (16.667, 20] ms; p95 remains (33.334, 50] ms. Workload
+varies and one second contains a slowdown. Later higher rates occur with
+much less visible geometry. This supports improvement without proving the
+settled target. [Gameplay evidence](benchmarks/2026-10-19-beta14-gameplay-check.json).
+
+120 FPS requires both more than the current one extra per update and enough
+rendering headroom for three extras. The chosen window's aggregate ordinary
+and extra costs illustrate a 44.59 ms four-draw workload against a 33 ms
+native period. This is a rough budget screen, not predicted FPS; it does not
+justify merely raising the scheduler limit or changing shadow quality.
 
 ## Target and evidence standard
 
@@ -75,8 +89,9 @@ save, requiring a replacement. Rates are internal calls per nominal second.
 | beta.13, recreated save | 1,817 calls / 60 s = **30.28/s**, four extras. | Multi-method batching was active. Four zero-logic rows make this unsuitable as a controlled unpaused target run. [Report](benchmarks/2026-10-18-beta13-gameplay-check.json). |
 | beta.13, later live capture | Dense exploratory window: 1,795 calls / 60 s = **29.92/s**. Later readings exceeded 60. | Hans identified the high readings as a **lighter scene or different match**. They do not demonstrate success in the heavy save. [Report](benchmarks/2026-10-18-beta13-live-gameplay-check.json). |
 | beta.13, latest "Still 30" report | Latest eligible window: 1,927 calls / 60 s = **32.12/s**, 113 extras. | Exact save/scene was not confirmed and workload varied within the window. This is neither a settled heavy-scene result nor proof of 32 displayed FPS. [Report](benchmarks/2026-10-18-beta13-still30-gameplay-check.json). |
+| beta.14, user reports around 55 in the heavy scene | Densest eligible window: 3,095 calls / 60 s = **51.58/s**, 1,295 extras. | First user-confirmed improvement above 30; varying workload, a slowdown and no raw FrameView trace prevent a settled 59/s claim. [Report](benchmarks/2026-10-19-beta14-gameplay-check.json). |
 
-The last capture's pacing histogram places p50 in **(25, 33.334] ms** and p95
+The last beta.13 capture's pacing histogram places p50 in **(25, 33.334] ms** and p95
 in **(33.334, 50] ms**. It recorded 1,155 cost blocks, no safety-stop blocks
 and no recovery probes. This supports insufficient render headroom as the
 recorded scheduling reason. Overlapping scope timings and one-second

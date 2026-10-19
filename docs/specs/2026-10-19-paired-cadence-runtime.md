@@ -78,6 +78,13 @@ workload: it must back off, not receive the transient-recovery treatment.
 
 No actual game, GPU scene, FrameView measurement or multiplayer peer runs in
 these new cadence tests. The old cost aggregates are not paired samples.
-There is no verified gameplay FPS gain yet. A local beta test is justified
-by removing a demonstrated admission/recovery obstacle; the 59/s heavy-scene
-target still requires Hans's capture, and matching-beta sync remains open.
+Those tests alone do not establish a gameplay FPS gain. A local beta test
+was justified by removing a demonstrated admission/recovery obstacle.
+
+Hans subsequently reports about 55 FPS in the heavy scene. The
+[copied gameplay capture](../benchmarks/2026-10-19-beta14-gameplay-check.json)
+records 51.5833 presentation calls/s in the densest eligible complete
+60-second window, with 1,295 extras and matching shadow samples. The scene
+varies and the interval includes a slowdown. The settled 59/s target and
+matching-beta sync remain open; the improvement does not establish 120 FPS
+headroom or remove the adapter's one-extra-per-update limit.
