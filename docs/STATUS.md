@@ -30,6 +30,17 @@ Exact settled scene timestamps and FrameView data remain unavailable. Do
 not infer a controlled speedup or sustained 59/s from the user's near-60
 observation. See [gameplay evidence](benchmarks/2026-10-19-beta16-gameplay-check.json).
 
+Hans confirms the same saved-game scenario with the troops already present
+and 2x command-point limit. Exact camera/interval alignment remains unknown.
+Ten-second blocks 210..239 average 60.1..60.6 presentations/s, but weighted
+instanced-mesh counts fall from about 4,586 to 640. Earlier 150..199 blocks
+average 32.6..42.4/s with roughly 8,143..13,574 meshes. This explains the
+near-60 observation without establishing a sustained heavy-view result.
+The 180..189 block has 274 cost blocks, a 19.84 ms mean estimate and 9.79 ms
+mean admitted-extra cost, with zero probes. Admission biases those actual
+costs; they cannot safely replace the estimate for refused frames. Inspect
+probe eligibility and full render costs before changing admission again.
+
 The paired scheduler no longer discards eligible recovery credit whenever a
 normal extra succeeds. An old expensive sample could otherwise remain while
 intermittent cheaper extras repeatedly prevented the 60-observation probe.

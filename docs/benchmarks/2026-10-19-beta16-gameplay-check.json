@@ -142,5 +142,104 @@
     41.766666666666666,
     53.083333333333336
   ],
-  "recovery_log": []
+  "recovery_log": [],
+  "user_confirmed_scenario": {
+    "same_saved_game_as_previous_test": true,
+    "troops_already_present": true,
+    "command_point_limit_multiplier": 2,
+    "exact_matching_camera_and_interval_verified": false
+  },
+  "ten_second_intervals": [
+    {
+      "start": 150,
+      "present": 42.4,
+      "frame_ms": 19.82526962457338,
+      "extra_ms": 9.73409090909091,
+      "expected_ms": 16.323900000000002,
+      "cost_blocks": 115,
+      "probes": 0,
+      "mesh": 9996.569965870307
+    },
+    {
+      "start": 160,
+      "present": 39.0,
+      "frame_ms": 23.59241584158416,
+      "extra_ms": 12.083390804597702,
+      "expected_ms": 15.0582,
+      "cost_blocks": 203,
+      "probes": 0,
+      "mesh": 13573.49504950495
+    },
+    {
+      "start": 170,
+      "present": 37.4,
+      "frame_ms": 22.41729372937294,
+      "extra_ms": 11.452013888888889,
+      "expected_ms": 17.1114,
+      "cost_blocks": 192,
+      "probes": 0,
+      "mesh": 11774.567656765677
+    },
+    {
+      "start": 180,
+      "present": 32.6,
+      "frame_ms": 20.710349834983496,
+      "extra_ms": 9.790958333333334,
+      "expected_ms": 19.841,
+      "cost_blocks": 274,
+      "probes": 0,
+      "mesh": 9880.122112211222
+    },
+    {
+      "start": 190,
+      "present": 41.9,
+      "frame_ms": 18.973016501650168,
+      "extra_ms": 9.16631896551724,
+      "expected_ms": 17.5779,
+      "cost_blocks": 184,
+      "probes": 0,
+      "mesh": 8142.729372937294
+    },
+    {
+      "start": 200,
+      "present": 58.4,
+      "frame_ms": 15.371108910891088,
+      "extra_ms": 8.6472695035461,
+      "expected_ms": 11.1843,
+      "cost_blocks": 4,
+      "probes": 0,
+      "mesh": 6025.983498349835
+    },
+    {
+      "start": 210,
+      "present": 60.4,
+      "frame_ms": 13.484402640264026,
+      "extra_ms": 7.8655215946843855,
+      "expected_ms": 10.2746,
+      "cost_blocks": 2,
+      "probes": 0,
+      "mesh": 4586.102310231023
+    },
+    {
+      "start": 220,
+      "present": 60.1,
+      "frame_ms": 8.717194078947369,
+      "extra_ms": 5.061414141414142,
+      "expected_ms": 6.3917,
+      "cost_blocks": 1,
+      "probes": 0,
+      "mesh": 1833.4506578947369
+    },
+    {
+      "start": 230,
+      "present": 60.6,
+      "frame_ms": 8.204587458745873,
+      "extra_ms": 4.876085808580858,
+      "expected_ms": 6.4153,
+      "cost_blocks": 0,
+      "probes": 0,
+      "mesh": 640.2211221122112
+    }
+  ],
+  "interval_limits": "Mesh counts vary with rendering passes, visibility and batching; not a unique-unit count. Admitted extra costs are selection-biased and cannot predict the cost of refused extras. Ten-second intervals do not satisfy the settled 60-second target."
 }
