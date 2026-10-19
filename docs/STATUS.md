@@ -58,6 +58,40 @@ Accelerator has now run in isolated offline harnesses (below).
   resolve a reproducible multiplayer divergence only after one is observed.
   No promised FPS gain, deployment or new gameplay request from this review.
 
+### Qualified bulk capture (2026-10-18)
+
+The next optional fixture captures follower palettes at the verified native
+loop boundary, retaining the native first member and group lifecycle. It
+requires exact fixture records, matching method/model state and absent
+external callbacks. Unsupported conditions return to the native loop;
+external callback counts/order and images are compared separately. Native
+method references and aggregate mesh-event accounting remain checked.
+
+Both local images/backends pass **192 candidate image/state cases, 96
+callback-refusal pairs, 160 predicate controls and 96 deliberate faults**.
+Lit pixels and captured state match; shadow depth remains within 1/2^24 of
+the reference. Longer native tests exposed device AddRef during D3DX texture
+assignment. The audit now permits only scoped ownership operations, while
+state calls and unscoped references still fail; a new fault proves that
+boundary. Failed runs and debugger evidence are retained in the
+[report](benchmarks/2026-10-18-group-bulk-capture.json).
+
+The worker saves a paired median **0.91-2.36 ms per regular/extra pair** over
+the prior command worker. Against the independent native bulk reference,
+native D3D9 saves **1.34-2.53 ms**, but DXVK still loses **0.20-1.62 ms**.
+These are synthetic comparisons, not gameplay FPS. No installation follows.
+
+The next concrete difference is GPU draw count: the independent consumer
+draws the leader separately, then two follower batches; native bulk draws
+all 25 units in two batches. Test including the leader in checked instanced
+submission, preserving the old consumer as a comparison. Redundant frame
+ownership/start handoffs are another remaining cost. Live resource lifetime,
+driver-error propagation and whole-scene/Present still need qualification.
+
+Original group and command-worker regressions pass 48 additional image/state
+cases and 24 fault processes. Installed beta.13 and its INI hashes are
+unchanged. Production sources are unchanged; no new gameplay test is requested.
+
 ### Producer capture profile (2026-10-18)
 
 The optional command profile separates effect recording, native traversal,

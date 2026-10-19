@@ -499,3 +499,64 @@ already-verified loop boundary, while retaining original native event and
 method ownership behavior and ordinary fallback. Compare its complete work
 against both the prior command worker and native bulk reference. No runtime
 or installed change follows from the profile alone.
+
+## Qualified fixed-fixture follower capture
+
+The optional `bench_group_capture.exe` retains the first native mesh callback
+and copies the remaining palettes through the verified native group loop
+hook. It requires the expected single-pass/method frame state, exact fixture
+record range, expected mesh/model/base-vertex identities and no external
+event callbacks. Any refusal returns to the original loop without consuming
+a palette. The loop bridge preserves general registers and flags. No native
+owning temporary is created for bypassed followers; the adapter therefore
+does not fabricate reference increments/decrements. Native group preparation,
+finish and method ownership remain checked. Existing aggregate scope helpers
+account for consumed mesh events, while actual external callbacks force the
+original per-mesh path.
+
+Twenty predicate controls mutate a copy of an actual captured frame and
+temporarily changed fixture fields, checking refusal and restoring eligibility
+after each. These are predicate checks, not twenty full fallback executions.
+Twelve callback pairs per process additionally execute original and fast
+capture through the native loop and compare callback counts/order hashes and
+images. Missing palette capture, omitted accounting and bypassed callback
+refusal are separate failure controls. Existing state, pose, shadow and
+ownership controls remain. Both original and fast capture are checked against
+the independent native reference before four-way rotated timings compare the
+native bulk path, direct fast capture, worker fast capture and old worker.
+
+The longer native D3D9 run exposed device AddRef in D3DX texture assignment.
+The debugger traced it through `material_fixture_sources` and `prepare`.
+This is a lifetime operation, not a render-state write. The audit now permits
+and counts only device IUnknown AddRef/Release during explicitly scoped
+source assignment or queued-resource ownership. Other device methods,
+state-block Capture/Apply and unscoped reference calls still fail. A new
+unscoped AddRef fault verifies that this is not a global audit exemption.
+The failed strict-audit run and debugger logs are retained with the report.
+The fixture still requires D3DCREATE_MULTITHREADED; this exception does not
+authorize arbitrary concurrent device-state access.
+
+This remains a fixed-fixture adapter. Arbitrary live records/resources,
+native exception recovery, original flags=6 failure equivalence, deferred
+driver errors and whole-scene/Present behavior are not qualified. Each frame
+also still waits for ownership and frame-start handoffs before capturing,
+then for full GPU completion. Removing those fixture barriers is a separate
+experiment that must retain complete timing and ownership checks.
+
+A further concrete difference remains in `packet_consumer_group_loaded`:
+it calls `pf_submit_pending` for the leader, then batches the 24 followers.
+With the observed fifteen-instance capacity, this is three GPU draws per
+25-unit group; the native bulk-first reference uses two. The next comparison
+should include the leader in checked instanced submission, preserving the
+original consumer as a control and testing first-unit image/failure behavior.
+This draw-count difference must not be mistaken for queue overhead alone.
+
+Both images/backends pass 192 candidate image/state cases, 96 external
+callback-refusal pairs, 160 predicate controls and 96 deliberately failing
+processes. Pixel/state oracles remain unchanged; shadow differences remain
+at most 1/2^24. Full four-way timings save a paired median 0.91-2.36 ms over
+the old worker. Relative to native bulk, native D3D9 saves 1.34-2.53 ms while
+DXVK regresses 0.20-1.62 ms. Preserve the uninstrumented measurements and all
+remaining frame-completion costs. See the
+[report](../benchmarks/2026-10-18-group-bulk-capture.json). This does not
+justify a runtime install or gameplay FPS prediction.

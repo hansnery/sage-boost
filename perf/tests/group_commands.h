@@ -22,6 +22,7 @@ static GcCommandBatch gc_commands,gc_command_slots[2];
 static LONG gc_command_references;
 static unsigned gc_command_capture,gc_command_callbacks,gc_command_batches,gc_command_max_bytes;
 static unsigned gc_command_verify,gc_command_restores,gc_command_audited;
+static unsigned gc_command_lifetime,gc_command_lifetime_calls;
 static void gc_send(GcRequest *,unsigned);
 
 static HRESULT gc_command_emit(unsigned kind,unsigned a,unsigned b,const void *data,unsigned bytes,IUnknown *resource)
@@ -36,7 +37,7 @@ static HRESULT gc_command_emit(unsigned kind,unsigned a,unsigned b,const void *d
     *c=(GcCommand){kind,a,b,gc_commands.bytes,bytes,resource};
     if(bytes)memcpy(gc_commands.data+c->offset,data,bytes);
     gc_commands.bytes+=aligned;
-    if(resource){IUnknown_AddRef(resource);InterlockedIncrement(&gc_command_references);}
+    if(resource){gc_command_lifetime++;IUnknown_AddRef(resource);gc_command_lifetime--;InterlockedIncrement(&gc_command_references);}
     return S_OK;
 }
 static void gc_command_flush(void)
@@ -149,6 +150,13 @@ static void **gc_stateblock_vtable;
 void gc_device_note(unsigned slot)
 {
     if(GetCurrentThreadId()==gc_producer && gc_command_capture) {
+        /* Native D3D9 resource references can also retain their device.
+         * Permit only IUnknown lifetime calls inside explicitly scoped
+         * source assignment or our queued-resource AddRef. State methods
+         * and unscoped lifetime calls still fail this audit. */
+        if((slot==1 || slot==2) && gc_command_lifetime) {
+            gc_command_lifetime_calls++;return;
+        }
         fprintf(stderr,"COMMAND DEVICE AUDIT: forbidden producer call %u\n",slot);
         REQUIRE(!gc_command_capture);
     }

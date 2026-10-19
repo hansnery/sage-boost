@@ -227,3 +227,42 @@ whole interval can be removed. Next test qualified bulk capture at the
 native loop boundary. Both backends retain prior image/state oracles;
 original/command regressions pass 48 cases and 24 faults. Details are in
 `../benchmarks/2026-10-18-group-capture-profile.json`.
+
+## Qualified follower capture at the native loop
+
+Implement an optional fixture build that keeps the first native member and
+captures the remaining fixed-fixture palettes at the verified loop hook.
+Require the current native pass/method/frame state, exact fixture records,
+matching model/base vertex and no external event callbacks. Preserve native
+method references, group prepare/finish and aggregate event accounting;
+otherwise return to the existing native loop before consuming anything.
+This does not qualify arbitrary live objects or original exception recovery.
+
+- [x] Extract palette copying from the owning native mesh callback and add
+  a general-register bridge for the optional bulk-capture fixture only.
+- [x] Compare fast and original capture against independent native images;
+  check callback refusal, scope totals, native method references, fresh
+  poses/shadows and deliberately missing palette/accounting failures.
+- [x] Rotate native bulk, direct bulk capture, worker bulk capture and the
+  original worker through complete regular/extra timing pairs. Repeat both
+  image/backend workloads if the initial pilot supports further work.
+- [x] Preserve source/log hashes and report the result honestly; deployment
+  still requires later live integration and substantive improvement proof.
+
+Completed: both images/backends pass 192 candidate image/state cases,
+96 external callback pairs, 160 predicate controls and 96 fault processes.
+The previous worker improves by a paired median 0.91-2.36 ms per pair.
+Against native bulk, native D3D9 saves 1.34-2.53 ms and DXVK loses
+0.20-1.62 ms. The original and command regressions pass 48 further cases
+and 24 faults. Installed binary/settings remain unchanged.
+
+The extended native run exposed D3DX texture assignment retaining the device.
+Only explicitly scoped COM lifetime calls are now permitted; rendering state
+and unscoped device references still fail, with a new negative control.
+The strict-audit failure and debugger traces are retained in
+`../benchmarks/2026-10-18-group-bulk-capture.json`.
+
+Next: include the leader in checked instanced submission. The consumer still
+uses three draws per 25-unit group versus two in the native bulk reference.
+Compare both consumer variants directly before testing the remaining frame
+ownership/start barriers; do not remove completion work from the timings.

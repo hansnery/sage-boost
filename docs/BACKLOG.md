@@ -124,11 +124,18 @@ Strike an item through, with the date, when it's done.
   copies and first CommitChanges; queue publication/waits occupy 0.39-0.56 ms.
   Both backends/workloads retain prior image/state oracles. See
   `benchmarks/2026-10-18-group-capture-profile.json`.
-- [ ] Reduce producer capture cost, including redundant native
-  per-mesh dispatch in already-qualified bulk groups. Preserve native
-  events, ownership and ordinary fallback; do not omit capture cost from
-  comparisons. The changed flags=7 Begin contract, deferred driver errors,
-  cold effects, live resources and whole scene/Present remain unqualified.
+- [x] 2026-10-18: qualify bulk follower capture in the fixed fixture. Both
+  images/backends pass 192 image/state cases, 96 callback-refusal pairs,
+  160 predicate controls and 96 faults. Compared with the old worker, paired
+  median savings are 0.91-2.36 ms. Native D3D9 beats its native bulk reference
+  by 1.34-2.53 ms; DXVK still trails by 0.20-1.62 ms. No install. See
+  `benchmarks/2026-10-18-group-bulk-capture.json`.
+- [ ] Include the first unit in checked consumer instancing and compare
+  against the current three-draw consumer, prior worker and native two-draw
+  reference. Preserve first-unit output, ownership, failure behavior and full
+  measured work. Then test redundant frame-start/ownership synchronization.
+  The changed flags=7 Begin contract, deferred driver errors, cold effects,
+  live resources and whole scene/Present remain unqualified.
 - [x] 2026-10-18: back up a second launcher replacement of beta.13 by
   0.9.10, restore the identical tested binary and only the three missing beta
   keys, and verify the shortcut with CheckOnly. No game launched; see
