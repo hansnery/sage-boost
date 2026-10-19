@@ -11,6 +11,16 @@ Strike an item through, with the date, when it's done.
   Read upstream documentation/releases/issues; stage and hash-check official
   Accelerator 2.0 build 73 and SAGE Unlocked 1.9.5 archives without installing
   or executing them. See STATUS.md for evidence, conflicts and the receipt.
+- [x] 2026-10-18: clarify the SAGE Unlocked multiplayer evidence at the
+  user's request. The 1.9.4 release claims mixed-FPS/stock-peer sync;
+  Hans's October 12 issue #20 reports unit skipping during multiplayer,
+  without a release number or desync report. Documentation review is not
+  independent Realms validation, and effect-speed issue #32 is separate.
+- [ ] Evaluate SAGE Unlocked's unit presentation separately from its sync
+  claim. A later multiplayer qualification must identify exact versions,
+  include differing FPS and an unmodified performance-plugin peer, and
+  record sustained match/simulation behavior. Preserve the existing
+  faction unlocker; no new game-test request without significant evidence.
 - [ ] Prioritize render-thread isolation/compatibility over further small
   material caches. Accelerator multiplayer remains untested upstream;
   SAGE Unlocked's reported sync fix does not establish Realms compatibility.

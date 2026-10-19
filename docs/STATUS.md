@@ -29,9 +29,19 @@ Accelerator has now run in isolated offline harnesses (below).
   [1.9.4](https://github.com/TheeHorse/SAGE-Unlocked/releases/tag/v1.9.4)
   and subsequent logic corrections in stable
   [1.9.5](https://github.com/TheeHorse/SAGE-Unlocked/releases/tag/v1.9.5).
-  This is not Realms validation; Hans's
+  The 1.9.4 claim explicitly includes different render rates and a peer
+  without the mod: stock logic order and game speed should remain equal.
+  Our investigation has reviewed documentation and reports; it has not
+  independently validated that claim in a Realms multiplayer match.
+  Hans's October 12 [multiplayer report](https://github.com/TheeHorse/SAGE-Unlocked/issues/20)
+  describes smooth scrolling but units visibly skipping. It does not
+  specify the tested release or report a desync, and provides no sustained
+  mixed-client sync measurement. Treat unit presentation and network sync
+  as separate questions. Hans's
   [ROTWK effect-speed report](https://github.com/TheeHorse/SAGE-Unlocked/issues/32)
-  remains open. Its BFME loader occupies `dinput8.dll`, already used by our
+  remains open; it also does not establish a multiplayer sync failure.
+  SAGE remains a candidate, not a demonstrated Realms sync failure or a
+  validated replacement. Its BFME loader occupies `dinput8.dll`, already used by our
   faction unlocker. Do not overwrite that component to try it.
 - Official Accelerator 2.0 build 73 and SAGE Unlocked 1.9.5 ZIPs are staged,
   hash-verified at
