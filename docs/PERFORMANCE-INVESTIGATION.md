@@ -1,6 +1,7 @@
 # Performance investigation: what did not deliver the target
 
-Evidence through 2026-10-18, development commit `79d58c5`.
+Evidence through 2026-10-18. Initially consolidated from development commit
+`79d58c5`; subsequent experiments cite their own reports below.
 Written at Hans's request after repeated reports of approximately 30 FPS.
 
 **We have not demonstrated a meaningful FPS improvement in Hans's troop-heavy
@@ -165,6 +166,7 @@ stated otherwise, timings include queue waits and final GPU completion.
 | Bulk capture of group followers | Saved 0.91-2.36 ms versus the previous worker, but still **regressed 0.20-1.62 ms on DXVK versus native bulk rendering**. | Improving a slower prototype did not beat the relevant baseline. [Report](benchmarks/2026-10-18-group-bulk-capture.json). |
 | Including the first unit in the worker batch | Reduced fixture draws from three to two per 25 units. Saved 0.95-1.82 ms versus the previous worker; versus native bulk, DXVK ranged from 0.26 ms regression to 0.55 ms saving. | No consistent material advantage over direct bulk rendering. [Report](benchmarks/2026-10-18-group-first-batch.json). |
 | Merged/asynchronous frame start | Full matrix passed. DXVK ranged from **0.82 ms regression to 0.91 ms saving** versus the prior worker, and 0.86 ms regression to 0.94 ms saving versus native bulk. Native D3D9 improved. | No consistent DXVK gain. Final completion still serialized frames. [Full report](benchmarks/2026-10-18-group-frame-start.json). |
+| Deferring GPU completion across 2/4/8 frames | Under the same final-completion policy, DXVK worker-versus-native ranges from **0.48 ms regression to 1.21 ms saving per pair**. The native path itself saves 0.34-1.55 ms when its per-frame waits are removed. | Completion policy helps the baseline too; it is not a threading-only gain or a measured game improvement. CPU frame execution remains serialized. [Report](benchmarks/2026-10-18-group-completion.json). |
 
 The [capture profile](benchmarks/2026-10-18-group-capture-profile.json) found
 about 3.17-3.34 ms of native producer traversal versus 0.39-0.56 ms of queue
@@ -203,11 +205,26 @@ do not establish that threading as a whole has failed or succeeded.
   untested; defaults also changed frame scheduling, camera and faction AI.
   A default installation would not isolate rendering performance.
   [Release inventory](benchmarks/2026-10-18-alternative-release-preflight.json).
-- **Overlap across successive frames is not implemented.** Current worker
-  tests still complete and drain each frame. Removing that wait alone would
-  race shared state. A future comparison needs owned per-frame results and
-  resources, checks of every intermediate frame, and equal final GPU
-  completion in both candidate and baseline.
+- **MetaIdea's 60 FPS mod updater was reviewed, not executed (2026-10-18).**
+  It extracts and rebuilds mod archives, changes the FPS settings and rescales
+  gameplay data: speed factors by 0.5 and time factors by 2 at its default
+  60 FPS. This includes weapons, movement, build times and cooldowns. It is
+  a separate mod conversion, not evidence of reduced rendering cost or
+  unchanged logic. Compatibility with unconverted Realms clients is not
+  established. The author discontinued it in favor of SageMetaTool. That
+  successor's wiki also describes scaling engine values and rewriting
+  gameplay INI values during parsing; it does not establish unchanged logic
+  or lower rendering cost. Neither tool was executed here.
+  [README](https://github.com/MetaIdea/bfme2-60fps-mod-updater-tool),
+  [factors](https://github.com/MetaIdea/bfme2-60fps-mod-updater-tool/blob/main/ExecuteModDefinitionScript.lua#L1-L5),
+  [conversion rules](https://github.com/MetaIdea/bfme2-60fps-mod-updater-tool/blob/main/ModDefinitionScript.lua),
+  [SageMetaTool's mechanism](https://github.com/MetaIdea/SageMetaTool/wiki#how-does-the-60-fps-engine-proper-gamespeed-fix-work-exactly-).
+- **Producer/worker CPU overlap across successive frames is not implemented.**
+  The new [completion control](specs/2026-10-18-frame-completion-screen.md)
+  allows bounded pending GPU work, checks every intermediate image and gives
+  both paths equal final completion. It still waits for CPU command execution
+  after each frame. Removing that remaining wait needs owned per-frame results
+  and resources; simply dropping it would race shared state.
   [Completion-boundary audit](specs/2026-10-18-native-source-worker.md).
 - **Skeleton threading and extra shader coverage were deprioritized, not
   disproved.** Measured skeleton work was about 1.54 ms in the first heavy

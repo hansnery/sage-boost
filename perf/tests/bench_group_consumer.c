@@ -19,7 +19,7 @@ extern HRESULT material_fixture_try_open(unsigned *);
 extern void material_fixture_native(void **,unsigned *,unsigned *);
 extern int bench_scope_owner_idle(DWORD);
 
-enum { GC_FRAME, GC_BEGIN, GC_DRAW_END, GC_END_ONLY, GC_FINISH, GC_CLAIM, GC_STOP, GC_COMMANDS };
+enum { GC_FRAME, GC_BEGIN, GC_DRAW_END, GC_END_ONLY, GC_FINISH, GC_CLAIM, GC_STOP, GC_COMMANDS, GC_FLUSH };
 typedef struct {
     unsigned kind,extra,group,count,identity,fail,check;
 #ifdef PF_GROUP_BATCH_FIRST
@@ -53,7 +53,9 @@ static unsigned gc_batch_first=1,gc_group_size=GROUP_SIZE,gc_failure_probe;
 #ifdef PF_GROUP_COMMANDS
 #include "group_commands.h"
 #ifdef PF_GROUP_CAPTURE
-#ifdef PF_GROUP_FRAME_START
+#ifdef PF_GROUP_COMPLETION
+#define GC_MAX_FAULT 17
+#elif defined(PF_GROUP_FRAME_START)
 #define GC_MAX_FAULT 15
 #elif defined(PF_GROUP_BATCH_FIRST)
 #define GC_MAX_FAULT 13
@@ -126,6 +128,10 @@ static unsigned gc_snapshot(unsigned *out)
     return words;
 }
 
+#ifdef PF_GROUP_COMPLETION
+#include "group_completion.h"
+#endif
+
 static void gc_execute(GcRequest *r)
 {
     REQUIRE(GetCurrentThreadId()==(gc_worker_mode()?gc_gpu:gc_producer));
@@ -194,13 +200,21 @@ static void gc_execute(GcRequest *r)
         REQUIRE(gc_active_frame && gc_active_frame==r->frame_id);
 #endif
         HR(IDirect3DStateBlock9_Apply(outer));
-        HR(IDirect3DDevice9_EndScene(g_dev));drain();
+        HR(IDirect3DDevice9_EndScene(g_dev));
+#ifdef PF_GROUP_COMPLETION
+        gc_completion_finish(r);
+#else
+        drain();
         if(r->check){read_pixels(gc_output);gc_state_words=gc_snapshot(gc_state);}
+#endif
 #ifdef PF_GROUP_FRAME_START
         gc_completed_frame=gc_active_frame;gc_active_frame=0;
 #endif
         break;
     case GC_STOP: packet_consumer_close();break;
+#ifdef PF_GROUP_COMPLETION
+    case GC_FLUSH: gc_completion_flush();break;
+#endif
 #ifdef PF_GROUP_COMMANDS
     case GC_COMMANDS:
 #ifdef PF_GROUP_FRAME_START
@@ -394,6 +408,9 @@ static void gc_frame(unsigned mode,unsigned phase,unsigned check,unsigned fail)
 {
     GC_PROFILE_START(frame_start);
     REQUIRE(gc_group_size && gc_group_size<=GROUP_SIZE);
+#ifdef PF_GROUP_COMPLETION
+    gc_completion_enter(mode);
+#endif
     gc_mode=mode;gc_extra=phase!=0;gc_epoch=phase>=2;gc_fail=fail;
     GcRequest request={0};request.kind=GC_CLAIM;
 #ifdef PF_GROUP_FRAME_START
@@ -497,6 +514,10 @@ static void gc_first_validate(void)
     }
     printf("FIRST BATCH: %u size/image/state cases; %u first-batch shader failures recover with complete ordered replay; actual device draws checked\n",cases,recoveries);
 }
+#endif
+
+#ifdef PF_GROUP_COMPLETION
+#include "group_completion_cases.h"
 #endif
 
 int main(int argc,char **argv)
@@ -611,6 +632,9 @@ int main(int argc,char **argv)
 #ifdef PF_GROUP_FRAME_START
     gc_start_validate();
 #endif
+#ifdef PF_GROUP_COMPLETION
+    gc_completion_validate();
+#endif
     gc_first_device_observer(0);
 #endif
 #ifdef PF_GROUP_COMMANDS
@@ -687,6 +711,9 @@ int main(int argc,char **argv)
             gc_profile_ticks[GCP_TRAVERSE]*1000.0/qpf,gc_profile_ticks[GCP_PUBLISH]*1000.0/qpf,
             other*1000.0/qpf,(gc_profile_ticks[GCP_FRAME]-gc_profile_ticks[GCP_GROUP])*1000.0/qpf,unprofiled);
     }
+#endif
+#ifdef PF_GROUP_COMPLETION
+    gc_completion_measure();
 #endif
     gc_mode=2;GcRequest end={0};end.kind=GC_CLAIM;gc_send(&end,1);end.kind=GC_STOP;gc_send(&end,1);
     gc_wait(gc_worker);DWORD exit_code;REQUIRE(GetExitCodeThread(gc_worker,&exit_code) && !exit_code && gc_sent==gc_received);

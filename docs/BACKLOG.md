@@ -7,6 +7,19 @@ Strike an item through, with the date, when it's done.
 
 ## Full-rate 60 FPS investigation (2026-10-17)
 
+- [x] 2026-10-18: qualify equal final GPU completion for native/direct/worker
+  paths at batch depths 2/4/8. All intermediate images/states are checked;
+  stale-image and premature-mode-change controls fail as intended. DXVK
+  gains remain small/mixed against the equally batched native baseline.
+  [Evidence](benchmarks/2026-10-18-group-completion.json). CPU frame execution
+  remains serialized; live integration and 60 FPS are not established.
+- [ ] Qualify producer preparation overlapping worker CPU completion across
+  frames with owned per-frame results/resources and collection before reuse.
+  Keep the native per-batch completion control, all intermediate-frame
+  checks, bounded queue depth and an eventual whole-scene/Present test.
+- [x] 2026-10-18: review Hans's MetaIdea converter link and its successor's
+  documented mechanism. Both rescale gameplay values; neither is a qualified
+  unchanged-logic solution. [Sources](PERFORMANCE-INVESTIGATION.md#approaches-not-tested-or-excluded-by-the-requested-behavior).
 - [x] 2026-10-18: consolidate failed and insufficient approaches at Hans's
   request in [PERFORMANCE-INVESTIGATION.md](PERFORMANCE-INVESTIGATION.md).
   Read it before repeating an experiment. It records the unmet gameplay

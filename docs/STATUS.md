@@ -15,6 +15,38 @@ troop-heavy scene has been demonstrated; the target remains unmet.
 
 ## Next target: 60 visual FPS with shadows at 60 (2026-10-17)
 
+### Matched GPU-completion control (2026-10-18)
+
+`bench_group_completion.exe` compares native bulk, direct capture and the
+merged-start worker with either per-frame GPU drains or one final drain
+after 2/4/8 frames. CPU command execution still completes at each frame
+boundary. Every intermediate checked frame has its own saved GPU image/state;
+all copies and audit wrappers are absent from timing.
+
+Both images/backends pass 336 new intermediate image/state comparisons and
+136 deliberate faults, including stale-middle-image and premature-mode-change
+controls. Existing checks and separate frame-start regressions pass. The 288
+six-way timing rows show DXVK worker-versus-native paired median savings
+from **-0.48 to +1.21 ms/pair** under matched final completion. Native D3D9
+saves 1.48-3.42 ms/pair. Native bulk on DXVK itself saves 0.34-1.55 ms/pair
+when its completion policy changes. This is not a consistent large gain
+for the installed backend and cannot be credited entirely to threading.
+
+See the [specification and limits](specs/2026-10-18-frame-completion-screen.md)
+and [full evidence](benchmarks/2026-10-18-group-completion.json). The fixture
+uses a MULTITHREADED device on every path; real-game device creation differs.
+No Present, live engine ownership, gameplay FPS or multiplayer is qualified.
+Installed beta.13 and INI hashes remain unchanged. The isolated runs have
+finished; no install or new gameplay request follows. The next ownership
+boundary is producer preparation overlapping worker CPU completion across
+frames, retaining this matched native per-batch control.
+
+Hans also linked MetaIdea's 60 FPS mod converter. Its code rescales gameplay
+INI data and rebuilds mod archives; SageMetaTool's wiki describes scaling
+engine/INI values too. These mechanisms do not satisfy unchanged game logic.
+Neither was run. Sources and limits are in the
+[alternative review](PERFORMANCE-INVESTIGATION.md#approaches-not-tested-or-excluded-by-the-requested-behavior).
+
 ### Direction change: evaluate external render threading (2026-10-18)
 
 The user requests reassessing BFME2 Accelerator and SAGE Unlocked after the

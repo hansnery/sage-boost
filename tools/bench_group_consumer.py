@@ -27,7 +27,10 @@ def main():
     parser.add_argument('--capture-bulk', action='store_true', help='capture qualified follower palettes at the native loop boundary')
     parser.add_argument('--batch-first', action='store_true', help='include the first unit in checked consumer instancing')
     parser.add_argument('--frame-start', action='store_true', help='compare merged synchronous and asynchronous worker frame starts')
+    parser.add_argument('--completion', action='store_true', help='compare per-frame and bounded-batch GPU completion with every intermediate image checked')
     args = parser.parse_args()
+    if args.completion:
+        args.frame_start = True
     if args.frame_start:
         args.batch_first = True
     if args.batch_first:
@@ -38,7 +41,7 @@ def main():
         args.commands = True
     guard()
     root = Path(tempfile.mkdtemp(prefix='sage-native-group-consumer-'))
-    exe = REPO/'perf/build'/('bench_group_start.exe' if args.frame_start else 'bench_group_first.exe' if args.batch_first else 'bench_group_capture.exe' if args.capture_bulk else 'bench_group_profile.exe' if args.profile else 'bench_group_commands.exe' if args.commands else 'bench_group_consumer.exe')
+    exe = REPO/'perf/build'/('bench_group_completion.exe' if args.completion else 'bench_group_start.exe' if args.frame_start else 'bench_group_first.exe' if args.batch_first else 'bench_group_capture.exe' if args.capture_bulk else 'bench_group_profile.exe' if args.profile else 'bench_group_commands.exe' if args.commands else 'bench_group_consumer.exe')
     shutil.copy2(exe, root/exe.name)
     if args.backend == 'dxvk':
         shutil.copy2(args.install/'d3d9.dll', root/'d3d9.dll')
@@ -49,7 +52,7 @@ def main():
                *(args.install/name for name in ('Shaders.big', 'msvcr71.dll', 'd3dx9_27.dll', 'd3d9.dll')),
                REPO/'tools/test_mesh_draw_contract.py', REPO/'tools/test_group_contract.py', BASELINE]
     report = {'base_commit': subprocess.check_output(['rtk', 'git', 'rev-parse', 'HEAD'], text=True).strip(),
-              'backend': args.backend, 'commands': args.commands, 'profile': args.profile, 'capture_bulk': args.capture_bulk, 'batch_first': args.batch_first, 'frame_start': args.frame_start, 'directory': str(root), 'inputs_sha256': {str(p.resolve()): sha(p) for p in sources},
+              'backend': args.backend, 'commands': args.commands, 'profile': args.profile, 'capture_bulk': args.capture_bulk, 'batch_first': args.batch_first, 'frame_start': args.frame_start, 'completion': args.completion, 'directory': str(root), 'inputs_sha256': {str(p.resolve()): sha(p) for p in sources},
               'images': [], 'runs': [], 'game_launched': False, 'runtime_changed': False,
               'sample_columns': ['round', 'native_bulk_complete_ms', 'direct_capture_complete_ms',
                                  'worker_capture_complete_ms', 'saved_vs_native_ms']}
@@ -59,6 +62,16 @@ def main():
         report['sample_columns'].append('previous_bulk_worker_complete_ms')
     if args.frame_start:
         report['sample_columns'].extend(['previous_first_worker_complete_ms', 'merged_sync_worker_complete_ms'])
+    if args.completion:
+        report['completion_columns'] = ['frames', 'round', 'native_per_frame_ms', 'direct_per_frame_ms',
+                                        'worker_per_frame_ms', 'native_per_batch_ms', 'direct_per_batch_ms',
+                                        'worker_per_batch_ms']
+        report['completion_limits'] = [
+            'Raw timings cover the complete bounded batch, including final GPU completion; summaries normalize to two frames.',
+            'CPU command execution still completes at every frame boundary; only GPU completion is deferred.',
+            'Every intermediate correctness image is retained on a separate GPU surface and read after the final drain.',
+            'Correctness copies, readbacks and audit wrappers are absent from timing.',
+            'No Present, live engine ownership, gameplay FPS or multiplayer claim follows from this fixture.']
     reference = Image(BASELINE)
     for index, image in enumerate(args.image):
         with contextlib.redirect_stdout(io.StringIO()):
@@ -71,7 +84,7 @@ def main():
                                  'mesh_manifest': str(mesh), 'mesh_sha256': sha(mesh),
                                  'group_manifest': str(group), 'group_sha256': sha(group)})
         for workload in args.workload or ['lit', 'shadow']:
-            for fault in ([0] if args.pilot else range(16 if args.frame_start else 14 if args.batch_first else 13 if args.capture_bulk else 9 if args.commands else 5)):
+            for fault in ([0] if args.pilot else range(18 if args.completion else 16 if args.frame_start else 14 if args.batch_first else 13 if args.capture_bulk else 9 if args.commands else 5)):
                 guard()
                 command = [str(root/exe.name), str(args.install/'Shaders.big'), str(args.install/'msvcr71.dll'),
                            workload, 'narrow', '100', 'leader-bulk-first', str(image.resolve()), str(mesh), str(group), str(fault)]
@@ -107,6 +120,24 @@ def main():
                     if args.frame_start:
                         result['frame_start'] = next(s for s in text.splitlines() if s.startswith('FRAME START:'))
                         assert '12 image/state cases; 6 held-worker capture probes; 4 shader-failure recovery cases;' in result['frame_start']
+                    if args.completion:
+                        result['completion_checks'] = next(s for s in text.splitlines() if s.startswith('COMPLETION:'))
+                        assert '42 intermediate image/state cases in 9 batches;' in result['completion_checks']
+                        comp = [[float(x) for x in s.split(',')[1:]] for s in text.splitlines() if s.startswith('completion,')]
+                        assert len(comp) == 36 and all(len(r) == 8 and all(x > 0 for x in r[2:]) for r in comp)
+                        assert [(r[0], r[1]) for r in comp] == [(n, r) for n in (2, 4, 8) for r in range(12)]
+                        result['completion_samples'] = comp
+                        result['completion_medians_ms_per_pair'] = {
+                            str(n): {name: statistics.median(r[i]*2/n for r in comp if r[0] == n)
+                                     for i, name in enumerate(report['completion_columns']) if i >= 2}
+                            for n in (2, 4, 8)}
+                        result['completion_paired_savings_ms_per_pair'] = {
+                            str(n): {name: statistics.median((r[a]-r[b])*2/n for r in comp if r[0] == n)
+                                     for name, a, b in [('worker_vs_native_per_frame', 2, 4),
+                                                        ('worker_vs_native_per_batch', 5, 7),
+                                                        ('native_batch_vs_per_frame', 2, 5),
+                                                        ('worker_batch_vs_per_frame', 4, 7)]}
+                            for n in (2, 4, 8)}
                     result['oracles'] = [s for s in text.splitlines() if s.startswith('GROUP ORACLE:')]
                     assert len(result['oracles']) == 3
                     rows = [[float(x) for x in s.split(',')[1:]] for s in text.splitlines() if s.startswith('sample,')]
@@ -125,7 +156,9 @@ def main():
                                                      'paired_unprofiled_complete_ms']
                         result['profiles'] = prof
                 else:
-                    expected = ('gc_active_frame && gc_active_frame==r->frame_id' if fault == 15 else
+                    expected = ('!gc_completion_pending || mode==gc_completion_mode' if fault == 17 else
+                                'gc_pixels_equal(expected[i],gc_completion_pixels[i])' if fault == 16 else
+                                'gc_active_frame && gc_active_frame==r->frame_id' if fault == 15 else
                                 'consumer.owner==GetCurrentThreadId()' if fault == 14 else
                                 'gc_pixels_equal(expected,gc_output)' if fault == 13 else
                                 'COMMAND DEVICE AUDIT: forbidden producer call 1' if fault == 12 else
@@ -142,7 +175,7 @@ def main():
                     assert run.returncode == 1 and expected in text, text[-3000:]
                     result['fault_detected'] = True
                 args.output.write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
-                print(json.dumps(result if fault else {k: v for k, v in result.items() if k != 'samples'}), flush=True)
+                print(json.dumps(result if fault else {k: v for k, v in result.items() if k not in ('samples', 'completion_samples')}), flush=True)
     for path, digest in report['inputs_sha256'].items():
         assert sha(path) == digest, path
     for image in report['images']:

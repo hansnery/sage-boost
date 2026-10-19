@@ -675,3 +675,10 @@ threading. Validate each intermediate frame's fresh lit/shadow output and
 ordering separately; a final matching image can conceal a dropped frame.
 This is an audited next boundary, not an implemented pipeline or a claim
 that the game's simulation can overlap rendering safely.
+
+The first control is now implemented in the separate
+[frame-completion screen](2026-10-18-frame-completion-screen.md): equal final
+GPU completion on native/direct/worker paths, with every intermediate image
+retained and checked. It still waits for CPU command execution at each frame
+boundary. Its small/mixed DXVK results do not justify runtime promotion or
+remove the per-frame ownership requirements for further CPU overlap.
