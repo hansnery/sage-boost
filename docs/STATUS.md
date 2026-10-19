@@ -7,6 +7,12 @@ repo, backlog) is in the Realms repo's `data\AGENTS.md`; what the docs can't
 settle is in [BACKLOG.md](BACKLOG.md). Re-check anything below against the
 files before relying on it.
 
+For the consolidated outcome of the unsuccessful 60 FPS attempts, read
+[Performance investigation: what did not deliver the target](PERFORMANCE-INVESTIGATION.md).
+It separates gameplay results, offline regressions, insufficient synthetic
+gains and untested alternatives. No meaningful FPS improvement in Hans's
+troop-heavy scene has been demonstrated; the target remains unmet.
+
 ## Next target: 60 visual FPS with shadows at 60 (2026-10-17)
 
 ### Direction change: evaluate external render threading (2026-10-18)

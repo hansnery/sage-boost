@@ -7,6 +7,10 @@ Strike an item through, with the date, when it's done.
 
 ## Full-rate 60 FPS investigation (2026-10-17)
 
+- [x] 2026-10-18: consolidate failed and insufficient approaches at Hans's
+  request in [PERFORMANCE-INVESTIGATION.md](PERFORMANCE-INVESTIGATION.md).
+  Read it before repeating an experiment. It records the unmet gameplay
+  target, superseded comparisons and the evidence needed to revisit a route.
 - [x] 2026-10-18: reassess external alternatives at the user's request.
   Read upstream documentation/releases/issues; stage and hash-check official
   Accelerator 2.0 build 73 and SAGE Unlocked 1.9.5 archives without installing
