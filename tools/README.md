@@ -32,6 +32,16 @@ legacy-duration compensation. Narrow compensation overflow is refused without
 a write. The result is `perf/build/native-duration-screen.json`; it does not
 qualify actual Realms fields, a live hook, multiplayer or FPS.
 
+`make test-pairpace` runs a closed-loop scheduling policy model and records
+`perf/build/pairpace-screen.json` through `test_pairpace.py`. It compares the
+actual legacy admission function with a separate integer-only paired cadence
+controller, using controlled costs and the native clock's millisecond
+quantization. It checks debt repayment, changing native periods, wrap,
+missing observations and deliberate broken scheduling policies. The wrapper
+also audits the compiled controller for FP instructions. No scene, game, GPU
+or multiplayer code runs; rates in this report are modeled, not measured FPS.
+The controller is not yet linked into the plugin.
+
 | script | what |
 |---|---|
 | `verify_sites.py` | unlocker: checks every signature against each game's baseline image and regenerates `dll/src/patch_table.c` and `dll/tests/baseline_expect.h` (`--write`). Run by `make test` in `dll/`. Needs `pefile` and `capstone`. |

@@ -258,6 +258,16 @@ elapsed duration where storage permits; narrow overflow is refused. Actual
 mod field coverage and runtime integration are still open. This is timing
 correctness groundwork, with no measured gameplay or FPS improvement.
 
+The [paired-cadence policy screen](benchmarks/2026-10-18-paired-cadence.json)
+then investigates deadline admission without doubling game updates. In a
+closed loop with controlled costs, reducing reserved idle time and repaying
+small overruns admits 60.6 modeled presentations/s at the latest aggregate
+anchors, but only 45.45 at the heavier anchor and 30.3 under overload. No
+game or GPU ran; this is not a capture replay or FPS forecast. Runtime
+estimator/backoff, hook ownership and game-state gates remain to integrate.
+The 4 ms allowance is a prediction bound, not a cap on unexpected draw time.
+Nothing is installed from this policy test alone.
+
 ## What future attempts must do differently
 
 1. **Start from a measured game bottleneck and the current baseline.** Do

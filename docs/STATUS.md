@@ -15,6 +15,39 @@ troop-heavy scene has been demonstrated; the target remains unmet.
 
 ## Next target: 60 visual FPS with shadows at 60 (2026-10-17)
 
+### Paired-cadence policy screen (2026-10-18)
+
+Route 2 now has a tested integer-only controller, **not yet linked into the
+plugin**. It allows at most one extra draw per native update and up to 4 ms
+of predicted deadline borrowing, repaid by shortening subsequent waits. It
+retains the native period, including network adjustments. Small debt survives
+period changes; pause, long stalls and missing observations reset the epoch.
+Actual unexpected work can exceed the predicted allowance and needs runtime
+backoff. The 1.25 ms reserve includes the native clock's 1 ms quantization.
+
+The controlled-cost model passes 160,438 checks, including repeated wait
+observations, wrap, debt repayment and 6,000 changing-period frames. The
+actual legacy `pf_fps_schedule` is the comparison planner. Two cases anchored
+to the latest aggregate costs produce 60.6 modeled presentations/s instead
+of 30.3; adding alternating 2 ms regular-work jitter still gives 60.6, with
+22.448 ms p95 gaps. The heavier earlier aggregate produces only 45.45, and
+the overload case stays at 30.3. Ordinary-update counts remain 1,818 in each
+60-second case that fits native cadence. These are controlled inputs, **not
+a gameplay trace replay, GPU benchmark or FPS forecast**. The model keeps
+extra-cost estimates fixed and does not run the runtime estimator/backoff.
+
+Fault controls show that forgetting debt slows ordinary updates, while
+retaining debt without repaying it eventually starves extras. The compiled
+controller has no FP instructions/control writes. [Evidence and limits](benchmarks/2026-10-18-paired-cadence.json),
+[plan and integration gate](plans/2026-10-18-paired-cadence.md).
+
+This justifies implementing an opt-in beta adapter using the existing
+verified frame/limiter hooks. Qualify one pacing owner, actual cost learning,
+pause/loading/UI gates, state/shadow guards and hook-level closed-loop tests
+before deciding on installation. Full native 10/60 data retiming remains a
+broader alternative, not the immediate integration route. Installed beta.13
+and INI hashes are unchanged; stable/launcher versions are untouched.
+
 ### Native duration conversion and legacy rounding (2026-10-18)
 
 The next simulation-beta check executes the actual float/uint/ushort/byte

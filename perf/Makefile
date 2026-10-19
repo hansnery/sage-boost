@@ -209,6 +209,15 @@ $(BUILD)/test_fps.exe: tests/test_fps.c src/fps.c src/extraprofile.c src/stubs.c
                        src/btnclock.c src/scan.c src/*.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
 
+# Policy screen only: pairpace is not yet part of the shipped plugin.
+$(BUILD)/test_pairpace.exe: tests/test_pairpace.c $(BUILD)/pairpace.o src/fps.c src/extraprofile.c src/stubs.c src/log.c src/fpsmath.c \
+                            src/btnclock.c src/scan.c src/*.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c %.o,$^)
+
+.PHONY: test-pairpace
+test-pairpace: $(BUILD)/test_pairpace.exe
+	python ../tools/test_pairpace.py --executable $< --output $(BUILD)/pairpace-screen.json
+
 $(BUILD)/test_extraprofile.exe: tests/test_extraprofile.c src/extraprofile.c src/*.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
 

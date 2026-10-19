@@ -158,3 +158,33 @@ internal width checks but is rejected by Python's independent oracle.
 This establishes a conversion policy, not a working 60 FPS mode. Audit actual
 field coverage/startup order and complete-frame cost next. Logic consumers,
 network synchronization, camera/input semantics and performance remain open.
+
+## Route 2: paired cadence before full data retiming
+
+The [paired-cadence screen](../benchmarks/2026-10-18-paired-cadence.json)
+tests a different admission policy without increasing logic/client updates.
+The native loop currently starts each period from the previous completion;
+the legacy extra-frame policy reserves 3 ms, 1/8 of extra cost and 0.5 ms
+slack before every deadline. Even a pair with total work below 33 ms can be
+rejected. This is a scheduling opportunity, not evidence that drawing is free.
+
+The new controller uses one extra draw at most, a 1.25 ms reserve including
+clock quantization, and up to 4 ms predicted borrowing. It carries small debt
+across native-period changes and repays it in later waits. It never creates,
+skips or increments game updates. Pause/stall/missing-observation boundaries
+start a fresh epoch. Repeated wait observations cannot claim another draw.
+An unexpectedly slow draw can exceed the allowance; runtime backoff remains
+necessary. The initial 2 ms allowance did not sustain every extra under the
+controlled 2 ms jitter case; the tested candidate uses 4 ms.
+
+In the cost model, 19.854 ms regular work plus 10.819 or 12.849 ms extra work
+admits two presentations per 33 ms with unchanged ordinary-update counts.
+The 23.284/12.261 ms case only averages 45.45 modeled presentations/s, and
+26/15 ms admits no extras. These aggregate anchors are not paired samples.
+The model does not run native game updates, a GPU or the cost-learning and
+backoff adapters. It cannot qualify actual FPS, normal gameplay or sync.
+
+Proceed to the opt-in runtime adapter and hook-level tests in the
+[integration plan](../plans/2026-10-18-paired-cadence.md). Do not install the
+policy screen alone. Keep the duration/startup audit available if complete
+10/60 retiming becomes necessary; this route avoids multiplying that work.

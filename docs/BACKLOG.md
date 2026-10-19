@@ -7,6 +7,16 @@ Strike an item through, with the date, when it's done.
 
 ## Full-rate 60 FPS investigation (2026-10-17)
 
+- [x] 2026-10-18: screen paired cadence with actual legacy admission as the
+  comparison, native-clock quantization, bounded predicted borrowing and
+  later debt repayment. Controlled costs give 60.6/45.45/30.3 modeled rates
+  depending on workload; no gameplay FPS result. [Report](benchmarks/2026-10-18-paired-cadence.json).
+- [ ] Integrate paired cadence behind an opt-in experimental setting using
+  the verified frame and limiter hooks. Require one pacing owner, complete
+  runtime cost/backoff behavior, pause/loading/UI gates, fresh shadows and
+  existing state guards. Test the actual hook adapter in a closed loop and
+  run the full plugin suite before deciding whether to install.
+
 - [x] 2026-10-18: execute native float/uint/ushort/byte duration conversions
   with explicit fixture dependencies on both images. Confirm rate-setter
   rounding changes; qualify doubled legacy ticks for representable integer
