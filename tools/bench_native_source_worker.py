@@ -65,23 +65,30 @@ def main():
     parser.add_argument('--repeat', type=int, default=1)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--checked', action='store_true')
+    parser.add_argument('--backend', choices=('dxvk', 'native'), default='dxvk')
     parser.add_argument('--native-pose', action='store_true',
                         help='generate consumed bone positions with verified native vector decoding')
     parser.add_argument('--pose-step', type=int, choices=(0, 1), default=1,
                         help='warm decoder cursor advance; only used with --native-pose')
     parser.add_argument('--window-owner', action='store_true',
                         help='keep window/device initialization on producer; requires --native-pose')
+    parser.add_argument('--reset-lifecycle', action='store_true',
+                        help='qualify reset/teardown rather than collect timings; requires --window-owner')
     args = parser.parse_args()
     if args.window_owner and not args.native_pose:
         parser.error('--window-owner requires --native-pose')
+    if args.reset_lifecycle and not args.window_owner:
+        parser.error('--reset-lifecycle requires --window-owner')
     assert 1 <= args.repeat <= 3
     guard()
     root = Path(tempfile.mkdtemp(prefix='sage-native-source-worker-'))
     install = args.install.resolve()
-    exe = REPO/'perf/build'/('bench_window_pose_worker.exe' if args.window_owner else
+    exe = REPO/'perf/build'/('bench_window_reset_worker.exe' if args.reset_lifecycle else
+                          'bench_window_pose_worker.exe' if args.window_owner else
                           'bench_native_pose_worker.exe' if args.native_pose else 'bench_native_source_worker.exe')
     shutil.copy2(exe, root/exe.name)
-    shutil.copy2(install/'d3d9.dll', root/'d3d9.dll')
+    if args.backend == 'dxvk':
+        shutil.copy2(install/'d3d9.dll', root/'d3d9.dll')
     sources = [Path(__file__), REPO/'tools/bench_native_matrix_sources.py', REPO/'tools/bench_native_decode.py',
                REPO/'tools/verify_device_owner.py',
                REPO/'perf/Makefile', *sorted((REPO/'perf/tests').glob('*.c')),
@@ -92,6 +99,7 @@ def main():
     report = {'base_commit': subprocess.check_output(['rtk', 'git', 'rev-parse', 'HEAD'], cwd=REPO, text=True).strip(),
               'directory': str(root), 'inputs_sha256': {str(p.resolve()): sha(p) for p in sources},
               'sample_columns': COLUMNS, 'images': [], 'runs': [],
+              'backend': args.backend, 'reset_lifecycle': args.reset_lifecycle,
               'runtime_changed': False, 'game_launched': False, 'deployed': False}
     reference = Image(BASELINE)
     for index, image in enumerate(args.image):
@@ -131,6 +139,8 @@ def main():
                 faults = ['', 'wrong-setter', 'stale-source'] + (['stale-pose'] if args.native_pose else [])
                 if args.window_owner:
                     faults.extend(['device-flags','stale-material'])
+                if args.reset_lifecycle:
+                    faults.extend(['reset-before-drain', 'stale-generation'])
                 for fault in faults if repeat == 0 else ['']:
                     guard()
                     label = f'{index}-{repeat}-{workload}' + ('-'+fault if fault else '')
@@ -154,7 +164,15 @@ def main():
                               'seconds': time.monotonic()-start, 'log': str(log), 'log_sha256': sha(log)}
                     report['runs'].append(result)
                     args.output.write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
-                    if fault == 'device-flags':
+                    if fault == 'stale-generation':
+                        assert run.returncode == 1 and 'slot->sequence==collected+1 && slot->rejected==expect_rejected' in text
+                        assert text.count('RESET CALL:') == 1
+                        result['fault_detected_by_generation_oracle'] = True
+                    elif fault == 'reset-before-drain':
+                        assert run.returncode == 1 and '!accepting_packets && submitted==collected' in text
+                        assert 'RESET CALL:' not in text and 'WORKER: consumed=' not in text
+                        result['fault_detected_before_teardown'] = True
+                    elif fault == 'device-flags':
                         assert run.returncode == 1 and 'creation.BehaviorFlags & D3DCREATE_MULTITHREADED' in text
                         assert 'WORKER: consumed=' not in text
                         result['fault_detected_before_worker_start'] = True
@@ -164,18 +182,34 @@ def main():
                         result['fault_detected_by_output_oracle'] = True
                     else:
                         assert run.returncode == 0, text[-4000:]
-                        result.update(parse(text))
+                        if args.reset_lifecycle:
+                            assert 'refused' not in text and 'FAILED:' not in text
+                            assert text.count('RESET CALL:') == 3
+                            assert 'LIFECYCLE: resets=3 injected_failed_results=3 closed_refusals=6 stale_rejections=3 exact_images=30 generations=4 packets=37;' in text
+                            assert 'DEVICE RELEASE: remaining=0 ' in text
+                            assert 'POSE: fills=41 native_vector_calls=1771200;' in text
+                            controls = [line for line in text.splitlines() if line.startswith('OWNERSHIP:')]
+                            assert len(controls) == 4
+                            result.update(oracle=next(line for line in text.splitlines() if line.startswith('ORACLE:')),
+                                          ownership_controls=controls, resets=3, injected_failed_results=3,
+                                          closed_refusals=6, stale_rejections=3, exact_images=30,
+                                          generations=4, packets=37, final_device_references=0,
+                                          pose_fills=41, native_vector_calls=1771200)
+                        else:
+                            result.update(parse(text))
                         if args.native_pose:
-                            assert 'POSE: fills=594 native_vector_calls=25660800;' in text
+                            if not args.reset_lifecycle:
+                                assert 'POSE: fills=594 native_vector_calls=25660800;' in text
+                                result['pose_fills'] = 594
+                                result['native_vector_calls'] = 25660800
                             assert 'POSE ORACLE: native decoded endpoints change ' in text
-                            result['pose_fills'] = 594
-                            result['native_vector_calls'] = 25660800
                             result['pose_step'] = args.pose_step
                             result['pose_oracle'] = next(line for line in text.splitlines() if line.startswith('POSE ORACLE:'))
                         if args.window_owner:
-                            assert 'WINDOW OWNER: 590 ordered worker messages dispatched on producer;' in text
+                            if not args.reset_lifecycle:
+                                assert 'WINDOW OWNER: 590 ordered worker messages dispatched on producer;' in text
                             result['device_owner'] = next(line for line in text.splitlines() if line.startswith('DEVICE OWNER:'))
-                            result['window_messages'] = 590
+                            result['window_messages'] = 37 if args.reset_lifecycle else 590
                     args.output.write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
                     print(json.dumps({'case': label, 'returncode': run.returncode,
                                       'medians': result.get('medians_ms_per_pair'), 'log': str(log)}), flush=True)

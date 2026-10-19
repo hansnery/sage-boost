@@ -54,3 +54,27 @@ faults with unchanged reference hashes. Installed beta.13/INI hashes match.
 No full-suite rerun or production change; the shared fixture's own instancing
 checks execute in each GPU process. Resource teardown and separate live
 frame/render bookkeeping are the next integration boundary.
+
+## Reset/resource generations
+
+- [x] Extend the existing owner fixture with closed admission, full-queue
+  draining, effect lost/reset callbacks and default-pool resource recreation.
+- [x] Keep lifecycle calls and final device release on the window owner;
+  release fixture/cache references and require zero final device references.
+- [x] Reject stale resource generations, exercise injected failed Reset
+  results and fail deliberate early-teardown/omitted-generation controls.
+- [x] Run both executable variants on DXVK and native D3D9, retaining the
+  original image/state references across three real resets per process.
+- [x] Re-run the owner and original batch worker regressions with unchanged
+  reference hashes. These checks pass another 44 image/state cases.
+- [x] Complete the full plugin regression suite and preserve its log/hash.
+- [x] Record source/input/log hashes, unchanged installed beta/INI hashes and
+  the remaining native lifecycle boundaries for the development commit.
+
+Eight lifecycle processes pass 240 exact image/state cases, 24 real resets,
+24 injected failure results, 24 stale-generation and 48 closed-admission
+refusals. All 56 deliberate fault processes reach their expected checks.
+This is fixture-owned teardown with a joined/restarted worker, not a live
+native Reset hook, arbitrary resource registry or actual lost-device test.
+Separate frame/render bookkeeping and native lifecycle integration remain
+the next steps; no runtime change or installation is justified by this test.

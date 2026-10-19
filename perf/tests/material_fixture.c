@@ -51,6 +51,35 @@ static D3DXHANDLE captured_handles[3];
 static const float (*source_reference)[16];
 static const fixture_material_values *captured_material;
 static unsigned captured_material_groups;
+static unsigned lifecycle_open,lifecycle_lost;
+
+void material_fixture_lost(void)
+{
+    REQUIRE(!lifecycle_open && !lifecycle_lost && !captured_material && !captured_sources);
+    bench_filter_clear();
+    for(unsigned i=0;i<2;i++)HR(FXCALL(contexts[i].instance,OnLostDevice));
+    lifecycle_lost=1;
+}
+
+void material_fixture_reset(void)
+{
+    REQUIRE(lifecycle_lost && !lifecycle_open);
+    for(unsigned i=0;i<2;i++)HR(FXCALL(contexts[i].instance,OnResetDevice));
+    bench_filter_init(material_device,rs_mask,texture_mask);
+    lifecycle_lost=0;
+}
+
+void material_fixture_destroy(void)
+{
+    REQUIRE(lifecycle_lost && !lifecycle_open);
+    for(unsigned i=0;i<2;i++) {
+        HR(FXCALL(contexts[i].instance,DeleteParameterBlock,contexts[i].block));
+        REQUIRE(FXCALL(contexts[i].instance,Release)==0);
+        contexts[i].instance=NULL;
+        IDirect3DTexture9_Release(textures[i]);textures[i]=NULL;
+    }
+    free(g_rec);g_rec=NULL;material_device=NULL;
+}
 
 void material_fixture_capture(unsigned group,unsigned generation,unsigned change_percent,
                               unsigned milliseconds,fixture_material_values *out)
@@ -245,10 +274,12 @@ void material_fixture_native(void **fx,unsigned *tech,unsigned *block)
 void material_fixture_open(void)
 {
     UINT passes=0;
+    REQUIRE(!lifecycle_open && !lifecycle_lost);
     if(verify_end) for(unsigned i=0;i<256;i++) if(rs_mask[i])
         HR(IDirect3DDevice9_GetRenderState(material_device,i,&entry_render_states[i]));
     if(filter_mode) HR(bench_filter_begin());
     HR(F(Begin,&passes,6)); REQUIRE(passes==1);
+    lifecycle_open=1;
 }
 void material_fixture_close(void)
 {
@@ -258,6 +289,7 @@ void material_fixture_close(void)
         changed_end_states+=state!=entry_render_states[i];
     }
     HR(F(End));
+    lifecycle_open=0;
     if(filter_mode) HR(bench_filter_end());
     if(verify_end) {
         for(unsigned i=0;i<256;i++) if(rs_mask[i]) {

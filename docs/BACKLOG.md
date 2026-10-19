@@ -89,6 +89,13 @@ Strike an item through, with the date, when it's done.
   releasing assets, retain window-thread lifecycle calls, invalidate resource
   generations and separate frame/render bookkeeping. Offline thread-ID
   transfers and fixed texture indices do not establish those live contracts.
+- [x] 2026-10-18: qualify the owned fixture's reset/recreation and final release
+  on DXVK/native D3D9, both executable variants. Pass 24 real resets, 240 exact
+  image/state cases, 56 deliberate fault processes and eight final device
+  releases with zero references. Correct fixture resource leaks; reject old
+  generations and publication during teardown/failure. Failed Reset results
+  are injected, not real device loss. See `benchmarks/2026-10-18-worker-reset-lifetime.json`.
+  Live native lifecycle/accounting and actual lost-device recovery remain open.
 - [x] 2026-10-18: back up a second launcher replacement of beta.13 by
   0.9.10, restore the identical tested binary and only the three missing beta
   keys, and verify the shortcut with CheckOnly. No game launched; see

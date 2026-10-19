@@ -247,7 +247,10 @@ static void setup_dispatch(int argc, char **argv)
     build_scene();
     setup_constants();
     HR(IDirect3DDevice9_SetRenderTarget(g_dev, 0, g_rt));
-    HR(IDirect3DDevice9_SetPixelShader(g_dev, diffuse_ps()));
+    IDirect3DPixelShader9 *lit_ps = diffuse_ps();
+    REQUIRE(lit_ps);
+    HR(IDirect3DDevice9_SetPixelShader(g_dev, lit_ps));
+    IDirect3DPixelShader9_Release(lit_ps);
     HR(IDirect3DDevice9_SetRenderState(g_dev, D3DRS_ZENABLE, FALSE));
     HR(IDirect3DDevice9_SetRenderState(g_dev, D3DRS_CULLMODE, D3DCULL_NONE));
     if (shadow_mode) {
@@ -259,6 +262,9 @@ static void setup_dispatch(int argc, char **argv)
         REQUIRE(g_v->family == 3);
         code = find_shader(2, &size);
         REQUIRE(code && size == 208);
+        IDirect3DVertexShader9_Release(g_ea); g_ea = NULL;
+        IDirect3DSurface9_Release(g_rt); g_rt = NULL;
+        IDirect3DSurface9_Release(g_sys); g_sys = NULL;
         HR(IDirect3DDevice9_CreateVertexShader(g_dev, (const DWORD *)find_ea(g_v), &g_ea));
         HR(IDirect3DDevice9_CreatePixelShader(g_dev, (const DWORD *)code, &ps));
         HR(IDirect3DDevice9_CreateRenderTarget(g_dev, RT, RT, D3DFMT_R32F,
@@ -270,6 +276,7 @@ static void setup_dispatch(int argc, char **argv)
         HR(IDirect3DDevice9_SetRenderTarget(g_dev, 0, g_rt));
         HR(IDirect3DDevice9_SetDepthStencilSurface(g_dev, g_sds));
         HR(IDirect3DDevice9_SetPixelShader(g_dev, ps));
+        IDirect3DPixelShader9_Release(ps);
         HR(IDirect3DDevice9_SetRenderState(g_dev, D3DRS_ZENABLE, TRUE));
         HR(IDirect3DDevice9_SetRenderState(g_dev, D3DRS_ZWRITEENABLE, TRUE));
         HR(IDirect3DDevice9_SetRenderState(g_dev, D3DRS_ZFUNC, D3DCMP_LESSEQUAL));

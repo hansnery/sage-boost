@@ -14,6 +14,23 @@ int bench_inst_transfer_owner(DWORD previous)
     return 1;
 }
 
+/* Offline reset boundary only, after the queue and GPU have drained. This
+ * explicitly releases the fixture caches; it is not a live reset hook. */
+int bench_inst_release_resources(void)
+{
+    if(g_thread!=GetCurrentThreadId() || g.mode!=M_IDLE || g.armed ||
+       g.count || g_bulk_context)return 0;
+    release_stream_owner();
+    pf_decl_cache_clear(&g_decl);
+    release(g_ivb);g_ivb=0;
+    for(unsigned i=0;i<PF_INST_VARIANTS;i++) {
+        release(g_ours[i]);g_ours[i]=0;g_ours_failed[i]=0;
+    }
+    for(unsigned i=0;i<g_vs_n;i++){release(g_vs[i].vs);g_vs[i].vs=0;}
+    g_vs_n=0;g_dev=0;
+    return 1;
+}
+
 /* After the regular path accepted the second member. Remaining records
  * borrow the group's method: no by-value temporary was constructed. The
  * benchmark deliberately omits marker accounting to establish whether even

@@ -27,6 +27,9 @@ static float worker_palettes[GROUPS*GROUP_SIZE][BONES][8];
 #endif
 typedef struct {
     unsigned sequence,epoch,clock,extra,check,oracle;
+#ifdef PF_WORKER_RESET
+    unsigned resource_generation;
+#endif
 #ifdef PF_NATIVE_SOURCE_WORKER
     unsigned source_phase;
     source_matrix_command sources[GROUPS*3];
@@ -55,6 +58,11 @@ static unsigned integrity_checks=1;
 static int worker_argc;
 static char **worker_argv;
 static DWORD render_thread;
+#ifdef PF_WORKER_RESET
+static unsigned resource_generation=1,accepting_packets=1;
+static unsigned skip_generation_check;
+static void worker_resources_release(void);
+#endif
 #ifdef PF_WINDOW_DEVICE_OWNER
 static DWORD window_thread;
 extern int bench_scope_transfer_owner(DWORD);
@@ -106,7 +114,7 @@ static void verify_window_owner(void)
     HR(IDirect3DDevice9_TestCooperativeLevel(g_dev));
     owner_previous_proc=(WNDPROC)SetWindowLongPtrW(owner_window,GWLP_WNDPROC,(LONG_PTR)owner_window_proc);
     REQUIRE(owner_previous_proc);
-    printf("DEVICE OWNER: window/create/cooperative-level thread=%lu flags=%08lX; worker drawing follows; Reset/destruction unqualified\n",
+    printf("DEVICE OWNER: window/create/cooperative-level thread=%lu flags=%08lX; worker drawing follows\n",
            (unsigned long)window_thread,(unsigned long)creation.BehaviorFlags);
 }
 #endif
@@ -272,7 +280,12 @@ static DWORD WINAPI worker_main(void *unused)
 #else
     initialize_worker();
 #endif
-    REQUIRE(SetEvent(initialized));unsigned consumed=0;
+    REQUIRE(SetEvent(initialized));
+#ifdef PF_WORKER_RESET
+    unsigned consumed=collected;
+#else
+    unsigned consumed=0;
+#endif
     for(;;) {
         DWORD wait=MsgWaitForMultipleObjects(1,&available,FALSE,10000,QS_ALLINPUT);
         if(wait==WAIT_OBJECT_0+1) {
@@ -289,6 +302,9 @@ static DWORD WINAPI worker_main(void *unused)
         long long begin=ticks();slot->queue_ticks=begin-slot->published;
         unsigned bytes=slot->direct?offsetof(render_packet,palettes):sizeof *p;
         slot->rejected=slot->has_checksum && packet_hash(p,bytes)!=slot->checksum;
+#ifdef PF_WORKER_RESET
+        if(!skip_generation_check && !slot->rejected && p->resource_generation!=resource_generation)slot->rejected=2;
+#endif
         if(!slot->rejected) {
             REQUIRE(p->sequence==slot->sequence);
             static unsigned pixels[RT*RT],state[WORKER_STATE_WORDS];
@@ -314,8 +330,12 @@ static DWORD WINAPI worker_main(void *unused)
         REQUIRE(InterlockedExchange(&slot->state,SLOT_DONE)==SLOT_READING);
         REQUIRE(SetEvent(slot->done));
     }
+#ifdef PF_WORKER_RESET
+    worker_resources_release();
+#else
     drain();bench_retained_clear();IDirect3DStateBlock9_Release(outer);
     IDirect3DQuery9_Release(fence);
+#endif
     printf("WORKER: consumed=%u thread=%lu; GPU work drained before every completion\n",consumed,(unsigned long)render_thread);
     return 0;
 }
@@ -324,6 +344,9 @@ static void prepare(unsigned extra,unsigned epoch,unsigned clock,unsigned check,
 {
     scratch.sequence=submitted+1;scratch.extra=extra;scratch.epoch=epoch;scratch.clock=clock;
     scratch.check=check;scratch.oracle=oracle;
+#ifdef PF_WORKER_RESET
+    scratch.resource_generation=resource_generation;
+#endif
 #ifdef PF_WINDOW_DEVICE_OWNER
     for(unsigned group=0;group<GROUPS;group++)
         material_fixture_capture(group,stale_material_values?0:epoch,100,clock,&scratch.materials[group]);
@@ -347,8 +370,11 @@ static int next_free(void)
     return InterlockedCompareExchange(&slots[submitted%WORKER_SLOTS].state,0,0)==SLOT_FREE;
 }
 
-static void publish(unsigned fault_alias,unsigned direct)
+static int publish(unsigned fault_alias,unsigned direct)
 {
+#ifdef PF_WORKER_RESET
+    if(!accepting_packets)return 0;
+#endif
     packet_slot *slot=&slots[submitted%WORKER_SLOTS];
     REQUIRE(InterlockedCompareExchange(&slot->state,SLOT_WRITING,SLOT_FREE)==SLOT_FREE);
     REQUIRE(scratch.sequence==submitted+1);
@@ -360,6 +386,7 @@ static void publish(unsigned fault_alias,unsigned direct)
     slot->published=ticks();
     REQUIRE(InterlockedExchange(&slot->state,SLOT_READY)==SLOT_WRITING);
     REQUIRE(ReleaseSemaphore(available,1,NULL));
+    return 1;
 }
 
 static void collect(unsigned expect_rejected,long long *worker,long long *queue)
@@ -414,7 +441,10 @@ static void worker_sample(unsigned mode,unsigned round,double result[5])
     result[3]=worker*scale;result[4]=queue*scale;
 }
 
-int main(int argc,char **argv)
+#ifndef PF_WORKER_MAIN
+#define PF_WORKER_MAIN main
+#endif
+int PF_WORKER_MAIN(int argc,char **argv)
 {
 #ifdef PF_NATIVE_SOURCE_WORKER
 #ifdef PF_NATIVE_POSE_WORKER

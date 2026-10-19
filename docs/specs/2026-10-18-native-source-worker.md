@@ -207,3 +207,62 @@ native-pose runner and building `bench_window_pose_worker.exe`.
 Platform references: [D3DCREATE](https://learn.microsoft.com/en-us/windows/win32/direct3d9/d3dcreate),
 [CreateDevice](https://learn.microsoft.com/en-us/windows/win32/api/d3d9helper/nf-d3d9helper-idirect3d9-createdevice),
 [multithreading rules](https://learn.microsoft.com/en-us/windows/win32/direct3d9/multithreading-issues).
+
+## Reset and resource lifetime qualification
+
+`bench_window_reset_worker.exe` extends the same owned-packet/native-pose
+fixture with a deliberately full two-slot queue at each reset boundary.
+The producer closes publication, collects both completed draws while pumping
+messages, and only then requests worker teardown. The worker drains the GPU,
+ends effect use, releases retained state blocks and instancing caches, calls
+OnLostDevice, unbinds resources and releases explicit render/depth targets.
+The producer joins the worker before calling TestCooperativeLevel and Reset.
+It recreates targets, restores copied numeric fixture state, calls
+OnResetDevice and starts a new worker before reopening publication.
+
+Packets carry a resource generation that advances only after successful
+Reset. A checksum-valid old-generation packet must be rejected before draw;
+disabling this check is a deliberate failing control. Another fault attempts
+teardown before collecting the queued work and must fail the boundary guard.
+Closed admission is checked both before teardown and after an injected
+failed Reset result. This injection exercises result handling; the device
+itself is not forced into a real lost state. The successful Reset calls are
+real. Allocation failures, actual device loss and fullscreen transitions
+remain outside this fixture.
+
+Resource ownership checks exposed old fixture leaks: overwritten shader and
+surface owners, unreleased temporary pixel shaders/factory references and
+retained source shaders in the test instancer cache. Fix the fixture owners
+and explicitly release every cache reference at teardown. Final device
+Release must return zero on the window thread before destroying its window.
+This adapter is test-only; production instancing reset hooks are unchanged.
+
+Three reset/recreate cycles retain the original pre-reset image/state
+references rather than regenerating expected outputs. Each successful
+process checks 30 exact images, four alias refusals and queue-capacity
+recoveries, three stale-generation refusals, six closed admissions and
+four resource generations. No timings or gameplay FPS are inferred.
+
+Build `perf/build/bench_window_reset_worker.exe`; run the existing runner
+with `--native-pose --window-owner --reset-lifecycle`, both images and an
+output report. Repeat with `--backend native` to use system D3D9; the default
+stages the installed DXVK in an isolated temporary directory. The original
+owner benchmark remains available without `--reset-lifecycle`.
+
+This closes a fixture lifecycle boundary, not native integration. A live
+bridge still needs verified hooks before native resource teardown, separate
+frame/render accounting, all native source/effect identities and Begin/pass
+result handling. The test restarts its worker between generations and owns
+all resources; neither models concurrent native asset creation/destruction.
+
+Platform contracts: [Reset](https://learn.microsoft.com/en-us/windows/win32/api/d3d9helper/nf-d3d9helper-idirect3ddevice9-reset),
+[OnLostDevice](https://learn.microsoft.com/en-us/windows/win32/direct3d9/id3dxeffect--onlostdevice),
+[OnResetDevice](https://learn.microsoft.com/en-us/windows/win32/direct3d9/id3dxeffect--onresetdevice).
+
+Both images on both backends pass 240 exact image/state cases over 24 real
+resets, with eight zero-reference final device releases. All 56 deliberate
+fault processes reach their expected checks. Original owner/batch regression
+hashes remain unchanged across 44 image/state cases, and the full `perf/`
+suite passes. See the [lifecycle report](../benchmarks/2026-10-18-worker-reset-lifetime.json)
+for input/log hashes, superseded leak-failing pilots and exact controls.
+The installed beta.13 and its INI remain hash-identical; no deployment.

@@ -58,6 +58,34 @@ Accelerator has now run in isolated offline harnesses (below).
   resolve a reproducible multiplayer divergence only after one is observed.
   No promised FPS gain, deployment or new gameplay request from this review.
 
+### Worker reset and resource lifetime checks (2026-10-18)
+
+The optional worker fixture now closes publication with two draws pending,
+collects and drains them, releases effect/state/cache/default-pool resources,
+and joins the worker before resetting the device on its window thread.
+Successful reset advances a resource generation, recreates resources and
+restarts drawing; checksum-valid old-generation packets are rejected.
+Final device Release must return zero on the window thread. Correcting the
+fixture's old shader/surface reference leaks was necessary to pass that test.
+
+Both local executable variants pass on DXVK and native D3D9: **24 actual
+resets, 240 exact image/state cases and eight zero-reference final releases**.
+The [report](benchmarks/2026-10-18-worker-reset-lifetime.json) records 56
+deliberate fault processes, including early teardown and omitted generation
+checks, plus 24 stale-generation and 48 closed-admission refusals. Failed
+Reset HRESULTs are injected; actual device loss/fullscreen recovery is not
+tested. Original owner and batch workers preserve their hashes in another
+44 image/state cases.
+
+The full `perf/` regression suite passes, including both native executable
+contracts and the instancing GPU fixture. Installed beta.13 and INI hashes
+still match the existing restoration receipt.
+
+This qualifies owned fixture resources, not the game's lifecycle. Native
+teardown hooks, concurrent asset lifetimes, separate frame/render accounting,
+effect/Begin contracts and full scene/Present remain open. No new timing or
+gameplay FPS claim, installation or gameplay-test request follows.
+
 ### Window/device ownership and copied material values (2026-10-18)
 
 Both local executables' complete native Create_Device bodies omit the

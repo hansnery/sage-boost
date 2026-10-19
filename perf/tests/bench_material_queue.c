@@ -213,6 +213,7 @@ static void effect_setup(void)
             g_v=&pf_inst_variants[i]; found++;
         }
     REQUIRE(found==1);
+    IDirect3DVertexShader9_Release(g_ea);
     g_ea=vs;
     material_fixture_end();
     printf("Bound effect shader: %08X, variant %u\n",hash,g_v->ea_index);

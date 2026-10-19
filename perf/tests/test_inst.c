@@ -679,6 +679,7 @@ out:
         IDirect3DSurface9_Release(g_ssys);
     if (g_sds)
         IDirect3DSurface9_Release(g_sds);
+    g_srt = g_ssys = g_sds = NULL;
     g_ea = lit_ea;
     g_v = lit;
     pf_inst_set_shadow(NULL, 1);
@@ -730,9 +731,11 @@ int main(int argc, char **argv)
     if (!d3d || FAILED(IDirect3D9_CreateDevice(d3d, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, wnd,
                                                fixture_device_flags, &pp, &g_dev))) {
         printf("SKIP: no hardware D3D9 device\n");
+        if (d3d) IDirect3D9_Release(d3d);
         DestroyWindow(wnd);
         goto done;
     }
+    IDirect3D9_Release(d3d); /* The device retains its parent. */
     GetTempPathW(MAX_PATH, log_path);
     wcscat(log_path, L"bfme2perf-inst-test.log");
     DeleteFileW(log_path);
@@ -773,6 +776,7 @@ int main(int argc, char **argv)
     IDirect3DIndexBuffer9_Unlock(g_ib);
     IDirect3DDevice9_SetRenderTarget(g_dev, 0, g_rt);
     IDirect3DDevice9_SetPixelShader(g_dev, ps);
+    IDirect3DPixelShader9_Release(ps); /* Bound device reference remains. */
     IDirect3DDevice9_SetRenderState(g_dev, D3DRS_ZENABLE, FALSE);
     IDirect3DDevice9_SetRenderState(g_dev, D3DRS_CULLMODE, D3DCULL_NONE);
     build_scene();
