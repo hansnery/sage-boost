@@ -337,8 +337,41 @@ static void closed_loop(int paired, unsigned regular, int jitter)
     else CHECK(row.extra == 0, "legacy unexpectedly admitted this workload: %u", row.extra);
 }
 
+static void intermittent_recovery(void)
+{
+    pf_fps_row row;
+    unsigned before;
+    unsigned long long start;
+    setup_runtime(1);
+    for (unsigned i = 0; i < 120; i++) runtime_frame(8000, 33);
+    for (unsigned i = 0; i < 8; i++) game_draw(20000, 0);
+    /* An expensive extra fits a light ordinary frame without being late.
+     * Later occasional light frames permit cheap extras, but fewer than
+     * 60 consecutive blocked frames occur before each such success. */
+    extra_us = 18500;
+    runtime_frame(8000, 33);
+    extra_us = 12849;
+    before = sim_draws;
+    start = run_us;
+    pf_fps_take_row(&row);
+    for (unsigned i = 0; i < 1800; i++)
+        runtime_frame(i % 50 == 0 ? 8000 : 19854, 33);
+    pf_fps_take_row(&row);
+    CHECK(sim_draws - before > 1700 && row.probes[0] == 1 && row.probes[1] == 1,
+          "intermittent successes starved bounded recovery");
+    CHECK(!row.late && !pf_fps_stopped() && run_us - start >= 59390000ull &&
+          run_us - start <= 59410000ull, "intermittent recovery changed cadence");
+    CHECK(row.shadows == row.extra && row.reflections == row.extra &&
+          g_client_obj.frame == sim_sequence && g_seed == 17 &&
+          !g_views_ran && !g_particles_ran && g_camera_obj.m[3] == 123.0f,
+          "intermittent recovery changed guarded state or full-rate passes");
+    printf("intermittent recovery: %u extras, %u probe, %u late, %llu us\n",
+           sim_draws - before, row.probes[0], row.late, run_us - start);
+}
+
 int main(void)
 {
+    intermittent_recovery();
     unsigned i;
     pf_cu_sites cu;
     adaptive_boundaries();

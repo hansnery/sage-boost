@@ -71,7 +71,7 @@ int main(int argc, char **argv)
         goto done;
     CHECK(read_file(log_path, log, sizeof log), "no log at %ls", log_path);
     printf("%s", log);
-    CHECK(strstr(log, "bfme2perf 0.9.11-beta.15\r\n") == log, "first line is not the version");
+    CHECK(strstr(log, "bfme2perf 0.9.11-beta.16\r\n") == log, "first line is not the version");
     CHECK(strstr(log, "self: ") && strstr(log, "bfme2perf-test\\bfme2perf.asi"), "no self path");
     CHECK(strstr(log, "host: ") && strstr(log, "test_load.exe"), "no host path");
     CHECK(strstr(log, "pinned=1") != NULL, "not pinned");

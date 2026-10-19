@@ -16,6 +16,24 @@ and multiplayer qualification remain unmet.
 
 ## Performance beta and 120 FPS research (2026-10-19)
 
+### Beta.16 intermittent recovery fix (2026-10-19)
+
+The paired scheduler no longer discards eligible recovery credit whenever a
+normal extra succeeds. An old expensive sample could otherwise remain while
+intermittent cheaper extras repeatedly prevented the 60-observation probe.
+The controlled reproduction improves from 36 to 1,741 extras in 1,800 native
+updates, with one successful probe and no late predictions. This is not a
+gameplay rate. No deadline allowance or user preference is changed.
+
+The full plugin suite passes (exit 0); six production integer objects pass
+the instruction audit. Existing persistent-cost backoff still stops after
+three failed probes. See [design and limits](specs/2026-10-19-intermittent-recovery.md)
+and [runtime evidence](benchmarks/2026-10-19-intermittent-recovery-runtime.json).
+Published beta.14 and Stable remain unchanged. Local deployment is authorized
+as a substantive recovery fix, with backup and exact INI preservation; its
+receipt is recorded separately after verification. The 59/s gameplay target
+and multiplayer qualification remain open.
+
 ### Later installed capture reviewed (2026-10-19)
 
 Fresh inspection found beta.14 installed again, with its published ASI hash

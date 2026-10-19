@@ -41,6 +41,9 @@ def main():
     assert "3 probes, 3 failed, resting=three paired recovery probes" in output
     recovery = re.search(r"adapter recovery: (\d+) extra draws after the spike, 1 late, (\d+) us", output)
     assert recovery and int(recovery.group(1)) > 100
+    intermittent = re.search(r"intermittent recovery: (\d+) extras, 1 probe, 0 late, (\d+) us", output)
+    assert intermittent and int(intermittent.group(1)) > 1700
+    assert 59390000 <= int(intermittent.group(2)) <= 59410000
     adaptive = []
     pattern = (r"adaptive max=(\d+) limit=(\d+) regular=(\d+) cost=(\d+): (\d+) ordinary, "
                r"(\d+) extra, (\d+) us, max gap (\d+) us, (\d+) late")
@@ -97,12 +100,16 @@ def main():
         "integer_object_audit": objects,
         "full_suite_log": suite,
         "closed_loop_cases": rows,
+        "intermittent_recovery": {"ordinary_updates": 1800,
+                                  "extra_draws": int(intermittent.group(1)),
+                                  "probes": 1, "late_predictions": 0,
+                                  "virtual_elapsed_us": int(intermittent.group(2))},
         "adaptive_cases": adaptive,
         "changing_period_case": {"ordinary_updates": 6000,
                                  "extra_draws": int(period_case.group(1)),
                                  "virtual_elapsed_us": int(period_case.group(2))},
         "raw_output": '\n'.join(line for line in output.splitlines()
-                                if line.startswith(('adaptive ', 'adapter ', 'paired runtime adapter:'))),
+                                if line.startswith(('adaptive ', 'adapter ', 'intermittent ', 'paired runtime adapter:'))),
         "coverage": [
             "Production fps/catch-up/pairpace object files, not alternate implementations",
             "One pacing owner, real saved wait-threshold adapter and exact ordinary update count",
