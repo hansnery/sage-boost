@@ -8,6 +8,16 @@ user's own installs at run time.
 
 ## Build and verification
 
+`report_ui_upload.py --native-log <log> --dxvk-log <log> --output
+docs/benchmarks/<report.json> --samples docs/benchmarks/<samples.csv>`
+validates the complete `perf/tests/bench_ui_upload.c` screen (build with
+`make build/bench_ui_upload.exe`). It requires eighteen cases, exact image
+and stale/wrong-state controls, rollover/lock/draw counts, restored device
+state and 21 paired samples per case. It rejects corrupted evidence and
+records source/executable/backend hashes, including WOW64 resolution for
+the native i686 DLL. This uses generated inputs, not game callbacks, and
+cannot establish gameplay FPS. [Design/results](../docs/specs/2026-10-19-ui-upload-design.md).
+
 `audit_ui_boundary.py --image <game.dat> --image <game820.dat> --capture
 <copied timing CSV> --output <report.json>` statically verifies complete UI
 draw boundaries against the existing Open-BFME-2 reference and rejects

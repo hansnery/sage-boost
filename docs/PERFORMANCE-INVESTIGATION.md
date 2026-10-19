@@ -30,6 +30,14 @@ variable costs, while the expensive case remains unchanged. It does not
 reduce rendering cost or establish 120 FPS in the heavy save. See the
 [sequential-admission qualification](specs/2026-10-19-sequential-extras-design.md).
 
+The subsequent UI upload screen preserves each draw/state boundary while
+combining small vertex-buffer locks. All eighteen native/DXVK cases pass
+image and state controls, but the large batched DXVK cases save only
+0.207/0.191 ms at the paired median and have negative p10 savings. No live
+request distribution is established. This is another insufficient screen,
+not a runtime change or gameplay gain; retain beta.18 and pursue larger
+costs. [Results and reproducible samples](specs/2026-10-19-ui-upload-design.md).
+
 ## First partial gameplay success: paired cadence (beta.14)
 
 The new policy relaxes the old per-frame admission margin and repays small

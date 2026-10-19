@@ -429,6 +429,15 @@ bench-retained-multi: $(BUILD)/bench_retained_multi.exe
 	  DXVK_LOG_LEVEL=none ./bench_retained_multi.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit && \
 	  DXVK_LOG_LEVEL=none ./bench_retained_multi.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow
 
+$(BUILD)/bench_ui_upload.exe: tests/bench_ui_upload.c tests/bench_guard.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -msse2 -mfpmath=sse -static -o $@ $< -luser32 -lgdi32
+
+.PHONY: bench-ui-upload
+bench-ui-upload: $(BUILD)/bench_ui_upload.exe
+	./$(BUILD)/bench_ui_upload.exe native
+	@test -f "$(DXVK_D3D9)" || { echo "error: bench-ui-upload requires DXVK_D3D9"; exit 1; }
+	DXVK_LOG_LEVEL=none ./$(BUILD)/bench_ui_upload.exe "$(DXVK_D3D9)"
+
 $(BUILD)/material_fixture.o: tests/material_fixture.c tests/material_packet.h tests/source_packet.h tests/effect_filter_bench.h tests/shadow_fx/shadow_fx.c src/shadowfx_table.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -c -o $@ $<
 

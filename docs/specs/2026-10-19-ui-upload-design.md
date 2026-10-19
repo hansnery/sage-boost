@@ -33,3 +33,53 @@ game asset or reference-checkout write is part of this screen. A positive
 result still needs native boundary/resource qualification and measured live
 request counts before installation; a small or negative result is recorded
 without another gameplay test. Do not convert fixture timing into game FPS.
+
+## Result and decision (2026-10-19)
+
+All eighteen final cases pass exact images over three advancing phases,
+stale-geometry and wrong-texture rejection, draw/lock/rollover counts and
+restoration of every changed render state, FVF, texture and stream binding.
+The standalone executable builds with warnings treated as errors. Both
+guarded runs exit successfully; no game or launcher was started.
+
+On the installed DXVK, the 1,024-request cases with batches of 16/64 save
+0.207/0.191 ms at the paired median. Their p10 savings are negative
+(-0.147/-0.343 ms); every DXVK case has a negative p10. Even the
+single-request control, which removes no locks, fluctuates substantially.
+Native D3D9 saves 0.276/0.299 ms in those large batched cases, but that is a
+different backend and does not establish a benefit for Hans's installation.
+
+This is insufficient evidence for runtime integration or another gameplay
+test. The measured heavy extra-frame UI scope was 1.428 ms, and only an
+unknown part of it belongs to this APT upload path. Live request counts and
+batch sizes are also unknown. Do not assign these synthetic savings to that
+scope, add them to other experiments, or forecast FPS from them. The
+Begin/End/flush/resource-lifetime boundaries would still need native
+qualification before any runtime implementation.
+
+[Final report](../benchmarks/2026-10-19-ui-upload.json) and
+[378 paired samples](../benchmarks/2026-10-19-ui-upload-samples.csv).
+The report rejects nine corrupted evidence controls and records source,
+executable and backend hashes, resolving the native i686 DLL through WOW64.
+The first successful matrix is retained in ignored
+`perf/build/ui-upload-*-initial.log` with its source/executable; final runs
+add explicit stencil-function/pass and FVF restoration assertions. Those
+earlier samples are not mixed into the final report.
+
+Beta.18, the user's INI and public releases remain unchanged. Further work
+toward 120 should target a larger measured cost or the scheduling behavior
+of beta.18, rather than install this small, noisy upload screen.
+
+## Reproduce
+
+Build `make build/bench_ui_upload.exe` in `perf/`. Run that executable with
+`native`, then with the absolute installed i686 DXVK `d3d9.dll` path, saving
+each log separately. `make bench-ui-upload` runs both in sequence. The
+fixture refuses an active game, WorldBuilder or launcher, creates only a
+hidden owned window, and uses generated geometry/textures.
+
+From the checkout root run `python tools/report_ui_upload.py --native-log
+perf/build/ui-upload-native.log --dxvk-log perf/build/ui-upload-dxvk.log
+--output docs/benchmarks/2026-10-19-ui-upload.json --samples
+docs/benchmarks/2026-10-19-ui-upload-samples.csv`. The report requires all
+cases and controls and only writes within this checkout's benchmark folder.

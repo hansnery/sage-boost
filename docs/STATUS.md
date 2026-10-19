@@ -95,6 +95,17 @@ bodies match both executable variants; ten altered-body controls refuse.
 [Evidence and narrower next measurement](specs/2026-10-19-ui-render-boundary.md).
 Beta.18 and its installed settings remain unchanged.
 
+The narrower UI-upload screen is complete: direct per-request buffer locks
+versus CPU staging with one upload at each unchanged draw boundary. All
+eighteen native/DXVK cases pass fresh-image, stale/wrong-state, rollover and
+device-restoration controls. DXVK's largest batched cases save only
+0.207/0.191 ms at the paired median, with negative p10 savings; every DXVK
+case has a negative p10. Actual game request/batch frequencies are unknown.
+This is insufficient for integration or a gameplay test. The larger native
+D3D9 savings do not qualify a backend switch. [Design/results](specs/2026-10-19-ui-upload-design.md),
+[report](benchmarks/2026-10-19-ui-upload.json). Beta.18 and the INI are intact;
+no new game capture has appeared since its installation.
+
 ### Beta.17 budget-gap recovery (2026-10-19)
 
 The candidate retains recovery credit across frames with insufficient budget,

@@ -1,0 +1,528 @@
+{
+  "cases": [
+    {
+      "backend": "native",
+      "controls": {
+        "requests": 64,
+        "group": 1,
+        "direct_locks": 64,
+        "staged_locks": 64,
+        "draws": 64,
+        "wraps": 0,
+        "phases": 3,
+        "exact_images": 3,
+        "nonempty_images": 3,
+        "stale_rejected": 3,
+        "state_fault_rejected": 3,
+        "restoration_checks": 12
+      },
+      "summary": {
+        "samples": 21,
+        "frames_per_path_per_sample": 8,
+        "direct_complete_median_ms": 0.391413,
+        "staged_complete_median_ms": 0.389338,
+        "paired_saving_median_ms": 0.00475,
+        "paired_saving_p10_ms": -0.036187,
+        "paired_saving_p90_ms": 0.037913,
+        "positive_pairs": 12
+      }
+    },
+    {
+      "backend": "native",
+      "controls": {
+        "requests": 64,
+        "group": 16,
+        "direct_locks": 64,
+        "staged_locks": 4,
+        "draws": 4,
+        "wraps": 0,
+        "phases": 3,
+        "exact_images": 3,
+        "nonempty_images": 3,
+        "stale_rejected": 3,
+        "state_fault_rejected": 3,
+        "restoration_checks": 12
+      },
+      "summary": {
+        "samples": 21,
+        "frames_per_path_per_sample": 8,
+        "direct_complete_median_ms": 0.134175,
+        "staged_complete_median_ms": 0.1236,
+        "paired_saving_median_ms": -0.001825,
+        "paired_saving_p10_ms": -0.138512,
+        "paired_saving_p90_ms": 0.029738,
+        "positive_pairs": 10
+      }
+    },
+    {
+      "backend": "native",
+      "controls": {
+        "requests": 64,
+        "group": 64,
+        "direct_locks": 64,
+        "staged_locks": 1,
+        "draws": 1,
+        "wraps": 0,
+        "phases": 3,
+        "exact_images": 3,
+        "nonempty_images": 3,
+        "stale_rejected": 3,
+        "state_fault_rejected": 3,
+        "restoration_checks": 12
+      },
+      "summary": {
+        "samples": 21,
+        "frames_per_path_per_sample": 8,
+        "direct_complete_median_ms": 0.147712,
+        "staged_complete_median_ms": 0.147787,
+        "paired_saving_median_ms": 0.005563,
+        "paired_saving_p10_ms": -0.1534,
+        "paired_saving_p90_ms": 0.694625,
+        "positive_pairs": 12
+      }
+    },
+    {
+      "backend": "native",
+      "controls": {
+        "requests": 256,
+        "group": 1,
+        "direct_locks": 256,
+        "staged_locks": 256,
+        "draws": 256,
+        "wraps": 0,
+        "phases": 3,
+        "exact_images": 3,
+        "nonempty_images": 3,
+        "stale_rejected": 3,
+        "state_fault_rejected": 3,
+        "restoration_checks": 12
+      },
+      "summary": {
+        "samples": 21,
+        "frames_per_path_per_sample": 8,
+        "direct_complete_median_ms": 1.525438,
+        "staged_complete_median_ms": 1.420438,
+        "paired_saving_median_ms": 0.000325,
+        "paired_saving_p10_ms": -0.148212,
+        "paired_saving_p90_ms": 0.418262,
+        "positive_pairs": 11
+      }
+    },
+    {
+      "backend": "native",
+      "controls": {
+        "requests": 256,
+        "group": 16,
+        "direct_locks": 256,
+        "staged_locks": 16,
+        "draws": 16,
+        "wraps": 0,
+        "phases": 3,
+        "exact_images": 3,
+        "nonempty_images": 3,
+        "stale_rejected": 3,
+        "state_fault_rejected": 3,
+        "restoration_checks": 12
+      },
+      "summary": {
+        "samples": 21,
+        "frames_per_path_per_sample": 8,
+        "direct_complete_median_ms": 0.314287,
+        "staged_complete_median_ms": 0.26055,
+        "paired_saving_median_ms": 0.06135,
+        "paired_saving_p10_ms": 0.01185,
+        "paired_saving_p90_ms": 0.12815,
+        "positive_pairs": 19
+      }
+    },
+    {
+      "backend": "native",
+      "controls": {
+        "requests": 256,
+        "group": 64,
+        "direct_locks": 256,
+        "staged_locks": 4,
+        "draws": 4,
+        "wraps": 0,
+        "phases": 3,
+        "exact_images": 3,
+        "nonempty_images": 3,
+        "stale_rejected": 3,
+        "state_fault_rejected": 3,
+        "restoration_checks": 12
+      },
+      "summary": {
+        "samples": 21,
+        "frames_per_path_per_sample": 8,
+        "direct_complete_median_ms": 0.258775,
+        "staged_complete_median_ms": 0.19375,
+        "paired_saving_median_ms": 0.068362,
+        "paired_saving_p10_ms": 0.03895,
+        "paired_saving_p90_ms": 0.375037,
+        "positive_pairs": 19
+      }
+    },
+    {
+      "backend": "native",
+      "controls": {
+        "requests": 1024,
+        "group": 1,
+        "direct_locks": 1024,
+        "staged_locks": 1024,
+        "draws": 1024,
+        "wraps": 1,
+        "phases": 3,
+        "exact_images": 3,
+        "nonempty_images": 3,
+        "stale_rejected": 3,
+        "state_fault_rejected": 3,
+        "restoration_checks": 12
+      },
+      "summary": {
+        "samples": 21,
+        "frames_per_path_per_sample": 8,
+        "direct_complete_median_ms": 3.992625,
+        "staged_complete_median_ms": 4.070187,
+        "paired_saving_median_ms": -0.058612,
+        "paired_saving_p10_ms": -0.6375,
+        "paired_saving_p90_ms": 0.755288,
+        "positive_pairs": 10
+      }
+    },
+    {
+      "backend": "native",
+      "controls": {
+        "requests": 1024,
+        "group": 16,
+        "direct_locks": 1024,
+        "staged_locks": 65,
+        "draws": 65,
+        "wraps": 1,
+        "phases": 3,
+        "exact_images": 3,
+        "nonempty_images": 3,
+        "stale_rejected": 3,
+        "state_fault_rejected": 3,
+        "restoration_checks": 12
+      },
+      "summary": {
+        "samples": 21,
+        "frames_per_path_per_sample": 8,
+        "direct_complete_median_ms": 0.779262,
+        "staged_complete_median_ms": 0.524038,
+        "paired_saving_median_ms": 0.276225,
+        "paired_saving_p10_ms": 0.159875,
+        "paired_saving_p90_ms": 0.41535,
+        "positive_pairs": 21
+      }
+    },
+    {
+      "backend": "native",
+      "controls": {
+        "requests": 1024,
+        "group": 64,
+        "direct_locks": 1024,
+        "staged_locks": 17,
+        "draws": 17,
+        "wraps": 1,
+        "phases": 3,
+        "exact_images": 3,
+        "nonempty_images": 3,
+        "stale_rejected": 3,
+        "state_fault_rejected": 3,
+        "restoration_checks": 12
+      },
+      "summary": {
+        "samples": 21,
+        "frames_per_path_per_sample": 8,
+        "direct_complete_median_ms": 0.761125,
+        "staged_complete_median_ms": 0.467525,
+        "paired_saving_median_ms": 0.298825,
+        "paired_saving_p10_ms": 0.096875,
+        "paired_saving_p90_ms": 0.426237,
+        "positive_pairs": 20
+      }
+    },
+    {
+      "backend": "dxvk",
+      "controls": {
+        "requests": 64,
+        "group": 1,
+        "direct_locks": 64,
+        "staged_locks": 64,
+        "draws": 64,
+        "wraps": 0,
+        "phases": 3,
+        "exact_images": 3,
+        "nonempty_images": 3,
+        "stale_rejected": 3,
+        "state_fault_rejected": 3,
+        "restoration_checks": 12
+      },
+      "summary": {
+        "samples": 21,
+        "frames_per_path_per_sample": 8,
+        "direct_complete_median_ms": 0.622125,
+        "staged_complete_median_ms": 0.583675,
+        "paired_saving_median_ms": 0.01385,
+        "paired_saving_p10_ms": -0.142237,
+        "paired_saving_p90_ms": 0.146338,
+        "positive_pairs": 11
+      }
+    },
+    {
+      "backend": "dxvk",
+      "controls": {
+        "requests": 64,
+        "group": 16,
+        "direct_locks": 64,
+        "staged_locks": 4,
+        "draws": 4,
+        "wraps": 0,
+        "phases": 3,
+        "exact_images": 3,
+        "nonempty_images": 3,
+        "stale_rejected": 3,
+        "state_fault_rejected": 3,
+        "restoration_checks": 12
+      },
+      "summary": {
+        "samples": 21,
+        "frames_per_path_per_sample": 8,
+        "direct_complete_median_ms": 0.5501,
+        "staged_complete_median_ms": 0.477762,
+        "paired_saving_median_ms": 0.072475,
+        "paired_saving_p10_ms": -0.096438,
+        "paired_saving_p90_ms": 0.423162,
+        "positive_pairs": 16
+      }
+    },
+    {
+      "backend": "dxvk",
+      "controls": {
+        "requests": 64,
+        "group": 64,
+        "direct_locks": 64,
+        "staged_locks": 1,
+        "draws": 1,
+        "wraps": 0,
+        "phases": 3,
+        "exact_images": 3,
+        "nonempty_images": 3,
+        "stale_rejected": 3,
+        "state_fault_rejected": 3,
+        "restoration_checks": 12
+      },
+      "summary": {
+        "samples": 21,
+        "frames_per_path_per_sample": 8,
+        "direct_complete_median_ms": 0.4406,
+        "staged_complete_median_ms": 0.44365,
+        "paired_saving_median_ms": -0.000962,
+        "paired_saving_p10_ms": -0.245887,
+        "paired_saving_p90_ms": 0.176512,
+        "positive_pairs": 10
+      }
+    },
+    {
+      "backend": "dxvk",
+      "controls": {
+        "requests": 256,
+        "group": 1,
+        "direct_locks": 256,
+        "staged_locks": 256,
+        "draws": 256,
+        "wraps": 0,
+        "phases": 3,
+        "exact_images": 3,
+        "nonempty_images": 3,
+        "stale_rejected": 3,
+        "state_fault_rejected": 3,
+        "restoration_checks": 12
+      },
+      "summary": {
+        "samples": 21,
+        "frames_per_path_per_sample": 8,
+        "direct_complete_median_ms": 1.565138,
+        "staged_complete_median_ms": 1.801588,
+        "paired_saving_median_ms": -0.06645,
+        "paired_saving_p10_ms": -0.594475,
+        "paired_saving_p90_ms": 0.2982,
+        "positive_pairs": 8
+      }
+    },
+    {
+      "backend": "dxvk",
+      "controls": {
+        "requests": 256,
+        "group": 16,
+        "direct_locks": 256,
+        "staged_locks": 16,
+        "draws": 16,
+        "wraps": 0,
+        "phases": 3,
+        "exact_images": 3,
+        "nonempty_images": 3,
+        "stale_rejected": 3,
+        "state_fault_rejected": 3,
+        "restoration_checks": 12
+      },
+      "summary": {
+        "samples": 21,
+        "frames_per_path_per_sample": 8,
+        "direct_complete_median_ms": 0.672562,
+        "staged_complete_median_ms": 0.510575,
+        "paired_saving_median_ms": 0.148962,
+        "paired_saving_p10_ms": -0.2204,
+        "paired_saving_p90_ms": 0.344387,
+        "positive_pairs": 14
+      }
+    },
+    {
+      "backend": "dxvk",
+      "controls": {
+        "requests": 256,
+        "group": 64,
+        "direct_locks": 256,
+        "staged_locks": 4,
+        "draws": 4,
+        "wraps": 0,
+        "phases": 3,
+        "exact_images": 3,
+        "nonempty_images": 3,
+        "stale_rejected": 3,
+        "state_fault_rejected": 3,
+        "restoration_checks": 12
+      },
+      "summary": {
+        "samples": 21,
+        "frames_per_path_per_sample": 8,
+        "direct_complete_median_ms": 0.765925,
+        "staged_complete_median_ms": 0.594112,
+        "paired_saving_median_ms": 0.082,
+        "paired_saving_p10_ms": -0.158337,
+        "paired_saving_p90_ms": 0.681513,
+        "positive_pairs": 12
+      }
+    },
+    {
+      "backend": "dxvk",
+      "controls": {
+        "requests": 1024,
+        "group": 1,
+        "direct_locks": 1024,
+        "staged_locks": 1024,
+        "draws": 1024,
+        "wraps": 1,
+        "phases": 3,
+        "exact_images": 3,
+        "nonempty_images": 3,
+        "stale_rejected": 3,
+        "state_fault_rejected": 3,
+        "restoration_checks": 12
+      },
+      "summary": {
+        "samples": 21,
+        "frames_per_path_per_sample": 8,
+        "direct_complete_median_ms": 3.280375,
+        "staged_complete_median_ms": 3.102537,
+        "paired_saving_median_ms": 0.144238,
+        "paired_saving_p10_ms": -0.508412,
+        "paired_saving_p90_ms": 0.9339,
+        "positive_pairs": 12
+      }
+    },
+    {
+      "backend": "dxvk",
+      "controls": {
+        "requests": 1024,
+        "group": 16,
+        "direct_locks": 1024,
+        "staged_locks": 65,
+        "draws": 65,
+        "wraps": 1,
+        "phases": 3,
+        "exact_images": 3,
+        "nonempty_images": 3,
+        "stale_rejected": 3,
+        "state_fault_rejected": 3,
+        "restoration_checks": 12
+      },
+      "summary": {
+        "samples": 21,
+        "frames_per_path_per_sample": 8,
+        "direct_complete_median_ms": 1.614825,
+        "staged_complete_median_ms": 1.343638,
+        "paired_saving_median_ms": 0.207275,
+        "paired_saving_p10_ms": -0.146513,
+        "paired_saving_p90_ms": 0.629413,
+        "positive_pairs": 15
+      }
+    },
+    {
+      "backend": "dxvk",
+      "controls": {
+        "requests": 1024,
+        "group": 64,
+        "direct_locks": 1024,
+        "staged_locks": 17,
+        "draws": 17,
+        "wraps": 1,
+        "phases": 3,
+        "exact_images": 3,
+        "nonempty_images": 3,
+        "stale_rejected": 3,
+        "state_fault_rejected": 3,
+        "restoration_checks": 12
+      },
+      "summary": {
+        "samples": 21,
+        "frames_per_path_per_sample": 8,
+        "direct_complete_median_ms": 1.485325,
+        "staged_complete_median_ms": 1.327763,
+        "paired_saving_median_ms": 0.190937,
+        "paired_saving_p10_ms": -0.3429,
+        "paired_saving_p90_ms": 0.452338,
+        "positive_pairs": 12
+      }
+    }
+  ],
+  "selected_input_sha256": {
+    "perf\\build\\ui-upload-native.log": "b728d310dd16112e341d5ed0862583ff4df3794b85fe0311102e90eabcbee575",
+    "perf\\build\\ui-upload-dxvk.log": "dc2221dde819ddcdf5d064b2e7b45b34a7a18fea6b74efb868f53f10dcba9bb0",
+    "C:\\WINDOWS\\SysWOW64\\d3d9.dll": "210e52314d24bdc8492e5185674626225af2c030ff51d13c01155aedb2d248ad",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\d3d9.dll": "00bc142e98ddad1e334a4d88fa630038e092b0758b3d79e295172b181a4c772d",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_ui_upload.c": "2a869cede20ad9a15d9bcfc5fc7619310fb11e0f5e4c08968423becca1239572",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_guard.h": "46082a3fef62b0e26ea0f16b6294171af964e0cb952c7dd7c8ef9a509cd8adf6",
+    "C:\\repositories\\sage-boost\\perf\\Makefile": "d9d378761b0d3fd2ad1d78d7285a5b82f269b0a0c258b94c5866a7f6d3d896f6",
+    "C:\\repositories\\sage-boost\\perf\\build\\bench_ui_upload.exe": "767c87d4b49dd7ed3c4632d9324730e38f545750e55fc24a8dcb47d7dee59fd0",
+    "C:\\repositories\\sage-boost\\tools\\report_ui_upload.py": "db732b57536d1c190c585fe1d15f5fe14cec01bac585f7421e27f3764129e976"
+  },
+  "native_module": {
+    "loader_reported_path": "C:\\WINDOWS\\system32\\d3d9.dll",
+    "wow64_resolved_hash_path": "C:\\WINDOWS\\SysWOW64\\d3d9.dll"
+  },
+  "report_refusal_controls": [
+    "missing_completion",
+    "explicit_failure",
+    "missing_sample",
+    "duplicate_sample",
+    "nonfinite_timing",
+    "inconsistent_saving",
+    "failed_image_control",
+    "failed_stale_control",
+    "failed_state_control"
+  ],
+  "installed_changes": false,
+  "gameplay_fps_measured": false,
+  "limits": [
+    "Generated fixed-function UI geometry/textures; no EA assets or native callbacks executed.",
+    "No measured live UI request/batch distribution; tested counts are a parameter sweep.",
+    "Identical draw boundaries/order; this screens vertex upload strategy only.",
+    "Fresh generation, extra CPU copy, state restoration and GPU completion are timed.",
+    "No scene, shadows, logic, Present or pacing; these timings cannot be converted to game FPS.",
+    "Native D3D9 and DXVK results are separate workloads; do not combine them.",
+    "Positive screens require native boundary/resource qualification and live frequency evidence."
+  ],
+  "samples_sha256": "e49577b1abf067ccfdc82611e13c1fd027822eea47785460f5b63c9d067d48ac"
+}
