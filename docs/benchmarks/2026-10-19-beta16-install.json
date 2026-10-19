@@ -1,0 +1,37 @@
+﻿{
+    "backed_up_files":  [
+                            {
+                                "sha256":  "320f99d66269265c069388bc0231233e0ce234d26e78adad36a20bca9a9ba630",
+                                "name":  "bfme2perf.asi"
+                            },
+                            {
+                                "sha256":  "778f8032ff41fdad7437aaf7b43e717457d3e86e898a638c80409b1961a0bdd7",
+                                "name":  "bfme2perf.ini"
+                            },
+                            {
+                                "sha256":  "4de5249b8dcc65e2d23ef8f31206c51385975dea591e3374dc522c816dc27988",
+                                "name":  "bfme2perf.log"
+                            },
+                            {
+                                "sha256":  "8e8fa98b454e381abe09ba2ae4839797723b967d2be73d22c8aa34fca22694cc",
+                                "name":  "bfme2perf_scopes.csv"
+                            },
+                            {
+                                "sha256":  "04b0bbfe60d18e29ed1943d81a47c633c24a1caf99da1ce6c91d094a7e53bf0a",
+                                "name":  "bfme2perf_timing.csv"
+                            }
+                        ],
+    "version":  "0.9.11-beta.16",
+    "gameplay_target_verified":  false,
+    "check_only_output":  "Beta binary, settings, game path and mod path verified. Nothing launched.",
+    "backup":  "C:\\Users\\Hans\\AppData\\Local\\Temp\\bfme2perf-beta14-before-beta16-20261019-115820",
+    "ini_before_sha256":  "778f8032ff41fdad7437aaf7b43e717457d3e86e898a638c80409b1961a0bdd7",
+    "mod_path":  "C:\\Jogos\\AgeoftheRing\\realms",
+    "shortcut":  "C:\\Users\\Hans\\Desktop\\Realms - sage-boost beta test.lnk",
+    "published_releases_changed":  false,
+    "ini_after_sha256":  "778f8032ff41fdad7437aaf7b43e717457d3e86e898a638c80409b1961a0bdd7",
+    "game_launched":  false,
+    "source_commit":  "d27bf75",
+    "installed_sha256":  "b93ae03b57ab70a455fee8c859b05ecf6c05c57335b33657e5ad7665b52a16cc",
+    "build_sha256":  "b93ae03b57ab70a455fee8c859b05ecf6c05c57335b33657e5ad7665b52a16cc"
+}

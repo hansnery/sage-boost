@@ -34,6 +34,20 @@ as a substantive recovery fix, with backup and exact INI preservation; its
 receipt is recorded separately after verification. The 59/s gameplay target
 and multiplayer qualification remain open.
 
+Committed/pushed as `d27bf75`, then installed locally after the game/launcher
+closed check. Build and installed SHA-256 match
+`b93ae03b57ab70a455fee8c859b05ecf6c05c57335b33657e5ad7665b52a16cc`;
+the entire installed INI is byte-identical. Binary, INI, logs and the prior
+shortcut are backed up in
+`%TEMP%\bfme2perf-beta14-before-beta16-20261019-115820`.
+The desktop **Realms - sage-boost beta test** shortcut pins beta.16 and the
+current INI, using the current launcher-managed `C:\Jogos\AgeoftheRing\realms`
+mod directory. CheckOnly passes; no game was launched. See
+[installation receipt](benchmarks/2026-10-19-beta16-install.json).
+Next qualification: user loads the same heavy save, lets it settle, then
+records 60 unpaused seconds with a fixed camera and FrameView. Keep the
+same command limit and graphics settings when comparing builds.
+
 ### Later installed capture reviewed (2026-10-19)
 
 Fresh inspection found beta.14 installed again, with its published ASI hash
