@@ -5,6 +5,11 @@
 #ifdef PF_NATIVE_SOURCE_WORKER
 #include "source_packet.h"
 #endif
+#ifdef PF_NATIVE_POSE_WORKER
+#include "pose_packet.h"
+static unsigned stale_pose_values;
+static float worker_palettes[GROUPS*GROUP_SIZE][BONES][8];
+#endif
 
 #define WORKER_SLOTS 2
 #define WORKER_JOBS 8
@@ -88,9 +93,19 @@ static void render_packet_owned(const render_packet *p,unsigned *pixels,unsigned
 {
     REQUIRE(GetCurrentThreadId()==render_thread);
     if(p->check)deterministic_state();
+#ifdef PF_NATIVE_POSE_WORKER
+    const float *palettes=(const float*)p->palettes;
+    if(direct) {
+        native_pose_fill((const float*)templates[p->extra!=0],(float*)worker_palettes,GROUPS*GROUP_SIZE*BONES);
+        palettes=(const float*)worker_palettes;
+    }
+    for(unsigned i=0;i<GROUPS*GROUP_SIZE;i++)for(unsigned b=0;b<BONES;b++)
+        memcpy(many_pivots[i]+g_bonemap[b]*0x58+0x30,palettes+(i*BONES+b)*8,28);
+#else
     if(direct)pose(p->extra);
     else for(unsigned i=0;i<GROUPS*GROUP_SIZE;i++)for(unsigned b=0;b<BONES;b++)
         memcpy(many_pivots[i]+g_bonemap[b]*0x58+0x30,p->palettes[i][b],28);
+#endif
     material_fixture_epoch(p->epoch);material_fixture_clock(p->clock);
 #ifdef PF_NATIVE_SOURCE_WORKER
     material_fixture_source_packets(p->sources,GROUPS,wrong_source_setter);
@@ -131,6 +146,11 @@ static void initialize_worker(void)
     }
     for(unsigned c=0;c<WORKER_ORACLES;c++) {
         deterministic_state();pose(c!=0);
+#ifdef PF_NATIVE_POSE_WORKER
+        native_pose_fill((const float*)templates[c!=0],(float*)worker_palettes,GROUPS*GROUP_SIZE*BONES);
+        for(unsigned i=0;i<GROUPS*GROUP_SIZE;i++)for(unsigned b=0;b<BONES;b++)
+            memcpy(many_pivots[i]+g_bonemap[b]*0x58+0x30,worker_palettes[i][b],28);
+#endif
         material_fixture_epoch(c>=2);material_fixture_clock(c>=2?33:0);
 #ifdef PF_NATIVE_SOURCE_WORKER
         /* Independent reference uses ordinary SetValue, not the packet
@@ -157,6 +177,17 @@ static void initialize_worker(void)
         shadow_mode?"shadow":"lit",covered,moved,material,
         packet_hash(reference[0],sizeof reference[0]),packet_hash(reference[1],sizeof reference[1]),
         packet_hash(reference[2],sizeof reference[2]));
+#ifdef PF_NATIVE_POSE_WORKER
+    /* The native calculation must actually affect the rendered picture;
+     * a no-op decoder would only manufacture unrelated producer work. */
+    static unsigned raw_pose[RT*RT];unsigned decoded_changed=0;
+    deterministic_state();pose(0);material_fixture_epoch(0);material_fixture_clock(0);
+    pair_optimized=0;retain_now=0;dispatch_bulk_now=1;
+    frame_draw(0,0,raw_pose);
+    for(unsigned i=0;i<RT*RT;i++)decoded_changed+=raw_pose[i]!=reference[0][i];
+    REQUIRE(decoded_changed>100);
+    printf("POSE ORACLE: native decoded endpoints change %u pixels versus raw templates\n",decoded_changed);
+#endif
 }
 
 static DWORD WINAPI worker_main(void *unused)
@@ -211,7 +242,13 @@ static void prepare(unsigned extra,unsigned epoch,unsigned clock,unsigned check,
     unsigned phase=stale_source_values?0:scratch.source_phase;
     for(unsigned group=0;group<GROUPS;group++)native_source_capture(source_seed[phase],&scratch.sources[group*3]);
 #endif
-    if(!direct)memcpy(scratch.palettes,templates[extra!=0],sizeof scratch.palettes);
+    if(!direct) {
+#ifdef PF_NATIVE_POSE_WORKER
+        native_pose_fill((const float*)templates[stale_pose_values?0:extra!=0],(float*)scratch.palettes,GROUPS*GROUP_SIZE*BONES);
+#else
+        memcpy(scratch.palettes,templates[extra!=0],sizeof scratch.palettes);
+#endif
+    }
 }
 
 static int next_free(void)
@@ -285,12 +322,25 @@ static void worker_sample(unsigned mode,unsigned round,double result[5])
 int main(int argc,char **argv)
 {
 #ifdef PF_NATIVE_SOURCE_WORKER
+#ifdef PF_NATIVE_POSE_WORKER
+    REQUIRE((argc==9 || argc==10) && bench_no_game());
+    unsigned fault_arg=9;
+    REQUIRE((argv[8][0]=='0' || argv[8][0]=='1') && !argv[8][1]);
+    native_pose_init(argv[5],argv[7],(unsigned)(argv[8][0]-'0'));
+#else
     REQUIRE((argc==7 || argc==8) && bench_no_game());
+    unsigned fault_arg=7;
+#endif
     REQUIRE(!strcmp(argv[4],"checked") || !strcmp(argv[4],"owned"));
     integrity_checks=!strcmp(argv[4],"checked");
-    if(argc==8) {
-        REQUIRE(!strcmp(argv[7],"wrong-setter") || !strcmp(argv[7],"stale-source"));
-        wrong_source_setter=!strcmp(argv[7],"wrong-setter");stale_source_values=!strcmp(argv[7],"stale-source");
+    if((unsigned)argc>fault_arg) {
+#ifdef PF_NATIVE_POSE_WORKER
+        stale_pose_values=!strcmp(argv[fault_arg],"stale-pose");
+        REQUIRE(stale_pose_values || !strcmp(argv[fault_arg],"wrong-setter") || !strcmp(argv[fault_arg],"stale-source"));
+#else
+        REQUIRE(!strcmp(argv[fault_arg],"wrong-setter") || !strcmp(argv[fault_arg],"stale-source"));
+#endif
+        wrong_source_setter=!strcmp(argv[fault_arg],"wrong-setter");stale_source_values=!strcmp(argv[fault_arg],"stale-source");
     }
 #else
     REQUIRE((argc==4 || argc==5) && bench_no_game());
@@ -311,7 +361,11 @@ int main(int argc,char **argv)
     ownership_controls();
     printf("PACKET: %u bytes, %u owned slots; timed checksums=%u, all copies included; all GPU/resource calls stay on worker\n",(unsigned)sizeof(render_packet),WORKER_SLOTS,integrity_checks);
 #ifdef PF_NATIVE_SOURCE_WORKER
+#ifdef PF_NATIVE_POSE_WORKER
+    puts("LIMITS: native matrix capture and 43,200 warm vector decodes per draw; decoded next endpoints feed geometry; synthetic channels/cursors, bulk-after-second, fixed resources; no simulation, interpolation/hierarchy composition, terrain/reflections/Present or gameplay FPS");
+#else
     puts("LIMITS: three native matrix sources on producer; immutable palette templates, synthetic single-pass geometry, bulk-after-second prototype; no live engine lifetimes, terrain/reflections/Present, artificial logic workload or gameplay FPS");
+#endif
 #else
     puts("LIMITS: immutable fixture templates, synthetic single-pass geometry, bulk-after-second prototype; no native capture, terrain/reflections/Present, artificial logic workload or gameplay FPS");
 #endif
@@ -340,6 +394,11 @@ int main(int argc,char **argv)
     unsigned captured=native_source_capture_calls();REQUIRE(captured==submitted*GROUPS*3);
     printf("CAPTURE: %u native matrix callbacks, provider storage poisoned before publication; copied typed setters only\n",captured);
     native_source_capture_close();
+#endif
+#ifdef PF_NATIVE_POSE_WORKER
+    /* Four reference renders, plus one generated palette for every job,
+     * including the two deliberately rejected borrowed packets. */
+    native_pose_close(submitted+WORKER_ORACLES);
 #endif
     REQUIRE(bench_no_game());return 0;
 }

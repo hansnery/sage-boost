@@ -58,6 +58,41 @@ Accelerator has now run in isolated offline harnesses (below).
   resolve a reproducible multiplayer divergence only after one is observed.
   No promised FPS gain, deployment or new gameplay request from this review.
 
+### Native pose preparation overlapping rendering (2026-10-18)
+
+The optional owned-worker fixture now executes verified native vector
+decoders to prepare the bone positions that its draws consume. Direct mode
+performs preparation and drawing serially on the worker; queued modes
+prepare on the producer and copy the results. All paths use the same native
+work and output, with no external accelerator DLL. Completed-work timing
+includes copies, backpressure and GPU drains.
+
+Across both images and lit/shadow workloads, advancing a warm decoder cursor
+by one saves **1.4112-1.9442 ms per synthetic regular/extra pair** against
+direct completion. A lower-work zero-advance case on `game.dat` saves
+0.7457-1.2160 ms. These are medians of paired differences, not caller-only
+timings. Producer preparation takes 2.4055-2.4579 ms/pair for advance one and
+1.8517-1.9204 ms for advance zero, before separately recorded waits.
+
+Twelve positive processes pass **144 exact packet image/state cases**, with
+18 deliberate setter/stale-source/stale-pose faults caught, 24 borrowed
+buffer refusals and 24 capacity/recovery controls. Independent decoded-versus-
+raw images establish that the native work affects the picture. Original
+matrix-worker and batch-worker regressions pass 24 and 20 image/state cases.
+The [report](benchmarks/2026-10-18-native-pose-worker.json) preserves all
+252 three-mode samples, numeric native manifests and input/log hashes.
+
+This establishes useful overlap in this fixture, not a gameplay improvement.
+Its 43,200 vector decodes per draw use synthetic channels and warm cursors;
+neither the count nor cursor distribution comes from gameplay. Decoded next
+endpoints feed geometry without animation interpolation or hierarchy
+composition. Full scene, resource/effect lifetimes, Begin/pass dependencies
+and live device/window/Reset integration remain open. Lit and shadow deltas
+cannot be added or converted to FPS. No production code changed; the full
+suite passed at the preceding `da85d4e`, and this extension used the optional
+worker regressions above. Installed beta.13 and INI hashes still match.
+Continue integration; no installation or new gameplay request is justified.
+
 ### Readback waits and the unhooked baseline (2026-10-18)
 
 The new optional `bench_external_readbacks.exe` compares external threading,

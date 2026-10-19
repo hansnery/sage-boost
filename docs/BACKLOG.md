@@ -70,6 +70,14 @@ Strike an item through, with the date, when it's done.
   `benchmarks/2026-10-18-native-source-worker.json`. Preparation costs
   0.52-0.55 ms/pair before waits, but shadow completion shows no repeatable
   gain. This does not close the broader capture/lifetime item above.
+- [x] 2026-10-18: measure useful preparation/render overlap by feeding
+  verified native vector-decoder endpoints into the worker's actual bone
+  positions. Twelve processes pass 144 image/state cases and 18 deliberate
+  output faults; original worker variants also pass. Preserve 252 samples
+  in `benchmarks/2026-10-18-native-pose-worker.json`. Completion saves
+  0.75-1.94 ms per synthetic pair across warm zero/one cursor advances.
+  Counts, cursors and resources remain synthetic; this qualifies overlap,
+  not real animation capture, full-scene ownership or gameplay FPS.
 - [x] 2026-10-18: back up a second launcher replacement of beta.13 by
   0.9.10, restore the identical tested binary and only the three missing beta
   keys, and verify the shortcut with CheckOnly. No game launched; see

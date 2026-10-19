@@ -65,15 +65,19 @@ def main():
     parser.add_argument('--repeat', type=int, default=1)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--checked', action='store_true')
+    parser.add_argument('--native-pose', action='store_true',
+                        help='generate consumed bone positions with verified native vector decoding')
+    parser.add_argument('--pose-step', type=int, choices=(0, 1), default=1,
+                        help='warm decoder cursor advance; only used with --native-pose')
     args = parser.parse_args()
     assert 1 <= args.repeat <= 3
     guard()
     root = Path(tempfile.mkdtemp(prefix='sage-native-source-worker-'))
     install = args.install.resolve()
-    exe = REPO/'perf/build/bench_native_source_worker.exe'
+    exe = REPO/'perf/build'/('bench_native_pose_worker.exe' if args.native_pose else 'bench_native_source_worker.exe')
     shutil.copy2(exe, root/exe.name)
     shutil.copy2(install/'d3d9.dll', root/'d3d9.dll')
-    sources = [Path(__file__), REPO/'tools/bench_native_matrix_sources.py',
+    sources = [Path(__file__), REPO/'tools/bench_native_matrix_sources.py', REPO/'tools/bench_native_decode.py',
                REPO/'perf/Makefile', *sorted((REPO/'perf/tests').glob('*.c')),
                *sorted((REPO/'perf/tests').glob('*.h')), REPO/'perf/tests/shadow_fx/shadow_fx.c',
                *sorted((REPO/'perf/src').glob('*.c')), *sorted((REPO/'perf/src').glob('*.h')),
@@ -101,18 +105,32 @@ def main():
                                 'bodies': [{'name': name, 'rva': rva, 'size': size,
                                             'sha256': hashlib.sha256(bytes(target.mem[rva:rva+size])).hexdigest()}
                                            for (name, _, _), (rva, size, _, _) in zip(BODIES, records)]})
+        if args.native_pose:
+            import bench_native_decode as decode
+            with contextlib.redirect_stdout(io.StringIO()):
+                pose_records = decode.refusals(reference, target)
+            pose_manifest = root/f'pose-{index}.txt'
+            pose_manifest.write_text('\n'.join(' '.join(map(str, row)) for row in pose_records)+'\n', encoding='ascii')
+            report['images'][-1]['pose_decoder'] = {
+                'manifest': str(pose_manifest), 'manifest_sha256': sha(pose_manifest),
+                'refusal_controls': 6, 'records': pose_records,
+                'body_sha256': [hashlib.sha256(bytes(target.mem[rva:rva+size])).hexdigest()
+                                for rva,size,_,_,_ in pose_records]}
         for repeat in range(args.repeat):
             workloads = args.workload or ['lit', 'shadow']
             if repeat & 1:
                 workloads = list(reversed(workloads))
             for workload in workloads:
                 # The deliberate setter corruption must reach the image/state oracle.
-                for fault in ['', 'wrong-setter', 'stale-source'] if repeat == 0 else ['']:
+                faults = ['', 'wrong-setter', 'stale-source'] + (['stale-pose'] if args.native_pose else [])
+                for fault in faults if repeat == 0 else ['']:
                     guard()
                     label = f'{index}-{repeat}-{workload}' + ('-'+fault if fault else '')
                     log = root/(label+'.log')
                     command = [str(root/exe.name), str(install/'Shaders.big'), str(install/'msvcr71.dll'),
                                workload, 'checked' if args.checked else 'owned', str(image), str(manifest)]
+                    if args.native_pose:
+                        command.extend([str(pose_manifest), str(args.pose_step)])
                     if fault:
                         command.append(fault)
                     startup = subprocess.STARTUPINFO()
@@ -135,12 +153,21 @@ def main():
                     else:
                         assert run.returncode == 0, text[-4000:]
                         result.update(parse(text))
+                        if args.native_pose:
+                            assert 'POSE: fills=594 native_vector_calls=25660800;' in text
+                            assert 'POSE ORACLE: native decoded endpoints change ' in text
+                            result['pose_fills'] = 594
+                            result['native_vector_calls'] = 25660800
+                            result['pose_step'] = args.pose_step
+                            result['pose_oracle'] = next(line for line in text.splitlines() if line.startswith('POSE ORACLE:'))
                     args.output.write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
                     print(json.dumps({'case': label, 'returncode': run.returncode,
                                       'medians': result.get('medians_ms_per_pair'), 'log': str(log)}), flush=True)
     assert all(sha(path) == digest for path, digest in report['inputs_sha256'].items())
     for image in report['images']:
         assert sha(image['path']) == image['sha256'] and sha(image['manifest']) == image['manifest_sha256']
+        if args.native_pose:
+            assert sha(image['pose_decoder']['manifest']) == image['pose_decoder']['manifest_sha256']
     guard()
     print('All native-source, pixel/state, ownership and negative controls passed.', flush=True)
 
