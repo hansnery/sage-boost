@@ -130,10 +130,14 @@ Strike an item through, with the date, when it's done.
   median savings are 0.91-2.36 ms. Native D3D9 beats its native bulk reference
   by 1.34-2.53 ms; DXVK still trails by 0.20-1.62 ms. No install. See
   `benchmarks/2026-10-18-group-bulk-capture.json`.
-- [ ] Include the first unit in checked consumer instancing and compare
-  against the current three-draw consumer, prior worker and native two-draw
-  reference. Preserve first-unit output, ownership, failure behavior and full
-  measured work. Then test redundant frame-start/ownership synchronization.
+- [x] 2026-10-18: include the first unit in checked consumer instancing.
+  Both images/backends pass 528 main/size image-state cases, 32 first-batch
+  recovery cases and 104 faults. Actual draws fall from three to two per
+  25-unit group. Versus native bulk, native D3D9 saves 1.67-3.20 ms/pair;
+  DXVK ranges from a 0.26 ms regression to a 0.55 ms saving. No install.
+  See `benchmarks/2026-10-18-group-first-batch.json`.
+- [ ] Test redundant frame-start/ownership synchronization while preserving
+  FIFO ordering, GPU ownership, failure controls and all completion work.
   The changed flags=7 Begin contract, deferred driver errors, cold effects,
   live resources and whole scene/Present remain unqualified.
 - [x] 2026-10-18: back up a second launcher replacement of beta.13 by

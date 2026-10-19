@@ -13,6 +13,9 @@ static struct {
     pf_submit submit;
     unsigned capacity,frames[2],groups[2],meshes[2],draws[2];
 } consumer;
+#ifdef PF_GROUP_BATCH_FIRST
+static unsigned consumer_skip_first,consumer_expect_recovery,consumer_recoveries;
+#endif
 
 static unsigned consumer_integer_bits(unsigned value)
 {
@@ -48,10 +51,10 @@ static void packet_consumer_close(void)
     consumer.submit.valid=0;consumer.owner=0;
 }
 
-static void packet_consumer_group_loaded(const float *palettes,unsigned count,unsigned extra,
-                                  IDirect3DVertexShader9 *game_shader)
+static void packet_consumer_group_submit(const float *palettes,unsigned count,unsigned extra,
+                                  IDirect3DVertexShader9 *game_shader,unsigned batch_first)
 {
-    REQUIRE(consumer.owner==GetCurrentThreadId() && extra<2 && count && count<=GROUP_SIZE);
+    REQUIRE(consumer.owner==GetCurrentThreadId() && extra<2 && count && count<=GROUP_SIZE && batch_first<=1);
     unsigned *bones=(unsigned *)palettes;
     pf_submit_desc descriptor={0};
     descriptor.dev=g_dev;descriptor.game_vs=game_shader;descriptor.our_vs=consumer.shader;
@@ -65,19 +68,53 @@ static void packet_consumer_group_loaded(const float *palettes,unsigned count,un
     HR(IDirect3DDevice9_GetStreamSource(g_dev,descriptor.instance_stream,
         (IDirect3DVertexBuffer9 **)&descriptor.previous_vb,&descriptor.previous_offset,&descriptor.previous_stride));
     HR(pf_submit_capture(&consumer.submit,&descriptor));
-    pf_submit_result result=pf_submit_pending(&consumer.submit,bones,1);
-    REQUIRE(SUCCEEDED(result.error) && result.complete && result.coherent && result.replayed==1);
-    consumer.draws[extra]++;
-    for(unsigned first=1;first<count;) {
+    unsigned first=0;
+    pf_submit_result result;
+    if(!batch_first) {
+        result=pf_submit_pending(&consumer.submit,bones,1);
+        REQUIRE(SUCCEEDED(result.error) && result.complete && result.coherent && result.replayed==1);
+        consumer.draws[extra]++;first=1;
+    }
+#ifdef PF_GROUP_BATCH_FIRST
+    unsigned ordinary_remaining=0;
+    if(batch_first && consumer_skip_first)first=1;
+#endif
+    for(;first<count;) {
         unsigned n=count-first;
         if(n>consumer.capacity)n=consumer.capacity;
+#ifdef PF_GROUP_BATCH_FIRST
+        if(ordinary_remaining) {
+            result=pf_submit_pending(&consumer.submit,bones+first*BONES*8,n);
+            REQUIRE(SUCCEEDED(result.error) && result.complete && result.coherent && result.replayed==n);
+            consumer.draws[extra]+=n;first+=n;continue;
+        }
+#endif
         result=pf_submit_batch(&consumer.submit,bones+first*BONES*8,n);
-        REQUIRE(SUCCEEDED(result.error) && result.complete && result.coherent && result.committed==n);
-        consumer.draws[extra]++;first+=n;
+#ifdef PF_GROUP_BATCH_FIRST
+        if(FAILED(result.error)) {
+            REQUIRE(consumer_expect_recovery && result.error==E_FAIL && result.complete && result.coherent &&
+                    !result.committed && result.replayed==n && !first && !consumer.submit.valid && !consumer.submit.open);
+            consumer_expect_recovery=0;consumer_recoveries++;consumer.draws[extra]+=n;
+            /* A recovered API error still invalidates the transaction. The
+             * fixture's immutable descriptor and restored bindings qualify
+             * a fresh capture solely for ordinary drawing of the remainder. */
+            if(first+n<count)HR(pf_submit_capture(&consumer.submit,&descriptor));
+            ordinary_remaining=1;
+        } else
+#endif
+        {
+            REQUIRE(SUCCEEDED(result.error) && result.complete && result.coherent && result.committed==n);
+            consumer.draws[extra]++;
+        }
+        first+=n;
     }
     if(descriptor.previous_vb)IDirect3DVertexBuffer9_Release((IDirect3DVertexBuffer9 *)descriptor.previous_vb);
     consumer.groups[extra]++;consumer.meshes[extra]+=count;
 }
+
+static void packet_consumer_group_loaded(const float *palettes,unsigned count,unsigned extra,
+                                  IDirect3DVertexShader9 *game_shader)
+{ packet_consumer_group_submit(palettes,count,extra,game_shader,0); }
 
 static void packet_consumer_group(const float *palettes,unsigned count,unsigned extra,
                                   IDirect3DVertexShader9 *game_shader)

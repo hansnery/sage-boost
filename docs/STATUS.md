@@ -58,6 +58,37 @@ Accelerator has now run in isolated offline harnesses (below).
   resolve a reproducible multiplayer divergence only after one is observed.
   No promised FPS gain, deployment or new gameplay request from this review.
 
+### First-unit batching in the independent worker (2026-10-18)
+
+The optional consumer now includes the first unit in checked instancing,
+reducing actual draws from three to two per 25-unit fixture group. Both
+images/backends pass **288 main image/state cases, 240 size cases and 32
+injected first-batch recovery cases**. The 104 deliberate faults include
+eight omitted-first-unit checks. Lit pixels/state remain exact; shadow
+depth differs by at most 1/2^24 within the existing tolerance.
+
+The recovery pilot caught a fixture bug: an API error invalidates the
+submission capture even after complete ordinary replay. The corrected path
+checks invalidation, re-captures the unchanged fixture descriptor only for
+ordinary drawing of the remainder, and verifies all 25 successful draws.
+The failed pilot, 96 rotated five-way timing rows and input/log hashes are
+preserved in the [report](benchmarks/2026-10-18-group-first-batch.json).
+
+Compared with the previous bulk worker, paired median savings are
+**0.95-1.82 ms on DXVK** and **0.10-0.27 ms on native D3D9**, per synthetic
+regular/extra pair. Against native bulk drawing, native D3D9 saves
+**1.67-3.20 ms**; DXVK ranges from a **0.26 ms regression to a 0.55 ms
+saving**. This is not a consistent DXVK advantage or a gameplay FPS result.
+
+Existing group/packet paths pass another 132 image/state cases, 50 deliberate
+faults, six real resets and two zero-reference final releases. The submission
+unit test passes 19 cases. Production sources, installed beta.13 and INI
+hashes remain unchanged. No installation or gameplay request follows.
+
+Next measure redundant ownership/frame-start handoffs without excluding
+completion costs. Fixed resources and warm effects still leave live resource
+lifetime, deferred errors, cold effects and whole-scene/Present unqualified.
+
 ### Qualified bulk capture (2026-10-18)
 
 The next optional fixture captures follower palettes at the verified native
@@ -81,10 +112,10 @@ the prior command worker. Against the independent native bulk reference,
 native D3D9 saves **1.34-2.53 ms**, but DXVK still loses **0.20-1.62 ms**.
 These are synthetic comparisons, not gameplay FPS. No installation follows.
 
-The next concrete difference is GPU draw count: the independent consumer
+This exposed a concrete difference in GPU draw count: the independent consumer
 draws the leader separately, then two follower batches; native bulk draws
-all 25 units in two batches. Test including the leader in checked instanced
-submission, preserving the old consumer as a comparison. Redundant frame
+all 25 units in two batches. The first-unit comparison above preserves the
+old consumer as a control. Redundant frame
 ownership/start handoffs are another remaining cost. Live resource lifetime,
 driver-error propagation and whole-scene/Present still need qualification.
 

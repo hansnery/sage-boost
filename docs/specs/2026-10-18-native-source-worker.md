@@ -560,3 +560,43 @@ DXVK regresses 0.20-1.62 ms. Preserve the uninstrumented measurements and all
 remaining frame-completion costs. See the
 [report](../benchmarks/2026-10-18-group-bulk-capture.json). This does not
 justify a runtime install or gameplay FPS prediction.
+
+## Include the first unit in checked consumer batching
+
+The optional `bench_group_first.exe` / `--batch-first` comparison carries
+the batching choice in each owned draw command. The existing consumer keeps
+its ordinary first draw by default. The candidate includes the first unit
+in the checked instancing transaction, reducing a 25-unit fixture group from
+three draws to two at the current fifteen-instance capacity.
+
+Correctness runs compare group sizes 1, 2, 15, 16 and 25 against ordinary and
+bulk native references for regular and extra frames. An observer counts
+actual successful device draws and is removed, together with all other
+device/state-block auditing, before timing. A deliberately omitted first
+unit must fail the existing image oracle. Five-way timing rotations retain
+native bulk, direct and worker first-batch capture, the previous bulk worker
+and the original per-mesh worker; every path includes final GPU completion.
+
+A separate control injects E_FAIL at the real first-batch shader preparation
+call. The transaction engine restores state and replays that batch normally.
+An early pilot incorrectly attempted another instanced batch afterward;
+the API contract invalidates capture even after coherent complete recovery.
+The corrected fixture verifies invalidation, re-captures its unchanged
+descriptor only for ordinary draws of the remainder, and checks exactly 25
+successful draws for the failed group. Later groups establish new captures.
+This is a controlled preparation failure, not general asynchronous error
+propagation or live device-loss qualification. The historical packet/reset
+path keeps its ordinary-first default and is tested separately.
+
+Both images/backends pass 528 main/size image-state cases, 32 first-batch
+recovery cases and 104 deliberate faults. Group/packet regressions preserve
+132 image/state cases, six resets and two zero-reference releases, and
+reject 50 deliberate faults. Compared with the previous bulk worker, paired
+median savings are 0.95-1.82 ms on DXVK and 0.10-0.27 ms on native D3D9.
+Against native bulk, native D3D9 saves 1.67-3.20 ms and DXVK ranges from a
+0.26 ms regression to a 0.55 ms saving. All figures are per synthetic
+regular/extra pair. See the
+[report](../benchmarks/2026-10-18-group-first-batch.json); no runtime promotion
+or gameplay FPS prediction follows. Profile pairs are diagnostic and retain
+their adjacent unprofiled measurements rather than attributing all drift
+to instrumentation.

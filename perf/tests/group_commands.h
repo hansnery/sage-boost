@@ -123,7 +123,8 @@ static void gc_command_replay(const GcCommandBatch *batch)
             IDirect3DVertexShader9 *shader=NULL;
             HR(IDirect3DDevice9_GetVertexShader(g_dev,&shader));REQUIRE(shader);
             REQUIRE(c->bytes==a*BONES*8*sizeof(float));
-            packet_consumer_group_loaded(v,a,b,shader);IDirect3DVertexShader9_Release(shader);break;
+            REQUIRE(b<4);
+            packet_consumer_group_submit(v,a,b&1,shader,b>>1);IDirect3DVertexShader9_Release(shader);break;
         }
         case CMD_RESTORE:
             if(gc_fault!=6)hr=bench_filter_end();

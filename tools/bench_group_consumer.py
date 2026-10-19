@@ -25,14 +25,17 @@ def main():
     parser.add_argument('--commands', action='store_true', help='evaluate effects on producer and batch owned device commands')
     parser.add_argument('--profile', action='store_true', help='profile coarse producer intervals after ordinary command timing rounds')
     parser.add_argument('--capture-bulk', action='store_true', help='capture qualified follower palettes at the native loop boundary')
+    parser.add_argument('--batch-first', action='store_true', help='include the first unit in checked consumer instancing')
     args = parser.parse_args()
+    if args.batch_first:
+        args.capture_bulk = True
     if args.capture_bulk:
         args.profile = True
     if args.profile:
         args.commands = True
     guard()
     root = Path(tempfile.mkdtemp(prefix='sage-native-group-consumer-'))
-    exe = REPO/'perf/build'/('bench_group_capture.exe' if args.capture_bulk else 'bench_group_profile.exe' if args.profile else 'bench_group_commands.exe' if args.commands else 'bench_group_consumer.exe')
+    exe = REPO/'perf/build'/('bench_group_first.exe' if args.batch_first else 'bench_group_capture.exe' if args.capture_bulk else 'bench_group_profile.exe' if args.profile else 'bench_group_commands.exe' if args.commands else 'bench_group_consumer.exe')
     shutil.copy2(exe, root/exe.name)
     if args.backend == 'dxvk':
         shutil.copy2(args.install/'d3d9.dll', root/'d3d9.dll')
@@ -43,12 +46,14 @@ def main():
                *(args.install/name for name in ('Shaders.big', 'msvcr71.dll', 'd3dx9_27.dll', 'd3d9.dll')),
                REPO/'tools/test_mesh_draw_contract.py', REPO/'tools/test_group_contract.py', BASELINE]
     report = {'base_commit': subprocess.check_output(['rtk', 'git', 'rev-parse', 'HEAD'], text=True).strip(),
-              'backend': args.backend, 'commands': args.commands, 'profile': args.profile, 'capture_bulk': args.capture_bulk, 'directory': str(root), 'inputs_sha256': {str(p.resolve()): sha(p) for p in sources},
+              'backend': args.backend, 'commands': args.commands, 'profile': args.profile, 'capture_bulk': args.capture_bulk, 'batch_first': args.batch_first, 'directory': str(root), 'inputs_sha256': {str(p.resolve()): sha(p) for p in sources},
               'images': [], 'runs': [], 'game_launched': False, 'runtime_changed': False,
               'sample_columns': ['round', 'native_bulk_complete_ms', 'direct_capture_complete_ms',
                                  'worker_capture_complete_ms', 'saved_vs_native_ms']}
     if args.capture_bulk:
         report['sample_columns'].append('original_worker_complete_ms')
+    if args.batch_first:
+        report['sample_columns'].append('previous_bulk_worker_complete_ms')
     reference = Image(BASELINE)
     for index, image in enumerate(args.image):
         with contextlib.redirect_stdout(io.StringIO()):
@@ -61,7 +66,7 @@ def main():
                                  'mesh_manifest': str(mesh), 'mesh_sha256': sha(mesh),
                                  'group_manifest': str(group), 'group_sha256': sha(group)})
         for workload in args.workload or ['lit', 'shadow']:
-            for fault in ([0] if args.pilot else range(13 if args.capture_bulk else 9 if args.commands else 5)):
+            for fault in ([0] if args.pilot else range(14 if args.batch_first else 13 if args.capture_bulk else 9 if args.commands else 5)):
                 guard()
                 command = [str(root/exe.name), str(args.install/'Shaders.big'), str(args.install/'msvcr71.dll'),
                            workload, 'narrow', '100', 'leader-bulk-first', str(image.resolve()), str(mesh), str(group), str(fault)]
@@ -79,7 +84,7 @@ def main():
                 if not fault:
                     assert run.returncode == 0, text[-3000:]
                     label = 'NATIVE GROUP COMMANDS:' if args.commands else 'NATIVE GROUP CONSUMER:'
-                    assert label+(' 24' if args.capture_bulk else ' 12')+' image/state cases;' in text
+                    assert label+(' 36' if args.batch_first else ' 24' if args.capture_bulk else ' 12')+' image/state cases;' in text
                     result['correctness'] = next(s for s in text.splitlines() if s.startswith(label))
                     if args.commands:
                         result['audit'] = next(s for s in text.splitlines() if s.startswith('COMMAND AUDIT:'))
@@ -91,6 +96,9 @@ def main():
                         assert '12 callback refusal pairs;' in result['bulk']
                         result['guards'] = next(s for s in text.splitlines() if s.startswith('CAPTURE GUARDS:'))
                         assert '20 actual-frame predicate refusals;' in result['guards']
+                    if args.batch_first:
+                        result['first_batch'] = next(s for s in text.splitlines() if s.startswith('FIRST BATCH:'))
+                        assert '30 size/image/state cases; 4 first-batch shader failures recover' in result['first_batch']
                     result['oracles'] = [s for s in text.splitlines() if s.startswith('GROUP ORACLE:')]
                     assert len(result['oracles']) == 3
                     rows = [[float(x) for x in s.split(',')[1:]] for s in text.splitlines() if s.startswith('sample,')]
@@ -109,7 +117,8 @@ def main():
                                                      'paired_unprofiled_complete_ms']
                         result['profiles'] = prof
                 else:
-                    expected = ('COMMAND DEVICE AUDIT: forbidden producer call 1' if fault == 12 else
+                    expected = ('gc_pixels_equal(expected,gc_output)' if fault == 13 else
+                                'COMMAND DEVICE AUDIT: forbidden producer call 1' if fault == 12 else
                                 'gc_bulk_captured==bulk_before' if fault == 11 else
                                 'scope_after.scopes-scope_before.scopes==' if fault == 10 else
                                 'gc_captured-captured==' if fault == 9 else

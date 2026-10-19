@@ -266,3 +266,31 @@ Next: include the leader in checked instanced submission. The consumer still
 uses three draws per 25-unit group versus two in the native bulk reference.
 Compare both consumer variants directly before testing the remaining frame
 ownership/start barriers; do not remove completion work from the timings.
+
+## Include the first unit in consumer instancing
+
+Add an optional first-batch fixture. Keep the existing consumer unchanged
+by default, and carry the new choice in the owned draw command. Compare
+native bulk, direct and worker first-batch capture, the previous bulk worker
+and the earlier per-mesh worker in rotated complete frame pairs.
+
+- [x] Add an explicit first-in-batch submission path using the existing
+  checked transaction engine, with no pending ordinary leader draw.
+- [x] Compare both paths against native references for full groups and
+  sizes around the fifteen-instance capacity. Count actual device draws in
+  correctness runs, then remove the observer before timing.
+- [x] Inject a real first-batch preparation failure and verify coherent
+  ordinary replay includes the leader once, restores state and preserves
+  images. Deliberately omitting the leader must fail the image/count checks.
+- [x] Run both images/backends and regress the existing capture and packet
+  paths. Preserve source/log hashes, report complete timing, and install
+  only after later runtime qualification and substantive offline performance
+  evidence justify a gameplay test.
+
+Completed: 528 main/size cases, 32 first-batch recoveries, 104 fault processes
+and 96 five-way timing rows. The failed recovery pilot is preserved; the fix
+checks capture invalidation and draws the rest of that group ordinarily.
+Existing paths retain 132 image/state cases, six resets and zero-reference
+final releases, with 50 faults rejected. Versus native bulk, native D3D9
+saves 1.67-3.20 ms/pair; DXVK ranges from a 0.26 ms regression to a 0.55 ms
+saving. No install. See `../benchmarks/2026-10-18-group-first-batch.json`.

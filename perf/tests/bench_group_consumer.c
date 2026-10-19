@@ -22,6 +22,9 @@ extern int bench_scope_owner_idle(DWORD);
 enum { GC_FRAME, GC_BEGIN, GC_DRAW_END, GC_END_ONLY, GC_FINISH, GC_CLAIM, GC_STOP, GC_COMMANDS };
 typedef struct {
     unsigned kind,extra,group,count,identity,fail,check;
+#ifdef PF_GROUP_BATCH_FIRST
+    unsigned batch_first,recovery;
+#endif
     fixture_material_values material;
     float palette[GROUP_SIZE][BONES][8];
     HRESULT result;
@@ -39,10 +42,19 @@ static unsigned gc_output[RT*RT],gc_state[1600],gc_state_words;
 static GcRequest gc_group;
 static void *gc_effects[2];
 static unsigned gc_depth_max;
+#ifdef PF_GROUP_BATCH_FIRST
+static unsigned gc_batch_first=1,gc_group_size=GROUP_SIZE,gc_failure_probe;
+#else
+#define gc_group_size GROUP_SIZE
+#endif
 #ifdef PF_GROUP_COMMANDS
 #include "group_commands.h"
 #ifdef PF_GROUP_CAPTURE
+#ifdef PF_GROUP_BATCH_FIRST
+#define GC_MAX_FAULT 13
+#else
 #define GC_MAX_FAULT 12
+#endif
 static unsigned gc_fast_capture=1,gc_bulk_captured;
 #else
 #define GC_MAX_FAULT 8
@@ -65,6 +77,10 @@ static LONGLONG gc_profile_ticks[GCP_COUNT],gc_traversal_start;
 #else
 #define GC_PROFILE_START(name) ((void)0)
 #define GC_PROFILE_STOP(name,kind) ((void)0)
+#endif
+
+#ifdef PF_GROUP_BATCH_FIRST
+#include "group_first_batch.h"
 #endif
 
 static int gc_pixels_equal(const unsigned *expected,const unsigned *actual)
@@ -107,6 +123,11 @@ static void gc_execute(GcRequest *r)
     switch(r->kind) {
     case GC_CLAIM: consumer.owner=GetCurrentThreadId();break;
     case GC_FRAME: {
+#ifdef PF_GROUP_BATCH_FIRST
+        gc_first_draws=gc_first_failures=0;gc_first_fail_armed=r->recovery;
+        consumer_expect_recovery=r->recovery;consumer_recoveries=0;
+        consumer_skip_first=gc_fault==13 && r->batch_first;
+#endif
 #ifdef PF_GROUP_COMMANDS
         gc_command_verify=r->check;
         if(r->check)HR(IDirect3DDevice9_SetRenderState(g_dev,D3DRS_CULLMODE,D3DCULL_CW));
@@ -268,7 +289,11 @@ static void __attribute__((thiscall)) gc_end_pass(void *self)
     ng_state();REQUIRE(self==&g_method && gc_group.count);
 #ifdef PF_GROUP_COMMANDS
     if(gc_mode>=3) {
-        HR(gc_command_emit(CMD_DRAW,gc_group.count,gc_group.extra,gc_group.palette,
+        unsigned flags=gc_group.extra;
+#ifdef PF_GROUP_BATCH_FIRST
+        flags|=gc_batch_first<<1;
+#endif
+        HR(gc_command_emit(CMD_DRAW,gc_group.count,flags,gc_group.palette,
                            gc_group.count*sizeof(gc_group.palette[0]),NULL));
         gc_command_capture=1;material_fixture_pass_end();gc_command_capture=0;
         memset(gc_group.palette,0xA5,sizeof gc_group.palette);
@@ -334,6 +359,7 @@ static void gc_empty_frame(void) {}
 static void gc_frame(unsigned mode,unsigned phase,unsigned check,unsigned fail)
 {
     GC_PROFILE_START(frame_start);
+    REQUIRE(gc_group_size && gc_group_size<=GROUP_SIZE);
     gc_mode=mode;gc_extra=phase!=0;gc_epoch=phase>=2;gc_fail=fail;
     GcRequest request={0};request.kind=GC_CLAIM;gc_send(&request,1);
     REQUIRE(bench_scope_owner_idle(gc_producer));
@@ -346,7 +372,11 @@ static void gc_frame(unsigned mode,unsigned phase,unsigned check,unsigned fail)
 #endif
     if(!mode){material_fixture_epoch(gc_epoch);material_fixture_clock(gc_epoch*33);ng_frame_mode(gc_native_optimized);bench_extra_mode(gc_extra);}
     else bench_native_group_mode(0);
-    request.kind=GC_FRAME;request.extra=gc_extra;request.check=check;gc_send(&request,1);
+    request.kind=GC_FRAME;request.extra=gc_extra;request.check=check;
+#ifdef PF_GROUP_BATCH_FIRST
+    request.batch_first=mode>=3?gc_batch_first:0;request.recovery=gc_failure_probe;
+#endif
+    gc_send(&request,1);
     GC_PROFILE_START(groups_start);
     for(unsigned group=0;group<GROUPS;group++) {
         ng_current_group=group;ng_begin_fail=fail && group==7;
@@ -354,7 +384,7 @@ static void gc_frame(unsigned mode,unsigned phase,unsigned check,unsigned fail)
 #ifdef PF_GROUP_CAPTURE
         if(mode>=3 && gc_fast_capture)hooked=1;
 #endif
-        ng_group_call(ng_target(hooked),ng_renderer,records[group],records[group]+sizeof records[0]);
+        ng_group_call(ng_target(hooked),ng_renderer,records[group],records[group]+gc_group_size*PF_RECORD_SIZE);
     }
     ng_begin_fail=0;
 #ifdef PF_GROUP_COMMANDS
@@ -367,20 +397,57 @@ static void gc_frame(unsigned mode,unsigned phase,unsigned check,unsigned fail)
 #endif
     if(!mode)bench_extra_mode(0);
     REQUIRE(!ng_group_abi_errors && g_method.refs==refs && bench_scope_owner_idle(gc_producer));
-    if(mode)REQUIRE(gc_captured-captured==(GROUPS-(fail?1:0))*GROUP_SIZE);
+    if(mode)REQUIRE(gc_captured-captured==(GROUPS-(fail?1:0))*gc_group_size);
 #ifdef PF_GROUP_CAPTURE
     if(mode) {
         pf_timing_get_stats(&scope_after);
-        REQUIRE(scope_after.scopes-scope_before.scopes==(GROUPS-(fail?1:0))*GROUP_SIZE+GROUPS);
+        REQUIRE(scope_after.scopes-scope_before.scopes==(GROUPS-(fail?1:0))*gc_group_size+GROUPS);
         REQUIRE(scope_after.stale_scopes==scope_before.stale_scopes);
         REQUIRE(ng_prepares-prepares==GROUPS && ng_finishes-finishes==GROUPS-(fail?1:0));
-        if(gc_fast_capture && !nm_begin_callback && !nm_end_callback)
+        if(gc_fast_capture && gc_group_size==GROUP_SIZE && !nm_begin_callback && !nm_end_callback)
             REQUIRE(gc_bulk_captured-bulk_before==(GROUPS-(fail?1:0))*(GROUP_SIZE-1));
         else REQUIRE(gc_bulk_captured==bulk_before);
     }
 #endif
+#ifdef PF_GROUP_BATCH_FIRST
+    if(mode && gc_first_observing) {
+        unsigned per=gc_batch_first?(gc_group_size+consumer.capacity-1)/consumer.capacity:
+            1+(gc_group_size-1+consumer.capacity-1)/consumer.capacity;
+        unsigned expected=(GROUPS-(fail?1:0))*per;
+        if(gc_failure_probe)expected+=gc_group_size-per;
+        REQUIRE(gc_first_draws==expected && gc_first_failures==gc_failure_probe &&
+                consumer_recoveries==gc_failure_probe && !consumer_expect_recovery && !gc_first_fail_armed);
+    }
+#endif
     GC_PROFILE_STOP(frame_start,GCP_FRAME);
 }
+
+#ifdef PF_GROUP_BATCH_FIRST
+static void gc_first_validate(void)
+{
+    static unsigned expected[RT*RT],state[1600];unsigned cases=0,recoveries=0;
+    const unsigned sizes[]={1,2,consumer.capacity,consumer.capacity+1,GROUP_SIZE};
+    for(unsigned phase=0;phase<2;phase++)for(unsigned si=0;si<5;si++) {
+        gc_group_size=sizes[si];gc_native_optimized=0;gc_frame(0,phase,1,0);
+        memcpy(expected,gc_output,sizeof expected);unsigned words=gc_state_words;memcpy(state,gc_state,words*4);
+        gc_native_optimized=1;gc_frame(0,phase,1,0);
+        REQUIRE(gc_pixels_equal(expected,gc_output) && words==gc_state_words && !memcmp(state,gc_state,words*4));
+        for(unsigned choice=0;choice<3;choice++) {
+            gc_batch_first=choice!=0;gc_fast_capture=1;
+            gc_frame(choice==1?3:4,phase,1,0);
+            REQUIRE(gc_pixels_equal(expected,gc_output) && words==gc_state_words && !memcmp(state,gc_state,words*4));cases++;
+        }
+    }
+    gc_group_size=GROUP_SIZE;gc_batch_first=gc_fast_capture=1;
+    for(unsigned phase=0;phase<2;phase++)for(unsigned mode=3;mode<=4;mode++) {
+        gc_frame(mode,phase,1,0);memcpy(expected,gc_output,sizeof expected);
+        unsigned words=gc_state_words;memcpy(state,gc_state,words*4);
+        gc_failure_probe=1;gc_frame(mode,phase,1,0);gc_failure_probe=0;
+        REQUIRE(gc_pixels_equal(expected,gc_output) && words==gc_state_words && !memcmp(state,gc_state,words*4));recoveries++;
+    }
+    printf("FIRST BATCH: %u size/image/state cases; %u first-batch shader failures recover with complete ordered replay; actual device draws checked\n",cases,recoveries);
+}
+#endif
 
 int main(int argc,char **argv)
 {
@@ -404,6 +471,9 @@ int main(int argc,char **argv)
     REQUIRE(gc_effects[0]!=gc_effects[1]);material_fixture_identity(0);
 #ifdef PF_GROUP_COMMANDS
     bench_filter_mode(1);gc_command_audit(1);
+#endif
+#ifdef PF_GROUP_BATCH_FIRST
+    gc_first_device_observer(1);
 #endif
     D3DDEVICE_CREATION_PARAMETERS creation;HR(IDirect3DDevice9_GetCreationParameters(g_dev,&creation));
     REQUIRE((creation.BehaviorFlags&D3DCREATE_MULTITHREADED) && GetWindowThreadProcessId(creation.hFocusWindow,NULL)==gc_producer);
@@ -430,7 +500,9 @@ int main(int argc,char **argv)
         }
         unsigned words=gc_state_words;memcpy(state,gc_state,words*4);
         for(unsigned candidate=1;candidate<=
-#ifdef PF_GROUP_CAPTURE
+#ifdef PF_GROUP_BATCH_FIRST
+            6
+#elif defined(PF_GROUP_CAPTURE)
             4
 #else
             2
@@ -439,6 +511,9 @@ int main(int argc,char **argv)
             unsigned mode=candidate;
 #ifdef PF_GROUP_CAPTURE
             mode=1+(candidate-1)%2;gc_fast_capture=candidate>=3;
+#endif
+#ifdef PF_GROUP_BATCH_FIRST
+            gc_batch_first=candidate>=5;
 #endif
 #ifdef PF_GROUP_COMMANDS
             mode+=2;
@@ -472,21 +547,30 @@ int main(int argc,char **argv)
     nm_begin_callback=nm_end_callback=NULL;gc_fast_capture=1;
     puts("CAPTURE BULK: 12 callback refusal pairs; native references, prepare/finish, scope totals and captured palette counts pass");
 #endif
+#ifdef PF_GROUP_BATCH_FIRST
+    gc_first_validate();gc_first_device_observer(0);
+#endif
 #ifdef PF_GROUP_COMMANDS
     gc_command_audit(0);
     REQUIRE(gc_command_audited && gc_command_callbacks && gc_command_restores);
     printf("COMMAND AUDIT: effects=%u callbacks=%u restored_groups=%u outstanding_refs=%ld scoped_lifetime_calls=%u; no producer state calls or unscoped device references; all audit wrappers removed before timing\n",gc_command_audited,gc_command_callbacks,gc_command_restores,gc_command_references,gc_command_lifetime_calls);
 #endif
     for(unsigned round=0;round<12;round++) {
-        REQUIRE(bench_no_game());double elapsed[4];
+        REQUIRE(bench_no_game());double elapsed[5];
         unsigned columns=3;
 #ifdef PF_GROUP_CAPTURE
         columns=4;
+#endif
+#ifdef PF_GROUP_BATCH_FIRST
+        columns=5;
 #endif
         for(unsigned offset=0;offset<columns;offset++) {
             unsigned column=(round+offset)%columns,mode=column;
 #ifdef PF_GROUP_CAPTURE
             gc_fast_capture=column!=3;if(column==3)mode=2;
+#endif
+#ifdef PF_GROUP_BATCH_FIRST
+            gc_batch_first=column==1 || column==2;if(column==4)mode=2;
 #endif
 #ifdef PF_GROUP_COMMANDS
             if(mode)mode+=2;
@@ -499,6 +583,9 @@ int main(int argc,char **argv)
         printf("sample,%u,%.4f,%.4f,%.4f,%.4f",round,elapsed[0],elapsed[1],elapsed[2],elapsed[0]-elapsed[2]);
 #ifdef PF_GROUP_CAPTURE
         printf(",%.4f",elapsed[3]);gc_fast_capture=1;
+#endif
+#ifdef PF_GROUP_BATCH_FIRST
+        printf(",%.4f",elapsed[4]);gc_batch_first=1;
 #endif
         putchar('\n');
     }
@@ -532,7 +619,9 @@ int main(int argc,char **argv)
     gc_wait(gc_worker);DWORD exit_code;REQUIRE(GetExitCodeThread(gc_worker,&exit_code) && !exit_code && gc_sent==gc_received);
     CloseHandle(gc_worker);CloseHandle(gc_available);for(unsigned i=0;i<2;i++)CloseHandle(gc_slots[i].done);
     REQUIRE(gc_failures==
-#ifdef PF_GROUP_CAPTURE
+#ifdef PF_GROUP_BATCH_FIRST
+        18
+#elif defined(PF_GROUP_CAPTURE)
         12
 #else
         6
