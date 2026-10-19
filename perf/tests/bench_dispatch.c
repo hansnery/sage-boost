@@ -136,7 +136,7 @@ static void read_pixels(unsigned *pixels)
     HR(IDirect3DSurface9_UnlockRect(g_sys));
 }
 
-static void check_state(void)
+static void check_state_shader(IDirect3DVertexShader9 *expected_shader)
 {
     IDirect3DVertexShader9 *vs = NULL;
     IDirect3DVertexDeclaration9 *decl = NULL;
@@ -147,12 +147,14 @@ static void check_state(void)
     HR(IDirect3DDevice9_GetStreamSourceFreq(g_dev, 0, &f0));
     HR(IDirect3DDevice9_GetStreamSourceFreq(g_dev, 1, &f1));
     HR(IDirect3DDevice9_GetStreamSource(g_dev, 0, &vb, &offset, &stride));
-    REQUIRE(vs == g_ea && decl == g_decl && vb == g_vb && !offset && stride == 40);
+    REQUIRE(vs == expected_shader && decl == g_decl && vb == g_vb && !offset && stride == 40);
     REQUIRE(f0 == 1 && f1 == 1 && pf_inst_active());
     IDirect3DVertexShader9_Release(vs);
     IDirect3DVertexDeclaration9_Release(decl);
     IDirect3DVertexBuffer9_Release(vb);
 }
+
+static void check_state(void) { check_state_shader(g_ea); }
 
 static void sample(int bulk, int detail, double *submit, double *complete, unsigned *pixels)
 {

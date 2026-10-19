@@ -123,7 +123,12 @@ static void ng_setup(void)
     nm_setup();
     for(unsigned i=9;i<17;i++) ng_symbols[i]=nm_unexpected;
     ng_symbols[9]=ng_compare; ng_symbols[10]=ng_prepare;
-    ng_symbols[11]=pf_enter_stubs[PF_INST_MESH]; ng_symbols[12]=ng_finish;
+#ifdef PF_NATIVE_GROUP_RENDER
+    ng_symbols[11]=PF_NATIVE_GROUP_RENDER;
+#else
+    ng_symbols[11]=pf_enter_stubs[PF_INST_MESH];
+#endif
+    ng_symbols[12]=ng_finish;
     HMODULE crt=GetModuleHandleA("msvcr71.dll"); REQUIRE(crt);
     ng_symbols[17]=GetProcAddress(crt,"_mbscpy"); ng_symbols[18]=GetProcAddress(crt,"_mbscat");
     ng_sprintf=GetProcAddress(crt,"sprintf"); ng_strncpy=GetProcAddress(crt,"strncpy");

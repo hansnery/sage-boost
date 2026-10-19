@@ -104,11 +104,19 @@ Strike an item through, with the date, when it's done.
   final releases and 72 fault processes, including 16 thread-state controls.
   Original paths preserve 104 image/state cases. See
   `benchmarks/2026-10-18-independent-packet-consumer.json`.
-- [ ] Capture a verified native FX group into the independent consumer,
-  preserving effect identity, Begin/pass results, resource ownership and
-  release order. Define failure propagation and ordinary-rendering fallback;
-  obtain fresh paired performance evidence before runtime promotion. Fixed
-  fixture resources and separate counters alone do not qualify this bridge.
+- [x] 2026-10-18: screen native group capture with actual successful Begin
+  replies, two effect identities, owned palettes and injected Begin failure.
+  Both images/backends pass 96 candidate image/state cases, 48 ordinary/bulk
+  image checks and 32 faults. Shadow differences are at most 1/2^24, within
+  the existing 256/2^24 tolerance; lit pixels/state are exact. All 96 timing
+  pairs regress: synchronous group handoff adds a median 13.37-17.84 ms per
+  pair across workloads. Reject runtime promotion. See
+  `benchmarks/2026-10-18-native-group-consumer.json`.
+- [ ] Investigate a larger command handoff while keeping actual effect
+  lifecycle/results on the producer. Audit device calls and own all queued
+  values/resources; preserve explicit caller-state restoration and failure
+  propagation. Fixed single-pass group fixtures do not qualify the native
+  FX wrapper, general resource lifetime, whole scene or ordinary fallback.
 - [x] 2026-10-18: back up a second launcher replacement of beta.13 by
   0.9.10, restore the identical tested binary and only the three missing beta
   keys, and verify the shortcut with CheckOnly. No game launched; see

@@ -118,6 +118,16 @@ void material_fixture_filter(unsigned mode)
     filter_mode=mode;
     bench_filter_mode(mode);
     current=&contexts[mode?1:0];
+    HR(F(SetStateManager,mode?bench_filter_manager():NULL));
+}
+
+/* Select an independently created but equivalent effect, with no filtering.
+ * Only the GPU owner may call this outside an active effect. */
+void material_fixture_identity(unsigned index)
+{
+    REQUIRE(index<2 && !lifecycle_open && !filter_mode);
+    current=&contexts[index];
+    HR(F(SetStateManager,NULL));
 }
 
 void material_fixture_verify_end(unsigned enabled)
@@ -271,15 +281,22 @@ void material_fixture_native(void **fx,unsigned *tech,unsigned *block)
 }
 /* A retained hit keeps the real Begin/End pair but issues its drawing
  * directly. It never sends CommitChanges/EndPass without a BeginPass. */
-void material_fixture_open(void)
+HRESULT material_fixture_try_open(unsigned *passes)
 {
-    UINT passes=0;
+    *passes=0;
     REQUIRE(!lifecycle_open && !lifecycle_lost);
     if(verify_end) for(unsigned i=0;i<256;i++) if(rs_mask[i])
         HR(IDirect3DDevice9_GetRenderState(material_device,i,&entry_render_states[i]));
     if(filter_mode) HR(bench_filter_begin());
-    HR(F(Begin,&passes,6)); REQUIRE(passes==1);
-    lifecycle_open=1;
+    HRESULT result=F(Begin,passes,6);
+    lifecycle_open=SUCCEEDED(result);
+    if(FAILED(result) && filter_mode)HR(bench_filter_end());
+    return result;
+}
+void material_fixture_open(void)
+{
+    unsigned passes;
+    HR(material_fixture_try_open(&passes));REQUIRE(passes==1);
 }
 void material_fixture_close(void)
 {

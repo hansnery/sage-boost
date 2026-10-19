@@ -58,6 +58,43 @@ Accelerator has now run in isolated offline harnesses (below).
   resolve a reproducible multiplayer divergence only after one is observed.
   No promised FPS gain, deployment or new gameplay request from this review.
 
+### Native group capture: synchronous handoff rejected (2026-10-18)
+
+The new optional fixture executes verified native group control flow on the
+producer, copies each mesh's palette into owned packets and obtains the real
+effect Begin result/pass count from the GPU owner before continuing. Two
+equivalent effect identities alternate. Original native method references
+and frame bookkeeping stay on the producer; copied palette storage is
+poisoned after publication to detect borrowing.
+
+Both images on DXVK and native D3D9 pass **96 candidate image/state cases,
+48 ordinary-versus-bulk image checks and 32 deliberate fault processes**.
+Lit pixels and captured state match exactly. Shadow depth differs by at most
+one unit in 2^24, within the pre-existing tolerance of 256 units. Successful
+Begin replies are real; failed replies are injected before opening the
+effect. This tests one pass and fixed retained resources, with controlled
+native material callbacks, rather than the complete native FX lifecycle.
+
+All **96 paired timing samples regress**. Median added completion cost is
+13.37-17.84 ms per regular/extra pair across the eight workloads. Direct
+capture without a worker is also slower than the original native bulk
+prototype. Timings include capture, synchronization, state restoration and
+completed GPU work. The native bulk prototype is not the entire installed
+beta.13 renderer; these measurements cannot predict gameplay FPS.
+See the [report](benchmarks/2026-10-18-native-group-consumer.json).
+
+Reject this synchronous group boundary for runtime promotion. Next, audit
+whether effect lifecycle/results can stay on the producer while owned GPU
+state and drawing commands are submitted in larger batches. Actual D3DX
+device calls, explicit state restoration, failure handling and live resource
+lifetimes still need proof. No production change or installation follows.
+
+The full plugin regression suite passes. The existing packet consumer also
+preserves 60 exact image/state cases across six real resets and two final
+zero-reference releases; all 18 deliberate faults fail as expected. Both
+material state-filter workloads pass. Installed beta.13 and INI hashes match
+the prior restoration receipt.
+
 ### Independent render packet consumer (2026-10-18)
 
 The optional worker now draws copied palettes through the existing checked
@@ -79,8 +116,8 @@ unchanged original-worker hashes across another 104 image/state cases.
 This establishes independent fixture state, not a live rendering bridge or
 multiplayer qualification. Native FX-group capture, Begin/pass results,
 concurrent resource ownership, failure propagation and full scene/Present
-remain open. The new consumer has no timing result; previous worker savings
-cannot be assigned to it. Production sources and installed beta.13/INI hashes
+remain open. That stage collected no consumer timings; the group comparison
+above measures a later capture boundary. Production sources and installed beta.13/INI hashes
 are unchanged. The full suite passed at `9121da8`; this extension reruns the
 affected optional worker paths. No installation or gameplay test follows.
 

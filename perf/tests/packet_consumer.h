@@ -48,6 +48,39 @@ static void packet_consumer_close(void)
     consumer.submit.valid=0;consumer.owner=0;
 }
 
+static void packet_consumer_group(const float *palettes,unsigned count,unsigned extra,
+                                  IDirect3DVertexShader9 *game_shader)
+{
+    REQUIRE(consumer.owner==GetCurrentThreadId() && extra<2 && count && count<=GROUP_SIZE);
+    unsigned *bones=(unsigned *)palettes;
+    material_fixture_bones(bones,BONES*32);
+    pf_submit_desc descriptor={0};
+    descriptor.dev=g_dev;descriptor.game_vs=game_shader;descriptor.our_vs=consumer.shader;
+    descriptor.game_decl=g_decl;descriptor.our_decl=consumer.declaration->ours;
+    descriptor.instance_vb=consumer.instances;descriptor.instance_stream=consumer.declaration->inst_stream;
+    descriptor.input_streams=consumer.declaration->streams;
+    descriptor.instance_register=g_v->ir_reg;descriptor.instance_registers=g_v->ir_count;
+    descriptor.bone_register=g_v->roles[PF_ROLE_BONES];descriptor.bone_registers=BONES*2;
+    descriptor.dip[0]=D3DPT_TRIANGLELIST;descriptor.dip[3]=(GRID+1)*(GRID+1);
+    descriptor.dip[5]=GRID*GRID*2;
+    HR(IDirect3DDevice9_GetStreamSource(g_dev,descriptor.instance_stream,
+        (IDirect3DVertexBuffer9 **)&descriptor.previous_vb,&descriptor.previous_offset,&descriptor.previous_stride));
+    HR(pf_submit_capture(&consumer.submit,&descriptor));
+    pf_submit_result result=pf_submit_pending(&consumer.submit,bones,1);
+    REQUIRE(SUCCEEDED(result.error) && result.complete && result.coherent && result.replayed==1);
+    consumer.draws[extra]++;
+    for(unsigned first=1;first<count;) {
+        unsigned n=count-first;
+        if(n>consumer.capacity)n=consumer.capacity;
+        result=pf_submit_batch(&consumer.submit,bones+first*BONES*8,n);
+        REQUIRE(SUCCEEDED(result.error) && result.complete && result.coherent && result.committed==n);
+        consumer.draws[extra]++;first+=n;
+    }
+    if(descriptor.previous_vb)IDirect3DVertexBuffer9_Release((IDirect3DVertexBuffer9 *)descriptor.previous_vb);
+    consumer.groups[extra]++;consumer.meshes[extra]+=count;
+}
+
+#ifndef PF_PACKET_CONSUMER_GROUP_ONLY
 static void packet_consumer_draw(const float *palettes,unsigned extra,unsigned *pixels)
 {
     REQUIRE(consumer.owner==GetCurrentThreadId() && extra<2);
@@ -66,36 +99,12 @@ static void packet_consumer_draw(const float *palettes,unsigned extra,unsigned *
             REQUIRE(SetEvent(consumer_inside));
             REQUIRE(WaitForSingleObject(consumer_continue,10000)==WAIT_OBJECT_0);
         }
-        unsigned *bones=(unsigned *)(palettes+group*GROUP_SIZE*BONES*8);
-        material_fixture_bones(bones,BONES*32);
-        pf_submit_desc descriptor={0};
-        descriptor.dev=g_dev;descriptor.game_vs=g_ea;descriptor.our_vs=consumer.shader;
-        descriptor.game_decl=g_decl;descriptor.our_decl=consumer.declaration->ours;
-        descriptor.instance_vb=consumer.instances;descriptor.instance_stream=consumer.declaration->inst_stream;
-        descriptor.input_streams=consumer.declaration->streams;
-        descriptor.instance_register=g_v->ir_reg;descriptor.instance_registers=g_v->ir_count;
-        descriptor.bone_register=g_v->roles[PF_ROLE_BONES];descriptor.bone_registers=BONES*2;
-        descriptor.dip[0]=D3DPT_TRIANGLELIST;descriptor.dip[3]=(GRID+1)*(GRID+1);
-        descriptor.dip[5]=GRID*GRID*2;
-        HR(IDirect3DDevice9_GetStreamSource(g_dev,descriptor.instance_stream,
-            (IDirect3DVertexBuffer9 **)&descriptor.previous_vb,&descriptor.previous_offset,&descriptor.previous_stride));
-        HR(pf_submit_capture(&consumer.submit,&descriptor));
-        /* Preserve the original first-unit draw and follower ordering. */
-        pf_submit_result result=pf_submit_pending(&consumer.submit,bones,1);
-        REQUIRE(SUCCEEDED(result.error) && result.complete && result.coherent && result.replayed==1);
-        consumer.draws[extra]++;
-        for(unsigned first=1;first<GROUP_SIZE;) {
-            unsigned count=GROUP_SIZE-first;
-            if(count>consumer.capacity)count=consumer.capacity;
-            result=pf_submit_batch(&consumer.submit,bones+first*BONES*8,count);
-            REQUIRE(SUCCEEDED(result.error) && result.complete && result.coherent && result.committed==count);
-            consumer.draws[extra]++;first+=count;
-        }
-        if(descriptor.previous_vb)IDirect3DVertexBuffer9_Release((IDirect3DVertexBuffer9 *)descriptor.previous_vb);
-        material_fixture_end();consumer.groups[extra]++;consumer.meshes[extra]+=GROUP_SIZE;
+        packet_consumer_group(palettes+group*GROUP_SIZE*BONES*8,GROUP_SIZE,extra,g_ea);
+        material_fixture_end();
     }
     if(extra)HR(IDirect3DStateBlock9_Apply(outer));
     HR(IDirect3DDevice9_EndScene(g_dev));consumer.frames[extra]++;
     check_state();
     if(pixels)read_pixels(pixels);
 }
+#endif

@@ -320,3 +320,79 @@ unchanged. The original reset/owner/batch variants preserve their hashes
 across another 104 image/state cases and 24 deliberate faults. See the
 [consumer report](../benchmarks/2026-10-18-independent-packet-consumer.json).
 Installed beta.13 and its INI remain unchanged; no runtime promotion.
+
+## Native group capture and synchronous Begin results
+
+`bench_group_consumer.exe` reuses the verified native group loader and its
+original method/event ownership behavior. The producer calls the native
+group and substitutes a palette-copy callback for native mesh rendering in
+the candidate modes. The native method Begin callback submits material
+values and the registered effect identity, waits for the actual successful
+D3DX Begin HRESULT/pass count, and returns that result to native control
+flow. EndPass publishes the owned group; the GPU owner executes BeginPass,
+checked ordinary/instanced submission, EndPass and End in order.
+
+Two event-protected slots carry copied numeric state and palettes, with no
+borrowed native mesh, pivot or effect pointer. The fixture retains resources
+and resolves either of two independently created equivalent effects on the
+GPU owner. The producer poisons its scratch palette after publication.
+Original instancing/timing/extra-frame globals remain on the producer. The
+private consumer's owner changes only while idle between comparison modes;
+this does not qualify live mode switching. Both regular and extra frames
+retain the original group fixture's caller-state capture/restore boundary.
+
+Compare three paths in rotated order: original native bulk prototype,
+native capture with direct consumption, and native capture with a worker.
+Every measured pair completes a regular draw and a fresh extra draw,
+including producer pose updates, material capture, copies, waits, effect
+work, state restoration and GPU completion. It does not include the separate
+native decoder/matrix producer or the game's complete scene/Present.
+Neither external alternative DLL is loaded by this fixture.
+
+Build and run from the repository, with the game and launcher closed:
+
+```text
+mingw32-make -C perf build/bench_group_consumer.exe
+python tools/bench_group_consumer.py <install> --image <game.dat> --image <game820.dat> --output <dxvk-report.json>
+python tools/bench_group_consumer.py <install> --image <game.dat> --image <game820.dat> --backend native --output <native-report.json>
+```
+
+The runner creates an isolated TEMP directory, verifies native group/mesh
+contracts, checks process guards and records inputs/log hashes. It never
+starts the game or changes an installed file. Each successful process checks
+six ordinary/bulk reference images and twelve candidate image/state cases:
+direct/worker, regular/extra/changed material, with/without an injected Begin
+failure. Nonempty coverage and changed pixels are required. Four deliberate
+faults must fail: incorrect pass count, success after failed Begin, repeated
+first-unit palettes and wrong registered effect identity.
+
+Across both images/backends, 96 candidate cases, 48 ordinary/bulk references
+and 32 faults pass. Lit pixels and captured state are exact; shadow depth
+differs by at most 1/2^24, within the existing 256/2^24 tolerance. Initial
+strict shadow comparisons failed on this one-unit difference; those reports
+are retained. Other superseded pilots exposed stale effect-state-manager
+selection and invalid shader hashing in the fixture; corrected final runs
+do not reuse those pilots' timing evidence.
+
+All 96 rotated timing rows regress against the native bulk prototype.
+Workload medians add 13.37-17.84 ms per regular/extra pair. Direct capture is
+also slower, and worker handoff adds a further substantial cost. The saved
+column is native minus worker for each paired round; its median is not the
+difference of separate column medians. See the
+[group report](../benchmarks/2026-10-18-native-group-consumer.json).
+
+Reject this boundary for runtime promotion. Keeping effect lifecycle and
+results on the producer while capturing owned GPU state/draw commands into
+larger batches is a next experiment, not an established solution. A custom
+[D3DX state manager](https://learn.microsoft.com/en-us/windows/win32/direct3d9/id3dxeffectstatemanager)
+bypasses automatic state saving/restoration, so explicit restoration and
+actual device-call behavior must be audited before making that change.
+
+Limits: native compare/prepare/finish and method callbacks remain controlled;
+this is not the full native FX wrapper/source lifecycle. Only one pass and
+fixed retained resources are supported. Begin failure is injected before the
+real call; driver failure recovery and arbitrary effect/resource lifetimes
+remain unqualified. This group fixture joins and closes its consumer but
+does not prove zero-reference final device release. The separate packet
+consumer reset regression covers that existing contract. No runtime change,
+installation, multiplayer validation or gameplay FPS claim follows.

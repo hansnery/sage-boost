@@ -111,3 +111,40 @@ zero-reference releases and 72 fault processes. Old reset/owner/batch paths
 preserve another 104 image/state cases. No consumer timing is collected and
 no production source or installed file changes. The full suite previously
 passed at `9121da8`; affected optional paths were rerun for this extension.
+
+## Native group result boundary
+
+Execute inline. Extend the existing verified group/GPU fixture rather than
+starting another synthetic group loop. Preserve the actual effect Begin
+HRESULT and returned pass count before native control flow continues.
+
+- [x] Split the independent consumer's checked group draw from its frame
+  loop in `perf/tests/packet_consumer.h`; retain the old worker regression.
+- [x] Add `perf/tests/bench_group_consumer.c`, executing native group calls
+  on the producer and copied palette draws on a GPU worker. Begin requests
+  return actual results; native EndPass/End publish one owned group packet.
+  Keep original native bulk drawing as the independent image reference.
+- [x] Exercise alternating effect identities, changed material/pose,
+  failed Begin, copied-buffer poisoning and native method reference balance.
+  Compare direct capture with the worker including waits and GPU completion.
+- [x] Use both local executable variants and both graphics backends, retain
+  logs/hashes, and select the next integration step from measured cost.
+  Do not install a synchronous group bridge merely because it is correct.
+
+Both images/backends pass 96 candidate image/state cases, 48 ordinary/bulk
+reference images and 32 deliberate faults. Lit pixels and captured state are
+exact; shadow depth differs by at most 1/2^24, within the existing tolerance
+of 256/2^24. The original packet consumer preserves 60 exact image/state
+cases, six resets and two zero-reference releases; 18 deliberate faults are
+rejected. Both material state-filter workloads also pass.
+
+All 96 paired timing samples regress; workload medians add 13.37-17.84 ms
+per regular/extra pair against the native bulk prototype. Reject this
+synchronous handoff. The next experiment must avoid per-group waits while
+preserving actual effect results, explicit caller-state restoration and
+owned resources. Fixed single-pass callbacks do not establish the full
+native FX lifecycle or a live render bridge. No installation follows.
+
+The full plugin regression suite passes without skips. Final source, binary,
+input and log hashes are recorded in the group report; installed beta.13 and
+INI hashes remain unchanged.
