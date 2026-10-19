@@ -18,6 +18,18 @@ and multiplayer qualification remain unmet.
 
 ### Beta.16 intermittent recovery fix (2026-10-19)
 
+Hans subsequently tested beta.16 and reports remaining above 30 FPS, near
+60. The new copied capture confirms beta.16 and the unchanged installed INI
+hash. Its 38 complete positive-logic/nonempty 60-second windows range from
+41.77 to 53.08 presentation calls/s. The window with the highest weighted
+instanced-mesh count (151..210 seconds) averages 42.22/s, with p50 gaps
+(20,25] ms and p95 (33.334,50] ms. All 729 counted extras have completed
+shadow samples; regular shadow skips and sampled verification failures are
+zero. It records 972 cost blocks, one late extra, and no recovery-probe log.
+Exact settled scene timestamps and FrameView data remain unavailable. Do
+not infer a controlled speedup or sustained 59/s from the user's near-60
+observation. See [gameplay evidence](benchmarks/2026-10-19-beta16-gameplay-check.json).
+
 The paired scheduler no longer discards eligible recovery credit whenever a
 normal extra succeeds. An old expensive sample could otherwise remain while
 intermittent cheaper extras repeatedly prevented the 60-observation probe.
