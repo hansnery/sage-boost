@@ -407,6 +407,20 @@ bench-scopes: $(BUILD)/bench_scopes.exe
 $(BUILD)/bench_retained.exe: tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(DISPATCH_OBJS) src/*.h
 	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(filter-out $(BUILD)/fps.o,$(DISPATCH_OBJS))
 
+$(BUILD)/bench_retained_multi.exe: tests/bench_retained_multi.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(DISPATCH_OBJS) src/*.h
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(filter-out $(BUILD)/fps.o,$(DISPATCH_OBJS))
+
+.PHONY: bench-retained-multi
+bench-retained-multi: $(BUILD)/bench_retained_multi.exe
+	./$(BUILD)/bench_retained_multi.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit
+	./$(BUILD)/bench_retained_multi.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow
+	@test -f "$(DXVK_D3D9)" || { echo "error: bench-retained-multi requires DXVK_D3D9"; exit 1; }
+	mkdir -p $(BUILD)/retained_multi_dxvk
+	cp $(BUILD)/bench_retained_multi.exe "$(DXVK_D3D9)" $(BUILD)/retained_multi_dxvk/
+	cd $(BUILD)/retained_multi_dxvk && \
+	  DXVK_LOG_LEVEL=none ./bench_retained_multi.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit && \
+	  DXVK_LOG_LEVEL=none ./bench_retained_multi.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow
+
 $(BUILD)/material_fixture.o: tests/material_fixture.c tests/material_packet.h tests/source_packet.h tests/effect_filter_bench.h tests/shadow_fx/shadow_fx.c src/shadowfx_table.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -c -o $@ $<
 

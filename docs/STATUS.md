@@ -27,6 +27,12 @@ measures capture-once/replay-three, with complete capture costs and fresh
 poses/shadows: [design](specs/2026-10-19-120fps-retained-screen-design.md),
 [plan](plans/2026-10-19-120fps-retained-screen.md).
 
+`bench-retained-multi` now builds a separate one/three-extra GPU screen with
+per-phase pose/image controls, fresh shadow redraws and charged capture cost.
+Its initial run refused before GPU setup because the game was open. No new
+timing or correctness result is claimed. The current installed beta.17 is
+unchanged; wait for the user's session to finish before running this target.
+
 ### Beta.17 budget-gap recovery (2026-10-19)
 
 The candidate retains recovery credit across frames with insufficient budget,
