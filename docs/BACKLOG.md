@@ -96,6 +96,19 @@ Strike an item through, with the date, when it's done.
   generations and publication during teardown/failure. Failed Reset results
   are injected, not real device loss. See `benchmarks/2026-10-18-worker-reset-lifetime.json`.
   Live native lifecycle/accounting and actual lost-device recovery remain open.
+- [x] 2026-10-18: replace the worker fixture's timing/instancing thread-ID
+  transfers with a private checked packet consumer. Producer frame hooks and
+  diagnostic flushing coexist with an open worker effect; native counters,
+  method references and shared extra-frame state stay unchanged. Both images
+  and backends pass 240 exact image/state cases, 24 resets, eight zero-reference
+  final releases and 72 fault processes, including 16 thread-state controls.
+  Original paths preserve 104 image/state cases. See
+  `benchmarks/2026-10-18-independent-packet-consumer.json`.
+- [ ] Capture a verified native FX group into the independent consumer,
+  preserving effect identity, Begin/pass results, resource ownership and
+  release order. Define failure propagation and ordinary-rendering fallback;
+  obtain fresh paired performance evidence before runtime promotion. Fixed
+  fixture resources and separate counters alone do not qualify this bridge.
 - [x] 2026-10-18: back up a second launcher replacement of beta.13 by
   0.9.10, restore the identical tested binary and only the three missing beta
   keys, and verify the shortcut with CheckOnly. No game launched; see

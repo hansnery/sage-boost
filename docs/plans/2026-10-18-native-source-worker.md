@@ -78,3 +78,36 @@ This is fixture-owned teardown with a joined/restarted worker, not a live
 native Reset hook, arbitrary resource registry or actual lost-device test.
 Separate frame/render bookkeeping and native lifecycle integration remain
 the next steps; no runtime change or installation is justified by this test.
+
+## Independent packet consumer
+
+Keep the production frame/timing/extra-frame hooks on the producer. Reuse
+the existing context-based `pf_submit_capture`/`pf_submit_batch` engine in a
+worker-owned consumer instead of transferring the native instancer and
+timing globals to the worker. This removes the fixture-only ownership
+workaround before attempting a live capture bridge.
+
+- [x] Add `perf/tests/packet_consumer.h` with private shader/declaration/
+  instance-buffer ownership and direct checked draws from copied palettes.
+  Material effects remain owned by the GPU consumer; no native object or
+  callback is invoked from the worker.
+- [x] Add an optional consumer mode to `bench_batch_worker.c` and
+  `bench_worker_reset.c`; the unchanged hook-based path remains the oracle.
+  Producer preparation uses actual frame/render timing stubs. During an
+  untimed worker pause inside an open effect, exercise producer frame hooks
+  and require unchanged worker/global-extra state and balanced counters.
+- [x] Require exact original images/state, fresh palettes/material/matrices,
+  independent frame counters, all reset/generation controls and zero final
+  device references on both executable variants and both D3D backends.
+- [x] Run existing worker regressions, retain logs/hashes and document the
+  remaining native capture/Begin/result and full-scene integration work.
+
+This changes the consumer architecture rather than making the existing
+single-thread globals concurrent. The fixture's single material family and
+fixed resources still do not qualify a general live renderer.
+
+Both images/backends pass 240 image/state cases, 24 real resets, eight final
+zero-reference releases and 72 fault processes. Old reset/owner/batch paths
+preserve another 104 image/state cases. No consumer timing is collected and
+no production source or installed file changes. The full suite previously
+passed at `9121da8`; affected optional paths were rerun for this extension.

@@ -58,6 +58,16 @@ static unsigned integrity_checks=1;
 static int worker_argc;
 static char **worker_argv;
 static DWORD render_thread;
+#ifdef PF_PACKET_CONSUMER
+#include "fps.h"
+static void packet_consumer_init(void),packet_consumer_close(void);
+static void packet_consumer_draw(const float *,unsigned,unsigned *);
+static HANDLE consumer_inside,consumer_continue;
+static volatile LONG consumer_probe_pending;
+static unsigned producer_preparations,producer_probes;
+static unsigned consumer_shared_extra,consumer_transfer_timing;
+extern int bench_scope_owner_idle(DWORD);
+#endif
 #ifdef PF_WORKER_RESET
 static unsigned resource_generation=1,accepting_packets=1;
 static unsigned skip_generation_check;
@@ -171,8 +181,10 @@ static void render_packet_owned(const render_packet *p,unsigned *pixels,unsigned
         native_pose_fill((const float*)templates[p->extra!=0],(float*)worker_palettes,GROUPS*GROUP_SIZE*BONES);
         palettes=(const float*)worker_palettes;
     }
+#ifndef PF_PACKET_CONSUMER
     for(unsigned i=0;i<GROUPS*GROUP_SIZE;i++)for(unsigned b=0;b<BONES;b++)
         memcpy(many_pivots[i]+g_bonemap[b]*0x58+0x30,palettes+(i*BONES+b)*8,28);
+#endif
 #else
     if(direct)pose(p->extra);
     else for(unsigned i=0;i<GROUPS*GROUP_SIZE;i++)for(unsigned b=0;b<BONES;b++)
@@ -187,16 +199,22 @@ static void render_packet_owned(const render_packet *p,unsigned *pixels,unsigned
 #ifdef PF_NATIVE_SOURCE_WORKER
     material_fixture_source_packets(p->sources,GROUPS,wrong_source_setter);
 #endif
+#ifdef PF_PACKET_CONSUMER
+    packet_consumer_draw(palettes,p->extra,pixels);drain();
+#else
     pair_optimized=0;retain_now=0;dispatch_bulk_now=1;
     unsigned refs=g_method.refs;
     frame_draw(p->extra,0,pixels);drain();
+#endif
 #ifdef PF_WINDOW_DEVICE_OWNER
     material_fixture_captured(NULL,0);
 #endif
 #ifdef PF_NATIVE_SOURCE_WORKER
     material_fixture_source_packets(NULL,0,0);
 #endif
+#ifndef PF_PACKET_CONSUMER
     REQUIRE(g_method.refs==refs);
+#endif
 }
 
 static void initialize_worker(void)
@@ -275,8 +293,13 @@ static DWORD WINAPI worker_main(void *unused)
     (void)unused;render_thread=GetCurrentThreadId();
 #ifdef PF_WINDOW_DEVICE_OWNER
     REQUIRE(render_thread!=window_thread);
+#ifdef PF_PACKET_CONSUMER
+    if(consumer_transfer_timing)REQUIRE(bench_scope_transfer_owner(window_thread));
+    packet_consumer_init();
+#else
     REQUIRE(bench_scope_transfer_owner(window_thread));
     REQUIRE(bench_inst_transfer_owner(window_thread));
+#endif
 #else
     initialize_worker();
 #endif
@@ -333,6 +356,9 @@ static DWORD WINAPI worker_main(void *unused)
 #ifdef PF_WORKER_RESET
     worker_resources_release();
 #else
+#ifdef PF_PACKET_CONSUMER
+    packet_consumer_close();
+#endif
     drain();bench_retained_clear();IDirect3DStateBlock9_Release(outer);
     IDirect3DQuery9_Release(fence);
 #endif
@@ -340,7 +366,7 @@ static DWORD WINAPI worker_main(void *unused)
     return 0;
 }
 
-static void prepare(unsigned extra,unsigned epoch,unsigned clock,unsigned check,unsigned oracle,unsigned direct)
+static void prepare_values(unsigned extra,unsigned epoch,unsigned clock,unsigned check,unsigned oracle,unsigned direct)
 {
     scratch.sequence=submitted+1;scratch.extra=extra;scratch.epoch=epoch;scratch.clock=clock;
     scratch.check=check;scratch.oracle=oracle;
@@ -364,6 +390,30 @@ static void prepare(unsigned extra,unsigned epoch,unsigned clock,unsigned check,
 #endif
     }
 }
+
+#ifdef PF_PACKET_CONSUMER
+static unsigned producer_arguments[6];
+static void producer_render(void)
+{
+    prepare_values(producer_arguments[0],producer_arguments[1],producer_arguments[2],
+                   producer_arguments[3],producer_arguments[4],producer_arguments[5]);
+}
+static void producer_frame(void)
+{ ((void (*)(void))pf_enter_stubs[PF_RENDER])(); }
+static void producer_probe_frame(void) { producer_probes++; }
+
+static void prepare(unsigned extra,unsigned epoch,unsigned clock,unsigned check,unsigned oracle,unsigned direct)
+{
+    REQUIRE(bench_scope_owner_idle(window_thread) && !pf_fps_in_extra());
+    unsigned args[]={extra,epoch,clock,check,oracle,direct};
+    memcpy(producer_arguments,args,sizeof args);
+    pf_timing_set_next(PF_FRAME,producer_frame);pf_timing_set_next(PF_RENDER,producer_render);
+    ((void (*)(void))pf_enter_stubs[PF_FRAME])();producer_preparations++;
+    REQUIRE(bench_scope_owner_idle(window_thread) && !pf_fps_in_extra());
+}
+#else
+#define prepare prepare_values
+#endif
 
 static int next_free(void)
 {
@@ -392,6 +442,21 @@ static int publish(unsigned fault_alias,unsigned direct)
 static void collect(unsigned expect_rejected,long long *worker,long long *queue)
 {
     packet_slot *slot=&slots[collected%WORKER_SLOTS];
+#ifdef PF_PACKET_CONSUMER
+    if(consumer_probe_pending) {
+        REQUIRE(wait_owner(consumer_inside,10000)==WAIT_OBJECT_0);
+        REQUIRE(bench_scope_owner_idle(window_thread) && !pf_fps_in_extra());
+        pf_timing_stats before,after;pf_timing_get_stats(&before);
+        pf_timing_set_next(PF_FRAME,producer_probe_frame);
+        for(unsigned i=0;i<3;i++)((void (*)(void))pf_enter_stubs[PF_FRAME])();
+        pf_timing_flush(); /* Drain frame-owned diagnostics with a worker effect still open. */
+        pf_timing_get_stats(&after);
+        REQUIRE(after.frames-before.frames==3 && after.render_calls==before.render_calls &&
+                after.stale==before.stale && after.stale_scopes==before.stale_scopes);
+        REQUIRE(bench_scope_owner_idle(window_thread) && !pf_fps_in_extra());
+        InterlockedExchange(&consumer_probe_pending,0);REQUIRE(SetEvent(consumer_continue));
+    }
+#endif
 #ifdef PF_WINDOW_DEVICE_OWNER
     REQUIRE(wait_owner(slot->done,10000)==WAIT_OBJECT_0);
 #else

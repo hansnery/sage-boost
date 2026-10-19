@@ -58,6 +58,32 @@ Accelerator has now run in isolated offline harnesses (below).
   resolve a reproducible multiplayer divergence only after one is observed.
   No promised FPS gain, deployment or new gameplay request from this review.
 
+### Independent render packet consumer (2026-10-18)
+
+The optional worker now draws copied palettes through the existing checked
+submission engine with its own shader, declaration cache, instance buffer
+and counters. It leaves the original timing, instancing and extra-frame
+state on the producer. The earlier fixture's thread-ID transfers are not
+needed in this mode. While the worker holds an effect open, the producer
+executes frame-hook callbacks and flushes diagnostics without changing the
+native instancer's totals or leaving stale scopes. These are fixture
+callbacks, not the real game's frame or logic functions.
+
+Both executable variants on DXVK and native D3D9 pass **240 exact image/state
+cases, 24 real resets and eight zero-reference final releases**. All 72
+deliberate fault processes reach the intended checks, including 16 that
+restore the old timing-owner transfer or shared extra-frame flag. The
+[report](benchmarks/2026-10-18-independent-packet-consumer.json) records
+unchanged original-worker hashes across another 104 image/state cases.
+
+This establishes independent fixture state, not a live rendering bridge or
+multiplayer qualification. Native FX-group capture, Begin/pass results,
+concurrent resource ownership, failure propagation and full scene/Present
+remain open. The new consumer has no timing result; previous worker savings
+cannot be assigned to it. Production sources and installed beta.13/INI hashes
+are unchanged. The full suite passed at `9121da8`; this extension reruns the
+affected optional worker paths. No installation or gameplay test follows.
+
 ### Worker reset and resource lifetime checks (2026-10-18)
 
 The optional worker fixture now closes publication with two draws pending,

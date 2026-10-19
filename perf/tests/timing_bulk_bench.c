@@ -14,6 +14,11 @@ int bench_scope_transfer_owner(DWORD previous)
     return 1;
 }
 
+int bench_scope_owner_idle(DWORD owner)
+{
+    return g_main==owner && GetCurrentThreadId()==owner && !bulk_open && !g_ssp && !g_sp;
+}
+
 extern void bench_extra_mode(int);
 
 /* Outside measured workloads. One actual interval supplies both scope and

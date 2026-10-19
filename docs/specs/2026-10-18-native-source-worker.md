@@ -266,3 +266,57 @@ hashes remain unchanged across 44 image/state cases, and the full `perf/`
 suite passes. See the [lifecycle report](../benchmarks/2026-10-18-worker-reset-lifetime.json)
 for input/log hashes, superseded leak-failing pilots and exact controls.
 The installed beta.13 and its INI remain hash-identical; no deployment.
+
+## Consumer state independent of game frame hooks
+
+The exclusive thread-ID transfers above cannot be a live implementation:
+the producer must continue its own frame hooks while rendering proceeds.
+The existing `instsubmit.c` transaction engine already carries its state in
+an explicit caller-owned context. Use it directly on the worker instead of
+making `timing.c`, `inst.c` and `fps.c` global state concurrent.
+
+The optional `bench_packet_consumer.exe` owns a separate instance buffer,
+replacement shader, declaration cache, submission context and draw counters.
+It consumes the copied palette directly, without writing synthetic native
+mesh/tree objects or calling the game's mesh/event/display hooks. Material
+effects and their setters remain on the GPU owner. The first unit follows
+the checked ordinary draw path, and ordered followers use checked instanced
+transactions. The original hook-based renderer remains the independent
+image/state oracle. Regular and extra draws use packet flags and separate
+consumer counters, leaving the global extra-frame state unchanged.
+
+Producer preparation executes through the existing frame/render stubs.
+An untimed handshake leaves an effect open inside the worker's scene while
+the producer executes three more frame hooks and flushes diagnostics.
+Require balanced producer stacks, unchanged native instancer totals/method
+references, no stale scopes and exact producer frame/preparation counts.
+Deliberately transferring the timing thread ID or setting the shared extra
+flag from the worker must fail these checks. This is fixture concurrency,
+not an invocation of the real game's frame/logic functions.
+
+Retain the reset suite's original output references across all generations,
+and require zero final device references. Clear the native instancer's
+initial oracle resources on the producer after joining the worker; clear
+the independent consumer's resources on the worker before teardown.
+
+Build `perf/build/bench_packet_consumer.exe` and add `--packet-consumer` to
+the reset runner. Both `--backend dxvk` and `--backend native` are supported.
+This mode does not collect timings. Previous worker timing deltas cannot
+be assigned to this changed consumer without a fresh paired comparison.
+
+Next integration boundary: capture a verified native FX group into this
+consumer while preserving effect identity, Begin/pass results, resource
+ownership and original release order. The fixed single-family fixture is
+not a native group capture bridge or a full-scene renderer. Actual failure
+recovery and result propagation at that boundary must precede runtime use.
+
+Both images on DXVK and native D3D9 pass 240 exact image/state cases, 24 real
+resets and eight zero-reference final releases. All 72 deliberate faults
+reach their expected checks, including 16 timing-owner/shared-extra faults.
+Each successful process records 40 producer frame hooks, 37 preparation
+hooks and three probes while the worker effect is open; 11 regular and 19
+extra draws leave the native instancer's counters and method references
+unchanged. The original reset/owner/batch variants preserve their hashes
+across another 104 image/state cases and 24 deliberate faults. See the
+[consumer report](../benchmarks/2026-10-18-independent-packet-consumer.json).
+Installed beta.13 and its INI remain unchanged; no runtime promotion.

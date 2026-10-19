@@ -74,16 +74,21 @@ def main():
                         help='keep window/device initialization on producer; requires --native-pose')
     parser.add_argument('--reset-lifecycle', action='store_true',
                         help='qualify reset/teardown rather than collect timings; requires --window-owner')
+    parser.add_argument('--packet-consumer', action='store_true',
+                        help='use independent checked GPU consumer; requires --reset-lifecycle')
     args = parser.parse_args()
     if args.window_owner and not args.native_pose:
         parser.error('--window-owner requires --native-pose')
     if args.reset_lifecycle and not args.window_owner:
         parser.error('--reset-lifecycle requires --window-owner')
+    if args.packet_consumer and not args.reset_lifecycle:
+        parser.error('--packet-consumer requires --reset-lifecycle')
     assert 1 <= args.repeat <= 3
     guard()
     root = Path(tempfile.mkdtemp(prefix='sage-native-source-worker-'))
     install = args.install.resolve()
-    exe = REPO/'perf/build'/('bench_window_reset_worker.exe' if args.reset_lifecycle else
+    exe = REPO/'perf/build'/('bench_packet_consumer.exe' if args.packet_consumer else
+                          'bench_window_reset_worker.exe' if args.reset_lifecycle else
                           'bench_window_pose_worker.exe' if args.window_owner else
                           'bench_native_pose_worker.exe' if args.native_pose else 'bench_native_source_worker.exe')
     shutil.copy2(exe, root/exe.name)
@@ -100,6 +105,7 @@ def main():
               'directory': str(root), 'inputs_sha256': {str(p.resolve()): sha(p) for p in sources},
               'sample_columns': COLUMNS, 'images': [], 'runs': [],
               'backend': args.backend, 'reset_lifecycle': args.reset_lifecycle,
+              'packet_consumer': args.packet_consumer,
               'runtime_changed': False, 'game_launched': False, 'deployed': False}
     reference = Image(BASELINE)
     for index, image in enumerate(args.image):
@@ -141,6 +147,8 @@ def main():
                     faults.extend(['device-flags','stale-material'])
                 if args.reset_lifecycle:
                     faults.extend(['reset-before-drain', 'stale-generation'])
+                if args.packet_consumer:
+                    faults.extend(['frame-owner', 'shared-extra'])
                 for fault in faults if repeat == 0 else ['']:
                     guard()
                     label = f'{index}-{repeat}-{workload}' + ('-'+fault if fault else '')
@@ -164,7 +172,11 @@ def main():
                               'seconds': time.monotonic()-start, 'log': str(log), 'log_sha256': sha(log)}
                     report['runs'].append(result)
                     args.output.write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
-                    if fault == 'stale-generation':
+                    if fault in ('frame-owner', 'shared-extra'):
+                        assert run.returncode == 1 and 'bench_scope_owner_idle(window_thread) && !pf_fps_in_extra()' in text
+                        assert 'RESET CALL:' not in text
+                        result['fault_detected_by_thread_state_oracle'] = True
+                    elif fault == 'stale-generation':
                         assert run.returncode == 1 and 'slot->sequence==collected+1 && slot->rejected==expect_rejected' in text
                         assert text.count('RESET CALL:') == 1
                         result['fault_detected_by_generation_oracle'] = True
@@ -210,6 +222,9 @@ def main():
                                 assert 'WINDOW OWNER: 590 ordered worker messages dispatched on producer;' in text
                             result['device_owner'] = next(line for line in text.splitlines() if line.startswith('DEVICE OWNER:'))
                             result['window_messages'] = 37 if args.reset_lifecycle else 590
+                        if args.packet_consumer:
+                            assert 'SEPARATE CONSUMER: producer_frames=40 producer_render=37 concurrent_probes=3 worker_frames=11/19 meshes=79200/136800;' in text
+                            result['separate_consumer'] = next(line for line in text.splitlines() if line.startswith('SEPARATE CONSUMER:'))
                     args.output.write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
                     print(json.dumps({'case': label, 'returncode': run.returncode,
                                       'medians': result.get('medians_ms_per_pair'), 'log': str(log)}), flush=True)

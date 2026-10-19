@@ -3,6 +3,9 @@
 #define PF_WORKER_RESET
 #define PF_WORKER_MAIN unused_worker_benchmark_main
 #include "bench_batch_worker.c"
+#ifdef PF_PACKET_CONSUMER
+#include "packet_consumer.h"
+#endif
 
 extern int bench_inst_release_resources(void);
 extern void material_fixture_lost(void);
@@ -30,7 +33,11 @@ static void worker_resources_release(void)
     bench_retained_clear();
     IDirect3DStateBlock9_Release(outer);outer=NULL;
     material_fixture_lost();
+#ifdef PF_PACKET_CONSUMER
+    packet_consumer_close();
+#else
     REQUIRE(bench_inst_release_resources());
+#endif
     IDirect3DQuery9_Release(fence);fence=NULL;
     HR(IDirect3DDevice9_SetDepthStencilSurface(g_dev,NULL));
     IDirect3DSurface9 *back=NULL;
@@ -101,8 +108,13 @@ static void stop_worker(HANDLE worker)
     REQUIRE(wait_owner(worker,10000)==WAIT_OBJECT_0);
     DWORD code;REQUIRE(GetExitCodeThread(worker,&code) && !code);CloseHandle(worker);
     REQUIRE(owner_messages==submitted);
+#ifdef PF_PACKET_CONSUMER
+    REQUIRE(bench_scope_owner_idle(window_thread));
+    REQUIRE(bench_inst_release_resources());
+#else
     REQUIRE(bench_scope_transfer_owner(render_thread));
     REQUIRE(bench_inst_transfer_owner(render_thread));
+#endif
 }
 
 static int reset_result(HRESULT result)
@@ -126,6 +138,11 @@ int main(int argc,char **argv)
     stale_pose_values=!strcmp(fault,"stale-pose");stale_material_values=!strcmp(fault,"stale-material");
     wrong_source_setter=!strcmp(fault,"wrong-setter");stale_source_values=!strcmp(fault,"stale-source");
     unsigned no_mt=!strcmp(fault,"device-flags");
+#ifdef PF_PACKET_CONSUMER
+    consumer_shared_extra=!strcmp(fault,"shared-extra");
+    consumer_transfer_timing=!strcmp(fault,"frame-owner");
+    if(!consumer_shared_extra && !consumer_transfer_timing)
+#endif
     REQUIRE(!*fault || early_reset || skip_generation_check || stale_pose_values || stale_material_values || wrong_source_setter || stale_source_values || no_mt);
     if(no_mt)fixture_device_flags&=~D3DCREATE_MULTITHREADED;
     native_pose_init(argv[5],argv[7],(unsigned)(argv[8][0]-'0'));
@@ -135,6 +152,15 @@ int main(int argc,char **argv)
     REQUIRE(available && initialized && consume_gate);
     for(unsigned i=0;i<WORKER_SLOTS;i++){slots[i].done=CreateEventW(NULL,FALSE,FALSE,NULL);REQUIRE(slots[i].done);}
     window_thread=GetCurrentThreadId();initialize_worker();verify_window_owner();
+#ifdef PF_PACKET_CONSUMER
+    pf_timing_stats producer_before;pf_timing_get_stats(&producer_before);
+    pf_inst_counts native_before;pf_inst_totals(&native_before);
+    pf_timing_set_inst(pf_inst_enter,pf_inst_take);
+    unsigned original_refs=g_method.refs;
+    consumer_inside=CreateEventW(NULL,FALSE,FALSE,NULL);
+    consumer_continue=CreateEventW(NULL,FALSE,FALSE,NULL);
+    REQUIRE(consumer_inside && consumer_continue);consumer_probe_pending=1;
+#endif
     IDirect3DSwapChain9 *chain=NULL;
     HR(IDirect3DDevice9_GetSwapChain(g_dev,0,&chain));
     HR(IDirect3DSwapChain9_GetPresentParameters(chain,&reset_parameters));
@@ -168,6 +194,24 @@ int main(int argc,char **argv)
         ownership_controls();
     }
     accepting_packets=0;stop_worker(worker);
+#ifdef PF_PACKET_CONSUMER
+    pf_timing_stats producer_after;pf_timing_get_stats(&producer_after);
+    pf_inst_counts native_after;pf_inst_totals(&native_after);
+    REQUIRE(producer_preparations==submitted && producer_probes==3 && !consumer_probe_pending);
+    REQUIRE(producer_after.frames-producer_before.frames==producer_preparations+producer_probes);
+    REQUIRE(producer_after.render_calls-producer_before.render_calls==producer_preparations);
+    REQUIRE(producer_after.scopes==producer_before.scopes && producer_after.stale==producer_before.stale &&
+            producer_after.stale_scopes==producer_before.stale_scopes && g_method.refs==original_refs);
+    REQUIRE(!memcmp(&native_before,&native_after,sizeof native_before));
+    REQUIRE(consumer.frames[0]+consumer.frames[1]==30);
+    for(unsigned i=0;i<2;i++)REQUIRE(consumer.groups[i]==consumer.frames[i]*GROUPS &&
+        consumer.meshes[i]==consumer.groups[i]*GROUP_SIZE &&
+        consumer.draws[i]==consumer.groups[i]*(1+fixture_batches(GROUP_SIZE-1)));
+    printf("SEPARATE CONSUMER: producer_frames=%u producer_render=%u concurrent_probes=%u worker_frames=%u/%u meshes=%u/%u; native method references and frame counters isolated\n",
+        producer_after.frames-producer_before.frames,producer_preparations,producer_probes,
+        consumer.frames[0],consumer.frames[1],consumer.meshes[0],consumer.meshes[1]);
+    CloseHandle(consumer_inside);CloseHandle(consumer_continue);
+#endif
     HR(IDirect3DDevice9_TestCooperativeLevel(g_dev));
     material_fixture_destroy();
     if(reset_pixel)IDirect3DPixelShader9_Release(reset_pixel);
