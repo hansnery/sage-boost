@@ -40,3 +40,16 @@ aggregates cannot prove the same control-flow sequence occurred in that game.
 No gameplay gain, final 59/s result or multiplayer qualification follows from
 the fixture. Keep the published beta.14 and Stable intact; beta.16 requires
 separate deployment and real gameplay qualification.
+
+## Supplemental eligibility regression
+
+After local deployment, an additional production-object regression accumulates
+30 eligible blocked observations, interrupts with pause, scrolling or building
+placement, then resumes. None of the three cases probes within the next 30
+observations; each probes successfully during the following 40, without a late
+prediction. This checks that retained credit does not cross an ineligible UI
+or game state and that eligibility can recover afterward. `make test-pair-runtime`
+passes including these cases and the existing three-failed-probe rest case.
+Only the test changed; the installed beta.16 binary and preferences did not.
+The complete prior suite remains the runtime build validation; these additional
+cases were run through the focused adapter target, not a second full suite.

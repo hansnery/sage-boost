@@ -369,9 +369,40 @@ static void intermittent_recovery(void)
            sim_draws - before, row.probes[0], row.late, run_us - start);
 }
 
+static void recovery_credit_gates(void)
+{
+    for (unsigned gate = 0; gate < 3; gate++) {
+        pf_fps_row row;
+        setup_runtime(1);
+        for (unsigned i = 0; i < 120; i++) runtime_frame(8000, 33);
+        for (unsigned i = 0; i < 8; i++) game_draw(20000, 0);
+        extra_us = 18500;
+        runtime_frame(8000, 33);
+        extra_us = 12849;
+        runtime_frame(8000, 33); /* establish a cheaper successful candidate */
+        pf_fps_take_row(&row);
+        for (unsigned i = 0; i < 30; i++) runtime_frame(19854, 33);
+        if (gate == 0) logic_data[16] = 1;
+        if (gate == 1) ui_data[8] = 1;
+        if (gate == 2) *(unsigned *)(ui_data + 4) = 1;
+        runtime_frame(19854, 33);
+        logic_data[16] = ui_data[8] = 0;
+        *(unsigned *)(ui_data + 4) = 0;
+        for (unsigned i = 0; i < 30; i++) runtime_frame(19854, 33);
+        pf_fps_take_row(&row);
+        CHECK(row.probes[0] == 0, "recovery credit survived eligibility gate %u", gate);
+        for (unsigned i = 0; i < 40; i++) runtime_frame(19854, 33);
+        pf_fps_take_row(&row);
+        CHECK(row.probes[0] == 1 && row.probes[1] == 1 && !row.late,
+              "bounded recovery did not restart after eligibility gate %u", gate);
+    }
+    puts("recovery credit: pause, scrolling and placement reset eligibility");
+}
+
 int main(void)
 {
     intermittent_recovery();
+    recovery_credit_gates();
     unsigned i;
     pf_cu_sites cu;
     adaptive_boundaries();
