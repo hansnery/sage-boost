@@ -600,3 +600,31 @@ regular/extra pair. See the
 or gameplay FPS prediction follows. Profile pairs are diagnostic and retain
 their adjacent unprofiled measurements rather than attributing all drift
 to instrumentation.
+
+## Merged frame-start prototype
+
+`bench_group_start.exe` / `--frame-start` compares the previous ownership
+claim plus synchronous setup with a merged synchronous start and a merged
+asynchronous start. The owned frame request carries its sequence, ownership
+claim and optional correctness probe. The GPU owner requires a new frame
+after the last completed one, matching IDs on each command batch and finish,
+and a valid consumer owner before setting device state. Final completion
+still restores state, ends the scene and drains the GPU before another
+frame can change ownership mode.
+
+The correctness probe blocks the worker before device setup. The producer
+must finish first-group effect/palette capture and then release the worker;
+this checks actual useful work before startup completion. Further cases
+compare both merged modes after direct rendering, regular/extra and changed
+material phases, a failed native Begin, and first-batch shader recovery.
+Two new faults omit the ownership claim or publish a stale frame ID.
+
+One positive DXVK/lit pilot passes the held-worker and image/state checks,
+but its asynchronous start is 0.215 ms slower per pair than the previous
+first-batch worker. The seven-way timings retain the native baseline and
+both older worker variants. Both-image/backend coverage, the two new fault
+processes and the previous-build regression remain pending because the
+game reopened before the full matrix started. The
+[pilot receipt](../benchmarks/2026-10-18-group-frame-start-pilot.json) preserves
+this incomplete state; it is not a performance qualification or runtime
+change.

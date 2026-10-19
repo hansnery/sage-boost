@@ -1,0 +1,504 @@
+{
+  "window": {
+    "start_s": 47,
+    "end_s_exclusive": 107,
+    "nominal_seconds": 60,
+    "at_least_60_seconds": true
+  },
+  "presentation_calls": 1795,
+  "presentation_calls_per_nominal_second": 29.916666666666668,
+  "nominal_rate_at_least_59": false,
+  "rate_bounds_from_timestamp_quantization": {
+    "lower": 29.42622950819672,
+    "upper": 30.423728813559322
+  },
+  "per_row_calls": {
+    "min": 19,
+    "max": 33
+  },
+  "regular_frame_updates": 1804,
+  "extra_frames": 5,
+  "pacing": {
+    "gaps": 1795,
+    "histogram_counts": {
+      "present_gap_le_8333us": 0,
+      "present_gap_le_12500us": 1,
+      "present_gap_le_16667us": 11,
+      "present_gap_le_20000us": 21,
+      "present_gap_le_25000us": 80,
+      "present_gap_le_33334us": 807,
+      "present_gap_le_50000us": 840,
+      "present_gap_le_100000us": 32,
+      "present_gap_le_200000us": 2,
+      "present_gap_le_500000us": 1,
+      "present_gap_le_1000000us": 0,
+      "present_gap_over_1000000us": 0
+    },
+    "p50": {
+      "lower_exclusive_ms": 25.0,
+      "upper_ms": 33.334
+    },
+    "p95": {
+      "lower_exclusive_ms": 33.334,
+      "upper_ms": 50.0
+    },
+    "fraction_over_25_ms": 0.9370473537604457,
+    "fraction_over_50_ms": 0.019498607242339833
+  },
+  "shadows": {
+    "extra_draw_calls": 5,
+    "extra_completed_pass_samples": 5,
+    "valid_extra_profiles": 5,
+    "invalid_extra_profiles": 0,
+    "regular_shadow_skips": 0,
+    "extra_counts_match_each_row": true
+  },
+  "verification_failures": {
+    "verify_bad": 0,
+    "shadow_verify_bad": 0,
+    "spv_bad": 0,
+    "lt_verify_bad": 0
+  },
+  "bulk_coverage": {
+    "available": true,
+    "instrumented_rows": 60,
+    "selected_rows": 60,
+    "regular": {
+      "consumed_followers_by_method_count": {
+        "1": 8561920,
+        "2": 5889441,
+        "3": 17763,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      },
+      "consumed_followers": 14469124,
+      "multi_method_followers": 5907204,
+      "multi_method_fraction": 0.40826272551123344,
+      "frame_denominator": 1804,
+      "consumed_followers_per_frame": 8020.578713968958
+    },
+    "extra": {
+      "consumed_followers_by_method_count": {
+        "1": 9442,
+        "2": 9781,
+        "3": 16,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      },
+      "consumed_followers": 19239,
+      "multi_method_followers": 9797,
+      "multi_method_fraction": 0.5092260512500649,
+      "frame_denominator": 5,
+      "consumed_followers_per_frame": 3847.8
+    },
+    "limits": [
+      "Consumed follower records across render passes; not unique units or successful draws.",
+      "Deferred leaders are excluded; no total eligible-record denominator is recorded.",
+      "Regular per-frame values include updates whose render was skipped.",
+      "Method counts measure use of the path, not time saved or FPS gained."
+    ]
+  },
+  "limits": [
+    "Completed flip-enabled EndScene calls; not measured display refresh or GPU success.",
+    "Row timestamps quantize duration; reported FPS uses the nominal interval.",
+    "Percentiles are pooled histogram bounds, not exact gaps or averaged row percentiles.",
+    "The first gap may begin before the selected interval.",
+    "Matching shadow counts do not prove correct pixels or per-frame correspondence.",
+    "Confirm the saved-game scene, loaded version/settings, visual output and runtime log.",
+    "Simulation/network/input/camera invariants require separate evidence.",
+    "Copied during a user-launched game; this snapshot is not a closed-session receipt.",
+    "Zero logic ticks at seconds 61..63 are consistent with a pause/inactive simulation. No eligible nonempty window in this snapshot has positive logic ticks in every row.",
+    "Visible mesh counts range widely. Later high-rate rows contain fewer meshes and do not prove the troop-heavy target.",
+    "No controlled beta.11/beta.13 comparison or disabled-bulk control was performed.",
+    "Scheduling and render scopes overlap; row-average costs do not reconstruct individual admission decisions."
+  ],
+  "selection": "Exploratory lowest-rate complete nonempty 60-second window in this snapshot; not a user-confirmed settled test. All eligible windows are also reported.",
+  "eligible_nonempty_windows": [
+    {
+      "start_s": 32,
+      "nominal_rate": 36.833333333333336,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 33,
+      "nominal_rate": 36.53333333333333,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 34,
+      "nominal_rate": 36.0,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 35,
+      "nominal_rate": 35.9,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 36,
+      "nominal_rate": 35.65,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 37,
+      "nominal_rate": 35.416666666666664,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 38,
+      "nominal_rate": 35.13333333333333,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 39,
+      "nominal_rate": 34.6,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 40,
+      "nominal_rate": 33.56666666666667,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 41,
+      "nominal_rate": 32.2,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 42,
+      "nominal_rate": 31.583333333333332,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 43,
+      "nominal_rate": 31.566666666666666,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 44,
+      "nominal_rate": 31.233333333333334,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 45,
+      "nominal_rate": 30.35,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 46,
+      "nominal_rate": 29.933333333333334,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 47,
+      "nominal_rate": 29.916666666666668,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 48,
+      "nominal_rate": 29.933333333333334,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 49,
+      "nominal_rate": 29.933333333333334,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 50,
+      "nominal_rate": 29.916666666666668,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 51,
+      "nominal_rate": 29.933333333333334,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 52,
+      "nominal_rate": 29.983333333333334,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "start_s": 53,
+      "nominal_rate": 30.2,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63,
+        112
+      ]
+    },
+    {
+      "start_s": 54,
+      "nominal_rate": 30.416666666666668,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63,
+        112,
+        113
+      ]
+    },
+    {
+      "start_s": 55,
+      "nominal_rate": 30.8,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63,
+        112,
+        113,
+        114
+      ]
+    },
+    {
+      "start_s": 56,
+      "nominal_rate": 31.15,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63,
+        112,
+        113,
+        114,
+        115
+      ]
+    },
+    {
+      "start_s": 57,
+      "nominal_rate": 31.65,
+      "zero_logic_tick_seconds": [
+        61,
+        62,
+        63,
+        112,
+        113,
+        114,
+        115,
+        116
+      ]
+    }
+  ],
+  "frame_weighted_metrics": {
+    "frame_avg_ms": 22.562891352549887,
+    "logic_ms": 2.3189279379157424,
+    "render_ms": 15.037318736141907,
+    "shadow_ms": 7.214816518847007,
+    "fx_batch_ms": 7.221973392461198,
+    "fx_mesh_ms": 3.6371596452328157,
+    "inst_meshes": 8568.981152993349,
+    "fx_groups": 862.0842572062085
+  },
+  "idle_ms_per_wait": 11.38448909090909,
+  "blockers": {
+    "fps_block_cost": 1244,
+    "fps_block_catchup": 127,
+    "fps_block_pause": 0,
+    "fps_block_stop": 0,
+    "fps_probe_attempts": 0,
+    "skipped_draws": 14
+  },
+  "zero_logic_tick_seconds": [
+    61,
+    62,
+    63
+  ],
+  "loaded_version": "bfme2perf 0.9.11-beta.13",
+  "activation": [
+    "render: QueueInsert=1: applied",
+    "render: QueueSort=1: applied",
+    "render: BulkRender=1: guarded native group batching enabled"
+  ],
+  "installed_sha256": {
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\mss\\bfme2perf.asi": "976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\mss\\bfme2perf.ini": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b"
+  },
+  "capture": {
+    "captured_at_utc": "2026-10-19T05:04:16.407716+00:00",
+    "directory": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-active-game-snapshot-qjimbkmw",
+    "copied_files_sha256": {
+      "bfme2perf.log": "6f793d0cf5a3a99df0425e4a8b7f1563c87096b273bc94900e13dedf5cf78d36",
+      "bfme2perf_scopes.csv": "878fd55559ed827f61f952e28dbab847571356d4028b75cdd4c0f03f033bb986",
+      "bfme2perf_timing.csv": "d952ba078c1434f9e7c1b66676759d89d247b1ce932fe685ac046e6e92c44715"
+    },
+    "live_snapshot": true,
+    "rows": 158,
+    "last_rows": [
+      {
+        "time_s": "179",
+        "frames": "31",
+        "present_calls": "124",
+        "inst_meshes": "2249",
+        "fx_groups": "167",
+        "render_ms": "3.091",
+        "shadow_ms": "1.769",
+        "extra_frames": "93",
+        "fps_block_cost": "0",
+        "bulk_followers_1": "30721",
+        "bulk_followers_2": "31031",
+        "bulk_followers_3": "0",
+        "bulk_followers_4": "0",
+        "bulk_followers_5": "0",
+        "bulk_followers_6": "0"
+      },
+      {
+        "time_s": "180",
+        "frames": "30",
+        "present_calls": "88",
+        "inst_meshes": "2162",
+        "fx_groups": "258",
+        "render_ms": "4.375",
+        "shadow_ms": "2.173",
+        "extra_frames": "58",
+        "fps_block_cost": "0",
+        "bulk_followers_1": "26479",
+        "bulk_followers_2": "30030",
+        "bulk_followers_3": "0",
+        "bulk_followers_4": "0",
+        "bulk_followers_5": "0",
+        "bulk_followers_6": "0"
+      },
+      {
+        "time_s": "181",
+        "frames": "30",
+        "present_calls": "88",
+        "inst_meshes": "2249",
+        "fx_groups": "167",
+        "render_ms": "3.299",
+        "shadow_ms": "1.949",
+        "extra_frames": "58",
+        "fps_block_cost": "0",
+        "bulk_followers_1": "29730",
+        "bulk_followers_2": "30030",
+        "bulk_followers_3": "0",
+        "bulk_followers_4": "0",
+        "bulk_followers_5": "0",
+        "bulk_followers_6": "0"
+      },
+      {
+        "time_s": "182",
+        "frames": "31",
+        "present_calls": "95",
+        "inst_meshes": "2249",
+        "fx_groups": "167",
+        "render_ms": "3.449",
+        "shadow_ms": "2.000",
+        "extra_frames": "64",
+        "fps_block_cost": "0",
+        "bulk_followers_1": "30721",
+        "bulk_followers_2": "31031",
+        "bulk_followers_3": "0",
+        "bulk_followers_4": "0",
+        "bulk_followers_5": "0",
+        "bulk_followers_6": "0"
+      },
+      {
+        "time_s": "183",
+        "frames": "30",
+        "present_calls": "97",
+        "inst_meshes": "2212",
+        "fx_groups": "202",
+        "render_ms": "4.054",
+        "shadow_ms": "2.167",
+        "extra_frames": "67",
+        "fps_block_cost": "0",
+        "bulk_followers_1": "28525",
+        "bulk_followers_2": "29963",
+        "bulk_followers_3": "0",
+        "bulk_followers_4": "0",
+        "bulk_followers_5": "0",
+        "bulk_followers_6": "0"
+      }
+    ]
+  },
+  "goal_achieved": false,
+  "scenario_confirmed": false,
+  "frameview_capture_available": false
+}

@@ -58,6 +58,28 @@ Accelerator has now run in isolated offline harnesses (below).
   resolve a reproducible multiplayer divergence only after one is observed.
   No promised FPS gain, deployment or new gameplay request from this review.
 
+### Frame-start handoff experiment: validation pending (2026-10-18)
+
+The worktree contains an optional `bench_group_start.exe` / `--frame-start`
+comparison of the existing two synchronous messages, a merged synchronous
+start and an asynchronous start that claims GPU ownership on the worker.
+Owned frame IDs guard start, command batches and completion. Final GPU drain
+is retained; ownership modes change only with the prior frame complete.
+
+One DXVK/lit pilot passes 48 main image/state cases, the existing size and
+recovery checks, 12 additional handoff image/state cases, six held-worker
+capture probes and four further shader-failure recoveries. The probe holds
+the worker before device setup while the producer completes first-group
+effect/palette capture. The pilot is **0.215 ms slower per pair** than the
+previous first-batch worker; it does not establish a speedup. Preserve the
+[pilot](benchmarks/2026-10-18-group-frame-start-pilot.json).
+
+The full matrix did not start: its guard found the user's running game and
+launcher. No benchmark process is still running. Both images/backends, new
+missing-claim/stale-frame faults and the previous first-batch regression
+remain pending. Continue after the process guard clears; the closure/context
+questions are already pending with the user. No install or settings change.
+
 ### First-unit batching in the independent worker (2026-10-18)
 
 The optional consumer now includes the first unit in checked instancing,
@@ -531,6 +553,24 @@ the [earlier restoration](benchmarks/2026-10-18-beta13-restoration.json) and
 the [original installation](benchmarks/2026-10-18-material-chain-install.json).
 
 ## Beta.13 gameplay: active batching, insufficient render budget (2026-10-18)
+
+A later user-launched session was copied while it was running at 22:04
+local time. Beta.13 and its INI hashes still match. Exploratory seconds
+47..106 record **1,795 completed presentation calls / 60 nominal seconds =
+29.9167/s**, with pooled p50 `(25, 33.334] ms` and p95 `(33.334, 50] ms`.
+All 26 complete nonempty 60-second windows in that snapshot remain below
+59/s (29.92-36.83/s). Each includes zero-logic-tick seconds 61..63, so none
+is a confirmed settled, unpaused benchmark. Later high-rate rows have fewer
+visible meshes; the exact scenario is awaiting the user's clarification.
+
+That diagnostic window averages 22.563 ms per normal update and 15.037 ms
+in rendering, with 11.384 ms idle per wait. It records 1,244 cost blocks,
+127 catch-up blocks and no pause/stop blocks. Its five extra frames each
+include a completed shadow pass; verification-error counters remain zero.
+Bulk counts demonstrate the installed path is in use, not an A/B gain.
+See the [live snapshot report](benchmarks/2026-10-18-beta13-live-gameplay-check.json).
+No GPU benchmark ran alongside this game. This does not meet the objective
+or replace a user-confirmed capture of the troop-heavy scenario.
 
 The user reports high initial FPS followed by a drop to 30. This new run
 loads **0.9.11-beta.13**, with the tested ASI and intended INI hashes above;

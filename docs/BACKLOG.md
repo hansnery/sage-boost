@@ -138,6 +138,11 @@ Strike an item through, with the date, when it's done.
   See `benchmarks/2026-10-18-group-first-batch.json`.
 - [ ] Test redundant frame-start/ownership synchronization while preserving
   FIFO ordering, GPU ownership, failure controls and all completion work.
+  The optional merged/asynchronous prototype passes one DXVK/lit pilot,
+  including held-worker capture, but is 0.215 ms slower per pair than the
+  previous first-batch worker. Full matrix/new faults/regression remain
+  pending after the game reopened; see
+  `benchmarks/2026-10-18-group-frame-start-pilot.json`.
   The changed flags=7 Begin contract, deferred driver errors, cold effects,
   live resources and whole scene/Present remain unqualified.
 - [x] 2026-10-18: back up a second launcher replacement of beta.13 by

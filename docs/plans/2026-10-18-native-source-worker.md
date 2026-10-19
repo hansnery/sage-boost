@@ -294,3 +294,25 @@ Existing paths retain 132 image/state cases, six resets and zero-reference
 final releases, with 50 faults rejected. Versus native bulk, native D3D9
 saves 1.67-3.20 ms/pair; DXVK ranges from a 0.26 ms regression to a 0.55 ms
 saving. No install. See `../benchmarks/2026-10-18-group-first-batch.json`.
+
+## Merge ownership and frame-start publication
+
+Compare the current two synchronous messages with one synchronous frame
+start and one asynchronous frame start that claims GPU ownership itself.
+Only producer command capture may overlap startup; native/direct paths keep
+their existing behavior. Final frame completion still waits for all queued
+commands and GPU work, and ownership modes change only after completion.
+
+- [ ] Add an optional fixture with owned frame sequence IDs. Require start,
+  command batches and finish to agree on the current frame; reject stale
+  commands and an incorrect owner before drawing.
+- [ ] Hold the worker before frame setup and prove the producer completes
+  first-group effect/palette capture before releasing it. Compare regular,
+  extra, changed-material and failed-Begin images/state, including checked
+  first-batch recovery and the existing callback/size controls.
+- [ ] Rotate seven complete timing paths: native bulk, direct capture, new
+  asynchronous start, original worker, prior bulk worker, prior first-batch
+  worker and merged synchronous start. Preserve all queue waits/GPU drains.
+- [ ] Run both images/backends and regress the previous first-batch fixture;
+  record sources, logs and rejected controls. Promote no runtime change from
+  a small or inconsistent synthetic delta.

@@ -685,6 +685,9 @@ $(BUILD)/bench_group_capture.exe: tests/bench_group_consumer.c tests/group_captu
 $(BUILD)/bench_group_first.exe: tests/bench_group_consumer.c tests/group_first_batch.h $(BUILD)/bench_group_capture.exe
 	$(CC) $(TEST_CFLAGS) -O2 -DPF_GROUP_COMMANDS -DPF_GROUP_PROFILE -DPF_GROUP_CAPTURE -DPF_GROUP_BATCH_FIRST -Wno-unused-function -static -o $@ $< $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_native_leader_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
 
+$(BUILD)/bench_group_start.exe: tests/bench_group_consumer.c tests/group_frame_start.h $(BUILD)/bench_group_first.exe
+	$(CC) $(TEST_CFLAGS) -O2 -DPF_GROUP_COMMANDS -DPF_GROUP_PROFILE -DPF_GROUP_CAPTURE -DPF_GROUP_BATCH_FIRST -DPF_GROUP_FRAME_START -Wno-unused-function -static -o $@ $< $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_native_leader_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
+
 bench-native-group-gpu: $(BUILD)/bench_native_group_gpu.exe
 	python ../tools/bench_native_group_gpu.py "$(AOTR_DAT)" $(BUILD)/bench_native_group_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first
 	python ../tools/bench_native_group_gpu.py "$(AOTR_DAT)" $(BUILD)/bench_native_group_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 leader-bulk-first

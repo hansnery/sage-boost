@@ -25,6 +25,9 @@ typedef struct {
 #ifdef PF_GROUP_BATCH_FIRST
     unsigned batch_first,recovery;
 #endif
+#ifdef PF_GROUP_FRAME_START
+    unsigned frame_id,claim,probe;
+#endif
     fixture_material_values material;
     float palette[GROUP_SIZE][BONES][8];
     HRESULT result;
@@ -50,7 +53,9 @@ static unsigned gc_batch_first=1,gc_group_size=GROUP_SIZE,gc_failure_probe;
 #ifdef PF_GROUP_COMMANDS
 #include "group_commands.h"
 #ifdef PF_GROUP_CAPTURE
-#ifdef PF_GROUP_BATCH_FIRST
+#ifdef PF_GROUP_FRAME_START
+#define GC_MAX_FAULT 15
+#elif defined(PF_GROUP_BATCH_FIRST)
 #define GC_MAX_FAULT 13
 #else
 #define GC_MAX_FAULT 12
@@ -104,6 +109,10 @@ static void gc_wait(HANDLE event)
     }
 }
 
+#ifdef PF_GROUP_FRAME_START
+#include "group_frame_start.h"
+#endif
+
 static unsigned gc_snapshot(unsigned *out)
 {
     HR(IDirect3DDevice9_GetVertexShaderConstantF(g_dev,0,(float *)out,256));
@@ -121,8 +130,15 @@ static void gc_execute(GcRequest *r)
 {
     REQUIRE(GetCurrentThreadId()==(gc_worker_mode()?gc_gpu:gc_producer));
     switch(r->kind) {
-    case GC_CLAIM: consumer.owner=GetCurrentThreadId();break;
+    case GC_CLAIM:
+#ifdef PF_GROUP_FRAME_START
+        REQUIRE(!gc_active_frame);
+#endif
+        consumer.owner=GetCurrentThreadId();break;
     case GC_FRAME: {
+#ifdef PF_GROUP_FRAME_START
+        gc_start_begin(r);
+#endif
 #ifdef PF_GROUP_BATCH_FIRST
         gc_first_draws=gc_first_failures=0;gc_first_fail_armed=r->recovery;
         consumer_expect_recovery=r->recovery;consumer_recoveries=0;
@@ -174,13 +190,23 @@ static void gc_execute(GcRequest *r)
     }
     case GC_END_ONLY: material_fixture_close();break;
     case GC_FINISH:
+#ifdef PF_GROUP_FRAME_START
+        REQUIRE(gc_active_frame && gc_active_frame==r->frame_id);
+#endif
         HR(IDirect3DStateBlock9_Apply(outer));
         HR(IDirect3DDevice9_EndScene(g_dev));drain();
         if(r->check){read_pixels(gc_output);gc_state_words=gc_snapshot(gc_state);}
+#ifdef PF_GROUP_FRAME_START
+        gc_completed_frame=gc_active_frame;gc_active_frame=0;
+#endif
         break;
     case GC_STOP: packet_consumer_close();break;
 #ifdef PF_GROUP_COMMANDS
-    case GC_COMMANDS: gc_command_replay(gc_mode==4?&gc_command_slots[r->group]:&gc_commands);break;
+    case GC_COMMANDS:
+#ifdef PF_GROUP_FRAME_START
+        REQUIRE(gc_active_frame && gc_active_frame==r->frame_id);
+#endif
+        gc_command_replay(gc_mode==4?&gc_command_slots[r->group]:&gc_commands);break;
 #endif
     default: REQUIRE(!"unknown group command");
     }
@@ -201,6 +227,10 @@ static DWORD WINAPI gc_run(void *unused)
 static void gc_send(GcRequest *r,unsigned wait)
 {
     GC_PROFILE_START(publish_start);
+#ifdef PF_GROUP_FRAME_START
+    if(r->kind==GC_FRAME || r->kind==GC_COMMANDS || r->kind==GC_FINISH)r->frame_id=gc_frame_id;
+    if(gc_fault==15 && gc_mode==4 && gc_start_style==2 && r->kind==GC_COMMANDS)r->frame_id--;
+#endif
     if(!gc_worker_mode()){
         gc_execute(r);
         if(r->kind==GC_COMMANDS)GC_PROFILE_STOP(publish_start,GCP_PUBLISH);
@@ -313,7 +343,11 @@ static void __attribute__((thiscall)) gc_end(void *self)
     if(gc_mode>=3) {
         gc_command_capture=1;material_fixture_close();gc_command_capture=0;
         HR(gc_command_emit(CMD_RESTORE,0,0,NULL,0,NULL));
-        if(++gc_commands.groups==CMD_GROUPS)gc_command_flush();
+        ++gc_commands.groups;
+#ifdef PF_GROUP_FRAME_START
+        gc_start_capture_done();
+#endif
+        if(gc_commands.groups==CMD_GROUPS)gc_command_flush();
         GC_PROFILE_STOP(end_start,GCP_END);
         return;
     }
@@ -361,7 +395,14 @@ static void gc_frame(unsigned mode,unsigned phase,unsigned check,unsigned fail)
     GC_PROFILE_START(frame_start);
     REQUIRE(gc_group_size && gc_group_size<=GROUP_SIZE);
     gc_mode=mode;gc_extra=phase!=0;gc_epoch=phase>=2;gc_fail=fail;
-    GcRequest request={0};request.kind=GC_CLAIM;gc_send(&request,1);
+    GcRequest request={0};request.kind=GC_CLAIM;
+#ifdef PF_GROUP_FRAME_START
+    REQUIRE(!gc_active_frame && gc_completed_frame==gc_frame_id);gc_frame_id++;
+    unsigned style=mode==4?gc_start_style:0;
+    if(!style)gc_send(&request,1);
+#else
+    gc_send(&request,1);
+#endif
     REQUIRE(bench_scope_owner_idle(gc_producer));
     pose(gc_extra);material_fixture_verify_end(0);
     /* Producer only mutates its own mesh/pivot storage while worker draws. */
@@ -376,7 +417,13 @@ static void gc_frame(unsigned mode,unsigned phase,unsigned check,unsigned fail)
 #ifdef PF_GROUP_BATCH_FIRST
     request.batch_first=mode>=3?gc_batch_first:0;request.recovery=gc_failure_probe;
 #endif
+#ifdef PF_GROUP_FRAME_START
+    request.claim=style;request.probe=gc_start_probe && style==2;
+    if(request.probe){REQUIRE(ResetEvent(gc_start_arrived));REQUIRE(ResetEvent(gc_start_release));}
+    gc_send(&request,style!=2);
+#else
     gc_send(&request,1);
+#endif
     GC_PROFILE_START(groups_start);
     for(unsigned group=0;group<GROUPS;group++) {
         ng_current_group=group;ng_begin_fail=fail && group==7;
@@ -392,6 +439,9 @@ static void gc_frame(unsigned mode,unsigned phase,unsigned check,unsigned fail)
 #endif
     GC_PROFILE_STOP(groups_start,GCP_GROUP);
     request.kind=GC_FINISH;gc_send(&request,1);
+#ifdef PF_GROUP_FRAME_START
+    REQUIRE(!gc_active_frame && gc_completed_frame==gc_frame_id);
+#endif
 #ifdef PF_GROUP_COMMANDS
     REQUIRE(!gc_command_references && !gc_commands.count && !gc_command_capture && !gc_command_lifetime);
 #endif
@@ -481,6 +531,10 @@ int main(int argc,char **argv)
     gc_available=CreateSemaphoreW(NULL,0,2,NULL);REQUIRE(gc_available);
     for(unsigned i=0;i<2;i++){gc_slots[i].done=CreateEventW(NULL,TRUE,TRUE,NULL);REQUIRE(gc_slots[i].done);}
     gc_worker=CreateThread(NULL,0,gc_run,NULL,0,NULL);REQUIRE(gc_worker);
+#ifdef PF_GROUP_FRAME_START
+    gc_start_arrived=CreateEventW(NULL,TRUE,FALSE,NULL);gc_start_release=CreateEventW(NULL,TRUE,FALSE,NULL);
+    REQUIRE(gc_start_arrived && gc_start_release);
+#endif
     static unsigned expected[RT*RT],state[1600],first[RT*RT],second[RT*RT];unsigned cases=0;
     for(unsigned fail=0;fail<2;fail++)for(unsigned phase=0;phase<3;phase++) {
         gc_native_optimized=0;gc_frame(0,phase,1,fail);memcpy(expected,gc_output,sizeof expected);
@@ -500,7 +554,9 @@ int main(int argc,char **argv)
         }
         unsigned words=gc_state_words;memcpy(state,gc_state,words*4);
         for(unsigned candidate=1;candidate<=
-#ifdef PF_GROUP_BATCH_FIRST
+#ifdef PF_GROUP_FRAME_START
+            8
+#elif defined(PF_GROUP_BATCH_FIRST)
             6
 #elif defined(PF_GROUP_CAPTURE)
             4
@@ -517,6 +573,9 @@ int main(int argc,char **argv)
 #endif
 #ifdef PF_GROUP_COMMANDS
             mode+=2;
+#endif
+#ifdef PF_GROUP_FRAME_START
+            gc_start_style=candidate>=7?candidate-6:0;if(candidate>=7)mode=4;
 #endif
             gc_frame(mode,phase,1,fail);
             for(unsigned i=0;i<RT*RT;i++)if(shadow_mode?pf_depth_diff(expected[i],gc_output[i])>PF_DEPTH_TOLERANCE:expected[i]!=gc_output[i]) {
@@ -548,7 +607,11 @@ int main(int argc,char **argv)
     puts("CAPTURE BULK: 12 callback refusal pairs; native references, prepare/finish, scope totals and captured palette counts pass");
 #endif
 #ifdef PF_GROUP_BATCH_FIRST
-    gc_first_validate();gc_first_device_observer(0);
+    gc_first_validate();
+#ifdef PF_GROUP_FRAME_START
+    gc_start_validate();
+#endif
+    gc_first_device_observer(0);
 #endif
 #ifdef PF_GROUP_COMMANDS
     gc_command_audit(0);
@@ -556,13 +619,16 @@ int main(int argc,char **argv)
     printf("COMMAND AUDIT: effects=%u callbacks=%u restored_groups=%u outstanding_refs=%ld scoped_lifetime_calls=%u; no producer state calls or unscoped device references; all audit wrappers removed before timing\n",gc_command_audited,gc_command_callbacks,gc_command_restores,gc_command_references,gc_command_lifetime_calls);
 #endif
     for(unsigned round=0;round<12;round++) {
-        REQUIRE(bench_no_game());double elapsed[5];
+        REQUIRE(bench_no_game());double elapsed[7];
         unsigned columns=3;
 #ifdef PF_GROUP_CAPTURE
         columns=4;
 #endif
 #ifdef PF_GROUP_BATCH_FIRST
         columns=5;
+#endif
+#ifdef PF_GROUP_FRAME_START
+        columns=7;
 #endif
         for(unsigned offset=0;offset<columns;offset++) {
             unsigned column=(round+offset)%columns,mode=column;
@@ -575,6 +641,10 @@ int main(int argc,char **argv)
 #ifdef PF_GROUP_COMMANDS
             if(mode)mode+=2;
 #endif
+#ifdef PF_GROUP_FRAME_START
+            gc_start_style=column==2?2:column==6?1:0;
+            if(column>=5){mode=4;gc_fast_capture=gc_batch_first=1;}
+#endif
             /* Warm the selected ownership mode before its measured pair. */
             gc_frame(mode,0,0,0);
             LONGLONG start=ticks();gc_frame(mode,0,0,0);gc_frame(mode,1,0,0);
@@ -586,6 +656,9 @@ int main(int argc,char **argv)
 #endif
 #ifdef PF_GROUP_BATCH_FIRST
         printf(",%.4f",elapsed[4]);gc_batch_first=1;
+#endif
+#ifdef PF_GROUP_FRAME_START
+        printf(",%.4f,%.4f",elapsed[5],elapsed[6]);gc_start_style=2;
 #endif
         putchar('\n');
     }
@@ -618,8 +691,14 @@ int main(int argc,char **argv)
     gc_mode=2;GcRequest end={0};end.kind=GC_CLAIM;gc_send(&end,1);end.kind=GC_STOP;gc_send(&end,1);
     gc_wait(gc_worker);DWORD exit_code;REQUIRE(GetExitCodeThread(gc_worker,&exit_code) && !exit_code && gc_sent==gc_received);
     CloseHandle(gc_worker);CloseHandle(gc_available);for(unsigned i=0;i<2;i++)CloseHandle(gc_slots[i].done);
+#ifdef PF_GROUP_FRAME_START
+    REQUIRE(!gc_active_frame && gc_completed_frame==gc_frame_id);
+    CloseHandle(gc_start_arrived);CloseHandle(gc_start_release);
+#endif
     REQUIRE(gc_failures==
-#ifdef PF_GROUP_BATCH_FIRST
+#ifdef PF_GROUP_FRAME_START
+        33
+#elif defined(PF_GROUP_BATCH_FIRST)
         18
 #elif defined(PF_GROUP_CAPTURE)
         12
