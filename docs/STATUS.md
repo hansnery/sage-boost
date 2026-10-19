@@ -73,6 +73,37 @@ unqualified. See the [report](benchmarks/2026-10-18-external-render-thread-scree
 and [scope](specs/2026-10-18-external-render-thread-screen.md). No new
 performance build or gameplay test is justified yet.
 
+### External draw/shadow and synchronization checks (2026-10-18)
+
+The follow-up adds real geometry and fresh shadow maps to the external
+comparison, using our existing 288-group, 7,200-mesh GPU fixture. All 24
+final image/state cases match the unhooked oracle exactly. Both changed
+poses and changed materials visibly affect the reference output. The same
+bulk-after-second prototype runs on both timed paths; this is still not
+the installed beta.13 native integration or a complete scene.
+
+Four final runs preserve 84 paired samples: lit completion savings are
+**+0.0339/-0.9983 ms**, shadow **+0.3208/+0.5722 ms** per modeled regular/
+extra pair. Workload times drift substantially between runs; 84 earlier
+samples are retained separately. These isolated passes cannot be added or
+converted into an FPS estimate. No substantial repeatable gain justifies
+installing the alternative or requesting a game test.
+
+A separate black-box diagnostic identifies synchronization boundaries:
+GetVertexShader after queued effect work and GetVertexShaderConstantF
+after another CommitChanges each increment the external drain counter in
+all eight lit/shadow rounds. Later getters can reuse the earlier drain;
+zero then does not mean they are always asynchronous. Drain counts do not
+measure waiting time or attribute all benchmark drains.
+
+The instancer uses these queries to capture the current shader and preserve
+constants. Investigate submitting a complete render batch, with its state
+queries on the same worker, before assuming drop-in threading can overlap
+enough CPU work. Immutable inputs, ownership, worker ordering and game-loop
+boundaries need proof; do not move live engine objects across threads on
+the strength of this fixture. See [draw and barrier evidence](benchmarks/2026-10-18-external-render-thread-draws.json).
+Installed beta.13 and INI hashes still match the restoration receipt.
+
 ### Shared material cache: do not promote (2026-10-18)
 
 Twelve sequential native D3D9/DXVK lit/shadow runs preserve exact output,

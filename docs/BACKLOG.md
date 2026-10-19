@@ -23,10 +23,18 @@ Strike an item through, with the date, when it's done.
   the external DLL. Backend state, input-change and poison controls pass;
   84 paired samples show near-neutral or negative completion deltas. See
   `benchmarks/2026-10-18-external-render-thread-screen.json`.
-- [ ] Extend the external comparison to actual geometry and fresh shadow
-  draws, accounting for queue drain and complete frame submission. Qualify
-  resource lifetimes and production-hook coexistence before a live trial.
-  The effect-only result is not an architecture rejection or an FPS estimate.
+- [x] 2026-10-18: extend the external comparison to actual geometry and
+  fresh shadow draws, retaining queue/GPU completion. All 24 final pixel/
+  state cases pass; 84 paired samples show no substantial repeatable gain.
+  Preserve earlier samples and drift limits in
+  `benchmarks/2026-10-18-external-render-thread-draws.json`.
+- [x] 2026-10-18: independently attribute synchronous getter boundaries
+  through the external DLL's counters. Shader and constant reads after
+  queued effect work drain; counts do not establish their elapsed cost.
+- [ ] Investigate a complete render-batch boundary that keeps effect work,
+  state queries and submission together on the worker. Prove copied inputs,
+  ownership, ordering and completion before implementing production hooks.
+  Full scene/Present, native sources and multiplayer remain unqualified.
 - [x] 2026-10-18: back up a second launcher replacement of beta.13 by
   0.9.10, restore the identical tested binary and only the three missing beta
   keys, and verify the shortcut with CheckOnly. No game launched; see

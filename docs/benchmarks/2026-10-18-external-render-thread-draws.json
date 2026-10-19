@@ -1,0 +1,2584 @@
+{
+  "date": "2026-10-18",
+  "decision": "No substantial repeatable gain supporting a gameplay trial. Investigate render-batch integration and synchronous getter boundaries before a production implementation.",
+  "candidate": "Official BFME2 Accelerator 2.0 build 73, external DLL; no foreign implementation copied or linked",
+  "prior_report": "2026-10-18-external-render-thread-screen.json",
+  "unchanged_production_source_commit": "ab78745",
+  "common_inputs_sha256": {
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_external_draw.c": "395becd17693a9d9f3923d0ad88fd84dbc0e9b8b7259f6b1e2028e789e089a27",
+    "C:\\repositories\\sage-boost\\perf\\build\\btnclock.o": "5dbb5533dcfd4d20f8af23fc813bf9a4e11718f7efc6747345784e0f71106554",
+    "C:\\repositories\\sage-boost\\perf\\build\\bulk.o": "c3daa5e6a651daf507bd9b572146b2c5a7388939cb36d401b7a6d8b7a6b1d66c",
+    "C:\\repositories\\sage-boost\\perf\\build\\bulkcontract.o": "d11dc7f6f2ccc1bd39316ba3a341a5b9389c1932957e2da6cbf621b7ca1c69b0",
+    "C:\\repositories\\sage-boost\\perf\\build\\bulkpatch.o": "124d45b6f31e1f34919cfc7d983c4d91b70d466c4c2e842807d9767ee8d7430f",
+    "C:\\repositories\\sage-boost\\perf\\build\\bulk_chain_screen.o": "dbafab7582fd69bdb5acb8199ba9b118fa4cc827e198bed8b7ded034adab6e8f",
+    "C:\\repositories\\sage-boost\\perf\\build\\catchup.o": "3bb83f393743dfb08c50835bc59d59749e3292bdc50d41090e3cc28a50ea7d8b",
+    "C:\\repositories\\sage-boost\\perf\\build\\clock.o": "14628a7fc38e261dd99ef723b22efd08cbb2b2517c2fd13dc993d551aebf7abd",
+    "C:\\repositories\\sage-boost\\perf\\build\\config.o": "37d4e470d27f37a6db336b4a2bb2fdb99aaaf9fe2331381cd191bc78beb93b29",
+    "C:\\repositories\\sage-boost\\perf\\build\\csvrow.o": "964f8854733f75a8fe2c761fd0fea524e3c757fc0c28bd510a46f748d2742046",
+    "C:\\repositories\\sage-boost\\perf\\build\\cusites.o": "8058679c2f67073dc28d1ccff1161fb26e95452a1bff77cd07393227cd290fa8",
+    "C:\\repositories\\sage-boost\\perf\\build\\declcache.o": "9c03db2b527773c6468c813d2c554e403efe5bb5f19eac7a806b3e322432ea22",
+    "C:\\repositories\\sage-boost\\perf\\build\\effect_filter_bench.o": "f68d9f1c26cebd9f57e84e2cc1ea5fa18aaaa54a1601ac655dab082fb7b7d23f",
+    "C:\\repositories\\sage-boost\\perf\\build\\extraprofile.o": "7c910f105813a0f1efe1a91f09f9077ba2ac5fdfe22ac9b5f2923add7122eb8a",
+    "C:\\repositories\\sage-boost\\perf\\build\\fps.o": "6fdf1a6900847a5e158507ea2b234070b5da957223afd6c93c5c704120014aa0",
+    "C:\\repositories\\sage-boost\\perf\\build\\fpsites.o": "813926b61f15f6f55717443aef322cd55e0e93e14fa16cfb46449ce72b3a5920",
+    "C:\\repositories\\sage-boost\\perf\\build\\fpsmath.o": "6b47356e8dd85e5a71cf981bff398709acf06305d14ebefdefeacf0ef270f7af",
+    "C:\\repositories\\sage-boost\\perf\\build\\fps_extra_bench.o": "5e473e63f697020499c20398e7056d476ee74aba69fa53266567e0559d1b783e",
+    "C:\\repositories\\sage-boost\\perf\\build\\fxguard.o": "20f8f930b37b40018c49c5f53126a01d9da883c2a7b8a1f42aa362ff6f5c6dc5",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst.o": "5e02fd0dd9933cc911ccb30e605eba6468c687676ca7dcf753070a8006868018",
+    "C:\\repositories\\sage-boost\\perf\\build\\instsubmit.o": "f90f195f108e703c2611dc175395f1e03378e667d096290b064e92a13927b5da",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst_dispatch_engine.o": "9b41a1f38e37848d7aea454c4f0b0dfb282c83d07f1aa5c3247b8dddf008b88f",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst_gpu_fault_engine.o": "f0a7883e890425f9fb35e4d68b23a32ea3a266a271cca2b9c70ac16800267c39",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst_leader_engine.o": "8820119aafe0c69f4f039f8d553966571cf43d01909302621b21af7f18349b0a",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst_native_fallback_engine.o": "7f80014fd7dc478d6f2c7b4ecc7263d275260f73b90f41c3ba5dd3fa723ac0f7",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst_native_leader_engine.o": "27ecdf3dfce619d059778ebd37e1c9da8690bd4b8f20fe083fd9e584d03f2462",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst_recovery_engine.o": "ae330ae4dafc54e9c3557908bc026a84d4dc0ab7b6d371bd274c5a775a457ee5",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst_recovery_fault_engine.o": "de2044f8704fa9ac86a32e1056969d70be8ea8e5b869e37621a797110fddf93d",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst_retained_engine.o": "c85c4f64072b44b197a3f6d18fd5f23e8756dd5a1fa01c4f6b8d3ea08843ca9f",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst_runtime_fallback_engine.o": "1d8990f61b9d8661918babb9b314053d4ff6a821dd2c3c6e16d8462b70ab4e1a",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst_verify_old_engine.o": "e3bb8b95b08a49bade8d290febe2745774a97d68775d1568017d7be414ceb78a",
+    "C:\\repositories\\sage-boost\\perf\\build\\lights.o": "be9fbae7b81417f11c4efd25f7c5a7d8adde77d3aac139cb270f53a18733d217",
+    "C:\\repositories\\sage-boost\\perf\\build\\log.o": "b75e4ca21d62049be336edb758327fbe6a7b5e7c8509e78044dc18bd6d7c979f",
+    "C:\\repositories\\sage-boost\\perf\\build\\ltsites.o": "38fe46efe3c4fc6055c5b96c32f8befd0e60ef61f9133f9e663e2fc9b9e5764a",
+    "C:\\repositories\\sage-boost\\perf\\build\\main.o": "67cbd06f7bc8e52e3ba670aa3b62fb19007af6ef1c400ca9e6832cfbf77a3558",
+    "C:\\repositories\\sage-boost\\perf\\build\\material_fixture.o": "f0c96eb56227f940d652743d9f6f832a0c82c55591496da1a9c4b9f112d5e095",
+    "C:\\repositories\\sage-boost\\perf\\build\\nativecontract.o": "5fec2349db2ade207fd397349ea534f284d95e8effa6815d029568e531345e56",
+    "C:\\repositories\\sage-boost\\perf\\build\\native_group_gpu_bridge.o": "4063ff312474a3acaada2f20569ff008852d2f5a1b51565c9cc05b5ce361756d",
+    "C:\\repositories\\sage-boost\\perf\\build\\native_insert_fixture.o": "6603918b070804757a297ca5cb0ac642d8beec685bdfcb49a4d600b1d5015219",
+    "C:\\repositories\\sage-boost\\perf\\build\\native_sort_fixture.o": "51382f318e871b964b1fad3ecebe755b5ac4aa7879be61c083c9e6a0a75f5b9e",
+    "C:\\repositories\\sage-boost\\perf\\build\\notice.o": "8936a26e26c372f6d2c5a7a1d751658de20ff14d7b1b4c38f0645933dbe97616",
+    "C:\\repositories\\sage-boost\\perf\\build\\passflag.o": "6d62a8041f59039b6623f8213f2e74c9146081c26c2b3e090c2ffc95f12ede33",
+    "C:\\repositories\\sage-boost\\perf\\build\\patch.o": "1e1da760443ebcb1cb10db1188a16e42e6f87b9ce1f72ba912e05f655eeacc69",
+    "C:\\repositories\\sage-boost\\perf\\build\\presentgap.o": "9a81a3542d3c3bd025f841e81b1ccefc3678aa17d4ca3770bb38e568a27e3e4a",
+    "C:\\repositories\\sage-boost\\perf\\build\\queueinsert.o": "75d34d3c06fd1fba6047a013219aba1ed9ab1c3f9338f6d2bfc9b7471426dee0",
+    "C:\\repositories\\sage-boost\\perf\\build\\queuesort.o": "e6c04449f30f8fc100256598ad0b116cb8b75f01ed2b58f773aeb02d7f327fd2",
+    "C:\\repositories\\sage-boost\\perf\\build\\reflect.o": "919642b9c326fe1cdc5c64f1d221c0401260089b11ab7bfd795558bbe9e5aaab",
+    "C:\\repositories\\sage-boost\\perf\\build\\rt.o": "4cec2b277adc439c2eb481fe6f1073047c469aa80114bf3559e760da40dbbe82",
+    "C:\\repositories\\sage-boost\\perf\\build\\scan.o": "6228d4a360328a4c636432fe7e4ce3406236a63639caff23d0443806fca2c1f0",
+    "C:\\repositories\\sage-boost\\perf\\build\\shadowpass.o": "f3bdfdf706d8ba9b6fce572ea3a71ed208023d3d0dd1e158f2effc545c0acb0d",
+    "C:\\repositories\\sage-boost\\perf\\build\\sites.o": "e195418a6fed93aed32baba2102b44676c4a76dedc786273c1df810facb851c5",
+    "C:\\repositories\\sage-boost\\perf\\build\\spsites.o": "5cf3cf012afd00d59c67a79a52fd1d2f018191868d7de059ef7fe7234039b47e",
+    "C:\\repositories\\sage-boost\\perf\\build\\stubs.o": "b6629e027c2d493891fe24431b50deacce67bfb18c9b2162059c40ca49d732cf",
+    "C:\\repositories\\sage-boost\\perf\\build\\timing.o": "dff900a7788d821baa2bcbd92f9ca4bbd43f4174aa0d09f845e84a1df2d4f472",
+    "C:\\repositories\\sage-boost\\perf\\build\\timing_bulk_bench.o": "32a38b51850a89bf5d8a2ae882ccf5044017bcb58511cb59dba4dcfceca9ce96",
+    "C:\\repositories\\sage-boost\\perf\\build\\uistate.o": "072b9968db0c0ee195f8759c388f26026658c69d62563f0919156e430bc8cb9f",
+    "C:\\repositories\\sage-boost\\perf\\build\\version.o": "1d67acfa00674dddce328839ed3d1ab0ca849d2e7280cc03bc959aa910577d2d",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_dispatch.c": "463bbb04e57bef9121468fdd7391419b2e7430adf603cf1687f54dd847d62c23",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_material_queue.c": "8a2d943c3b7731cde0f79225b7fdbaaae65cb10b0e5b6913ca0e6805af1a63f4",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_retained.c": "f90ea726b19dc01e856bbbc06d8c3afaa5934276cdab5c7825160e4c8993f473",
+    "C:\\repositories\\sage-boost\\perf\\tests\\effect_filter_bench.c": "85e8da48832e61011a5315ef27b22674b1ab5aa429d20d89e5a8ff83d467cbc4",
+    "C:\\repositories\\sage-boost\\perf\\tests\\fps_extra_bench.c": "f5b7cb49d42c61b78f8f6f2e8d5736bbed726f080b4971b6976dea1886e8323e",
+    "C:\\repositories\\sage-boost\\perf\\tests\\inst_dispatch_engine.c": "404d47e024ceb927ff387d518acaa94f996a4519f37be736eadb4a4f9a011648",
+    "C:\\repositories\\sage-boost\\perf\\tests\\inst_retained_engine.c": "b1d3d466ca49a621626607ec32c0223d18bd6b6fa0cadce6fb2b9bea36481135",
+    "C:\\repositories\\sage-boost\\perf\\tests\\material_fixture.c": "2256d31dbed14712c8be4f69f44e29a01243ff3f374315295eabcbf8cdbb68db",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_inst.c": "e79d947c10083ecd066b4f0a47c216f7f095118646e0838304b6f0390efd8df6",
+    "C:\\repositories\\sage-boost\\perf\\tests\\timing_bulk_bench.c": "2896541779d5040c1b099ada3f1f2e0a62d4752409543f1b12970e0582698e30",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_guard.h": "46082a3fef62b0e26ea0f16b6294171af964e0cb952c7dd7c8ef9a509cd8adf6",
+    "C:\\repositories\\sage-boost\\perf\\tests\\effect_filter_bench.h": "7ead7da86b62cea939f3c92993d6faeb22a07d6994b4efb082e80775d4d79759",
+    "C:\\repositories\\sage-boost\\perf\\tests\\effect_source_audit.h": "8bc5b9e69f7de2007b956a2573537b011c16250fabe22e9a7e742555f98f16df",
+    "C:\\repositories\\sage-boost\\perf\\tests\\native_chain_fixture.h": "6e593e4dd1f7bd92c65ca32d243a8afbab244b56a5beecb41fef9afe6fe0226d",
+    "C:\\repositories\\sage-boost\\perf\\tests\\native_contract_image.h": "457f8e568ef4aec488e6d52ad70ec5dcb265864ad538ace75fcfe6d9a5420b70",
+    "C:\\repositories\\sage-boost\\perf\\tests\\native_fx_image.h": "301f59f9a89510fbe97bcb07ba17ffcc44b97bc3a55861875981875e31505331",
+    "C:\\repositories\\sage-boost\\perf\\tests\\native_group_image.h": "f21ec0d96410997c16b6217411b09e663d15c4d32373d79afc30a5aa784a6055",
+    "C:\\repositories\\sage-boost\\perf\\tests\\native_mesh_image.h": "9094254a8b3c8bfd359286b8a8c9f32e16538be6f81a38738ed464a276818dc6",
+    "C:\\repositories\\sage-boost\\perf\\tests\\native_shared_arena.h": "7a78922f05f7a3fb3e127f532cad67828c791dfac43b25b16650e1843af69cd7",
+    "C:\\repositories\\sage-boost\\perf\\src\\btnclock.h": "227f7042b2eb8ed271cc3dfdd6be700bb830b6cd2f037b587c171729a8542a31",
+    "C:\\repositories\\sage-boost\\perf\\src\\bulk.h": "0755a142893fde777a3239cc521123dae86b35eb42fefce2c0d2087d831bf2a1",
+    "C:\\repositories\\sage-boost\\perf\\src\\bulkcontract.h": "5a73614c81686e35fc35a40f267d9a858a360a0252ea2792a99e388c48a6ab4c",
+    "C:\\repositories\\sage-boost\\perf\\src\\bulkcontract_table.h": "2e81ff3f396103e32a001a76064f33af51b02c8112fcd8733172d499ba065cb4",
+    "C:\\repositories\\sage-boost\\perf\\src\\catchup.h": "18787d31181951ebd8bebeac0601cab9c28f3cab6a4473c46b76ced1d965c8e2",
+    "C:\\repositories\\sage-boost\\perf\\src\\clock.h": "6b055a4a8fe95a8b52a20145a674699aaada84af008067af23c026518cc21b02",
+    "C:\\repositories\\sage-boost\\perf\\src\\config.h": "4ba6e53109f8544f2850c0628c47aea0866736cd78cb6fe5bb655ead2293bf83",
+    "C:\\repositories\\sage-boost\\perf\\src\\csvrow.h": "5c019220f13cfa4e5abb0e38683d0354f1cf888b693175a003a77cea6c85c231",
+    "C:\\repositories\\sage-boost\\perf\\src\\cusites.h": "56d8c4ac4d8ab4d51aadb3cf3d33d73699811f8e80eb5283413c7dec30283372",
+    "C:\\repositories\\sage-boost\\perf\\src\\d3d9vt.h": "3986e61da91f93d3617cafbeb087a3b0a644d73ded80dbaaac3350c1b25efe89",
+    "C:\\repositories\\sage-boost\\perf\\src\\declcache.h": "303f515772da972b5a2a909479ca62ee68d649863e4edcc1e85a9a1e7864aec4",
+    "C:\\repositories\\sage-boost\\perf\\src\\depthcmp.h": "ff40c85100b6fb3c095df011a74a203e7a19a7b6aa1f04f1187b3b008a27f090",
+    "C:\\repositories\\sage-boost\\perf\\src\\extraprofile.h": "9d26112a54316d3b58044a1da8d26c8fc2af97725c323d3bceae439d7c324f30",
+    "C:\\repositories\\sage-boost\\perf\\src\\fps.h": "022f422e1a5eca5d43b65f537d32511e09e3b4afb5d6f7e2fa6cacabda606bcc",
+    "C:\\repositories\\sage-boost\\perf\\src\\fpsites.h": "30b26ead06683360c8446c4cc58d03035226a0273604a8f2bc01994449cb5755",
+    "C:\\repositories\\sage-boost\\perf\\src\\fpsmath.h": "2627e9adf6169f31aad388035183da39e1d7866c54401f9177ee6f5b9cdb46ad",
+    "C:\\repositories\\sage-boost\\perf\\src\\fxguard.h": "bf0ae812e4e77eb8c21d9152f8a96e34bd3a0a344f352524f5548962d4a4c984",
+    "C:\\repositories\\sage-boost\\perf\\src\\inst.h": "2076a17673ffdfe2edbf491de20df6563f4c4a4aafc5d002a5ebfe2c30f3d6cb",
+    "C:\\repositories\\sage-boost\\perf\\src\\instbulk.h": "984951df6add51b36d08be78a2d754cf065de8b60969a2665b02df61b2e14cd1",
+    "C:\\repositories\\sage-boost\\perf\\src\\instsubmit.h": "0595f61ecb32a586e3349dae9060f9d161068e23a51f331e193e55ec23954fa6",
+    "C:\\repositories\\sage-boost\\perf\\src\\inst_shaders.h": "fa55800397c77dd4b65ccd0be3881520d94281d7147218cbd85ab6a70d6e6e5a",
+    "C:\\repositories\\sage-boost\\perf\\src\\lights.h": "c1c4103f91454c2155aa3c311f84fb3163fba0a2479e5ec895bfd95180622a21",
+    "C:\\repositories\\sage-boost\\perf\\src\\log.h": "866c8bad842ba15ed7a67f0854838a5fa296c83a34de0f4d39558f032a404df5",
+    "C:\\repositories\\sage-boost\\perf\\src\\ltsites.h": "49442ed8ae8e371439f4dd16c761f28587fbe533e7b706accc0045b6e3d7caf9",
+    "C:\\repositories\\sage-boost\\perf\\src\\nativecontract.h": "a3773c8eb3745df31c1f849c8f88250e7e10088d02f991df227b5fb4436abe2a",
+    "C:\\repositories\\sage-boost\\perf\\src\\notice.h": "0b355623a9fa7ea9e623d2bd0b1d3ab9794dd09d1446d01e13b9d4c36d2658ce",
+    "C:\\repositories\\sage-boost\\perf\\src\\passflag.h": "14fc6e1edcc2bce1515ddee2680915b5be556e11c14789b723aa9b93d2589aeb",
+    "C:\\repositories\\sage-boost\\perf\\src\\patch.h": "bd0a6d0f6097ca9e1c919608341129600b10560b28265a984bc4e465b0cd5c84",
+    "C:\\repositories\\sage-boost\\perf\\src\\presentgap.h": "d043c26811ca5c35fb7253e724c83fc39f777da13429f2bb6d9dfb5b85291596",
+    "C:\\repositories\\sage-boost\\perf\\src\\queueinsert.h": "8f69d218d43d20607fa6f57104f2e47accb46d4a6ddeb360f17af4a37595f372",
+    "C:\\repositories\\sage-boost\\perf\\src\\queueinsert_table.h": "d8b9bd3a8098b038c68919c90e490a69795eb96781b69d3b98b76e70efcae57e",
+    "C:\\repositories\\sage-boost\\perf\\src\\queuesort.h": "e451b33e7ea3efc69ec02c9cb5973826def3b7fb7596233a4602e2c3e4ccef94",
+    "C:\\repositories\\sage-boost\\perf\\src\\queuesort_table.h": "c16bb361f9feb35cc012791e88c00c161f3c89dcfd3453e41785cb500bfd44fb",
+    "C:\\repositories\\sage-boost\\perf\\src\\reflect.h": "c539ca8225e9a43e81e7209660524c4c0683c0dc8da6bb7cd5cef23b550c2895",
+    "C:\\repositories\\sage-boost\\perf\\src\\scan.h": "f577a60dce8dd729d97f1db14462745f0e09e4c0e6f3c6ab743c34fa0485d550",
+    "C:\\repositories\\sage-boost\\perf\\src\\shadowfx_table.h": "53dfd4d0a89395411af5213827b2805e1debe1ba77118a492d30c04eecc98021",
+    "C:\\repositories\\sage-boost\\perf\\src\\shadowpass.h": "290e4b4cd8df3ab5b6a0dc5b52ce1cc0a719ac7f3c1b225c36975e72139d8d48",
+    "C:\\repositories\\sage-boost\\perf\\src\\sites.h": "1d54993af316a3d607d25cea23e2c88108a3ffcf00973f947a050dcb88b98aae",
+    "C:\\repositories\\sage-boost\\perf\\src\\spsites.h": "75f10e89601d2c5336cdcccb5d5821214cbe6700b8904e414607356a1185b656",
+    "C:\\repositories\\sage-boost\\perf\\src\\stubs.h": "26f4c55f8aa6f382bc6f0d546939cd2fffc468cfc01e515a84626fbee97811b6",
+    "C:\\repositories\\sage-boost\\perf\\src\\timing.h": "0ae4b3aed9ccb3b0c34df10d107dbd5af56e84908f9bd8de90878dd24556eb65",
+    "C:\\repositories\\sage-boost\\perf\\src\\uistate.h": "71b529cadebe454f308de69096e97f68e25b0512f66490245380249c82d04e6d",
+    "C:\\repositories\\sage-boost\\perf\\Makefile": "d7451fb87a84914db097c95ccccf6c89adae72642abec8b9421883ea216aae84",
+    "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bfme2_accel.new.dll": "2c837e566775386a401d709cf01f3971085ef32d9a59793443eac0682f984663",
+    "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\d3d9.dll": "00bc142e98ddad1e334a4d88fa630038e092b0758b3d79e295172b181a4c772d",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big": "353c835b0e77387b322a094b62477b35c34e8e1cea6d75f5844a20b9e36b091b",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\d3dx9_27.dll": "a70d571cd675c97c9eeb4a234dba1d667ffb54ec3bb14defb36b3e2f605ae257",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll": "8094af5ee310714caebccaeee7769ffb08048503ba478b879edfef5f1a24fefe"
+  },
+  "sample_columns": [
+    "round",
+    "off_caller_ms",
+    "on_caller_ms",
+    "off_complete_ms",
+    "on_complete_ms",
+    "saved_complete_ms"
+  ],
+  "final_runs": [
+    {
+      "command": [
+        "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bench_external_draw.exe",
+        "C:/Jogos/AgeoftheRing/rotwk/Shaders.big",
+        "C:/Jogos/AgeoftheRing/rotwk/msvcr71.dll",
+        "lit",
+        "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bfme2_accel.new.dll"
+      ],
+      "returncode": 0,
+      "seconds": 4.597494840621948,
+      "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\draw-final1-lit.log",
+      "sha256": "4539c2f46dfa2fb7c7c4e0ff3915796218ba6bb90ba5d87ed451877f66bd16cf",
+      "external_log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\draw-final1-lit-accelerator.log",
+      "external_log_sha256": "836f13fa490533613aa1827ef3b66fbab117f40130d39691556cca233c26e844",
+      "inputs": {
+        "C:\\repositories\\sage-boost\\perf\\build\\bench_external_draw.exe": "e994a1dcb87ea1b032dfd87f6912e8ea5419f4236a6562104bbba6ef1f2434d7"
+      },
+      "oracle": "ORACLE: lit covered=16390 fresh_pose=20962 changed_material=17044 hashes=8B626445/9F473945/44E38345",
+      "checks": [
+        "CHECK: mode=0 case=0 different_pixels=0 state_equal=1 hash=8B626445",
+        "CHECK: mode=0 case=1 different_pixels=0 state_equal=1 hash=9F473945",
+        "CHECK: mode=0 case=2 different_pixels=0 state_equal=1 hash=44E38345",
+        "CHECK: mode=1 case=0 different_pixels=0 state_equal=1 hash=8B626445",
+        "CHECK: mode=1 case=1 different_pixels=0 state_equal=1 hash=9F473945",
+        "CHECK: mode=1 case=2 different_pixels=0 state_equal=1 hash=44E38345"
+      ],
+      "samples": [
+        [
+          0.0,
+          8.5322,
+          8.3027,
+          8.8236,
+          8.4937,
+          0.3299
+        ],
+        [
+          1.0,
+          10.6901,
+          8.1066,
+          11.0354,
+          8.4243,
+          2.6111
+        ],
+        [
+          2.0,
+          8.6,
+          8.0365,
+          8.8064,
+          8.3535,
+          0.4529
+        ],
+        [
+          3.0,
+          7.8498,
+          7.4896,
+          8.192,
+          7.8064,
+          0.3857
+        ],
+        [
+          4.0,
+          8.1921,
+          8.4451,
+          8.55,
+          8.6835,
+          -0.1335
+        ],
+        [
+          5.0,
+          8.5595,
+          8.2668,
+          8.8136,
+          8.5944,
+          0.2191
+        ],
+        [
+          6.0,
+          7.8017,
+          8.8824,
+          8.12,
+          9.09,
+          -0.97
+        ],
+        [
+          7.0,
+          8.5189,
+          8.4966,
+          8.7604,
+          8.7265,
+          0.0339
+        ],
+        [
+          8.0,
+          8.0167,
+          8.4978,
+          8.2022,
+          8.858,
+          -0.6558
+        ],
+        [
+          9.0,
+          9.5916,
+          9.2314,
+          9.9044,
+          9.4647,
+          0.4397
+        ],
+        [
+          10.0,
+          8.3662,
+          8.3618,
+          8.6479,
+          8.6366,
+          0.0113
+        ],
+        [
+          11.0,
+          8.1846,
+          7.9857,
+          9.3242,
+          8.3109,
+          1.0132
+        ],
+        [
+          12.0,
+          9.5317,
+          9.1732,
+          9.8174,
+          9.4184,
+          0.399
+        ],
+        [
+          13.0,
+          8.5187,
+          8.4715,
+          8.8366,
+          8.7352,
+          0.1014
+        ],
+        [
+          14.0,
+          7.7746,
+          8.4064,
+          7.9665,
+          8.7909,
+          -0.8244
+        ],
+        [
+          15.0,
+          8.0683,
+          9.088,
+          8.4622,
+          9.541,
+          -1.0789
+        ],
+        [
+          16.0,
+          7.8541,
+          8.1443,
+          8.1415,
+          8.3877,
+          -0.2462
+        ],
+        [
+          17.0,
+          10.7035,
+          10.2234,
+          10.9524,
+          10.6303,
+          0.3222
+        ],
+        [
+          18.0,
+          7.7946,
+          8.7662,
+          8.0564,
+          9.0464,
+          -0.99
+        ],
+        [
+          19.0,
+          7.8503,
+          9.212,
+          8.2118,
+          9.4602,
+          -1.2485
+        ],
+        [
+          20.0,
+          8.1023,
+          8.5553,
+          8.328,
+          8.8778,
+          -0.5498
+        ]
+      ],
+      "median_completion_saving_ms": 0.0339,
+      "median_caller_saving_ms": 0.022299999999999542,
+      "final_queue": "FINAL QUEUE: direct_locks=6 direct_unlocks=6 locked_calls=0 mirror=0 pixel_records=0 shroud_records=0 pb_proxies=0 qcache_hit=0 miss=0 seq=6520683 exec=6520683 | drains=563037 waits=11 (timeouts 0, 0.421 ms) worker sleeps=1625 (timeouts 306) | tex mirrors adopted 0 locks 0 dropped 0 failed 0 | buf mirrors adopted 0 locks 0 dropped 0 failed 0 | annotation reads kept 0 | evicted 0 | fx-dedupe skipped=0 written=0 whole-drops=112320 (off-queue 0, block 112320, reset 0, other 0) block-drops=0 | off-queue from: other-thread 0 rt-off 0 direct-scope 0 | by setter: bool 0 int 0 float 0 vector 0 matrix 0 matrixT 0 texture 0 raw 0"
+    },
+    {
+      "command": [
+        "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bench_external_draw.exe",
+        "C:/Jogos/AgeoftheRing/rotwk/Shaders.big",
+        "C:/Jogos/AgeoftheRing/rotwk/msvcr71.dll",
+        "shadow",
+        "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bfme2_accel.new.dll"
+      ],
+      "returncode": 0,
+      "seconds": 5.035624027252197,
+      "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\draw-final1-shadow.log",
+      "sha256": "ffbd425cdd743c555387b8638b73365f71ced8bbe7e7167a53ac018abb94c075",
+      "external_log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\draw-final1-shadow-accelerator.log",
+      "external_log_sha256": "05a2edc7badf14ec9004d707a9bc54a723066c3a34f34ff838b16e683147fd46",
+      "inputs": {
+        "C:\\repositories\\sage-boost\\perf\\build\\bench_external_draw.exe": "e994a1dcb87ea1b032dfd87f6912e8ea5419f4236a6562104bbba6ef1f2434d7"
+      },
+      "oracle": "ORACLE: shadow covered=16350 fresh_pose=21130 changed_material=1860 hashes=6E5C0017/6556443E/8F2BE1FD",
+      "checks": [
+        "CHECK: mode=0 case=0 different_pixels=0 state_equal=1 hash=6E5C0017",
+        "CHECK: mode=0 case=1 different_pixels=0 state_equal=1 hash=6556443E",
+        "CHECK: mode=0 case=2 different_pixels=0 state_equal=1 hash=8F2BE1FD",
+        "CHECK: mode=1 case=0 different_pixels=0 state_equal=1 hash=6E5C0017",
+        "CHECK: mode=1 case=1 different_pixels=0 state_equal=1 hash=6556443E",
+        "CHECK: mode=1 case=2 different_pixels=0 state_equal=1 hash=8F2BE1FD"
+      ],
+      "samples": [
+        [
+          0.0,
+          9.9246,
+          8.9177,
+          10.3423,
+          9.2243,
+          1.118
+        ],
+        [
+          1.0,
+          14.3776,
+          10.2978,
+          14.9439,
+          10.8456,
+          4.0983
+        ],
+        [
+          2.0,
+          9.5728,
+          9.9165,
+          9.8904,
+          10.3393,
+          -0.4489
+        ],
+        [
+          3.0,
+          11.8439,
+          11.7312,
+          12.3335,
+          12.1899,
+          0.1436
+        ],
+        [
+          4.0,
+          8.9047,
+          9.6167,
+          9.4475,
+          10.0495,
+          -0.602
+        ],
+        [
+          5.0,
+          11.901,
+          8.3229,
+          12.4263,
+          8.8082,
+          3.6181
+        ],
+        [
+          6.0,
+          9.3933,
+          9.8961,
+          9.7757,
+          10.243,
+          -0.4673
+        ],
+        [
+          7.0,
+          8.7464,
+          7.7932,
+          9.2745,
+          8.1374,
+          1.1371
+        ],
+        [
+          8.0,
+          7.4683,
+          7.8166,
+          7.7452,
+          8.2402,
+          -0.495
+        ],
+        [
+          9.0,
+          8.2441,
+          7.6425,
+          8.6761,
+          7.9937,
+          0.6824
+        ],
+        [
+          10.0,
+          8.4586,
+          8.1953,
+          8.8948,
+          8.574,
+          0.3208
+        ],
+        [
+          11.0,
+          11.8158,
+          9.5773,
+          12.1947,
+          10.0482,
+          2.1465
+        ],
+        [
+          12.0,
+          8.3783,
+          8.2259,
+          8.7491,
+          8.5928,
+          0.1562
+        ],
+        [
+          13.0,
+          8.3555,
+          9.3461,
+          8.8135,
+          9.6644,
+          -0.8509
+        ],
+        [
+          14.0,
+          9.6274,
+          11.671,
+          10.0431,
+          12.2891,
+          -2.246
+        ],
+        [
+          15.0,
+          11.3484,
+          9.2442,
+          12.1672,
+          9.7976,
+          2.3697
+        ],
+        [
+          16.0,
+          8.9226,
+          8.5154,
+          9.5485,
+          9.098,
+          0.4504
+        ],
+        [
+          17.0,
+          8.8246,
+          8.5441,
+          9.188,
+          9.1105,
+          0.0775
+        ],
+        [
+          18.0,
+          7.679,
+          7.3828,
+          8.0764,
+          7.7511,
+          0.3253
+        ],
+        [
+          19.0,
+          11.0995,
+          8.9778,
+          11.7264,
+          9.502,
+          2.2244
+        ],
+        [
+          20.0,
+          10.1063,
+          10.0099,
+          10.8021,
+          10.7248,
+          0.0773
+        ]
+      ],
+      "median_completion_saving_ms": 0.3208,
+      "median_caller_saving_ms": 0.28049999999999997,
+      "final_queue": "FINAL QUEUE: direct_locks=6 direct_unlocks=6 locked_calls=0 mirror=0 pixel_records=0 shroud_records=0 pb_proxies=0 qcache_hit=0 miss=0 seq=5397483 exec=5397483 | drains=563037 waits=13 (timeouts 0, 0.611 ms) worker sleeps=1685 (timeouts 336) | tex mirrors adopted 0 locks 0 dropped 0 failed 0 | buf mirrors adopted 0 locks 0 dropped 0 failed 0 | annotation reads kept 0 | evicted 0 | fx-dedupe skipped=0 written=0 whole-drops=112320 (off-queue 0, block 112320, reset 0, other 0) block-drops=0 | off-queue from: other-thread 0 rt-off 0 direct-scope 0 | by setter: bool 0 int 0 float 0 vector 0 matrix 0 matrixT 0 texture 0 raw 0"
+    },
+    {
+      "command": [
+        "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bench_external_draw.exe",
+        "C:/Jogos/AgeoftheRing/rotwk/Shaders.big",
+        "C:/Jogos/AgeoftheRing/rotwk/msvcr71.dll",
+        "shadow",
+        "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bfme2_accel.new.dll"
+      ],
+      "returncode": 0,
+      "seconds": 5.793851375579834,
+      "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\draw-final2-shadow.log",
+      "sha256": "b07dd1d918f07f89d6abce2425be5370eebda459ffaf491e34d41517a954953f",
+      "external_log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\draw-final2-shadow-accelerator.log",
+      "external_log_sha256": "31c7414995e806b09bc12277d5ec3403d0cdce01f047ce6d8c44562d77ef0119",
+      "inputs": {
+        "C:\\repositories\\sage-boost\\perf\\build\\bench_external_draw.exe": "e994a1dcb87ea1b032dfd87f6912e8ea5419f4236a6562104bbba6ef1f2434d7"
+      },
+      "oracle": "ORACLE: shadow covered=16350 fresh_pose=21130 changed_material=1860 hashes=6E5C0017/6556443E/8F2BE1FD",
+      "checks": [
+        "CHECK: mode=0 case=0 different_pixels=0 state_equal=1 hash=6E5C0017",
+        "CHECK: mode=0 case=1 different_pixels=0 state_equal=1 hash=6556443E",
+        "CHECK: mode=0 case=2 different_pixels=0 state_equal=1 hash=8F2BE1FD",
+        "CHECK: mode=1 case=0 different_pixels=0 state_equal=1 hash=6E5C0017",
+        "CHECK: mode=1 case=1 different_pixels=0 state_equal=1 hash=6556443E",
+        "CHECK: mode=1 case=2 different_pixels=0 state_equal=1 hash=8F2BE1FD"
+      ],
+      "samples": [
+        [
+          0.0,
+          12.255,
+          8.1602,
+          12.873,
+          8.5832,
+          4.2897
+        ],
+        [
+          1.0,
+          8.0742,
+          14.9445,
+          8.4775,
+          15.7862,
+          -7.3087
+        ],
+        [
+          2.0,
+          9.6939,
+          9.653,
+          10.0881,
+          10.174,
+          -0.0859
+        ],
+        [
+          3.0,
+          9.6384,
+          12.4076,
+          10.2713,
+          12.8565,
+          -2.5852
+        ],
+        [
+          4.0,
+          8.7814,
+          9.493,
+          9.2845,
+          9.9226,
+          -0.6381
+        ],
+        [
+          5.0,
+          8.1035,
+          7.3528,
+          8.4972,
+          7.9251,
+          0.5722
+        ],
+        [
+          6.0,
+          15.3758,
+          12.2839,
+          15.9231,
+          12.8353,
+          3.0878
+        ],
+        [
+          7.0,
+          15.5817,
+          14.2967,
+          16.1854,
+          14.7939,
+          1.3916
+        ],
+        [
+          8.0,
+          11.5873,
+          12.4905,
+          12.0726,
+          13.0691,
+          -0.9965
+        ],
+        [
+          9.0,
+          12.3722,
+          18.7381,
+          12.9354,
+          19.3735,
+          -6.4382
+        ],
+        [
+          10.0,
+          9.8854,
+          13.1048,
+          10.3999,
+          13.523,
+          -3.1231
+        ],
+        [
+          11.0,
+          9.8593,
+          10.2374,
+          10.2465,
+          10.888,
+          -0.6415
+        ],
+        [
+          12.0,
+          12.232,
+          11.5761,
+          12.7087,
+          12.0905,
+          0.6182
+        ],
+        [
+          13.0,
+          9.1122,
+          8.9349,
+          9.6666,
+          9.459,
+          0.2076
+        ],
+        [
+          14.0,
+          11.3793,
+          10.5216,
+          11.9433,
+          11.1321,
+          0.8112
+        ],
+        [
+          15.0,
+          13.9167,
+          11.8586,
+          14.6349,
+          12.3797,
+          2.2552
+        ],
+        [
+          16.0,
+          9.637,
+          13.2277,
+          10.3391,
+          13.8291,
+          -3.49
+        ],
+        [
+          17.0,
+          14.9388,
+          13.4075,
+          15.6157,
+          14.1488,
+          1.4668
+        ],
+        [
+          18.0,
+          13.1469,
+          12.1136,
+          13.9523,
+          12.8091,
+          1.1431
+        ],
+        [
+          19.0,
+          10.7104,
+          10.0055,
+          11.4638,
+          10.6545,
+          0.8093
+        ],
+        [
+          20.0,
+          10.3355,
+          9.5409,
+          11.0753,
+          10.0773,
+          0.998
+        ]
+      ],
+      "median_completion_saving_ms": 0.5722,
+      "median_caller_saving_ms": 0.655899999999999,
+      "final_queue": "FINAL QUEUE: direct_locks=6 direct_unlocks=6 locked_calls=0 mirror=0 pixel_records=0 shroud_records=0 pb_proxies=0 qcache_hit=0 miss=0 seq=5397483 exec=5397483 | drains=563037 waits=19 (timeouts 0, 0.523 ms) worker sleeps=1804 (timeouts 380) | tex mirrors adopted 0 locks 0 dropped 0 failed 0 | buf mirrors adopted 0 locks 0 dropped 0 failed 0 | annotation reads kept 0 | evicted 0 | fx-dedupe skipped=0 written=0 whole-drops=112320 (off-queue 0, block 112320, reset 0, other 0) block-drops=0 | off-queue from: other-thread 0 rt-off 0 direct-scope 0 | by setter: bool 0 int 0 float 0 vector 0 matrix 0 matrixT 0 texture 0 raw 0"
+    },
+    {
+      "command": [
+        "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bench_external_draw.exe",
+        "C:/Jogos/AgeoftheRing/rotwk/Shaders.big",
+        "C:/Jogos/AgeoftheRing/rotwk/msvcr71.dll",
+        "lit",
+        "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bfme2_accel.new.dll"
+      ],
+      "returncode": 0,
+      "seconds": 6.583893537521362,
+      "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\draw-final2-lit.log",
+      "sha256": "406684fe75e12ec80cf44f4be48f30babf47cce855ee278ba92f4a132e047984",
+      "external_log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\draw-final2-lit-accelerator.log",
+      "external_log_sha256": "efb80aa7623907ed5528f792f356de8ccde339e7eecdc72004da2dd844dc43b1",
+      "inputs": {
+        "C:\\repositories\\sage-boost\\perf\\build\\bench_external_draw.exe": "e994a1dcb87ea1b032dfd87f6912e8ea5419f4236a6562104bbba6ef1f2434d7"
+      },
+      "oracle": "ORACLE: lit covered=16390 fresh_pose=20962 changed_material=17044 hashes=8B626445/9F473945/44E38345",
+      "checks": [
+        "CHECK: mode=0 case=0 different_pixels=0 state_equal=1 hash=8B626445",
+        "CHECK: mode=0 case=1 different_pixels=0 state_equal=1 hash=9F473945",
+        "CHECK: mode=0 case=2 different_pixels=0 state_equal=1 hash=44E38345",
+        "CHECK: mode=1 case=0 different_pixels=0 state_equal=1 hash=8B626445",
+        "CHECK: mode=1 case=1 different_pixels=0 state_equal=1 hash=9F473945",
+        "CHECK: mode=1 case=2 different_pixels=0 state_equal=1 hash=44E38345"
+      ],
+      "samples": [
+        [
+          0.0,
+          11.3291,
+          14.0061,
+          11.6627,
+          14.2864,
+          -2.6237
+        ],
+        [
+          1.0,
+          12.2704,
+          11.6384,
+          13.3795,
+          11.9464,
+          1.4331
+        ],
+        [
+          2.0,
+          15.696,
+          16.9722,
+          15.9902,
+          17.4224,
+          -1.4322
+        ],
+        [
+          3.0,
+          14.7485,
+          12.2573,
+          15.1255,
+          12.5667,
+          2.5587
+        ],
+        [
+          4.0,
+          14.0897,
+          15.187,
+          14.4775,
+          15.5181,
+          -1.0407
+        ],
+        [
+          5.0,
+          13.5865,
+          14.3335,
+          13.8666,
+          14.7571,
+          -0.8905
+        ],
+        [
+          6.0,
+          11.718,
+          11.8112,
+          12.2275,
+          12.2006,
+          0.0269
+        ],
+        [
+          7.0,
+          11.0559,
+          13.4687,
+          11.413,
+          13.7216,
+          -2.3086
+        ],
+        [
+          8.0,
+          14.6349,
+          11.7245,
+          15.013,
+          12.1175,
+          2.8956
+        ],
+        [
+          9.0,
+          12.4983,
+          14.9695,
+          12.859,
+          15.276,
+          -2.417
+        ],
+        [
+          10.0,
+          14.4326,
+          14.7969,
+          14.7598,
+          15.1297,
+          -0.3699
+        ],
+        [
+          11.0,
+          15.7793,
+          15.6544,
+          17.5204,
+          16.2455,
+          1.275
+        ],
+        [
+          12.0,
+          14.4401,
+          19.1314,
+          15.0758,
+          19.5776,
+          -4.5018
+        ],
+        [
+          13.0,
+          14.6819,
+          14.2413,
+          15.0205,
+          14.8215,
+          0.199
+        ],
+        [
+          14.0,
+          18.9257,
+          21.4881,
+          19.4577,
+          22.169,
+          -2.7113
+        ],
+        [
+          15.0,
+          15.648,
+          20.3834,
+          16.324,
+          21.2227,
+          -4.8987
+        ],
+        [
+          16.0,
+          15.7815,
+          16.1494,
+          16.4628,
+          16.63,
+          -0.1672
+        ],
+        [
+          17.0,
+          12.2419,
+          16.0739,
+          12.703,
+          16.8273,
+          -4.1243
+        ],
+        [
+          18.0,
+          14.2523,
+          15.2565,
+          14.7458,
+          15.7441,
+          -0.9983
+        ],
+        [
+          19.0,
+          11.6326,
+          15.8988,
+          12.515,
+          16.3664,
+          -3.8514
+        ],
+        [
+          20.0,
+          14.3295,
+          12.9806,
+          14.9897,
+          13.5576,
+          1.4321
+        ]
+      ],
+      "median_completion_saving_ms": -0.9983,
+      "median_caller_saving_ms": -1.0042000000000009,
+      "final_queue": "FINAL QUEUE: direct_locks=6 direct_unlocks=6 locked_calls=0 mirror=0 pixel_records=0 shroud_records=0 pb_proxies=0 qcache_hit=0 miss=0 seq=6520683 exec=6520683 | drains=563037 waits=32 (timeouts 0, 0.947 ms) worker sleeps=1936 (timeouts 410) | tex mirrors adopted 0 locks 0 dropped 0 failed 0 | buf mirrors adopted 0 locks 0 dropped 0 failed 0 | annotation reads kept 0 | evicted 0 | fx-dedupe skipped=0 written=0 whole-drops=112320 (off-queue 0, block 112320, reset 0, other 0) block-drops=0 | off-queue from: other-thread 0 rt-off 0 direct-scope 0 | by setter: bool 0 int 0 float 0 vector 0 matrix 0 matrixT 0 texture 0 raw 0"
+    }
+  ],
+  "barrier_columns": [
+    "round",
+    "operation",
+    "drain_delta",
+    "submitted_delta"
+  ],
+  "barrier_runs": [
+    {
+      "command": [
+        "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bench_external_barriers.exe",
+        "C:/Jogos/AgeoftheRing/rotwk/Shaders.big",
+        "C:/Jogos/AgeoftheRing/rotwk/msvcr71.dll",
+        "lit",
+        "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bfme2_accel.new.dll"
+      ],
+      "returncode": 0,
+      "seconds": 1.915175437927246,
+      "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\barrier-final-lit.log",
+      "sha256": "ae0ff1b0b65489a21aa30eda6a70f73355465a877a2158cb77d5a956378e23f0",
+      "external_log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\barrier-final-lit-accelerator.log",
+      "external_log_sha256": "7c877bb3b5153674571292fab7a49dba1d3a0606504eaf9d0223557e82cdaf8e",
+      "inputs": {
+        "C:\\repositories\\sage-boost\\perf\\build\\bench_external_barriers.exe": "54171172da1312d75b2f74861bf20460c403b96f136f2fd33c260d9528ead27e",
+        "C:\\repositories\\sage-boost\\perf\\tests\\bench_external_barriers.c": "8fb5a0e6bc53a04eab4fdd416295248bb428eaf2efe397bc7e6961eaa663e76e"
+      },
+      "probes": [
+        [
+          0,
+          "BeginScene",
+          0,
+          1
+        ],
+        [
+          0,
+          "prepare_technique_block_sources",
+          0,
+          20
+        ],
+        [
+          0,
+          "effect_Begin",
+          0,
+          2
+        ],
+        [
+          0,
+          "effect_BeginPass",
+          0,
+          1
+        ],
+        [
+          0,
+          "bones_SetRawValue_CommitChanges",
+          0,
+          2
+        ],
+        [
+          0,
+          "GetVertexShader",
+          1,
+          0
+        ],
+        [
+          0,
+          "GetVertexDeclaration",
+          0,
+          0
+        ],
+        [
+          0,
+          "GetStreamSourceFreq",
+          0,
+          0
+        ],
+        [
+          0,
+          "GetStreamSource",
+          0,
+          0
+        ],
+        [
+          0,
+          "GetIndices",
+          0,
+          0
+        ],
+        [
+          0,
+          "GetVertexShaderConstantF",
+          0,
+          0
+        ],
+        [
+          0,
+          "GetVertexShaderConstantF_after_Commit",
+          1,
+          0
+        ],
+        [
+          0,
+          "resource_Release",
+          0,
+          8
+        ],
+        [
+          0,
+          "DrawIndexedPrimitive",
+          0,
+          1
+        ],
+        [
+          0,
+          "effect_EndPass",
+          0,
+          1
+        ],
+        [
+          0,
+          "effect_End",
+          0,
+          1
+        ],
+        [
+          0,
+          "EndScene",
+          0,
+          1
+        ],
+        [
+          1,
+          "BeginScene",
+          0,
+          1
+        ],
+        [
+          1,
+          "prepare_technique_block_sources",
+          0,
+          20
+        ],
+        [
+          1,
+          "effect_Begin",
+          0,
+          2
+        ],
+        [
+          1,
+          "effect_BeginPass",
+          0,
+          1
+        ],
+        [
+          1,
+          "bones_SetRawValue_CommitChanges",
+          0,
+          2
+        ],
+        [
+          1,
+          "GetVertexShader",
+          1,
+          0
+        ],
+        [
+          1,
+          "GetVertexDeclaration",
+          0,
+          0
+        ],
+        [
+          1,
+          "GetStreamSourceFreq",
+          0,
+          0
+        ],
+        [
+          1,
+          "GetStreamSource",
+          0,
+          0
+        ],
+        [
+          1,
+          "GetIndices",
+          0,
+          0
+        ],
+        [
+          1,
+          "GetVertexShaderConstantF",
+          0,
+          0
+        ],
+        [
+          1,
+          "GetVertexShaderConstantF_after_Commit",
+          1,
+          0
+        ],
+        [
+          1,
+          "resource_Release",
+          0,
+          8
+        ],
+        [
+          1,
+          "DrawIndexedPrimitive",
+          0,
+          1
+        ],
+        [
+          1,
+          "effect_EndPass",
+          0,
+          1
+        ],
+        [
+          1,
+          "effect_End",
+          0,
+          1
+        ],
+        [
+          1,
+          "EndScene",
+          0,
+          1
+        ],
+        [
+          2,
+          "BeginScene",
+          0,
+          1
+        ],
+        [
+          2,
+          "prepare_technique_block_sources",
+          0,
+          20
+        ],
+        [
+          2,
+          "effect_Begin",
+          0,
+          2
+        ],
+        [
+          2,
+          "effect_BeginPass",
+          0,
+          1
+        ],
+        [
+          2,
+          "bones_SetRawValue_CommitChanges",
+          0,
+          2
+        ],
+        [
+          2,
+          "GetVertexShader",
+          1,
+          0
+        ],
+        [
+          2,
+          "GetVertexDeclaration",
+          0,
+          0
+        ],
+        [
+          2,
+          "GetStreamSourceFreq",
+          0,
+          0
+        ],
+        [
+          2,
+          "GetStreamSource",
+          0,
+          0
+        ],
+        [
+          2,
+          "GetIndices",
+          0,
+          0
+        ],
+        [
+          2,
+          "GetVertexShaderConstantF",
+          0,
+          0
+        ],
+        [
+          2,
+          "GetVertexShaderConstantF_after_Commit",
+          1,
+          0
+        ],
+        [
+          2,
+          "resource_Release",
+          0,
+          8
+        ],
+        [
+          2,
+          "DrawIndexedPrimitive",
+          0,
+          1
+        ],
+        [
+          2,
+          "effect_EndPass",
+          0,
+          1
+        ],
+        [
+          2,
+          "effect_End",
+          0,
+          1
+        ],
+        [
+          2,
+          "EndScene",
+          0,
+          1
+        ],
+        [
+          3,
+          "BeginScene",
+          0,
+          1
+        ],
+        [
+          3,
+          "prepare_technique_block_sources",
+          0,
+          20
+        ],
+        [
+          3,
+          "effect_Begin",
+          0,
+          2
+        ],
+        [
+          3,
+          "effect_BeginPass",
+          0,
+          1
+        ],
+        [
+          3,
+          "bones_SetRawValue_CommitChanges",
+          0,
+          2
+        ],
+        [
+          3,
+          "GetVertexShader",
+          1,
+          0
+        ],
+        [
+          3,
+          "GetVertexDeclaration",
+          0,
+          0
+        ],
+        [
+          3,
+          "GetStreamSourceFreq",
+          0,
+          0
+        ],
+        [
+          3,
+          "GetStreamSource",
+          0,
+          0
+        ],
+        [
+          3,
+          "GetIndices",
+          0,
+          0
+        ],
+        [
+          3,
+          "GetVertexShaderConstantF",
+          0,
+          0
+        ],
+        [
+          3,
+          "GetVertexShaderConstantF_after_Commit",
+          1,
+          0
+        ],
+        [
+          3,
+          "resource_Release",
+          0,
+          8
+        ],
+        [
+          3,
+          "DrawIndexedPrimitive",
+          0,
+          1
+        ],
+        [
+          3,
+          "effect_EndPass",
+          0,
+          1
+        ],
+        [
+          3,
+          "effect_End",
+          0,
+          1
+        ],
+        [
+          3,
+          "EndScene",
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "command": [
+        "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bench_external_barriers.exe",
+        "C:/Jogos/AgeoftheRing/rotwk/Shaders.big",
+        "C:/Jogos/AgeoftheRing/rotwk/msvcr71.dll",
+        "shadow",
+        "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bfme2_accel.new.dll"
+      ],
+      "returncode": 0,
+      "seconds": 1.9952185153961182,
+      "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\barrier-final-shadow.log",
+      "sha256": "28dbc5cd987f8b2e530f5ae92a40e000b968cbef4443bc6c43014b0a101e40ac",
+      "external_log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\barrier-final-shadow-accelerator.log",
+      "external_log_sha256": "26ac9d28eed5a55d104e939f993e58eb57f419fb60404a9e4dc415011c7a9bac",
+      "inputs": {
+        "C:\\repositories\\sage-boost\\perf\\build\\bench_external_barriers.exe": "54171172da1312d75b2f74861bf20460c403b96f136f2fd33c260d9528ead27e",
+        "C:\\repositories\\sage-boost\\perf\\tests\\bench_external_barriers.c": "8fb5a0e6bc53a04eab4fdd416295248bb428eaf2efe397bc7e6961eaa663e76e"
+      },
+      "probes": [
+        [
+          0,
+          "BeginScene",
+          0,
+          1
+        ],
+        [
+          0,
+          "prepare_technique_block_sources",
+          0,
+          10
+        ],
+        [
+          0,
+          "effect_Begin",
+          0,
+          2
+        ],
+        [
+          0,
+          "effect_BeginPass",
+          0,
+          1
+        ],
+        [
+          0,
+          "bones_SetRawValue_CommitChanges",
+          0,
+          2
+        ],
+        [
+          0,
+          "GetVertexShader",
+          1,
+          0
+        ],
+        [
+          0,
+          "GetVertexDeclaration",
+          0,
+          0
+        ],
+        [
+          0,
+          "GetStreamSourceFreq",
+          0,
+          0
+        ],
+        [
+          0,
+          "GetStreamSource",
+          0,
+          0
+        ],
+        [
+          0,
+          "GetIndices",
+          0,
+          0
+        ],
+        [
+          0,
+          "GetVertexShaderConstantF",
+          0,
+          0
+        ],
+        [
+          0,
+          "GetVertexShaderConstantF_after_Commit",
+          1,
+          0
+        ],
+        [
+          0,
+          "resource_Release",
+          0,
+          8
+        ],
+        [
+          0,
+          "DrawIndexedPrimitive",
+          0,
+          1
+        ],
+        [
+          0,
+          "effect_EndPass",
+          0,
+          1
+        ],
+        [
+          0,
+          "effect_End",
+          0,
+          1
+        ],
+        [
+          0,
+          "EndScene",
+          0,
+          1
+        ],
+        [
+          1,
+          "BeginScene",
+          0,
+          1
+        ],
+        [
+          1,
+          "prepare_technique_block_sources",
+          0,
+          10
+        ],
+        [
+          1,
+          "effect_Begin",
+          0,
+          2
+        ],
+        [
+          1,
+          "effect_BeginPass",
+          0,
+          1
+        ],
+        [
+          1,
+          "bones_SetRawValue_CommitChanges",
+          0,
+          2
+        ],
+        [
+          1,
+          "GetVertexShader",
+          1,
+          0
+        ],
+        [
+          1,
+          "GetVertexDeclaration",
+          0,
+          0
+        ],
+        [
+          1,
+          "GetStreamSourceFreq",
+          0,
+          0
+        ],
+        [
+          1,
+          "GetStreamSource",
+          0,
+          0
+        ],
+        [
+          1,
+          "GetIndices",
+          0,
+          0
+        ],
+        [
+          1,
+          "GetVertexShaderConstantF",
+          0,
+          0
+        ],
+        [
+          1,
+          "GetVertexShaderConstantF_after_Commit",
+          1,
+          0
+        ],
+        [
+          1,
+          "resource_Release",
+          0,
+          8
+        ],
+        [
+          1,
+          "DrawIndexedPrimitive",
+          0,
+          1
+        ],
+        [
+          1,
+          "effect_EndPass",
+          0,
+          1
+        ],
+        [
+          1,
+          "effect_End",
+          0,
+          1
+        ],
+        [
+          1,
+          "EndScene",
+          0,
+          1
+        ],
+        [
+          2,
+          "BeginScene",
+          0,
+          1
+        ],
+        [
+          2,
+          "prepare_technique_block_sources",
+          0,
+          10
+        ],
+        [
+          2,
+          "effect_Begin",
+          0,
+          2
+        ],
+        [
+          2,
+          "effect_BeginPass",
+          0,
+          1
+        ],
+        [
+          2,
+          "bones_SetRawValue_CommitChanges",
+          0,
+          2
+        ],
+        [
+          2,
+          "GetVertexShader",
+          1,
+          0
+        ],
+        [
+          2,
+          "GetVertexDeclaration",
+          0,
+          0
+        ],
+        [
+          2,
+          "GetStreamSourceFreq",
+          0,
+          0
+        ],
+        [
+          2,
+          "GetStreamSource",
+          0,
+          0
+        ],
+        [
+          2,
+          "GetIndices",
+          0,
+          0
+        ],
+        [
+          2,
+          "GetVertexShaderConstantF",
+          0,
+          0
+        ],
+        [
+          2,
+          "GetVertexShaderConstantF_after_Commit",
+          1,
+          0
+        ],
+        [
+          2,
+          "resource_Release",
+          0,
+          8
+        ],
+        [
+          2,
+          "DrawIndexedPrimitive",
+          0,
+          1
+        ],
+        [
+          2,
+          "effect_EndPass",
+          0,
+          1
+        ],
+        [
+          2,
+          "effect_End",
+          0,
+          1
+        ],
+        [
+          2,
+          "EndScene",
+          0,
+          1
+        ],
+        [
+          3,
+          "BeginScene",
+          0,
+          1
+        ],
+        [
+          3,
+          "prepare_technique_block_sources",
+          0,
+          10
+        ],
+        [
+          3,
+          "effect_Begin",
+          0,
+          2
+        ],
+        [
+          3,
+          "effect_BeginPass",
+          0,
+          1
+        ],
+        [
+          3,
+          "bones_SetRawValue_CommitChanges",
+          0,
+          2
+        ],
+        [
+          3,
+          "GetVertexShader",
+          1,
+          0
+        ],
+        [
+          3,
+          "GetVertexDeclaration",
+          0,
+          0
+        ],
+        [
+          3,
+          "GetStreamSourceFreq",
+          0,
+          0
+        ],
+        [
+          3,
+          "GetStreamSource",
+          0,
+          0
+        ],
+        [
+          3,
+          "GetIndices",
+          0,
+          0
+        ],
+        [
+          3,
+          "GetVertexShaderConstantF",
+          0,
+          0
+        ],
+        [
+          3,
+          "GetVertexShaderConstantF_after_Commit",
+          1,
+          0
+        ],
+        [
+          3,
+          "resource_Release",
+          0,
+          8
+        ],
+        [
+          3,
+          "DrawIndexedPrimitive",
+          0,
+          1
+        ],
+        [
+          3,
+          "effect_EndPass",
+          0,
+          1
+        ],
+        [
+          3,
+          "effect_End",
+          0,
+          1
+        ],
+        [
+          3,
+          "EndScene",
+          0,
+          1
+        ]
+      ]
+    }
+  ],
+  "preliminary_draw_runs": [
+    {
+      "command": [
+        "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bench_external_draw.exe",
+        "C:/Jogos/AgeoftheRing/rotwk/Shaders.big",
+        "C:/Jogos/AgeoftheRing/rotwk/msvcr71.dll",
+        "lit",
+        "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bfme2_accel.new.dll"
+      ],
+      "returncode": 0,
+      "seconds": 5.503968715667725,
+      "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\draw2-lit.log",
+      "sha256": "4203e65aebce56c72637ecc641fa76773b0068a9812d99ed4e810da0de99c237",
+      "external_log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\draw2-lit-accelerator.log",
+      "external_log_sha256": "c170ebb0b50b8719a7a88c8291f2f7caad2e27ba3822c985d4b28e43b2589031",
+      "source_sha256_at_run": "6b9a46a3885b76c6427d0f38448b04d2c7592b5c9d0881bbaaa5c463b8b2bf47",
+      "executable_sha256_at_run": "30a5cfee862db64c2b072ff97ade09d34f6c7c25a649e3cb8fde529454e7ac29",
+      "samples": [
+        [
+          0.0,
+          12.9693,
+          16.8066,
+          13.3344,
+          17.2722,
+          -3.9377
+        ],
+        [
+          1.0,
+          9.4215,
+          8.3958,
+          10.1133,
+          8.7249,
+          1.3884
+        ],
+        [
+          2.0,
+          8.303,
+          9.6577,
+          8.5617,
+          10.0192,
+          -1.4574
+        ],
+        [
+          3.0,
+          8.4536,
+          8.0768,
+          8.7975,
+          8.3717,
+          0.4258
+        ],
+        [
+          4.0,
+          7.8659,
+          8.2693,
+          8.2347,
+          8.5592,
+          -0.3245
+        ],
+        [
+          5.0,
+          8.2227,
+          9.1793,
+          8.4673,
+          9.6127,
+          -1.1454
+        ],
+        [
+          6.0,
+          8.5819,
+          9.1687,
+          8.9073,
+          9.3769,
+          -0.4696
+        ],
+        [
+          7.0,
+          8.6026,
+          8.4221,
+          8.9487,
+          8.6831,
+          0.2657
+        ],
+        [
+          8.0,
+          9.7118,
+          9.4447,
+          9.9007,
+          9.796,
+          0.1047
+        ],
+        [
+          9.0,
+          8.4837,
+          10.2931,
+          8.7901,
+          10.5336,
+          -1.7435
+        ],
+        [
+          10.0,
+          10.4058,
+          9.5038,
+          10.7008,
+          9.8102,
+          0.8906
+        ],
+        [
+          11.0,
+          9.6999,
+          10.1961,
+          9.8875,
+          10.5223,
+          -0.6348
+        ],
+        [
+          12.0,
+          8.6591,
+          9.1168,
+          8.9528,
+          9.4316,
+          -0.4788
+        ],
+        [
+          13.0,
+          9.1922,
+          9.4093,
+          9.4502,
+          9.8085,
+          -0.3583
+        ],
+        [
+          14.0,
+          8.2722,
+          9.4951,
+          8.5561,
+          9.9585,
+          -1.4024
+        ],
+        [
+          15.0,
+          8.9338,
+          9.4895,
+          9.319,
+          9.8503,
+          -0.5313
+        ],
+        [
+          16.0,
+          8.4059,
+          8.7297,
+          9.0229,
+          9.0881,
+          -0.0652
+        ],
+        [
+          17.0,
+          9.2064,
+          8.0899,
+          9.5131,
+          8.4956,
+          1.0175
+        ],
+        [
+          18.0,
+          11.2259,
+          8.7872,
+          11.6348,
+          9.095,
+          2.5398
+        ],
+        [
+          19.0,
+          8.6208,
+          8.5473,
+          9.1883,
+          8.8688,
+          0.3194
+        ],
+        [
+          20.0,
+          9.1145,
+          7.9506,
+          9.4112,
+          8.698,
+          0.7132
+        ]
+      ],
+      "median_completion_saving_ms": -0.3245
+    },
+    {
+      "command": [
+        "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bench_external_draw.exe",
+        "C:/Jogos/AgeoftheRing/rotwk/Shaders.big",
+        "C:/Jogos/AgeoftheRing/rotwk/msvcr71.dll",
+        "shadow",
+        "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bfme2_accel.new.dll"
+      ],
+      "returncode": 0,
+      "seconds": 4.295047760009766,
+      "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\draw2-shadow-shadow.log",
+      "sha256": "0b6045ab6ff3f53fe4f8eca96f4e77e82be7ef0c8a65827deeeca3d6bac4f108",
+      "external_log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\draw2-shadow-shadow-accelerator.log",
+      "external_log_sha256": "8612ca392e8e55b92231d0a851cb35ea277b3a90efef11b965b68c04855f1bb4",
+      "source_sha256_at_run": "6b9a46a3885b76c6427d0f38448b04d2c7592b5c9d0881bbaaa5c463b8b2bf47",
+      "executable_sha256_at_run": "30a5cfee862db64c2b072ff97ade09d34f6c7c25a649e3cb8fde529454e7ac29",
+      "samples": [
+        [
+          0.0,
+          6.9153,
+          7.7602,
+          7.3584,
+          8.1143,
+          -0.7559
+        ],
+        [
+          1.0,
+          8.1877,
+          7.8092,
+          8.6294,
+          8.1631,
+          0.4663
+        ],
+        [
+          2.0,
+          7.2716,
+          7.1596,
+          7.654,
+          8.4428,
+          -0.7888
+        ],
+        [
+          3.0,
+          7.2403,
+          7.4443,
+          7.9994,
+          7.8949,
+          0.1044
+        ],
+        [
+          4.0,
+          7.9098,
+          7.5959,
+          8.4029,
+          7.9646,
+          0.4383
+        ],
+        [
+          5.0,
+          7.4082,
+          7.0532,
+          7.7466,
+          7.4899,
+          0.2566
+        ],
+        [
+          6.0,
+          7.1141,
+          7.9971,
+          7.6109,
+          8.346,
+          -0.7352
+        ],
+        [
+          7.0,
+          7.2787,
+          7.7498,
+          7.6675,
+          8.1425,
+          -0.475
+        ],
+        [
+          8.0,
+          6.8073,
+          7.6734,
+          7.1716,
+          8.1642,
+          -0.9925
+        ],
+        [
+          9.0,
+          7.416,
+          7.0743,
+          7.8239,
+          7.4052,
+          0.4187
+        ],
+        [
+          10.0,
+          7.8758,
+          6.8816,
+          8.4066,
+          7.2794,
+          1.1272
+        ],
+        [
+          11.0,
+          7.0091,
+          6.5868,
+          7.2962,
+          7.1683,
+          0.1279
+        ],
+        [
+          12.0,
+          6.7547,
+          7.4044,
+          7.1378,
+          7.7393,
+          -0.6015
+        ],
+        [
+          13.0,
+          7.2411,
+          6.7119,
+          7.619,
+          7.055,
+          0.564
+        ],
+        [
+          14.0,
+          6.5433,
+          7.3926,
+          6.85,
+          7.8405,
+          -0.9906
+        ],
+        [
+          15.0,
+          8.8152,
+          6.545,
+          9.2135,
+          6.9878,
+          2.2257
+        ],
+        [
+          16.0,
+          6.7878,
+          6.8041,
+          7.2203,
+          7.1789,
+          0.0414
+        ],
+        [
+          17.0,
+          6.8672,
+          7.6516,
+          7.1483,
+          8.0826,
+          -0.9343
+        ],
+        [
+          18.0,
+          6.776,
+          7.5646,
+          7.1432,
+          7.905,
+          -0.7618
+        ],
+        [
+          19.0,
+          7.1539,
+          7.0198,
+          7.5662,
+          7.523,
+          0.0432
+        ],
+        [
+          20.0,
+          6.4127,
+          6.8347,
+          6.8396,
+          7.5298,
+          -0.6902
+        ]
+      ],
+      "median_completion_saving_ms": 0.0414
+    },
+    {
+      "command": [
+        "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bench_external_draw.exe",
+        "C:/Jogos/AgeoftheRing/rotwk/Shaders.big",
+        "C:/Jogos/AgeoftheRing/rotwk/msvcr71.dll",
+        "shadow",
+        "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bfme2_accel.new.dll"
+      ],
+      "returncode": 0,
+      "seconds": 4.242467880249023,
+      "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\draw3-shadow.log",
+      "sha256": "e0939e38fcbf387072bcc27c28f4d507e600efeac74aa486fe29dabf8d34bf3d",
+      "external_log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\draw3-shadow-accelerator.log",
+      "external_log_sha256": "0758c73200eafd45df8dc575ea8804b437bf545ed43eed19ab85ccfc2d136667",
+      "source_sha256_at_run": "6b9a46a3885b76c6427d0f38448b04d2c7592b5c9d0881bbaaa5c463b8b2bf47",
+      "executable_sha256_at_run": "30a5cfee862db64c2b072ff97ade09d34f6c7c25a649e3cb8fde529454e7ac29",
+      "samples": [
+        [
+          0.0,
+          6.6805,
+          7.7698,
+          7.1774,
+          8.0511,
+          -0.8737
+        ],
+        [
+          1.0,
+          7.741,
+          6.6545,
+          8.1566,
+          7.2826,
+          0.874
+        ],
+        [
+          2.0,
+          6.9813,
+          9.099,
+          7.3435,
+          9.5709,
+          -2.2273
+        ],
+        [
+          3.0,
+          7.5047,
+          6.7476,
+          7.9546,
+          7.0977,
+          0.8569
+        ],
+        [
+          4.0,
+          7.4901,
+          7.1553,
+          7.9433,
+          7.5552,
+          0.3881
+        ],
+        [
+          5.0,
+          6.87,
+          6.8969,
+          7.2412,
+          7.3323,
+          -0.0911
+        ],
+        [
+          6.0,
+          6.6669,
+          7.3359,
+          7.0741,
+          7.678,
+          -0.6039
+        ],
+        [
+          7.0,
+          6.8963,
+          6.717,
+          7.2989,
+          7.0096,
+          0.2893
+        ],
+        [
+          8.0,
+          7.0877,
+          6.9558,
+          7.37,
+          7.3782,
+          -0.0082
+        ],
+        [
+          9.0,
+          7.1754,
+          7.4107,
+          7.5577,
+          7.7547,
+          -0.197
+        ],
+        [
+          10.0,
+          7.1051,
+          6.9379,
+          7.5113,
+          7.4034,
+          0.1079
+        ],
+        [
+          11.0,
+          7.0232,
+          7.1952,
+          7.3364,
+          7.604,
+          -0.2676
+        ],
+        [
+          12.0,
+          6.6458,
+          7.849,
+          7.0052,
+          8.3056,
+          -1.3004
+        ],
+        [
+          13.0,
+          6.7465,
+          6.8509,
+          7.1239,
+          7.1549,
+          -0.0309
+        ],
+        [
+          14.0,
+          7.6074,
+          8.1701,
+          7.9372,
+          8.6094,
+          -0.6722
+        ],
+        [
+          15.0,
+          6.7004,
+          6.8019,
+          7.0652,
+          7.1779,
+          -0.1127
+        ],
+        [
+          16.0,
+          6.8589,
+          7.1564,
+          7.2959,
+          7.5041,
+          -0.2081
+        ],
+        [
+          17.0,
+          7.4618,
+          6.7547,
+          7.8554,
+          7.1428,
+          0.7125
+        ],
+        [
+          18.0,
+          6.4937,
+          7.7109,
+          6.9461,
+          8.0517,
+          -1.1056
+        ],
+        [
+          19.0,
+          7.0288,
+          6.3802,
+          7.6913,
+          6.8913,
+          0.8
+        ],
+        [
+          20.0,
+          7.7456,
+          7.2395,
+          8.534,
+          7.7557,
+          0.7783
+        ]
+      ],
+      "median_completion_saving_ms": -0.0911
+    },
+    {
+      "command": [
+        "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bench_external_draw.exe",
+        "C:/Jogos/AgeoftheRing/rotwk/Shaders.big",
+        "C:/Jogos/AgeoftheRing/rotwk/msvcr71.dll",
+        "lit",
+        "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\bfme2_accel.new.dll"
+      ],
+      "returncode": 0,
+      "seconds": 4.367506504058838,
+      "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\draw3-lit.log",
+      "sha256": "62cbbd76267e4718d4752cbaeff068421b8abcf88c486de9c3018a67c6ca84e5",
+      "external_log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-external-rt-20261018-mdf2hxwo\\draw3-lit-accelerator.log",
+      "external_log_sha256": "197e458497851b8725eebfda201968c896b3e7fb3eb9b98121da02ca1c1372be",
+      "source_sha256_at_run": "6b9a46a3885b76c6427d0f38448b04d2c7592b5c9d0881bbaaa5c463b8b2bf47",
+      "executable_sha256_at_run": "30a5cfee862db64c2b072ff97ade09d34f6c7c25a649e3cb8fde529454e7ac29",
+      "samples": [
+        [
+          0.0,
+          8.8392,
+          8.3146,
+          9.1761,
+          8.5062,
+          0.6699
+        ],
+        [
+          1.0,
+          9.6264,
+          8.1669,
+          10.0165,
+          8.4647,
+          1.5518
+        ],
+        [
+          2.0,
+          9.1827,
+          8.7028,
+          9.3906,
+          9.7066,
+          -0.3161
+        ],
+        [
+          3.0,
+          10.0199,
+          7.9065,
+          10.5096,
+          8.2298,
+          2.2798
+        ],
+        [
+          4.0,
+          8.3846,
+          8.3662,
+          8.7302,
+          8.6258,
+          0.1044
+        ],
+        [
+          5.0,
+          8.9329,
+          8.0873,
+          9.161,
+          8.4041,
+          0.757
+        ],
+        [
+          6.0,
+          7.8982,
+          8.1356,
+          8.1876,
+          8.4134,
+          -0.2258
+        ],
+        [
+          7.0,
+          8.0117,
+          8.2126,
+          8.2584,
+          8.5188,
+          -0.2604
+        ],
+        [
+          8.0,
+          7.7861,
+          8.1754,
+          8.0435,
+          8.5352,
+          -0.4916
+        ],
+        [
+          9.0,
+          8.2992,
+          7.8554,
+          8.6311,
+          8.1231,
+          0.508
+        ],
+        [
+          10.0,
+          7.722,
+          8.0723,
+          8.0231,
+          8.3207,
+          -0.2976
+        ],
+        [
+          11.0,
+          8.9363,
+          8.4597,
+          10.1246,
+          8.7852,
+          1.3393
+        ],
+        [
+          12.0,
+          9.6801,
+          8.9597,
+          10.0126,
+          9.2691,
+          0.7435
+        ],
+        [
+          13.0,
+          8.4427,
+          7.9566,
+          8.7927,
+          8.2528,
+          0.5399
+        ],
+        [
+          14.0,
+          8.1937,
+          8.9321,
+          8.3905,
+          9.3669,
+          -0.9764
+        ],
+        [
+          15.0,
+          8.2482,
+          7.7777,
+          8.6118,
+          8.0686,
+          0.5433
+        ],
+        [
+          16.0,
+          8.0976,
+          8.9759,
+          8.4972,
+          9.2659,
+          -0.7687
+        ],
+        [
+          17.0,
+          9.7834,
+          7.9424,
+          10.0869,
+          8.4245,
+          1.6624
+        ],
+        [
+          18.0,
+          7.6983,
+          7.7563,
+          8.0344,
+          8.0601,
+          -0.0257
+        ],
+        [
+          19.0,
+          7.8344,
+          7.7038,
+          8.3242,
+          8.0188,
+          0.3054
+        ],
+        [
+          20.0,
+          7.8093,
+          7.8102,
+          8.1635,
+          8.2219,
+          -0.0585
+        ]
+      ],
+      "median_completion_saving_ms": 0.3054
+    }
+  ],
+  "findings": [
+    "All 24 final wrapped-off/threaded image cases match the unhooked oracle exactly, with matching checked backend state. Fresh poses and changed materials visibly alter both lit output and shadow maps.",
+    "The four final runs retain 84 alternating paired samples. Lit completion savings are 0.0339 and -0.9983 ms; shadow savings are 0.3208 and 0.5722 ms per modeled normal/extra pair. Across-run workload times drift substantially; no significant full-scene gain is established.",
+    "The separate probe observes one drain for GetVertexShader after queued effect work, and one for GetVertexShaderConstantF after a new CommitChanges, in every lit/shadow round. A getter following the first drain reports zero; it is not proof that it never synchronizes.",
+    "Production instancing queries the bound shader when capturing a group and saves constant registers before submitting batches. These measured boundaries justify investigating their interaction with worker submission; drain counts alone do not establish elapsed blocking cost."
+  ],
+  "limits": [
+    "256x256 synthetic geometry/material workload: 288 groups of 25 meshes, six bones. No native material-source computation, terrain, water reflections, Present or full scene.",
+    "Both timed modes use the same optimistic bulk-after-second prototype; this is not the full installed beta.13 native group path. Wrapped-off mode still incurs external passthrough hooks.",
+    "Each sample averages four separately fenced regular/extra pairs. Fresh poses change between pair members. Separate lit/shadow timings must not be added or converted to gameplay FPS.",
+    "Backend state checks cover all vertex/pixel float constant registers, twelve render states, 104 sampler values and two stream frequencies, not all resource lifetime/failure behavior.",
+    "The diagnostic identifies drain counters, not their elapsed cost or the attribution of all drains in the benchmark. It reads counters without adding queue commands or drains; earlier getters can mask subsequent synchronization.",
+    "Preliminary 84 pairs are retained separately; final runs follow the main-name embedding macro addition needed by the barrier diagnostic. The draw workload logic did not change. Preliminary binaries were subsequently replaced in TEMP; their captured hashes are retained, not reverified from current binaries.",
+    "No external installation, runtime plugin change, game/WorldBuilder launch, multiplayer proof or FPS success."
+  ],
+  "installed_unchanged_since_restoration_sha256": {
+    "bfme2perf.asi": "976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd",
+    "bfme2perf.ini": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b"
+  },
+  "game_launched": false,
+  "external_candidate_deployed": false
+}

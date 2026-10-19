@@ -92,3 +92,50 @@ to identical tested beta.13 after the launcher replaced them with 0.9.10;
 see the restoration receipt. The comparison has no relaxed gameplay invariant
 and no assumed multiplayer fix. Record incompatibilities before selecting
 the next experiment.
+
+## Follow-up: actual geometry and shadow maps
+
+Reuse our material/instancing GPU fixture in a second optional standalone
+adapter. Capture three unhooked pixel/state references: original pose,
+fresh pose and changed material. Require nonempty images and observable
+pose/material differences before loading the candidate. Both wrapped-off
+and threaded modes must match every pixel and actual backend constants,
+render/sampler states and stream frequencies after completion.
+
+Keep identical bulk-after-second dispatch on both timing paths. Alternate
+21 paired samples after warmup, each averaging four regular/extra pairs,
+and retain caller and GPU-drained completion times separately. Evaluate lit
+and shadow workloads in separate processes. This adds geometry and fresh
+shadow images, but still lacks native material sources, terrain, reflection,
+Present, full beta.13 hook integration and full-frame overlap. Do not call
+these pairs complete game frames or add isolated pass savings into FPS.
+
+Four final runs pass all 24 image/state cases and preserve 84 pairs. Lit
+completion savings are +0.0339/-0.9983 ms, shadow +0.3208/+0.5722 ms, with
+substantial across-run timing drift. Preserve the earlier 84 samples under
+their own hashes. There is no substantial repeatable gain supporting a
+live trial; the broader architecture remains unqualified.
+
+An additional independently written diagnostic reads the external test
+counters around known API calls. Its own counter reads must add neither
+commands nor drains. After queued effect work, GetVertexShader increments
+the drain count; a subsequent constant query does not. Repeating the
+constant query after another CommitChanges increments it. All four rounds
+on both lit/shadow workloads agree. This avoids mistaking an already-drained
+getter sequence for universally asynchronous queries. It does not measure
+latency or attribute every drain in the full workload.
+
+Our instancer queries the current shader and saves constants for restoration.
+A future complete-batch experiment should keep those operations with the
+effect and drawing work on one worker, using immutable captured inputs.
+This is a research direction, not permission to move live engine callbacks
+or shared objects across threads. Ownership, native ordering, completion,
+full-scene coverage and unchanged game-loop behavior remain gates.
+
+Reproduce with optional targets `build/bench_external_draw.exe` and
+`build/bench_external_barriers.exe`. Each takes local `Shaders.big`, local
+`msvcr71.dll`, `lit` or `shadow`, and the explicit external DLL path. The
+same directory as the CRT must contain D3DX27. Copy each test executable
+into the isolated TEMP folder containing the hash-verified DXVK DLL before
+running. The checked commands and full input hashes are in the draw report;
+the tests refuse a running game and must not be installed into it.

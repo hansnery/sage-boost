@@ -39,7 +39,7 @@
   worker every 50 frames. Its separate enqueue microbench also does not
   provide full-frame timing. Repeat the independent effect workload below
   instead of treating whole-harness elapsed time as threaded throughput.
-- [ ] Persist a compact report under `docs/benchmarks/`, update STATUS and
+- [x] Persist a compact report under `docs/benchmarks/`, update STATUS and
   BACKLOG, and commit/push the evidence on `codex/perf-beta`.
 
 ### Task 3: Local-effect lifecycle comparison
@@ -56,3 +56,18 @@
   executed sequence counts after completion.
 - [x] Preserve samples/hashes and distinguish this no-draw lifecycle screen
   from GPU image qualification, native integration and saved-game FPS.
+
+### Task 4: Draw and fresh-shadow comparison
+
+- [x] Add an independently written adapter over our existing material/GPU
+  fixture; capture actual unhooked image/state references before installation.
+- [x] Require nonempty, changed-pose and changed-material controls; compare
+  threaded and wrapped-off output exactly for every reference.
+- [x] Measure lit and shadow workloads sequentially with identical existing
+  bulk dispatch on both sides. Keep queue/GPU completion in every sample.
+- [x] Preserve final source/input hashes and samples; repeat qualified runs,
+  record limitations and commit/push the result without a gameplay request.
+- [x] Attribute getter boundaries with external drain/command counters.
+  Repeat the constant query after a new effect commit to avoid an earlier
+  getter masking synchronization. Preserve all 136 observations separately
+  from elapsed-time measurements.
