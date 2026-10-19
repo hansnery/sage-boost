@@ -1,0 +1,327 @@
+{
+  "kind": "read-only native UI boundary audit",
+  "game_executed": false,
+  "runtime_qualified": false,
+  "performance_improvement_measured": false,
+  "audit_source_sha256": {
+    "audit_ui_boundary.py": "c3e9cca08c0aa224269af4096ea3d0be1e66446fc05845aee87e45d92ec9c0a3",
+    "port_sites.py": "af6a2840a67c03a03c654962c520f4cc4eeebb3d53e5f09e42fbd33b604e68c4",
+    "verify_sites.py": "0a7160d2c0c8803110147c7f462992c929e6121730bff70f0d54cbac9db85155"
+  },
+  "reference_commit": "ff1544d9fef63a5460d1fcd012cea309c13f7dff",
+  "reference_image_sha256": "f008b587570bad693981dc7218588c81d192a1e064b0f7f861539c51156a7640",
+  "boundary_catalog_sha256": "a3cfa38ec78bacd926fc3df3d8fb81a42461d117f36c420a20dfe12eb8472125",
+  "reference_source_sha256": {
+    "Code/GameEngineDevice/Source/W3DDevice/GameClient/W3DDisplayRva0004A462.cpp": "fcc71511a57f3aa0f00e0ab98eb111c50e78868568b1e598008ccbc9d0be7e8b",
+    "Code/GameEngine/Source/GameClient/InGameUISetEngineInputEnabled.cpp": "e26f24205a5a21722ea7a6eb708749f5242f9098fd784601ee988fb71f92add7",
+    "Code/GameEngine/Source/GameClient/InGameUI.cpp": "31a34b898bb8a102892744292b25a90e63805442b9d56f366b65795da073d553",
+    "Code/GameEngine/Source/GameClient/System/Rva0022244D.cpp": "eec9fa7beaea1d539b0bdd3d6d769c99784a297e7904584bbebccb748224c7ed",
+    "Code/GameEngine/Source/GameClient/System/Rva00062928RenderScope.cpp": "ee1f8e356580b00062c9d4185e4c22c7415082bfa1ebcaedc2cafe14007d291b",
+    "Code/GameEngineDevice/Source/W3DDevice/GameClient/GUI/W3DAptAuxPreDrawRva000A8F98.cpp": "5f8ccaac52b0d554a4668b6dd962c9a1a897c945fa39b701d5647d76e2905903",
+    "Code/GameEngineDevice/Source/W3DDevice/GameClient/GUI/W3DAptAux_PostDraw.cpp": "90ada8a3f5948e072344720307f00f6d468fddf3d8455df0b588d68eb11bc132"
+  },
+  "images": [
+    {
+      "image": "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+      "image_sha256": "035da15c626af6cd1663d1886deea605464ec6776f2c5f1d24570c2be6d73e61",
+      "functions": {
+        "ui_draw": {
+          "rva": "0x8ea29",
+          "size": 175,
+          "body_sha256": "d09790301f21af9a99259b1c1b56830b110dee1d12cc0813c32d8aa98a5836e0",
+          "whole_body_unique": true,
+          "direct_targets": [],
+          "indirect_targets": [
+            {
+              "kind": "indirect",
+              "displacement": 164
+            },
+            {
+              "kind": "indirect",
+              "displacement": 336
+            },
+            {
+              "kind": "indirect",
+              "displacement": 480
+            },
+            {
+              "kind": "indirect",
+              "displacement": 144
+            },
+            {
+              "kind": "indirect",
+              "displacement": 484
+            },
+            {
+              "kind": "indirect",
+              "displacement": 488
+            },
+            {
+              "kind": "indirect",
+              "displacement": 492
+            },
+            {
+              "kind": "indirect",
+              "displacement": 496
+            },
+            {
+              "kind": "indirect",
+              "displacement": 148
+            },
+            {
+              "kind": "indirect",
+              "displacement": 340
+            },
+            {
+              "kind": "indirect",
+              "displacement": 164
+            }
+          ]
+        },
+        "apt_draw": {
+          "rva": "0x6203e",
+          "size": 74,
+          "body_sha256": "23f27f1b73154aa352bb89cb5e34311d5b09a74942871023fc692b3af0b8c5e8",
+          "whole_body_unique": true,
+          "direct_targets": [
+            "0xa89bd",
+            "0x22212f",
+            "0xa8a96"
+          ],
+          "indirect_targets": []
+        },
+        "apt_core": {
+          "rva": "0x22212f",
+          "size": 36,
+          "body_sha256": "8e287388c5a0262e877c6d59afaf260224cae6ca656bff23d1cb4074a40ec0c2",
+          "whole_body_unique": true,
+          "direct_targets": [
+            "0x41424c",
+            "0x6e0ab0",
+            "0x414278"
+          ],
+          "indirect_targets": [
+            {
+              "kind": "indirect",
+              "displacement": 40
+            }
+          ]
+        },
+        "apt_pre": {
+          "rva": "0xa89bd",
+          "size": 217,
+          "body_sha256": "7b36b1ea480452b871a3337ff6cf3879519111502bad95da013bf3ff2d7b3f19",
+          "whole_body_unique": true,
+          "direct_targets": [
+            "0x63cef0",
+            "0x2f6e0",
+            "0x10fdf9",
+            "0x11096c",
+            "0x118380",
+            "0x116e20",
+            "0x116e20"
+          ],
+          "indirect_targets": [
+            {
+              "kind": "import",
+              "dll": "winmm.dll",
+              "name": "timeGetTime"
+            },
+            {
+              "kind": "import",
+              "dll": "winmm.dll",
+              "name": "timeGetTime"
+            }
+          ]
+        },
+        "apt_post": {
+          "rva": "0xa8a96",
+          "size": 63,
+          "body_sha256": "8db8f91ebcc8a5b4ec1be7b2109607cbaadff098346c4860355ed7950db5b8d3",
+          "whole_body_unique": true,
+          "direct_targets": [
+            "0x11108f",
+            "0x118380",
+            "0x116e20",
+            "0x116e20"
+          ],
+          "indirect_targets": []
+        }
+      },
+      "wrapper_calls_bound_to_verified_bodies": true,
+      "clock_import_calls": 2,
+      "conditional_update_slot": "0x28",
+      "alteration_controls": [
+        "ui_draw: altered body refused",
+        "apt_draw: altered body refused",
+        "apt_core: altered body refused",
+        "apt_pre: altered body refused",
+        "apt_post: altered body refused"
+      ]
+    },
+    {
+      "image": "C:\\Jogos\\AgeoftheRing\\rotwk\\game820.dat",
+      "image_sha256": "bcf4c85ec72ecb9eb95a844fc0072434fdcef49a5b2c59abb77ac04af29c277e",
+      "functions": {
+        "ui_draw": {
+          "rva": "0x8ea29",
+          "size": 175,
+          "body_sha256": "d09790301f21af9a99259b1c1b56830b110dee1d12cc0813c32d8aa98a5836e0",
+          "whole_body_unique": true,
+          "direct_targets": [],
+          "indirect_targets": [
+            {
+              "kind": "indirect",
+              "displacement": 164
+            },
+            {
+              "kind": "indirect",
+              "displacement": 336
+            },
+            {
+              "kind": "indirect",
+              "displacement": 480
+            },
+            {
+              "kind": "indirect",
+              "displacement": 144
+            },
+            {
+              "kind": "indirect",
+              "displacement": 484
+            },
+            {
+              "kind": "indirect",
+              "displacement": 488
+            },
+            {
+              "kind": "indirect",
+              "displacement": 492
+            },
+            {
+              "kind": "indirect",
+              "displacement": 496
+            },
+            {
+              "kind": "indirect",
+              "displacement": 148
+            },
+            {
+              "kind": "indirect",
+              "displacement": 340
+            },
+            {
+              "kind": "indirect",
+              "displacement": 164
+            }
+          ]
+        },
+        "apt_draw": {
+          "rva": "0x6203e",
+          "size": 74,
+          "body_sha256": "23f27f1b73154aa352bb89cb5e34311d5b09a74942871023fc692b3af0b8c5e8",
+          "whole_body_unique": true,
+          "direct_targets": [
+            "0xa89bd",
+            "0x22212f",
+            "0xa8a96"
+          ],
+          "indirect_targets": []
+        },
+        "apt_core": {
+          "rva": "0x22212f",
+          "size": 36,
+          "body_sha256": "8e287388c5a0262e877c6d59afaf260224cae6ca656bff23d1cb4074a40ec0c2",
+          "whole_body_unique": true,
+          "direct_targets": [
+            "0x41424c",
+            "0x6e0ab0",
+            "0x414278"
+          ],
+          "indirect_targets": [
+            {
+              "kind": "indirect",
+              "displacement": 40
+            }
+          ]
+        },
+        "apt_pre": {
+          "rva": "0xa89bd",
+          "size": 217,
+          "body_sha256": "7b36b1ea480452b871a3337ff6cf3879519111502bad95da013bf3ff2d7b3f19",
+          "whole_body_unique": true,
+          "direct_targets": [
+            "0x63cef0",
+            "0x2f6e0",
+            "0x10fdf9",
+            "0x11096c",
+            "0x118380",
+            "0x116e20",
+            "0x116e20"
+          ],
+          "indirect_targets": [
+            {
+              "kind": "import",
+              "dll": "winmm.dll",
+              "name": "timeGetTime"
+            },
+            {
+              "kind": "import",
+              "dll": "winmm.dll",
+              "name": "timeGetTime"
+            }
+          ]
+        },
+        "apt_post": {
+          "rva": "0xa8a96",
+          "size": 63,
+          "body_sha256": "8db8f91ebcc8a5b4ec1be7b2109607cbaadff098346c4860355ed7950db5b8d3",
+          "whole_body_unique": true,
+          "direct_targets": [
+            "0x11108f",
+            "0x118380",
+            "0x116e20",
+            "0x116e20"
+          ],
+          "indirect_targets": []
+        }
+      },
+      "wrapper_calls_bound_to_verified_bodies": true,
+      "clock_import_calls": 2,
+      "conditional_update_slot": "0x28",
+      "alteration_controls": [
+        "ui_draw: altered body refused",
+        "apt_draw: altered body refused",
+        "apt_core: altered body refused",
+        "apt_pre: altered body refused",
+        "apt_post: altered body refused"
+      ]
+    }
+  ],
+  "preserved_capture": {
+    "path": "C:\\Users\\Hans\\AppData\\Local\\Temp\\bfme2perf-beta16-before-beta17-20261019-132723\\bfme2perf_timing.csv",
+    "sha256": "11c096adfba556d54a36d9aa898db609e175336fa19a66076fab924bbf092e79",
+    "window": [
+      1193,
+      1252
+    ],
+    "extra_draws": 1505,
+    "mean_extra_ui_ms": 1.4275980066445182,
+    "mean_complete_extra_ms": 6.774120265780731,
+    "mean_profiled_extra_ms": 6.772107641196014
+  },
+  "decision": "Do not cache or skip the complete RenderUI/apt_draw boundary.",
+  "reasons": [
+    "APT PreDraw contains two conditional timeGetTime call sites and changes its animation clock.",
+    "APT core conditionally invokes virtual update slot 0x28 and clears its dirty flag.",
+    "UI draw includes preDraw, per-view drawing and window repainting.",
+    "The reference includes custom-control callbacks and mutable mask/transform state."
+  ],
+  "next_boundary": "Measure rendering beneath update/time/custom-control boundaries; do not assume the full UI scope is reusable.",
+  "limits": [
+    "This is static call-boundary evidence, not a live UI profile or a complete call-graph proof.",
+    "Whole-body masks relocate addresses; only the APT wrapper's three child bindings are checked here.",
+    "The copied UI scope includes more than APT; its 1.4 ms cannot be assigned wholly to one child.",
+    "No GPU pixel/state equivalence or runtime optimization is qualified."
+  ]
+}

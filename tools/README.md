@@ -8,6 +8,14 @@ user's own installs at run time.
 
 ## Build and verification
 
+`audit_ui_boundary.py --image <game.dat> --image <game820.dat> --capture
+<copied timing CSV> --output <report.json>` statically verifies complete UI
+draw boundaries against the existing Open-BFME-2 reference and rejects
+altered bodies. It binds the APT wrapper's child calls and identifies clock
+and update work that unconditional whole-UI reuse would skip. It executes
+no game code and is not a performance benchmark. See the
+[audit and limitations](../docs/specs/2026-10-19-ui-render-boundary.md).
+
 `make test-native-rates` in `perf/` runs `test_native_rates.py` against the
 two local executable images. It validates the complete native rate setter,
 executes only that leaf in private fixture memory, checks all rate/time

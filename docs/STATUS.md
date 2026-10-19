@@ -85,6 +85,16 @@ The desktop **Realms - sage-boost beta test** shortcut pins the new ASI and
 INI hashes; CheckOnly passes. Nothing was launched. Public launcher
 Stable/beta.14 remain unchanged. [Receipt](benchmarks/2026-10-19-beta18-install.json).
 
+### UI render-boundary follow-up (2026-10-19)
+
+Latest offline follow-up after installing beta.18: the UI boundary audit
+finds 1.428 ms average extra UI cost in the preserved heavy interval, but
+confirms timer reads, a conditional update call and state restoration inside
+APT drawing. Whole-UI reuse is therefore not qualified. Five complete
+bodies match both executable variants; ten altered-body controls refuse.
+[Evidence and narrower next measurement](specs/2026-10-19-ui-render-boundary.md).
+Beta.18 and its installed settings remain unchanged.
+
 ### Beta.17 budget-gap recovery (2026-10-19)
 
 The candidate retains recovery credit across frames with insufficient budget,
