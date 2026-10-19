@@ -40,6 +40,18 @@ and the INI are unchanged. The [design/results](specs/2026-10-19-120fps-retained
 link both sample sets. The failed initial run while the game was open is
 superseded only by these subsequent guarded executions, not counted as a pass.
 
+The next screen changes palette transport instead of retaining materials:
+full-precision vertex textures allow all 25 units in one draw. It reduces
+twenty-bone fixture draws from 2,016 to 288 per frame and all eight final
+native/DXVK lit/shadow cases pass fresh/stale-pose controls. DXVK nevertheless
+regresses by 0.79-1.26 ms/frame with staging, upload and completion included.
+Native gains are small/variable and do not qualify a backend switch.
+An initial DXVK vertex-sampler restoration failure is retained and excluded;
+explicit restoration fixed the test without relaxing any check.
+[Design and decision](specs/2026-10-19-palette-texture-design.md),
+[report](benchmarks/2026-10-19-palette-texture.json).
+No new installed build or gameplay test is justified by either screen.
+
 ### Beta.17 budget-gap recovery (2026-10-19)
 
 The candidate retains recovery credit across frames with insufficient budget,

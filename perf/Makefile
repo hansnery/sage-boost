@@ -436,6 +436,24 @@ $(BUILD)/bench_material_queue.exe: tests/bench_material_queue.c tests/bench_reta
 $(BUILD)/bench_material_multi.exe: tests/bench_material_multi.c tests/bench_retained_multi.c tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
 	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
 
+$(BUILD)/palette_texture_shaders.h: ../tools/palette_texture_shaders.py ../tools/inst_shaders.py shaders/inst.hlsl | $(BUILD)
+	python ../tools/palette_texture_shaders.py --big "$(DISPATCH_ASSETS)/Shaders.big" --output $@
+
+$(BUILD)/bench_palette_texture_6.exe $(BUILD)/bench_palette_texture_20.exe: tests/bench_palette_texture.c $(BUILD)/palette_texture_shaders.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
+	$(CC) $(TEST_CFLAGS) -I$(BUILD) -O2 -Wno-unused-function -DPF_FIXTURE_BONES=$(if $(findstring _20.exe,$@),20,6) -static -o $@ $< $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
+
+.PHONY: bench-palette-texture
+bench-palette-texture: $(BUILD)/bench_palette_texture_6.exe $(BUILD)/bench_palette_texture_20.exe
+	@for bones in 6 20; do for mode in lit shadow; do \
+	  ./$(BUILD)/bench_palette_texture_$$bones.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" $$mode || exit $$?; \
+	done; done
+	@test -f "$(DXVK_D3D9)" || { echo "error: bench-palette-texture requires DXVK_D3D9"; exit 1; }
+	mkdir -p $(BUILD)/palette_texture_dxvk
+	cp $(BUILD)/bench_palette_texture_6.exe $(BUILD)/bench_palette_texture_20.exe "$(DXVK_D3D9)" $(BUILD)/palette_texture_dxvk/
+	@cd $(BUILD)/palette_texture_dxvk && for bones in 6 20; do for mode in lit shadow; do \
+	  DXVK_LOG_LEVEL=none ./bench_palette_texture_$$bones.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" $$mode || exit $$?; \
+	done; done
+
 .PHONY: bench-material-multi
 bench-material-multi: $(BUILD)/bench_material_multi.exe
 	./$(BUILD)/bench_material_multi.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit

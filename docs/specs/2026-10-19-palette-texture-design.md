@@ -30,7 +30,7 @@ Both paths directly draw the same 288 synthetic groups of 25 units using
 the same local effect Begin/End, poses, geometry, instanced declaration,
 instance-index stream and full enclosing state restoration. Stage every
 fresh palette on the CPU for both. Constants upload per batch; the texture
-path uploads one 1024-by-288 A32B32G32R32F image per frame and selects each
+path uploads 288 rows of one 1024-by-512 A32B32G32R32F image per frame and selects each
 group's row with one constant. Charge staging, upload, rendering and final
 GPU completion. Resource creation and shader compilation stay outside timing.
 
@@ -49,3 +49,50 @@ milliseconds into gameplay FPS or request another game test from this alone.
 
 The current ASI, INI, public releases, logic, camera and reference repository
 remain unchanged. No game or WorldBuilder launch is authorized.
+
+## Measured outcome
+
+All eight final cases pass: six/twenty bones, lit/shadow, native/DXVK. Each
+compares three moving phases, with zero pixels over the existing tolerance
+for fresh palettes. Every stale-palette control exceeds 100 bad texels.
+Twenty-bone drawing drops from 2,016 to 288 calls per frame (7,200 meshes
+on both paths); six-bone drawing drops from 576 to 288. Both hardware paths
+accept full-precision dynamic vertex textures and the generated shaders.
+
+Median paired completed-frame savings, milliseconds; positive is faster:
+
+| Backend | Six bones, lit | Six bones, shadow | Twenty bones, lit | Twenty bones, shadow |
+|---|---:|---:|---:|---:|
+| Native D3D9 | 0.463 | 0.087 | 0.959 | 1.004 |
+| DXVK | -1.172 | -0.908 | -1.262 | -0.794 |
+
+Each value pools 21 AB/BA samples, eight fenced frames per path/sample after
+four warmups. The native results have substantial variation; twenty-bone
+shadow's p10 is -0.489 ms. All DXVK medians regress. These are isolated
+per-frame workload costs, not FPS or a production-plugin A/B comparison.
+Lit/shadow savings cannot be summed.
+
+**Reject this implementation for the installed DXVK path.** The draw-count
+reduction is real but does not outweigh staging/upload/sampling costs in
+this screen. Native-only gains are not enough to justify changing the whole
+game backend or installing this renderer. A different upload mechanism
+needs new evidence; do not promote this texture version just for its counts.
+
+The first run stopped at DXVK's vertex-sampler restoration assertion after
+completing the four native cases. It is excluded from these timings. Explicit
+restoration of the candidate-owned texture and six sampler states fixed
+the failure; that additional work is charged only to the texture path.
+The unchanged checks then pass for every frame. This observes the particular
+fixture/backend state-block behavior, not a general diagnosis of DXVK.
+
+Checks cover mesh/draw counts, method references, shader/declaration,
+stream-0 bindings, both stream frequencies, vertex texture identity and the
+six touched vertex sampler values. Full native engine state-cache, arbitrary
+materials, failures and resource/reset ownership remain unqualified.
+
+The [report](../benchmarks/2026-10-19-palette-texture.json) records hashes,
+controls, distributions and the excluded failure. All
+[168 final samples](../benchmarks/2026-10-19-palette-texture.csv) are retained.
+The parser rejects both a truncated final matrix and the real failed log.
+Initial compile diagnostics required a DWORD pointer cast; no tolerances
+or correctness checks were removed. No production or installed file changed.

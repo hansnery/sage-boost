@@ -1,0 +1,490 @@
+{
+  "cases": [
+    {
+      "backend": "native",
+      "support": {
+        "bones": 6,
+        "constant_capacity": 15,
+        "texture_capacity": 25,
+        "width": 1024,
+        "height": 512
+      },
+      "images": [
+        {
+          "match": 0,
+          "covered": 16600,
+          "bad": 17422
+        },
+        {
+          "match": 1,
+          "covered": 16600,
+          "bad": 0
+        },
+        {
+          "match": 0,
+          "covered": 16748,
+          "bad": 17418
+        },
+        {
+          "match": 1,
+          "covered": 16748,
+          "bad": 0
+        },
+        {
+          "match": 0,
+          "covered": 16668,
+          "bad": 17136
+        },
+        {
+          "match": 1,
+          "covered": 16668,
+          "bad": 0
+        }
+      ],
+      "controls": {
+        "bones": "6",
+        "mode": "lit",
+        "phases": "3",
+        "constant_draws": "576",
+        "texture_draws": "288"
+      },
+      "summary": {
+        "samples": 21,
+        "constant_complete_median_ms": 3.23524,
+        "texture_complete_median_ms": 3.03615,
+        "paired_saving_median_ms": 0.46289,
+        "paired_saving_p10_ms": -0.2545,
+        "paired_saving_p90_ms": 0.8575
+      }
+    },
+    {
+      "backend": "native",
+      "support": {
+        "bones": 6,
+        "constant_capacity": 15,
+        "texture_capacity": 25,
+        "width": 1024,
+        "height": 512
+      },
+      "images": [
+        {
+          "match": 0,
+          "covered": 16568,
+          "bad": 19062
+        },
+        {
+          "match": 1,
+          "covered": 16568,
+          "bad": 0
+        },
+        {
+          "match": 0,
+          "covered": 16704,
+          "bad": 18988
+        },
+        {
+          "match": 1,
+          "covered": 16704,
+          "bad": 0
+        },
+        {
+          "match": 0,
+          "covered": 16644,
+          "bad": 18980
+        },
+        {
+          "match": 1,
+          "covered": 16644,
+          "bad": 0
+        }
+      ],
+      "controls": {
+        "bones": "6",
+        "mode": "shadow",
+        "phases": "3",
+        "constant_draws": "576",
+        "texture_draws": "288"
+      },
+      "summary": {
+        "samples": 21,
+        "constant_complete_median_ms": 2.26805,
+        "texture_complete_median_ms": 2.32141,
+        "paired_saving_median_ms": 0.08681,
+        "paired_saving_p10_ms": -1.2431,
+        "paired_saving_p90_ms": 0.55106
+      }
+    },
+    {
+      "backend": "native",
+      "support": {
+        "bones": 20,
+        "constant_capacity": 4,
+        "texture_capacity": 25,
+        "width": 1024,
+        "height": 512
+      },
+      "images": [
+        {
+          "match": 0,
+          "covered": 17774,
+          "bad": 17916
+        },
+        {
+          "match": 1,
+          "covered": 17774,
+          "bad": 0
+        },
+        {
+          "match": 0,
+          "covered": 18132,
+          "bad": 17998
+        },
+        {
+          "match": 1,
+          "covered": 18132,
+          "bad": 0
+        },
+        {
+          "match": 0,
+          "covered": 18504,
+          "bad": 18980
+        },
+        {
+          "match": 1,
+          "covered": 18504,
+          "bad": 0
+        }
+      ],
+      "controls": {
+        "bones": "20",
+        "mode": "lit",
+        "phases": "3",
+        "constant_draws": "2016",
+        "texture_draws": "288"
+      },
+      "summary": {
+        "samples": 21,
+        "constant_complete_median_ms": 6.71714,
+        "texture_complete_median_ms": 5.66895,
+        "paired_saving_median_ms": 0.95872,
+        "paired_saving_p10_ms": 0.01961,
+        "paired_saving_p90_ms": 1.76288
+      }
+    },
+    {
+      "backend": "native",
+      "support": {
+        "bones": 20,
+        "constant_capacity": 4,
+        "texture_capacity": 25,
+        "width": 1024,
+        "height": 512
+      },
+      "images": [
+        {
+          "match": 0,
+          "covered": 17734,
+          "bad": 19920
+        },
+        {
+          "match": 1,
+          "covered": 17734,
+          "bad": 0
+        },
+        {
+          "match": 0,
+          "covered": 18064,
+          "bad": 20030
+        },
+        {
+          "match": 1,
+          "covered": 18064,
+          "bad": 0
+        },
+        {
+          "match": 0,
+          "covered": 18444,
+          "bad": 20996
+        },
+        {
+          "match": 1,
+          "covered": 18444,
+          "bad": 0
+        }
+      ],
+      "controls": {
+        "bones": "20",
+        "mode": "shadow",
+        "phases": "3",
+        "constant_draws": "2016",
+        "texture_draws": "288"
+      },
+      "summary": {
+        "samples": 21,
+        "constant_complete_median_ms": 5.75419,
+        "texture_complete_median_ms": 4.87175,
+        "paired_saving_median_ms": 1.00401,
+        "paired_saving_p10_ms": -0.48926,
+        "paired_saving_p90_ms": 1.87324
+      }
+    },
+    {
+      "backend": "dxvk",
+      "support": {
+        "bones": 6,
+        "constant_capacity": 15,
+        "texture_capacity": 25,
+        "width": 1024,
+        "height": 512
+      },
+      "images": [
+        {
+          "match": 0,
+          "covered": 16600,
+          "bad": 17422
+        },
+        {
+          "match": 1,
+          "covered": 16600,
+          "bad": 0
+        },
+        {
+          "match": 0,
+          "covered": 16748,
+          "bad": 17418
+        },
+        {
+          "match": 1,
+          "covered": 16748,
+          "bad": 0
+        },
+        {
+          "match": 0,
+          "covered": 16668,
+          "bad": 17136
+        },
+        {
+          "match": 1,
+          "covered": 16668,
+          "bad": 0
+        }
+      ],
+      "controls": {
+        "bones": "6",
+        "mode": "lit",
+        "phases": "3",
+        "constant_draws": "576",
+        "texture_draws": "288"
+      },
+      "summary": {
+        "samples": 21,
+        "constant_complete_median_ms": 2.56588,
+        "texture_complete_median_ms": 4.00245,
+        "paired_saving_median_ms": -1.17212,
+        "paired_saving_p10_ms": -2.04039,
+        "paired_saving_p90_ms": -0.85596
+      }
+    },
+    {
+      "backend": "dxvk",
+      "support": {
+        "bones": 6,
+        "constant_capacity": 15,
+        "texture_capacity": 25,
+        "width": 1024,
+        "height": 512
+      },
+      "images": [
+        {
+          "match": 0,
+          "covered": 16568,
+          "bad": 19062
+        },
+        {
+          "match": 1,
+          "covered": 16568,
+          "bad": 0
+        },
+        {
+          "match": 0,
+          "covered": 16704,
+          "bad": 18988
+        },
+        {
+          "match": 1,
+          "covered": 16704,
+          "bad": 0
+        },
+        {
+          "match": 0,
+          "covered": 16644,
+          "bad": 18980
+        },
+        {
+          "match": 1,
+          "covered": 16644,
+          "bad": 0
+        }
+      ],
+      "controls": {
+        "bones": "6",
+        "mode": "shadow",
+        "phases": "3",
+        "constant_draws": "576",
+        "texture_draws": "288"
+      },
+      "summary": {
+        "samples": 21,
+        "constant_complete_median_ms": 2.20143,
+        "texture_complete_median_ms": 3.1422,
+        "paired_saving_median_ms": -0.9083,
+        "paired_saving_p10_ms": -2.43717,
+        "paired_saving_p90_ms": -0.67836
+      }
+    },
+    {
+      "backend": "dxvk",
+      "support": {
+        "bones": 20,
+        "constant_capacity": 4,
+        "texture_capacity": 25,
+        "width": 1024,
+        "height": 512
+      },
+      "images": [
+        {
+          "match": 0,
+          "covered": 17774,
+          "bad": 17916
+        },
+        {
+          "match": 1,
+          "covered": 17774,
+          "bad": 0
+        },
+        {
+          "match": 0,
+          "covered": 18132,
+          "bad": 17998
+        },
+        {
+          "match": 1,
+          "covered": 18132,
+          "bad": 0
+        },
+        {
+          "match": 0,
+          "covered": 18504,
+          "bad": 18980
+        },
+        {
+          "match": 1,
+          "covered": 18504,
+          "bad": 0
+        }
+      ],
+      "controls": {
+        "bones": "20",
+        "mode": "lit",
+        "phases": "3",
+        "constant_draws": "2016",
+        "texture_draws": "288"
+      },
+      "summary": {
+        "samples": 21,
+        "constant_complete_median_ms": 7.22967,
+        "texture_complete_median_ms": 8.49205,
+        "paired_saving_median_ms": -1.26238,
+        "paired_saving_p10_ms": -2.33044,
+        "paired_saving_p90_ms": -0.6639
+      }
+    },
+    {
+      "backend": "dxvk",
+      "support": {
+        "bones": 20,
+        "constant_capacity": 4,
+        "texture_capacity": 25,
+        "width": 1024,
+        "height": 512
+      },
+      "images": [
+        {
+          "match": 0,
+          "covered": 17734,
+          "bad": 19920
+        },
+        {
+          "match": 1,
+          "covered": 17734,
+          "bad": 0
+        },
+        {
+          "match": 0,
+          "covered": 18064,
+          "bad": 20030
+        },
+        {
+          "match": 1,
+          "covered": 18064,
+          "bad": 0
+        },
+        {
+          "match": 0,
+          "covered": 18444,
+          "bad": 20996
+        },
+        {
+          "match": 1,
+          "covered": 18444,
+          "bad": 0
+        }
+      ],
+      "controls": {
+        "bones": "20",
+        "mode": "shadow",
+        "phases": "3",
+        "constant_draws": "2016",
+        "texture_draws": "288"
+      },
+      "summary": {
+        "samples": 21,
+        "constant_complete_median_ms": 5.6184,
+        "texture_complete_median_ms": 6.66486,
+        "paired_saving_median_ms": -0.79409,
+        "paired_saving_p10_ms": -2.13827,
+        "paired_saving_p90_ms": 0.3963
+      }
+    }
+  ],
+  "selected_input_hashes": {
+    "perf\\build\\palette-texture-screen.log": "d4fdbd01b162982444da34897264b6a62f9b8edc379d4dbe46557dce85a86de6",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_palette_texture.c": "8ad8d2332ab5c71d03b9ea83ec82b9d543e2bd78fa72a32b06bbe36f4140b016",
+    "C:\\repositories\\sage-boost\\tools\\palette_texture_shaders.py": "75df725891721aa9d743fd0799acd2c660b334c03ef420a87182f79ea021f3be",
+    "C:\\repositories\\sage-boost\\perf\\shaders\\inst.hlsl": "24919b563a1aed90b7e09015a2b02efbfe13586a0b116e489f0a095148d4c03b",
+    "C:\\repositories\\sage-boost\\perf\\build\\palette_texture_shaders.h": "b4813d010c8e0360460eadd2c7413adda74e89daf3f4001f2ac9f755a56d4c33",
+    "C:\\repositories\\sage-boost\\perf\\build\\bench_palette_texture_6.exe": "09835cb0595665454a1f90f113f5382bfa7983f4e1f2f23a7ba48da023c0d29f",
+    "C:\\repositories\\sage-boost\\perf\\build\\bench_palette_texture_20.exe": "852348f6e7854dd3c7af175a8f7471e81440a822b4da5e0f793bfba227e72caf",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_material_queue.c": "fe33d04874dc6aa17de77767766da8677c125511430912cd430708a8e7452f25",
+    "C:\\repositories\\sage-boost\\perf\\tests\\material_fixture.c": "5770f7e62e2f92158f605f4ca30ae9dc6fe8b83d5cac98753cc0e8adecf9fc60",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_dispatch.c": "3a28461c0d6ddf7fb200a8714c7c5efbc13886b414eb2a8ed432b4667fb076b1",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_inst.c": "4c313a28d3b70e437fb4c00a448ff4a3c2c11aafb123c4ef18a4e7613215bdd1",
+    "C:\\repositories\\sage-boost\\perf\\build\\palette_texture_dxvk\\d3d9.dll": "00bc142e98ddad1e334a4d88fa630038e092b0758b3d79e295172b181a4c772d"
+  },
+  "installed_changes": false,
+  "gameplay_fps_measured": false,
+  "limits": [
+    "Direct constant-upload baseline, not an end-to-end installed-plugin comparison.",
+    "Shared synthetic geometry and fixed group/resource lifetimes.",
+    "No native FX loop/source callbacks, visibility, UI, Present or scheduling.",
+    "Staging, upload and final completion charged; neither is pure GPU time.",
+    "Lit and shadow are separate complete workloads; savings cannot be added."
+  ],
+  "excluded_run": {
+    "log": "perf\\build\\palette-texture-initial-state-failure.log",
+    "sha256": "fb02d03c517a22c65a3f670d43c1b95e668ecab0816d4aed4ee0349c6392b2b2",
+    "reason": "Initial run stopped on DXVK vertex sampler restoration; its timings are excluded.",
+    "fix": "Explicitly restore the candidate-owned vertex texture and six sampler states; charge that path for restoration.",
+    "source_sha256": "175994110759220538ee434331ba1b989b0f3c58e54c8d4f6b426fef98352ee9"
+  }
+}

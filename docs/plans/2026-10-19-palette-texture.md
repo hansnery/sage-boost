@@ -17,27 +17,33 @@ graphics reduction or stale shadows. Preserve pixel/depth tolerances.
 
 ## Task 1: generated shader and device support
 
-- [ ] Add `tools/palette_texture_shaders.py`; import the existing shader
+- [x] Add `tools/palette_texture_shaders.py`; import the existing shader
   classifier/compiler, identify local variants 5 and 476, and compile only
   our HLSL with `IR[index]` replaced by a texture helper. Write the generated
   header to ignored `perf/build/`, with EA identity hashes and our bytecode.
-- [ ] Add `perf/tests/bench_palette_texture.c` and Makefile dependencies.
+- [x] Add `perf/tests/bench_palette_texture.c` and Makefile dependencies.
   Require vs_3_0, A32B32G32R32F vertex/dynamic texture support, successful
   dynamic allocation, and successful vertex sampling/draw setup.
 
 ## Task 2: correctness and timed comparison
 
-- [ ] Stage 288 rows of 25 complete palettes, applying identical pose
+- [x] Stage 288 rows of 25 complete palettes, applying identical pose
   production on both paths. Constants draw chunks of `ir_count/(2*BONES)`;
   texture mode uploads once and draws all 25 units in each group.
-- [ ] Validate at least three moving phases in lit and fresh-shadow passes,
+- [x] Validate at least three moving phases in lit and fresh-shadow passes,
   reject stale uploaded palettes, restore device/vertex sampler state and
   account for every mesh/draw. Fail immediately on any device error.
-- [ ] Run six- and twenty-bone native/DXVK cases serially with the guard.
+- [x] Run six- and twenty-bone native/DXVK cases serially with the guard.
   Use four warmups and 21 AB/BA samples of eight fenced frames each. Charge
   CPU palette staging/upload and final completion; record all samples.
-- [ ] Preserve any unsupported/failing cases and the exact source/binary/log
+- [x] Preserve any unsupported/failing cases and the exact source/binary/log
   hashes. Interpret only after controls pass; no installation from this test.
-- [ ] Update STATUS and the design with the decision; commit/push explicit
+- [x] Update STATUS and the design with the decision; commit/push explicit
   source/report paths. Continue toward native integration only for a useful
   measured gain against the direct constant baseline.
+
+Final decision: no runtime promotion. All eight correctness cases pass, but
+DXVK regresses by about 0.79-1.26 ms/frame despite fewer calls. The native
+gains do not qualify a backend switch. The first DXVK sampler-restoration
+failure is preserved and excluded; explicit owned-state restoration resolves
+it without weakening checks. Installed beta.17 and INI remain untouched.
