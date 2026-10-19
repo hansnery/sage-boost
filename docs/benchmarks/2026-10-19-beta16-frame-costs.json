@@ -1,0 +1,342 @@
+{
+  "window": {
+    "start_s": 1193,
+    "end_s_exclusive": 1253,
+    "nominal_seconds": 60,
+    "at_least_60_seconds": true
+  },
+  "presentation_calls": 3304,
+  "presentation_calls_per_nominal_second": 55.06666666666667,
+  "nominal_rate_at_least_59": false,
+  "rate_bounds_from_timestamp_quantization": {
+    "lower": 54.16393442622951,
+    "upper": 56.0
+  },
+  "per_row_calls": {
+    "min": 39,
+    "max": 62
+  },
+  "regular_frame_updates": 1810,
+  "extra_frames": 1505,
+  "extra_draws_per_regular_update": 0.8314917127071824,
+  "pacing": {
+    "gaps": 3304,
+    "histogram_counts": {
+      "present_gap_le_8333us": 29,
+      "present_gap_le_12500us": 310,
+      "present_gap_le_16667us": 1194,
+      "present_gap_le_20000us": 1119,
+      "present_gap_le_25000us": 356,
+      "present_gap_le_33334us": 169,
+      "present_gap_le_50000us": 111,
+      "present_gap_le_100000us": 14,
+      "present_gap_le_200000us": 2,
+      "present_gap_le_500000us": 0,
+      "present_gap_le_1000000us": 0,
+      "present_gap_over_1000000us": 0
+    },
+    "p50": {
+      "lower_exclusive_ms": 16.667,
+      "upper_ms": 20.0
+    },
+    "p95": {
+      "lower_exclusive_ms": 25.0,
+      "upper_ms": 33.334
+    },
+    "fraction_over_25_ms": 0.08958837772397095,
+    "fraction_over_50_ms": 0.004842615012106538
+  },
+  "shadows": {
+    "extra_draw_calls": 1505,
+    "extra_completed_pass_samples": 1505,
+    "valid_extra_profiles": 1505,
+    "invalid_extra_profiles": 0,
+    "regular_shadow_skips": 0,
+    "extra_counts_match_each_row": true
+  },
+  "verification_failures": {
+    "verify_bad": 0,
+    "shadow_verify_bad": 0,
+    "spv_bad": 0,
+    "lt_verify_bad": 0
+  },
+  "bulk_coverage": {
+    "available": true,
+    "instrumented_rows": 60,
+    "selected_rows": 60,
+    "regular": {
+      "consumed_followers_by_method_count": {
+        "1": 1591867,
+        "2": 1178926,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      },
+      "consumed_followers": 2770793,
+      "multi_method_followers": 1178926,
+      "multi_method_fraction": 0.425483246132064,
+      "frame_denominator": 1810,
+      "consumed_followers_per_frame": 1530.824861878453
+    },
+    "extra": {
+      "consumed_followers_by_method_count": {
+        "1": 924703,
+        "2": 984605,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      },
+      "consumed_followers": 1909308,
+      "multi_method_followers": 984605,
+      "multi_method_fraction": 0.5156868352303557,
+      "frame_denominator": 1505,
+      "consumed_followers_per_frame": 1268.6431893687707
+    },
+    "limits": [
+      "Consumed follower records across render passes; not unique units or successful draws.",
+      "Deferred leaders are excluded; no total eligible-record denominator is recorded.",
+      "Regular per-frame values include updates whose render was skipped.",
+      "Method counts measure use of the path, not time saved or FPS gained."
+    ]
+  },
+  "frame_costs": {
+    "regular": {
+      "frame_avg_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "frames",
+        "input_is_per_sample_average": true,
+        "samples": 1810,
+        "summed_ms": 21396.759000000002,
+        "mean_ms": 11.821413812154697
+      },
+      "logic_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "frames",
+        "input_is_per_sample_average": true,
+        "samples": 1810,
+        "summed_ms": 2738.4339999999997,
+        "mean_ms": 1.5129469613259667
+      },
+      "render_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "frames",
+        "input_is_per_sample_average": true,
+        "samples": 1810,
+        "summed_ms": 10857.850999999997,
+        "mean_ms": 5.998812707182319
+      },
+      "present_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "frames",
+        "input_is_per_sample_average": true,
+        "samples": 1810,
+        "summed_ms": 85.52400000000002,
+        "mean_ms": 0.047250828729281776
+      },
+      "shadow_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "frames",
+        "input_is_per_sample_average": true,
+        "samples": 1810,
+        "summed_ms": 4719.385,
+        "mean_ms": 2.6073950276243094
+      },
+      "reflect_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "frames",
+        "input_is_per_sample_average": true,
+        "samples": 1810,
+        "summed_ms": 1227.7560000000003,
+        "mean_ms": 0.678318232044199
+      },
+      "views_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "frames",
+        "input_is_per_sample_average": true,
+        "samples": 1810,
+        "summed_ms": 5563.339000000002,
+        "mean_ms": 3.0736679558011057
+      },
+      "ui_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "frames",
+        "input_is_per_sample_average": true,
+        "samples": 1810,
+        "summed_ms": 2701.181,
+        "mean_ms": 1.4923651933701658
+      },
+      "vis_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "frames",
+        "input_is_per_sample_average": true,
+        "samples": 1810,
+        "summed_ms": 468.094,
+        "mean_ms": 0.25861546961325965
+      },
+      "cust_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "frames",
+        "input_is_per_sample_average": true,
+        "samples": 1810,
+        "summed_ms": 2631.470999999999,
+        "mean_ms": 1.4538513812154692
+      },
+      "flush_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "frames",
+        "input_is_per_sample_average": true,
+        "samples": 1810,
+        "summed_ms": 8212.380000000001,
+        "mean_ms": 4.537226519337017
+      },
+      "fx_batch_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "frames",
+        "input_is_per_sample_average": true,
+        "samples": 1810,
+        "summed_ms": 3969.5800000000004,
+        "mean_ms": 2.1931381215469616
+      },
+      "fx_mesh_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "frames",
+        "input_is_per_sample_average": true,
+        "samples": 1810,
+        "summed_ms": 1927.3320000000003,
+        "mean_ms": 1.0648243093922654
+      },
+      "skel_render_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "frames",
+        "input_is_per_sample_average": true,
+        "samples": 1810,
+        "summed_ms": 837.4019999999999,
+        "mean_ms": 0.4626530386740331
+      },
+      "terrain_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "frames",
+        "input_is_per_sample_average": true,
+        "samples": 1810,
+        "summed_ms": 784.4499999999998,
+        "mean_ms": 0.43339779005524853
+      }
+    },
+    "extra": {
+      "extra_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "extra_frames",
+        "input_is_per_sample_average": true,
+        "samples": 1505,
+        "summed_ms": 10195.051,
+        "mean_ms": 6.774120265780731
+      },
+      "extra_profile_total_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "extra_profile_valid",
+        "input_is_per_sample_average": false,
+        "samples": 1505,
+        "summed_ms": 10192.022,
+        "mean_ms": 6.772107641196014
+      },
+      "extra_shadow_total_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "extra_shadow_samples",
+        "input_is_per_sample_average": false,
+        "samples": 1505,
+        "summed_ms": 3437.941,
+        "mean_ms": 2.284346179401993
+      },
+      "extra_reflect_total_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "extra_reflect_samples",
+        "input_is_per_sample_average": false,
+        "samples": 1008,
+        "summed_ms": 0.41400000000000026,
+        "mean_ms": 0.00041071428571428596
+      },
+      "extra_views_total_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "extra_views_samples",
+        "input_is_per_sample_average": false,
+        "samples": 1505,
+        "summed_ms": 3780.1760000000017,
+        "mean_ms": 2.51174485049834
+      },
+      "extra_ui_total_ms": {
+        "available": true,
+        "measured_rows": 60,
+        "selected_rows": 60,
+        "sample_count_column": "extra_ui_samples",
+        "input_is_per_sample_average": false,
+        "samples": 1505,
+        "summed_ms": 2148.535,
+        "mean_ms": 1.4275980066445182
+      }
+    },
+    "limits": [
+      "Regular fields are weighted by ordinary updates, including any skipped render.",
+      "Extra outer time uses all drawn extras; profiles use their own valid sample counts.",
+      "Nested scopes overlap: do not add render, shadow, views, FX, and mesh times.",
+      "Present scope is CPU call duration; it does not isolate GPU completion or display latency.",
+      "Row-average precision limits reconstructed sums; no individual frame timeline exists.",
+      "Admitted extras are selected by scheduling; refused-frame costs remain unknown.",
+      "These means do not predict 120 FPS, admission decisions, or future-frame deadlines."
+    ]
+  },
+  "limits": [
+    "Completed flip-enabled EndScene calls; not measured display refresh or GPU success.",
+    "Row timestamps quantize duration; reported FPS uses the nominal interval.",
+    "Percentiles are pooled histogram bounds, not exact gaps or averaged row percentiles.",
+    "The first gap may begin before the selected interval.",
+    "Matching shadow counts do not prove correct pixels or per-frame correspondence.",
+    "Confirm the saved-game scene, loaded version/settings, visual output and runtime log.",
+    "Simulation/network/input/camera invariants require separate evidence."
+  ],
+  "source": {
+    "path": "C:\\Users\\Hans\\AppData\\Local\\Temp\\bfme2perf-beta16-before-beta17-20261019-132723\\bfme2perf_timing.csv",
+    "sha256": "11c096adfba556d54a36d9aa898db609e175336fa19a66076fab924bbf092e79"
+  }
+}

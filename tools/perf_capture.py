@@ -13,6 +13,7 @@ import argparse
 import csv
 import hashlib
 import json
+import math
 import re
 from pathlib import Path
 
@@ -27,6 +28,16 @@ COUNT_COLUMNS = ('frames', 'present_calls', 'present_gaps', 'extra_frames',
                  'extra_profile_invalid', 'shadow_skipped') + VERIFY_COLUMNS
 BULK_COLUMNS = tuple(f'{prefix}bulk_followers_{methods}'
                      for prefix in ('', 'extra_') for methods in range(1, 7))
+REGULAR_TIMES = ('frame_avg_ms', 'logic_ms', 'render_ms', 'present_ms',
+                 'shadow_ms', 'reflect_ms', 'views_ms', 'ui_ms', 'vis_ms',
+                 'cust_ms', 'flush_ms', 'fx_batch_ms', 'fx_mesh_ms',
+                 'skel_render_ms', 'terrain_ms')
+EXTRA_TIMES = (('extra_ms', 'extra_frames', True),
+               ('extra_profile_total_ms', 'extra_profile_valid', False),
+               ('extra_shadow_total_ms', 'extra_shadow_samples', False),
+               ('extra_reflect_total_ms', 'extra_reflect_samples', False),
+               ('extra_views_total_ms', 'extra_views_samples', False),
+               ('extra_ui_total_ms', 'extra_ui_samples', False))
 
 
 def count(row, key):
@@ -107,6 +118,60 @@ def bulk_coverage(rows, totals):
     return report
 
 
+def pooled_time(rows, column, denominator, per_sample):
+    """CSV averages need count weighting; *_total_ms already contains sums."""
+    total = 0.0
+    samples = measured = 0
+    for row in rows:
+        if column not in row or denominator not in row:
+            continue
+        n = count(row, denominator)
+        value = row[column]
+        if value == '':
+            if n:
+                continue  # Unknown instrumentation is not a zero-cost sample.
+            ms = 0.0
+        else:
+            try:
+                ms = float(value)
+            except (TypeError, ValueError) as error:
+                raise ValueError(f'invalid timing {column}') from error
+            if not math.isfinite(ms) or ms < 0:
+                raise ValueError(f'invalid timing {column}')
+        if n == 0 and ms != 0:
+            raise ValueError(f'{column}: nonzero time without samples')
+        measured += 1
+        samples += n
+        total += ms * n if per_sample else ms
+    result = {'available': measured == len(rows), 'measured_rows': measured,
+              'selected_rows': len(rows), 'sample_count_column': denominator,
+              'input_is_per_sample_average': per_sample}
+    if result['available']:
+        result.update(samples=samples, summed_ms=total,
+                      mean_ms=total / samples if samples else None)
+    else:
+        result['reason'] = 'missing columns or unmeasured timing in selected rows'
+    return result
+
+
+def frame_costs(rows):
+    return {
+        'regular': {column: pooled_time(rows, column, 'frames', True)
+                    for column in REGULAR_TIMES},
+        'extra': {column: pooled_time(rows, column, denominator, per_sample)
+                  for column, denominator, per_sample in EXTRA_TIMES},
+        'limits': [
+            'Regular fields are weighted by ordinary updates, including any skipped render.',
+            'Extra outer time uses all drawn extras; profiles use their own valid sample counts.',
+            'Nested scopes overlap: do not add render, shadow, views, FX, and mesh times.',
+            'Present scope is CPU call duration; it does not isolate GPU completion or display latency.',
+            'Row-average precision limits reconstructed sums; no individual frame timeline exists.',
+            'Admitted extras are selected by scheduling; refused-frame costs remain unknown.',
+            'These means do not predict 120 FPS, admission decisions, or future-frame deadlines.',
+        ],
+    }
+
+
 def analyze(rows, start, seconds):
     if start < 0 or seconds <= 0:
         raise ValueError('start must be nonnegative and seconds positive')
@@ -153,6 +218,7 @@ def analyze(rows, start, seconds):
                           'max': max(row['present_calls'] for row in parsed)},
         'regular_frame_updates': totals['frames'],
         'extra_frames': extras,
+        'extra_draws_per_regular_update': extras / totals['frames'] if totals['frames'] else None,
         'pacing': {
             'gaps': gaps, 'histogram_counts': dict(zip(BIN_COLUMNS, bins)),
             'p50': quantile(bins, 50), 'p95': quantile(bins, 95),
@@ -169,6 +235,7 @@ def analyze(rows, start, seconds):
         },
         'verification_failures': {key: totals[key] for key in VERIFY_COLUMNS},
         'bulk_coverage': bulk_coverage(selected, totals),
+        'frame_costs': frame_costs(selected),
         'limits': [
             'Completed flip-enabled EndScene calls; not measured display refresh or GPU success.',
             'Row timestamps quantize duration; reported FPS uses the nominal interval.',

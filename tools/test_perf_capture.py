@@ -202,6 +202,55 @@ class CaptureTests(unittest.TestCase):
                 writer.writerows(rows)
             self.assertEqual(load_rows(path), rows)
 
+    def test_frame_cost_means_use_matching_counts_and_totals(self):
+        rows = capture(2)
+        rows[0].update(frames='10', frame_avg_ms='2', extra_frames='2',
+                       extra_ms='3', extra_profile_valid='2',
+                       extra_profile_total_ms='5')
+        rows[1].update(frames='30', frame_avg_ms='10', extra_frames='10',
+                       extra_ms='7', extra_profile_valid='10',
+                       extra_profile_total_ms='60')
+        rows[-1]['frame_avg_ms'] = '9999'  # Terminal row is excluded.
+        original = copy.deepcopy(rows)
+        report = analyze(rows, 100, 2)
+        costs = report['frame_costs']
+        self.assertEqual(costs['regular']['frame_avg_ms']['mean_ms'], 8)
+        self.assertAlmostEqual(costs['extra']['extra_ms']['mean_ms'], 76 / 12)
+        self.assertAlmostEqual(costs['extra']['extra_profile_total_ms']['mean_ms'], 65 / 12)
+        self.assertEqual(costs['extra']['extra_profile_total_ms']['summed_ms'], 65)
+        self.assertEqual(report['extra_draws_per_regular_update'], 0.3)
+        self.assertEqual(rows, original)
+
+    def test_missing_or_partial_times_are_unknown_not_zero(self):
+        rows = capture(2)
+        rows[0]['ui_ms'] = '2'
+        rows[1]['ui_ms'] = ''
+        costs = analyze(rows, 100, 2)['frame_costs']['regular']
+        self.assertFalse(costs['ui_ms']['available'])
+        self.assertEqual(costs['ui_ms']['measured_rows'], 1)
+        self.assertNotIn('mean_ms', costs['ui_ms'])
+        self.assertFalse(costs['frame_avg_ms']['available'])
+
+    def test_unobserved_extra_pass_has_no_mean(self):
+        rows = capture(2)
+        for row in rows:
+            row.update(extra_reflect_samples='0', extra_reflect_total_ms='')
+        cost = analyze(rows, 100, 2)['frame_costs']['extra']['extra_reflect_total_ms']
+        self.assertTrue(cost['available'])
+        self.assertEqual(cost['samples'], 0)
+        self.assertIsNone(cost['mean_ms'])
+
+    def test_invalid_timing_and_nonzero_time_without_samples_rejected(self):
+        for value in ('nan', 'inf', '-1', 'abc', '1e999'):
+            rows = capture(2)
+            rows[0]['frame_avg_ms'] = value
+            with self.assertRaisesRegex(ValueError, 'invalid timing'):
+                analyze(rows, 100, 2)
+        rows = capture(2)
+        rows[0].update(extra_reflect_samples='0', extra_reflect_total_ms='1')
+        with self.assertRaisesRegex(ValueError, 'without samples'):
+            analyze(rows, 100, 2)
+
 
 if __name__ == '__main__':
     unittest.main()

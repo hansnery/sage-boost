@@ -137,6 +137,14 @@ or blank instrumentation are reported as unavailable, not as zero coverage.
 These counts exclude leaders and do not establish successful draws, unique
 units, a fraction of all eligible records, or a saved-game speedup.
 
+The frame-cost section weights ordinary per-frame columns by ordinary
+updates, outer extra time by drawn extras, and extra profile totals by their
+own sample counts. Missing measurements are unavailable; a pass with no
+samples has no mean. Overlapping scopes are kept separate, and per-second
+averages cannot replay admission decisions or forecast 120 FPS. The extra
+draws/update ratio is an aggregate, not a distribution of extras per update.
+See the [preserved beta.16 cost report](../docs/benchmarks/2026-10-19-beta16-frame-costs.json).
+
 Choose the same settled troop-heavy scene, not the fastest window. The row at
 `start + seconds` must exist; the final shutdown row can be partial. Missing
 seconds, missing counters and inconsistent histograms are refused. The report
@@ -148,8 +156,9 @@ exact display refresh/GPU completion is outside this instrumentation.
 The report includes extra-shadow calls, completed shadow samples, invalid
 profiles and verification errors. No numeric field declares the overall goal
 complete: confirm the loaded version/settings, runtime log, same scene and
-visual behavior separately. Sixteen tests cover bursty 60 FPS,
-short/incomplete intervals, counter corruption and absent/mismatched shadows.
+visual behavior separately. Twenty-four tests cover bursty 60 FPS,
+short/incomplete intervals, counter corruption, absent/mismatched shadows,
+weighted cost aggregation, missing instrumentation and invalid timing values.
 
 ## Executable research
 

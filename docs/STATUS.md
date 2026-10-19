@@ -106,6 +106,31 @@ D3D9 savings do not qualify a backend switch. [Design/results](specs/2026-10-19-
 [report](benchmarks/2026-10-19-ui-upload.json). Beta.18 and the INI are intact;
 no new game capture has appeared since its installation.
 
+### Current cost evidence and next beta.18 capture
+
+The preserved beta.16 interval 1193..1252 now has a reproducible
+[frame-cost report](benchmarks/2026-10-19-beta16-frame-costs.json). Ordinary
+updates average 11.821 ms; complete admitted extras average 6.774 ms.
+Extra views/shadows/UI average 2.512/2.284/1.428 ms within their own scopes.
+Ordinary flip-enabled EndScene CPU calls average 0.047 ms; this does not
+measure GPU completion or prove the GPU is unconstrained. Nested scope
+times must not be added. Per-second averages cannot reconstruct scheduling
+decisions or predict a four-draw cycle in the user's scene.
+
+The existing capture has 1,505 extras across 1,810 ordinary updates and
+predates beta.18. No beta.18 gameplay capture is present. The pinned desktop
+shortcut's CheckOnly validation passes again without launching the game.
+The requested next test is a fixed troop-heavy view for at least 60 seconds
+using that shortcut and FrameView, followed by closing the game. This is
+justified by beta.18's substantive production-adapter improvement; the small
+UI upload screen does not justify an additional build. Preserve beta.18
+until that capture distinguishes remaining admission limits from render
+cost. Stable/Beta public releases remain unchanged; 120 FPS is unverified.
+
+`perf_capture.py` now reports count-weighted costs and distinguishes missing
+timings from unobserved passes. Its 24 counterexample tests pass, including
+unequal row weights, total-versus-average units and invalid numeric values.
+
 ### Beta.17 budget-gap recovery (2026-10-19)
 
 The candidate retains recovery credit across frames with insufficient budget,
