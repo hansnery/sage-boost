@@ -58,6 +58,28 @@ Accelerator has now run in isolated offline harnesses (below).
   resolve a reproducible multiplayer divergence only after one is observed.
   No promised FPS gain, deployment or new gameplay request from this review.
 
+### Producer capture profile (2026-10-18)
+
+The optional command profile separates effect recording, native traversal,
+publication/replay or queue waits, other group work and frame completion.
+It leaves the ordinary timing rounds uninstrumented and alternates each
+profiled pair with an unprofiled pair. No per-mesh clocks are added.
+
+On AotR's local image, both workloads/backends pass the previous pixel/state
+oracles. The 96 profile pairs show the worker's native traversal taking a
+median **3.17-3.34 ms per regular/extra pair**, versus **0.39-0.56 ms** for
+publication and slot waits. Traversal includes actual palette copying and
+the first CommitChanges, so that interval is not entirely removable. The
+probes themselves add a paired median **0.13-0.61 ms** across these tests.
+See the [report](benchmarks/2026-10-18-group-capture-profile.json).
+
+This supports testing bulk capture at the verified native loop boundary,
+preserving original ownership/events and refusing unsupported groups. Compare
+against both the native bulk baseline and the prior command worker; queue
+tuning alone does not address the largest observed producer interval. The
+original and command regressions pass 48 further image/state cases and 24
+faults. Installed beta.13 and its INI remain unchanged.
+
 ### Producer effects and batched device commands (2026-10-18)
 
 The next optional fixture keeps D3DX evaluation and native group control on

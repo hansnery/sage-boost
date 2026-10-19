@@ -23,10 +23,13 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--pilot', action='store_true')
     parser.add_argument('--commands', action='store_true', help='evaluate effects on producer and batch owned device commands')
+    parser.add_argument('--profile', action='store_true', help='profile coarse producer intervals after ordinary command timing rounds')
     args = parser.parse_args()
+    if args.profile:
+        args.commands = True
     guard()
     root = Path(tempfile.mkdtemp(prefix='sage-native-group-consumer-'))
-    exe = REPO/'perf/build'/('bench_group_commands.exe' if args.commands else 'bench_group_consumer.exe')
+    exe = REPO/'perf/build'/('bench_group_profile.exe' if args.profile else 'bench_group_commands.exe' if args.commands else 'bench_group_consumer.exe')
     shutil.copy2(exe, root/exe.name)
     if args.backend == 'dxvk':
         shutil.copy2(args.install/'d3d9.dll', root/'d3d9.dll')
@@ -37,7 +40,7 @@ def main():
                *(args.install/name for name in ('Shaders.big', 'msvcr71.dll', 'd3dx9_27.dll', 'd3d9.dll')),
                REPO/'tools/test_mesh_draw_contract.py', REPO/'tools/test_group_contract.py', BASELINE]
     report = {'base_commit': subprocess.check_output(['rtk', 'git', 'rev-parse', 'HEAD'], text=True).strip(),
-              'backend': args.backend, 'commands': args.commands, 'directory': str(root), 'inputs_sha256': {str(p.resolve()): sha(p) for p in sources},
+              'backend': args.backend, 'commands': args.commands, 'profile': args.profile, 'directory': str(root), 'inputs_sha256': {str(p.resolve()): sha(p) for p in sources},
               'images': [], 'runs': [], 'game_launched': False, 'runtime_changed': False,
               'sample_columns': ['round', 'native_bulk_complete_ms', 'direct_capture_complete_ms',
                                  'worker_capture_complete_ms', 'saved_vs_native_ms']}
@@ -86,6 +89,15 @@ def main():
                     result['samples'] = rows
                     result['medians_ms_per_pair'] = {name: statistics.median(r[i] for r in rows)
                                                       for i, name in enumerate(report['sample_columns']) if i}
+                    if args.profile:
+                        prof = [[float(x) for x in s.split(',')[1:]] for s in text.splitlines() if s.startswith('profile,')]
+                        assert len(prof) == 24 and all(len(r) == 9 for r in prof)
+                        assert sorted((r[0], r[1]) for r in prof) == [(r, m) for r in range(12) for m in (3, 4)]
+                        assert all(abs(r[2]-sum(r[3:8])) < 0.001 and all(x >= 0 for x in r[2:]) for r in prof)
+                        result['profile_columns'] = ['round', 'mode', 'complete_ms', 'effect_record_ms', 'native_traversal_ms',
+                                                     'publish_replay_or_wait_ms', 'other_group_ms', 'outside_groups_ms',
+                                                     'paired_unprofiled_complete_ms']
+                        result['profiles'] = prof
                 else:
                     expected = ('COMMAND DEVICE AUDIT: forbidden producer call 119' if fault == 8 else
                                 'COMMAND DEVICE AUDIT: forbidden producer call' if fault == 5 else

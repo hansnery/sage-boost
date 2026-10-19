@@ -199,3 +199,31 @@ workloads and the full plugin suite pass without skips. Source, binary,
 input and log hashes are preserved in
 `../benchmarks/2026-10-18-group-command-batches.json`. Installed beta.13 and
 INI hashes remain unchanged.
+
+## Attribute producer command-capture cost
+
+Before changing native dispatch, add an optional profiling build of the
+command fixture. Measure coarse producer intervals for effect preparation,
+BeginPass, native mesh traversal through EndPass, End/recording, publication
+including queue waits, and total group/frame completion. Keep the existing
+uninstrumented timing rounds and pixel/state/fault checks intact. Profiling
+intervals are diagnostic wall time under contention, not additive CPU time
+or a gameplay estimate. Do not put per-mesh clocks into the hot loop.
+
+- [x] Build an optional `bench_group_profile.exe` and extend the runner to
+  capture twelve regular/extra profile pairs for direct and worker modes.
+- [x] Run both workloads and both backends with the local AotR image,
+  retaining input hashes, original pixel oracles and raw uninstrumented
+  timings. Audit interval accounting and quantify profiling overhead.
+- [x] Use the measured dominant interval to select the next experiment;
+  preserve the installed beta and make no new gameplay request from a
+  diagnostic result alone.
+
+The worker spends a median 3.17-3.34 ms per pair in native traversal, versus
+0.39-0.56 ms publishing/waiting. Alternating instrumented/uninstrumented
+pairs put the probe delta at 0.13-0.61 ms across modes/workloads. Traversal
+includes useful palette copies and first CommitChanges; do not assume the
+whole interval can be removed. Next test qualified bulk capture at the
+native loop boundary. Both backends retain prior image/state oracles;
+original/command regressions pass 48 cases and 24 faults. Details are in
+`../benchmarks/2026-10-18-group-capture-profile.json`.

@@ -471,3 +471,31 @@ packet path retains 60 exact cases, six real resets, two zero-reference
 device releases and eighteen faults. Both material-filter workloads and
 the full plugin suite pass without skips; installed binary/INI hashes are
 unchanged.
+
+## Coarse producer capture profile
+
+`bench_group_profile.exe` adds optional coarse QPC intervals to the command
+fixture. Its ordinary baseline/direct/worker timing rounds run with probes
+disabled. A subsequent twelve rounds per mode alternate profiled and
+unprofiled regular/extra pairs, warming each before measuring. There are no
+per-mesh clock calls. The reported intervals partition producer wall time:
+effect evaluation/recording, native traversal between BeginPass and EndPass,
+publication (including direct replay or worker slot waits), other native
+group work, and work outside the groups. The fixed 288-group workload is a
+multiple of the sixteen-group batch size; assertions enforce that the
+publication subtraction is valid and that the partitions sum to completion.
+
+The AotR image passes both lit/shadow workloads on native D3D9 and installed
+DXVK, retaining previous pixel/state oracles. Across the worker runs, native
+traversal is 3.17-3.34 ms per pair, versus 0.39-0.56 ms for publication/waits.
+Traversal includes palette copies and first-palette CommitChanges. The
+profile's paired median overhead ranges from 0.13 to 0.61 ms across all
+modes/workloads; these diagnostic intervals are not a speedup prediction.
+The original and command regressions pass 48 image/state cases and 24 faults.
+See [captured evidence](../benchmarks/2026-10-18-group-capture-profile.json).
+
+The next candidate should reduce repeated native per-mesh dispatch at the
+already-verified loop boundary, while retaining original native event and
+method ownership behavior and ordinary fallback. Compare its complete work
+against both the prior command worker and native bulk reference. No runtime
+or installed change follows from the profile alone.

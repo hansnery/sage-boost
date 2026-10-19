@@ -45,6 +45,17 @@ static unsigned gc_depth_max;
 #endif
 static unsigned gc_worker_mode(void){return gc_mode==2 || gc_mode==4;}
 
+#ifdef PF_GROUP_PROFILE
+enum { GCP_BEGIN,GCP_PASS,GCP_TRAVERSE,GCP_END_PASS,GCP_END,GCP_PUBLISH,GCP_GROUP,GCP_FRAME,GCP_COUNT };
+static unsigned gc_profiling;
+static LONGLONG gc_profile_ticks[GCP_COUNT],gc_traversal_start;
+#define GC_PROFILE_START(name) LONGLONG name=gc_profiling?ticks():0
+#define GC_PROFILE_STOP(name,kind) do { if(gc_profiling)gc_profile_ticks[kind]+=ticks()-(name); } while(0)
+#else
+#define GC_PROFILE_START(name) ((void)0)
+#define GC_PROFILE_STOP(name,kind) ((void)0)
+#endif
+
 static int gc_pixels_equal(const unsigned *expected,const unsigned *actual)
 {
     for(unsigned i=0;i<RT*RT;i++) {
@@ -157,7 +168,12 @@ static DWORD WINAPI gc_run(void *unused)
 
 static void gc_send(GcRequest *r,unsigned wait)
 {
-    if(!gc_worker_mode()){gc_execute(r);return;}
+    GC_PROFILE_START(publish_start);
+    if(!gc_worker_mode()){
+        gc_execute(r);
+        if(r->kind==GC_COMMANDS)GC_PROFILE_STOP(publish_start,GCP_PUBLISH);
+        return;
+    }
     unsigned index=gc_sent++%2;
     GcSlot *slot=&gc_slots[index];gc_wait(slot->done);
     REQUIRE(ResetEvent(slot->done));slot->request=*r;
@@ -171,6 +187,7 @@ static void gc_send(GcRequest *r,unsigned wait)
 #endif
     REQUIRE(ReleaseSemaphore(gc_available,1,NULL));
     if(wait){gc_wait(slot->done);r->result=slot->request.result;r->passes=slot->request.passes;}
+    if(r->kind==GC_COMMANDS)GC_PROFILE_STOP(publish_start,GCP_PUBLISH);
 }
 
 static int __attribute__((thiscall)) gc_begin(void *self,int *passes,int flags)
@@ -179,6 +196,7 @@ static int __attribute__((thiscall)) gc_begin(void *self,int *passes,int flags)
         material_fixture_identity(ng_current_group&1);
         return ng_begin(self,passes,flags);
     }
+    GC_PROFILE_START(begin_start);
     ng_state();REQUIRE(self==&g_method && flags==0xFFFF && g_method.refs>=2);
     memset(&gc_group,0,sizeof gc_group);
     gc_group.kind=GC_BEGIN;gc_group.group=ng_current_group;
@@ -211,45 +229,60 @@ static int __attribute__((thiscall)) gc_begin(void *self,int *passes,int flags)
     else gc_failures++;
     if(gc_fault==1 && ok)*passes=0; /* Cached/incorrect reply must lose output. */
     if(gc_fault==2 && !ok){*passes=1;ok=1;}
+    GC_PROFILE_STOP(begin_start,GCP_BEGIN);
     return ok;
 }
 static void __attribute__((thiscall)) gc_pass(void *self,unsigned pass)
 {
     if(!gc_mode){ng_begin_pass(self,pass);return;}
+    GC_PROFILE_START(pass_start);
     ng_state();REQUIRE(self==&g_method && pass==0 && gc_group.passes==1);
 #ifdef PF_GROUP_COMMANDS
     if(gc_mode>=3){gc_command_capture=1;material_fixture_pass_begin(pass);gc_command_capture=0;}
+#endif
+    GC_PROFILE_STOP(pass_start,GCP_PASS);
+#ifdef PF_GROUP_PROFILE
+    if(gc_profiling)gc_traversal_start=ticks();
 #endif
 }
 static void __attribute__((thiscall)) gc_end_pass(void *self)
 {
     if(!gc_mode){ng_end_pass(self);return;}
+#ifdef PF_GROUP_PROFILE
+    GC_PROFILE_STOP(gc_traversal_start,GCP_TRAVERSE);
+#endif
+    GC_PROFILE_START(end_pass_start);
     ng_state();REQUIRE(self==&g_method && gc_group.count);
 #ifdef PF_GROUP_COMMANDS
     if(gc_mode>=3) {
         HR(gc_command_emit(CMD_DRAW,gc_group.count,gc_group.extra,gc_group.palette,
                            gc_group.count*sizeof(gc_group.palette[0]),NULL));
         gc_command_capture=1;material_fixture_pass_end();gc_command_capture=0;
-        memset(gc_group.palette,0xA5,sizeof gc_group.palette);return;
+        memset(gc_group.palette,0xA5,sizeof gc_group.palette);
+        GC_PROFILE_STOP(end_pass_start,GCP_END_PASS);return;
     }
 #endif
     gc_group.kind=GC_DRAW_END;gc_send(&gc_group,0);
     memset(gc_group.palette,0xA5,sizeof gc_group.palette); /* Publication owns all values. */
+    GC_PROFILE_STOP(end_pass_start,GCP_END_PASS);
 }
 static void __attribute__((thiscall)) gc_end(void *self)
 {
     if(!gc_mode){ng_end(self);return;}
+    GC_PROFILE_START(end_start);
     ng_state();REQUIRE(self==&g_method);
 #ifdef PF_GROUP_COMMANDS
     if(gc_mode>=3) {
         gc_command_capture=1;material_fixture_close();gc_command_capture=0;
         HR(gc_command_emit(CMD_RESTORE,0,0,NULL,0,NULL));
         if(++gc_commands.groups==CMD_GROUPS)gc_command_flush();
+        GC_PROFILE_STOP(end_start,GCP_END);
         return;
     }
 #endif
     if(gc_group.kind!=GC_DRAW_END){gc_group.kind=GC_END_ONLY;gc_send(&gc_group,0);}
     /* End is ordered in the preceding owned DRAW_END command. */
+    GC_PROFILE_STOP(end_start,GCP_END);
 }
 void __attribute__((thiscall)) gc_capture_render(fake_mesh *mesh,fake_method *method,int count)
 {
@@ -277,6 +310,7 @@ static void gc_empty_frame(void) {}
 
 static void gc_frame(unsigned mode,unsigned phase,unsigned check,unsigned fail)
 {
+    GC_PROFILE_START(frame_start);
     gc_mode=mode;gc_extra=phase!=0;gc_epoch=phase>=2;gc_fail=fail;
     GcRequest request={0};request.kind=GC_CLAIM;gc_send(&request,1);
     REQUIRE(bench_scope_owner_idle(gc_producer));
@@ -286,6 +320,7 @@ static void gc_frame(unsigned mode,unsigned phase,unsigned check,unsigned fail)
     if(!mode){material_fixture_epoch(gc_epoch);material_fixture_clock(gc_epoch*33);ng_frame_mode(gc_native_optimized);bench_extra_mode(gc_extra);}
     else bench_native_group_mode(0);
     request.kind=GC_FRAME;request.extra=gc_extra;request.check=check;gc_send(&request,1);
+    GC_PROFILE_START(groups_start);
     for(unsigned group=0;group<GROUPS;group++) {
         ng_current_group=group;ng_begin_fail=fail && group==7;
         ng_group_call(ng_target(!mode && gc_native_optimized),ng_renderer,records[group],records[group]+sizeof records[0]);
@@ -294,6 +329,7 @@ static void gc_frame(unsigned mode,unsigned phase,unsigned check,unsigned fail)
 #ifdef PF_GROUP_COMMANDS
     if(mode>=3)gc_command_flush();
 #endif
+    GC_PROFILE_STOP(groups_start,GCP_GROUP);
     request.kind=GC_FINISH;gc_send(&request,1);
 #ifdef PF_GROUP_COMMANDS
     REQUIRE(!gc_command_references && !gc_commands.count && !gc_command_capture);
@@ -301,6 +337,7 @@ static void gc_frame(unsigned mode,unsigned phase,unsigned check,unsigned fail)
     if(!mode)bench_extra_mode(0);
     REQUIRE(!ng_group_abi_errors && g_method.refs==refs && bench_scope_owner_idle(gc_producer));
     if(mode)REQUIRE(gc_captured-captured==(GROUPS-(fail?1:0))*GROUP_SIZE);
+    GC_PROFILE_STOP(frame_start,GCP_FRAME);
 }
 
 int main(int argc,char **argv)
@@ -388,6 +425,32 @@ int main(int argc,char **argv)
         }
         printf("sample,%u,%.4f,%.4f,%.4f,%.4f\n",round,elapsed[0],elapsed[1],elapsed[2],elapsed[0]-elapsed[2]);
     }
+#ifdef PF_GROUP_PROFILE
+    for(unsigned round=0;round<12;round++)for(unsigned offset=0;offset<2;offset++) {
+        unsigned mode=3+(round+offset)%2;
+        REQUIRE(bench_no_game());double unprofiled=0;
+        for(unsigned order=0;order<2;order++) {
+            unsigned enabled=(round+order)%2;
+            gc_frame(mode,0,0,0);
+            if(enabled)memset(gc_profile_ticks,0,sizeof gc_profile_ticks);
+            gc_profiling=enabled;
+            LONGLONG start=ticks();gc_frame(mode,0,0,0);gc_frame(mode,1,0,0);
+            if(!enabled)unprofiled=(ticks()-start)*1000.0/qpf;
+            gc_profiling=0;
+        }
+        /* End includes full-batch publication. GROUPS is a batch multiple,
+         * so the final explicit flush is empty in this fixed workload. */
+        REQUIRE(GROUPS%CMD_GROUPS==0 && gc_profile_ticks[GCP_END]>=gc_profile_ticks[GCP_PUBLISH]);
+        LONGLONG effects=gc_profile_ticks[GCP_BEGIN]+gc_profile_ticks[GCP_PASS]+
+            gc_profile_ticks[GCP_END_PASS]+gc_profile_ticks[GCP_END]-gc_profile_ticks[GCP_PUBLISH];
+        LONGLONG other=gc_profile_ticks[GCP_GROUP]-effects-gc_profile_ticks[GCP_TRAVERSE]-gc_profile_ticks[GCP_PUBLISH];
+        REQUIRE(other>=0 && gc_profile_ticks[GCP_FRAME]>=gc_profile_ticks[GCP_GROUP]);
+        printf("profile,%u,%u,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f\n",round,mode,
+            gc_profile_ticks[GCP_FRAME]*1000.0/qpf,effects*1000.0/qpf,
+            gc_profile_ticks[GCP_TRAVERSE]*1000.0/qpf,gc_profile_ticks[GCP_PUBLISH]*1000.0/qpf,
+            other*1000.0/qpf,(gc_profile_ticks[GCP_FRAME]-gc_profile_ticks[GCP_GROUP])*1000.0/qpf,unprofiled);
+    }
+#endif
     gc_mode=2;GcRequest end={0};end.kind=GC_CLAIM;gc_send(&end,1);end.kind=GC_STOP;gc_send(&end,1);
     gc_wait(gc_worker);DWORD exit_code;REQUIRE(GetExitCodeThread(gc_worker,&exit_code) && !exit_code && gc_sent==gc_received);
     CloseHandle(gc_worker);CloseHandle(gc_available);for(unsigned i=0;i<2;i++)CloseHandle(gc_slots[i].done);

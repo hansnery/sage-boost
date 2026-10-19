@@ -1,0 +1,3184 @@
+{
+  "base_commit": "dd4c0eb21eecd797c6ee771355daeecab7c77249",
+  "purpose": "Attribute producer command-capture cost without per-mesh clocks",
+  "runtime_changed": false,
+  "installed_changed": false,
+  "game_launched": false,
+  "result": {
+    "profiled_processes": 4,
+    "profile_pairs": 96,
+    "paired_unprofiled_pairs": 96,
+    "profile_correctness_cases": 48,
+    "regression_correctness_cases": 48,
+    "regression_faults": 24,
+    "prior_pixel_oracles_preserved": true,
+    "partition_checks_passed": true
+  },
+  "profile_summaries": [
+    {
+      "backend": "dxvk",
+      "workload": "lit",
+      "mode": "direct",
+      "medians_ms_per_pair": {
+        "complete_ms": 9.0712,
+        "effect_record_ms": 2.5260999999999996,
+        "native_traversal_ms": 3.2578,
+        "publish_replay_or_wait_ms": 1.67095,
+        "other_group_ms": 0.32835000000000003,
+        "outside_groups_ms": 1.26465,
+        "paired_unprofiled_complete_ms": 8.8601
+      },
+      "paired_profile_delta_median_ms": 0.2579999999999991
+    },
+    {
+      "backend": "dxvk",
+      "workload": "lit",
+      "mode": "worker",
+      "medians_ms_per_pair": {
+        "complete_ms": 8.23255,
+        "effect_record_ms": 2.6079,
+        "native_traversal_ms": 3.335,
+        "publish_replay_or_wait_ms": 0.5567500000000001,
+        "other_group_ms": 0.34425,
+        "outside_groups_ms": 1.4340000000000002,
+        "paired_unprofiled_complete_ms": 7.8906
+      },
+      "paired_profile_delta_median_ms": 0.6123000000000003
+    },
+    {
+      "backend": "dxvk",
+      "workload": "shadow",
+      "mode": "direct",
+      "medians_ms_per_pair": {
+        "complete_ms": 8.39255,
+        "effect_record_ms": 1.6734499999999999,
+        "native_traversal_ms": 3.2449500000000002,
+        "publish_replay_or_wait_ms": 1.54995,
+        "other_group_ms": 0.3335,
+        "outside_groups_ms": 1.5711,
+        "paired_unprofiled_complete_ms": 8.0117
+      },
+      "paired_profile_delta_median_ms": 0.2511999999999994
+    },
+    {
+      "backend": "dxvk",
+      "workload": "shadow",
+      "mode": "worker",
+      "medians_ms_per_pair": {
+        "complete_ms": 7.30985,
+        "effect_record_ms": 1.70255,
+        "native_traversal_ms": 3.1716499999999996,
+        "publish_replay_or_wait_ms": 0.46585,
+        "other_group_ms": 0.34240000000000004,
+        "outside_groups_ms": 1.5685,
+        "paired_unprofiled_complete_ms": 6.994
+      },
+      "paired_profile_delta_median_ms": 0.3134999999999999
+    },
+    {
+      "backend": "native",
+      "workload": "lit",
+      "mode": "direct",
+      "medians_ms_per_pair": {
+        "complete_ms": 11.4047,
+        "effect_record_ms": 2.5682,
+        "native_traversal_ms": 3.258,
+        "publish_replay_or_wait_ms": 4.514200000000001,
+        "other_group_ms": 0.34465,
+        "outside_groups_ms": 0.7133499999999999,
+        "paired_unprofiled_complete_ms": 11.28145
+      },
+      "paired_profile_delta_median_ms": 0.1780999999999997
+    },
+    {
+      "backend": "native",
+      "workload": "lit",
+      "mode": "worker",
+      "medians_ms_per_pair": {
+        "complete_ms": 7.92545,
+        "effect_record_ms": 2.6992000000000003,
+        "native_traversal_ms": 3.2626999999999997,
+        "publish_replay_or_wait_ms": 0.46635000000000004,
+        "other_group_ms": 0.35775,
+        "outside_groups_ms": 1.11015,
+        "paired_unprofiled_complete_ms": 7.937749999999999
+      },
+      "paired_profile_delta_median_ms": 0.12785000000000002
+    },
+    {
+      "backend": "native",
+      "workload": "shadow",
+      "mode": "direct",
+      "medians_ms_per_pair": {
+        "complete_ms": 10.14565,
+        "effect_record_ms": 1.62965,
+        "native_traversal_ms": 3.1717,
+        "publish_replay_or_wait_ms": 4.2508,
+        "other_group_ms": 0.34595,
+        "outside_groups_ms": 0.68125,
+        "paired_unprofiled_complete_ms": 9.933250000000001
+      },
+      "paired_profile_delta_median_ms": 0.1741999999999999
+    },
+    {
+      "backend": "native",
+      "workload": "shadow",
+      "mode": "worker",
+      "medians_ms_per_pair": {
+        "complete_ms": 6.7928999999999995,
+        "effect_record_ms": 1.7382,
+        "native_traversal_ms": 3.19085,
+        "publish_replay_or_wait_ms": 0.3948,
+        "other_group_ms": 0.35109999999999997,
+        "outside_groups_ms": 1.07565,
+        "paired_unprofiled_complete_ms": 6.6774000000000004
+      },
+      "paired_profile_delta_median_ms": 0.14419999999999966
+    }
+  ],
+  "inputs_sha256": {
+    "C:\\repositories\\sage-boost\\tools\\bench_group_consumer.py": "5f7e6443f46f7b9cd63c7687b2a69551a61f6f82d9b9ebd9638229e374751b3d",
+    "C:\\repositories\\sage-boost\\perf\\Makefile": "3c9a60d6b0d58e9d70e220017bdaa4fcfb3c9878cc7b2fd5fa9a24e306d9e94a",
+    "C:\\repositories\\sage-boost\\perf\\build\\bench_group_profile.exe": "bb67634377d6531f955bb01c36a55151bb82433faaf503263c5f93f19169986b",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_ambient.c": "eeafb5c3384b3be34cd7d26e6b9a4b9360d25c54f5cc29448cfe9e990bb381ae",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_batch_worker.c": "b21ef972248ed80cc01fa993c0c9010d2990741c41bc823823366213f193a8f9",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_chain_screen.c": "8f774941ca7f20d6300421869b6aa10bc4e7bf4359752dd0a03f8d14231254f2",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_dispatch.c": "3a28461c0d6ddf7fb200a8714c7c5efbc13886b414eb2a8ed432b4667fb076b1",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_effect.c": "22c8ca0efe9754b04bb4b290731881efeda923d187b4ef4642225f9015b33207",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_external_barriers.c": "38c984b3706451c99a0602404833e3d60a92fc25e26ea02616974633b57f1ab3",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_external_draw.c": "395becd17693a9d9f3923d0ad88fd84dbc0e9b8b7259f6b1e2028e789e089a27",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_external_readbacks.c": "ac29410a70f9dc6d13d50d418150117f96cba015d90dd69227b02e96c72024a9",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_external_rt.c": "efa7a270c770b78e034f730a79d1781fa987fdd7dbef7fa733b4e9f5b725db52",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_group_consumer.c": "8976b08b5aebcfa1a14d34745bb38f960b390f06da0b64bf9c147515cbd794a3",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_material_queue.c": "fe33d04874dc6aa17de77767766da8677c125511430912cd430708a8e7452f25",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_native_decode.c": "c0b98089bd85b4ed8b4ea797823dd164925a2fc62c1514cfd3f2eefceafa3fc1",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_native_fx_gpu.c": "28f063726e8c042b50f8712f1451c9b0e712ed395d6e2891301c7da16f2ae49a",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_native_group_gpu.c": "4e567d99f0c284d9ba42341628c5e05ef1cf8dd5a636cd2ed5df853545864a87",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_native_insert.c": "599038e4ddecbc51897d7f92109c07a40eb6f176b8c0797263344729983fa0c1",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_native_insert_gpu.c": "46e638263796ac6433f9f83238c65fa15c1c85b7ae7b75b64dad7e3abd8df74a",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_native_leader.c": "8a2b9ea7696016e598883b270b7e02cb43b6d3e5d8d7befe8a18339fc0d2a012",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_native_matrix_sources.c": "0b79201ad0f0907b85824b47f10f6e6fa027d49e169a16fe2168310c16dcd0ce",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_native_queue_gpu.c": "86c5bf5ff81ffac08f9dfbf44685e53867f3c448287373ee905ac1930c623963",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_native_sort.c": "3c71309b30f100442cac663b44e9ab7b4520d39ebd18bfc9385cf6e94213fd77",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_queue_cleanup.c": "d30e62ada8567c962d8af38bbd92cc5df0235c2f0118db68a688d4755718dd17",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_retained.c": "f90ea726b19dc01e856bbbc06d8c3afaa5934276cdab5c7825160e4c8993f473",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_scopes.c": "37c6044eaece12db1696774c5213f63b4413be753fc14fc024a744457dda5309",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_typed_effect.c": "10d61e97c8fbcc3acec7bea12473b4505085562c3bf17667ec328b42677e172a",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_verify_window_gpu.c": "51896f07220260d61d33cb247fd00d6dd9ed3df1298d9d41cc1e7eb319442fc2",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_worker_reset.c": "8996a2888e323fbdf00da97007754817e0952f9ac405b1aff17085cacb924b76",
+    "C:\\repositories\\sage-boost\\perf\\tests\\effect_filter_bench.c": "85e8da48832e61011a5315ef27b22674b1ab5aa429d20d89e5a8ff83d467cbc4",
+    "C:\\repositories\\sage-boost\\perf\\tests\\fps_extra_bench.c": "f5b7cb49d42c61b78f8f6f2e8d5736bbed726f080b4971b6976dea1886e8323e",
+    "C:\\repositories\\sage-boost\\perf\\tests\\inst_dispatch_engine.c": "c6e0a5476f00e9adc9432cdfde13e9897eec66750e4a623e920aeae78350a23b",
+    "C:\\repositories\\sage-boost\\perf\\tests\\inst_gpu_fault_engine.c": "e18b0532a4b2eec8e673a2167c9a3dd4daad5a45eb95cdcde8c3178529c59127",
+    "C:\\repositories\\sage-boost\\perf\\tests\\inst_leader_engine.c": "ede7709889eae344458e27a3aff2ff79b917e3faf84395ffb0c469ea2ef89d00",
+    "C:\\repositories\\sage-boost\\perf\\tests\\inst_native_fallback_engine.c": "d0655f765be51c342bc6bfb69696b01518b82bb3132edd11f1718ce9c023b03a",
+    "C:\\repositories\\sage-boost\\perf\\tests\\inst_native_leader_engine.c": "115579827aab592c9fd336b1f5ecb323ae4f95ff62609bc06c91a788d8a18115",
+    "C:\\repositories\\sage-boost\\perf\\tests\\inst_recovery_engine.c": "102891a5a3550c1528e421bad966f90d60c03cf813d937a7c786ab5ba798f8e1",
+    "C:\\repositories\\sage-boost\\perf\\tests\\inst_recovery_fault_engine.c": "84cea455bc694403ff846e2a608848d2a80e226e9afdc7562a83f73179d0a19d",
+    "C:\\repositories\\sage-boost\\perf\\tests\\inst_retained_engine.c": "b1d3d466ca49a621626607ec32c0223d18bd6b6fa0cadce6fb2b9bea36481135",
+    "C:\\repositories\\sage-boost\\perf\\tests\\inst_verify_old_engine.c": "e905f623f14511e0a73d02d75bb95f7139422fc50913117160ab1e501cd20070",
+    "C:\\repositories\\sage-boost\\perf\\tests\\material_fixture.c": "5770f7e62e2f92158f605f4ca30ae9dc6fe8b83d5cac98753cc0e8adecf9fc60",
+    "C:\\repositories\\sage-boost\\perf\\tests\\native_group_gpu_bridge.c": "d36929500f59d6e87fd308be5c753eab6402e190935761c4461d4c7ae5291941",
+    "C:\\repositories\\sage-boost\\perf\\tests\\native_pose_capture.c": "3a944554c8da4906e8b1f966dfce88bb72be6d619becedda38a611233ab09d34",
+    "C:\\repositories\\sage-boost\\perf\\tests\\native_source_capture.c": "8bc0f55e1bbd7e39ddf74c2bbe320872de38e3ea25266c0e0edc694d8a67e840",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_btn.c": "b68a6163ef9b964e3995b3e73de3cf5f2cdc84c7732d119c43753161955ca2cd",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_bulk_lifetime.c": "5132729487718e6f4a932336b354fdb87f01e36c260064e89731d3aa73b0cb56",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_bulkcontract.c": "a0c164a0c6f8ae7eb3f90be33a7bf2fedc33b2c8292ed9489db979ab87c9aaa0",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_catchup.c": "459c813bd80a93c635c288207f1a837e5efd591086fb8910d43416e66b5545c0",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_chain_recovery.c": "c0e14888fa4cbaa0b264fbc612f30f7b2c4ccf39d91f031ae58596518bb65d3b",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_config.c": "c1560d243ee798cf621f8a9b16b51e3dea5dd7104fc595a34e5266463bcb661c",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_declcache.c": "639d09e147445ff954b5e0a0dbbd698a97ff19dba440a8c39ef272b98b8314a9",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_extraprofile.c": "54de0a1036eaa8c864a1d0697f2d00ee0c24d27a93a66009ab60ed599ed397dc",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_fps.c": "dcd2e8249f36ec17f5f6bac94a08404c46be0db0edeb2a4162db68b257e0ed31",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_fx_lifecycle.c": "af65d5587131cee7bd3a026a1f2de1bfacf153bb904f3f0c4578aa716905cbf6",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_hooks.c": "360a81e971ce78b403c117554ec5e2638d4c79807cbedf53b70188b99990d93a",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_inst.c": "4c313a28d3b70e437fb4c00a448ff4a3c2c11aafb123c4ef18a4e7613215bdd1",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_inst_ownership.c": "e55c5b57da03ed167fec5bea8af380b98b8b69ede0e524cca2a0e7184d53294d",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_inst_ownership_gpu.c": "b6540a9912cdccc8af27e32ecf6df3382761872e2a447a5baf6c75d195c2bca8",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_inst_verify_policy.c": "009e82d52dbe8304fa0c885c9817d3bd60f7a97d1399fc20a86252f711f10062",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_instsubmit.c": "b1c57b4fec63eac28c153bc0793a21a9f2984f8b4169a7ce553b10faa7f6579b",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_lights.c": "1ad83a6d1ae8c5973efae76f8dce8b1f44a9980abbc4710801e93b09b7a1614d",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_load.c": "119656f359bef923a7bf83360053716c46107f162658916176f3d883d24604e4",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_native_events.c": "52f44de6535e71c91f8ddc2514f66ee0ab62a4f5f85abc0d00773fc7a4e1e03b",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_native_fx_recovery.c": "b174a01a32364f6d5673a1f5c2bcf99913887560069b259cb384e06528967b1e",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_native_gpu_faults.c": "79519217b494aeae8d688f65551028922b7edd97cb325fb51427d3a140b299bd",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_native_gpu_recovery.c": "34e0d3b5dff56969ff7cb376327d43a376da98311d109ff2757e7a6bcaa1df28",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_native_group.c": "1e53ec701a37405a4715790772c09db31a0a618137ea595b3de477de77d9829b",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_native_group_fallback.c": "aa2cdcf6cd4b80d07996f7539db44d9a0acbe29b2a380f9653a5d2f66c4d7700",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_native_mesh.c": "bcb60b86e7678c40d7ac7ceab893c7353491293c4c99c019ba818196f449f763",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_presentgap.c": "1d62fc30db92c688e873d543548bad084f6113a2df2d88f9e40178acb37d478d",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_queueinsert.c": "89a520a1fb5c5f82704dd8d7a00decd083a495bc94bc47b1b020a386d3b1833f",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_queuesort.c": "1ae982d2818e8bf784f9acbca698eb3873181cfc3a084e62825e930ab99105b4",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_reflect.c": "c21f8d88069befd0a7404493aeb57f8728e9eef032c9ab0ff9c84e3f42967739",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_row.c": "216a028bdb08f36764691bcf8b7f777838c1ccfe8cf916fdef5da274fd5bca95",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_shadowpass.c": "e520f4bf6dcaa5d33bd7d8d4098b1bf9d020e21938352e1c2f1fa95a6d63c7df",
+    "C:\\repositories\\sage-boost\\perf\\tests\\test_sites.c": "49f47f178f1600d2007a9bb92260d61fcf26b23f3c9396c81901eec2c1016b67",
+    "C:\\repositories\\sage-boost\\perf\\tests\\timing_bulk_bench.c": "2ea8a7a8aa3451a1cca4b5b00e14de261556f2ba1c5dc3a762788200b827d3b1",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_guard.h": "46082a3fef62b0e26ea0f16b6294171af964e0cb952c7dd7c8ef9a509cd8adf6",
+    "C:\\repositories\\sage-boost\\perf\\tests\\effect_filter_bench.h": "7ead7da86b62cea939f3c92993d6faeb22a07d6994b4efb082e80775d4d79759",
+    "C:\\repositories\\sage-boost\\perf\\tests\\effect_source_audit.h": "8bc5b9e69f7de2007b956a2573537b011c16250fabe22e9a7e742555f98f16df",
+    "C:\\repositories\\sage-boost\\perf\\tests\\group_commands.h": "59128877b7f968be830f013747b11768219d4451cecd465f35584954912847c9",
+    "C:\\repositories\\sage-boost\\perf\\tests\\material_packet.h": "ec2a5b8361bfa8ea81d5e4cc7a4df369ea1d5b3d28bc21cb08f14e786563d168",
+    "C:\\repositories\\sage-boost\\perf\\tests\\native_chain_fixture.h": "6e593e4dd1f7bd92c65ca32d243a8afbab244b56a5beecb41fef9afe6fe0226d",
+    "C:\\repositories\\sage-boost\\perf\\tests\\native_contract_image.h": "457f8e568ef4aec488e6d52ad70ec5dcb265864ad538ace75fcfe6d9a5420b70",
+    "C:\\repositories\\sage-boost\\perf\\tests\\native_fx_image.h": "301f59f9a89510fbe97bcb07ba17ffcc44b97bc3a55861875981875e31505331",
+    "C:\\repositories\\sage-boost\\perf\\tests\\native_group_image.h": "f21ec0d96410997c16b6217411b09e663d15c4d32373d79afc30a5aa784a6055",
+    "C:\\repositories\\sage-boost\\perf\\tests\\native_mesh_image.h": "9094254a8b3c8bfd359286b8a8c9f32e16538be6f81a38738ed464a276818dc6",
+    "C:\\repositories\\sage-boost\\perf\\tests\\native_shared_arena.h": "7a78922f05f7a3fb3e127f532cad67828c791dfac43b25b16650e1843af69cd7",
+    "C:\\repositories\\sage-boost\\perf\\tests\\packet_consumer.h": "fc19535cd484c02533181c5f2a52136d647ffa0c3dbac1513aef5be67bcb8373",
+    "C:\\repositories\\sage-boost\\perf\\tests\\pose_packet.h": "9196ccbebd05d9e81594cf1db6add1cc7087599dcc1b62cdcb592bf5732648e2",
+    "C:\\repositories\\sage-boost\\perf\\tests\\source_packet.h": "578ddb8a890fcb850e1c78a4feedd29517d44ebf75c14cd0daf109d789e2694b",
+    "C:\\repositories\\sage-boost\\perf\\src\\btnclock.c": "48f2e5727c8675d6e0f1cc30e4f7ea799e1a1a1960a79def2b824412c43f5c88",
+    "C:\\repositories\\sage-boost\\perf\\src\\bulk.c": "4d98d69e0d6d53e362298395ac559f9c974d25833cffc9d008474fe4850594ef",
+    "C:\\repositories\\sage-boost\\perf\\src\\bulkcontract.c": "f0b8a24a60c92681145de51bba5780ced5b33e6792e0c3dc50a7efedd4b547bc",
+    "C:\\repositories\\sage-boost\\perf\\src\\bulkpatch.c": "64fb1ade8c6c048b8f5d0d69c621520c16a7d3c001d5f5ad044bef86ff65955c",
+    "C:\\repositories\\sage-boost\\perf\\src\\catchup.c": "6e113340d7549959a42ef6057a5cb75d65b5a5d69b84896352a5288f370a1236",
+    "C:\\repositories\\sage-boost\\perf\\src\\clock.c": "fc7943c103f92ccd935d5fbce6caed80707a023f532ba9b203c9c1644991fa91",
+    "C:\\repositories\\sage-boost\\perf\\src\\config.c": "a357ada1715e8da39432b9259ca80b208fb5230fc83c3fadbdc192035132f98f",
+    "C:\\repositories\\sage-boost\\perf\\src\\csvrow.c": "a95749b532c5de7370ff85ac318d5e9fe67fc5bc9455497315e6be8dd08b0182",
+    "C:\\repositories\\sage-boost\\perf\\src\\cusites.c": "9716c383a51234d9200297b101821fe828d7bdb001e9e3d793b7383f6fb13e87",
+    "C:\\repositories\\sage-boost\\perf\\src\\declcache.c": "5181600462ca1d5ef9753c2e8521ccba983c3f7c877b6c9d77b59ec8124788e6",
+    "C:\\repositories\\sage-boost\\perf\\src\\extraprofile.c": "bd17ca197e54f0620c4cc7ca604af0495cb3355fa1777be5a6363f469b378b41",
+    "C:\\repositories\\sage-boost\\perf\\src\\fps.c": "e2c0417b35af0a18982f97a42f2b4ebb1c02723a291ca29f6154b190279ba12c",
+    "C:\\repositories\\sage-boost\\perf\\src\\fpsites.c": "6dcffe972ebfe722508ef1328d4bf14f57216e071ebea005003649ba5096f6b5",
+    "C:\\repositories\\sage-boost\\perf\\src\\fpsmath.c": "c2cf46bb09432f8d88b5fd48c1024b8dc659c7ab253f29b67e4c019dc9b47faf",
+    "C:\\repositories\\sage-boost\\perf\\src\\fxguard.c": "c8139e848daf50a67525fe01ed6881ad66b77050023b4c271c2a18b0254bb3e9",
+    "C:\\repositories\\sage-boost\\perf\\src\\inst.c": "6e46306917ce2d036afe3d6aa25326233b327b8e3b95ec3f3c1ece7fbaecda2a",
+    "C:\\repositories\\sage-boost\\perf\\src\\instsubmit.c": "419b97dd748333803acb9b90f0cea333ccc62e7caeed446bd70183615bc66423",
+    "C:\\repositories\\sage-boost\\perf\\src\\lights.c": "0ba6e303b971dadbb8dd477eace4485f02292467eb7cc9e33f2a7d7103efd795",
+    "C:\\repositories\\sage-boost\\perf\\src\\log.c": "8dfcc254eece72f18fd897df29121fa0e44b3bc0896155aff64956ae64b3d00d",
+    "C:\\repositories\\sage-boost\\perf\\src\\ltsites.c": "dc118cbdaa53cb4c51d242ad83958b14ef1ec8d4be24197789a71702b9a70924",
+    "C:\\repositories\\sage-boost\\perf\\src\\main.c": "7a872b1636d318d0bfe8eb7769d076f1cc7bfac750112030006a488e05ac2264",
+    "C:\\repositories\\sage-boost\\perf\\src\\nativecontract.c": "525bbfe7ead5faf89b4647a880d7bd64d8c30cd6479493f0aedc3d27950e87b0",
+    "C:\\repositories\\sage-boost\\perf\\src\\notice.c": "e0da2549865344f261bb5fc473a68b04e8e9f8667e50d9e98993412e0589c3d0",
+    "C:\\repositories\\sage-boost\\perf\\src\\passflag.c": "1403ee510a421d28ece3ce89ae1fa739da77755038d4594dbba4cd1f566bc8ba",
+    "C:\\repositories\\sage-boost\\perf\\src\\patch.c": "04f5c6bcfec826ad9107dab045fbdcbcc177ce357e4e9aa882371cd03065f8c3",
+    "C:\\repositories\\sage-boost\\perf\\src\\presentgap.c": "ea339026d82dc427b69b34a016916ed34b3f05e5d49b9c401f455846e003becb",
+    "C:\\repositories\\sage-boost\\perf\\src\\queueinsert.c": "1822a1ca62030719d889f87b23c79c45deba6e25e9bdf81072f0a3cbe74c638b",
+    "C:\\repositories\\sage-boost\\perf\\src\\queuesort.c": "d2578d7d91c0c21a7bd0317f81da6f5083d9b6b711c7d9bd64e85c10792772fc",
+    "C:\\repositories\\sage-boost\\perf\\src\\reflect.c": "7bd4652b344c8db9257753194d449395617205fb06ed043441a64a1c280a9b90",
+    "C:\\repositories\\sage-boost\\perf\\src\\rt.c": "e2a0c495b12b37c42d1c701da2c6175c8cb5f44c01dd1337032f42b1f215496d",
+    "C:\\repositories\\sage-boost\\perf\\src\\scan.c": "0377ec8218a8547792cfb67fa758c7189ba7e58461a55fa29a295793363e266a",
+    "C:\\repositories\\sage-boost\\perf\\src\\shadowpass.c": "f3c331a37537fc075711714ee76ab1d5de4a55db0f139200ff26f3d5a9fa4270",
+    "C:\\repositories\\sage-boost\\perf\\src\\sites.c": "71937f52c7b7c2a573ad79cb5dbd90fd5285e0fb9f70f1ba9d771c340c3d0e28",
+    "C:\\repositories\\sage-boost\\perf\\src\\spsites.c": "d9ac2da8fd5b6afbc4604918ade70e11c3d407fa3efba756dbbce0060a49fd6e",
+    "C:\\repositories\\sage-boost\\perf\\src\\stubs.c": "5f9eb64ed0bad6f75ca60eca013eae4ad09aeb70d577a0b5b7582a8889e63fdc",
+    "C:\\repositories\\sage-boost\\perf\\src\\timing.c": "10afb2c80351b2dcda427a2d7e624bdffe6a0467fddb68971a9ea3642229f80a",
+    "C:\\repositories\\sage-boost\\perf\\src\\uistate.c": "b23868cdc386711fc1878eef00ddba12da6bb36ea3ab45a997f3355f65d13a93",
+    "C:\\repositories\\sage-boost\\perf\\src\\btnclock.h": "227f7042b2eb8ed271cc3dfdd6be700bb830b6cd2f037b587c171729a8542a31",
+    "C:\\repositories\\sage-boost\\perf\\src\\bulk.h": "0755a142893fde777a3239cc521123dae86b35eb42fefce2c0d2087d831bf2a1",
+    "C:\\repositories\\sage-boost\\perf\\src\\bulkcontract.h": "5a73614c81686e35fc35a40f267d9a858a360a0252ea2792a99e388c48a6ab4c",
+    "C:\\repositories\\sage-boost\\perf\\src\\bulkcontract_table.h": "2e81ff3f396103e32a001a76064f33af51b02c8112fcd8733172d499ba065cb4",
+    "C:\\repositories\\sage-boost\\perf\\src\\catchup.h": "18787d31181951ebd8bebeac0601cab9c28f3cab6a4473c46b76ced1d965c8e2",
+    "C:\\repositories\\sage-boost\\perf\\src\\clock.h": "6b055a4a8fe95a8b52a20145a674699aaada84af008067af23c026518cc21b02",
+    "C:\\repositories\\sage-boost\\perf\\src\\config.h": "4ba6e53109f8544f2850c0628c47aea0866736cd78cb6fe5bb655ead2293bf83",
+    "C:\\repositories\\sage-boost\\perf\\src\\csvrow.h": "5c019220f13cfa4e5abb0e38683d0354f1cf888b693175a003a77cea6c85c231",
+    "C:\\repositories\\sage-boost\\perf\\src\\cusites.h": "56d8c4ac4d8ab4d51aadb3cf3d33d73699811f8e80eb5283413c7dec30283372",
+    "C:\\repositories\\sage-boost\\perf\\src\\d3d9vt.h": "3986e61da91f93d3617cafbeb087a3b0a644d73ded80dbaaac3350c1b25efe89",
+    "C:\\repositories\\sage-boost\\perf\\src\\declcache.h": "303f515772da972b5a2a909479ca62ee68d649863e4edcc1e85a9a1e7864aec4",
+    "C:\\repositories\\sage-boost\\perf\\src\\depthcmp.h": "ff40c85100b6fb3c095df011a74a203e7a19a7b6aa1f04f1187b3b008a27f090",
+    "C:\\repositories\\sage-boost\\perf\\src\\extraprofile.h": "9d26112a54316d3b58044a1da8d26c8fc2af97725c323d3bceae439d7c324f30",
+    "C:\\repositories\\sage-boost\\perf\\src\\fps.h": "022f422e1a5eca5d43b65f537d32511e09e3b4afb5d6f7e2fa6cacabda606bcc",
+    "C:\\repositories\\sage-boost\\perf\\src\\fpsites.h": "30b26ead06683360c8446c4cc58d03035226a0273604a8f2bc01994449cb5755",
+    "C:\\repositories\\sage-boost\\perf\\src\\fpsmath.h": "2627e9adf6169f31aad388035183da39e1d7866c54401f9177ee6f5b9cdb46ad",
+    "C:\\repositories\\sage-boost\\perf\\src\\fxguard.h": "bf0ae812e4e77eb8c21d9152f8a96e34bd3a0a344f352524f5548962d4a4c984",
+    "C:\\repositories\\sage-boost\\perf\\src\\inst.h": "2076a17673ffdfe2edbf491de20df6563f4c4a4aafc5d002a5ebfe2c30f3d6cb",
+    "C:\\repositories\\sage-boost\\perf\\src\\inst_shaders.h": "fa55800397c77dd4b65ccd0be3881520d94281d7147218cbd85ab6a70d6e6e5a",
+    "C:\\repositories\\sage-boost\\perf\\src\\instbulk.h": "984951df6add51b36d08be78a2d754cf065de8b60969a2665b02df61b2e14cd1",
+    "C:\\repositories\\sage-boost\\perf\\src\\instsubmit.h": "0595f61ecb32a586e3349dae9060f9d161068e23a51f331e193e55ec23954fa6",
+    "C:\\repositories\\sage-boost\\perf\\src\\lights.h": "c1c4103f91454c2155aa3c311f84fb3163fba0a2479e5ec895bfd95180622a21",
+    "C:\\repositories\\sage-boost\\perf\\src\\log.h": "866c8bad842ba15ed7a67f0854838a5fa296c83a34de0f4d39558f032a404df5",
+    "C:\\repositories\\sage-boost\\perf\\src\\ltsites.h": "49442ed8ae8e371439f4dd16c761f28587fbe533e7b706accc0045b6e3d7caf9",
+    "C:\\repositories\\sage-boost\\perf\\src\\nativecontract.h": "a3773c8eb3745df31c1f849c8f88250e7e10088d02f991df227b5fb4436abe2a",
+    "C:\\repositories\\sage-boost\\perf\\src\\notice.h": "0b355623a9fa7ea9e623d2bd0b1d3ab9794dd09d1446d01e13b9d4c36d2658ce",
+    "C:\\repositories\\sage-boost\\perf\\src\\passflag.h": "14fc6e1edcc2bce1515ddee2680915b5be556e11c14789b723aa9b93d2589aeb",
+    "C:\\repositories\\sage-boost\\perf\\src\\patch.h": "bd0a6d0f6097ca9e1c919608341129600b10560b28265a984bc4e465b0cd5c84",
+    "C:\\repositories\\sage-boost\\perf\\src\\presentgap.h": "d043c26811ca5c35fb7253e724c83fc39f777da13429f2bb6d9dfb5b85291596",
+    "C:\\repositories\\sage-boost\\perf\\src\\queueinsert.h": "8f69d218d43d20607fa6f57104f2e47accb46d4a6ddeb360f17af4a37595f372",
+    "C:\\repositories\\sage-boost\\perf\\src\\queueinsert_table.h": "d8b9bd3a8098b038c68919c90e490a69795eb96781b69d3b98b76e70efcae57e",
+    "C:\\repositories\\sage-boost\\perf\\src\\queuesort.h": "e451b33e7ea3efc69ec02c9cb5973826def3b7fb7596233a4602e2c3e4ccef94",
+    "C:\\repositories\\sage-boost\\perf\\src\\queuesort_table.h": "c16bb361f9feb35cc012791e88c00c161f3c89dcfd3453e41785cb500bfd44fb",
+    "C:\\repositories\\sage-boost\\perf\\src\\reflect.h": "c539ca8225e9a43e81e7209660524c4c0683c0dc8da6bb7cd5cef23b550c2895",
+    "C:\\repositories\\sage-boost\\perf\\src\\scan.h": "f577a60dce8dd729d97f1db14462745f0e09e4c0e6f3c6ab743c34fa0485d550",
+    "C:\\repositories\\sage-boost\\perf\\src\\shadowfx_table.h": "53dfd4d0a89395411af5213827b2805e1debe1ba77118a492d30c04eecc98021",
+    "C:\\repositories\\sage-boost\\perf\\src\\shadowpass.h": "290e4b4cd8df3ab5b6a0dc5b52ce1cc0a719ac7f3c1b225c36975e72139d8d48",
+    "C:\\repositories\\sage-boost\\perf\\src\\sites.h": "1d54993af316a3d607d25cea23e2c88108a3ffcf00973f947a050dcb88b98aae",
+    "C:\\repositories\\sage-boost\\perf\\src\\spsites.h": "75f10e89601d2c5336cdcccb5d5821214cbe6700b8904e414607356a1185b656",
+    "C:\\repositories\\sage-boost\\perf\\src\\stubs.h": "26f4c55f8aa6f382bc6f0d546939cd2fffc468cfc01e515a84626fbee97811b6",
+    "C:\\repositories\\sage-boost\\perf\\src\\timing.h": "0ae4b3aed9ccb3b0c34df10d107dbd5af56e84908f9bd8de90878dd24556eb65",
+    "C:\\repositories\\sage-boost\\perf\\src\\uistate.h": "71b529cadebe454f308de69096e97f68e25b0512f66490245380249c82d04e6d",
+    "C:\\repositories\\sage-boost\\perf\\build\\btnclock.o": "5dbb5533dcfd4d20f8af23fc813bf9a4e11718f7efc6747345784e0f71106554",
+    "C:\\repositories\\sage-boost\\perf\\build\\bulk.o": "c3daa5e6a651daf507bd9b572146b2c5a7388939cb36d401b7a6d8b7a6b1d66c",
+    "C:\\repositories\\sage-boost\\perf\\build\\bulk_chain_screen.o": "dbafab7582fd69bdb5acb8199ba9b118fa4cc827e198bed8b7ded034adab6e8f",
+    "C:\\repositories\\sage-boost\\perf\\build\\bulkcontract.o": "d11dc7f6f2ccc1bd39316ba3a341a5b9389c1932957e2da6cbf621b7ca1c69b0",
+    "C:\\repositories\\sage-boost\\perf\\build\\bulkpatch.o": "124d45b6f31e1f34919cfc7d983c4d91b70d466c4c2e842807d9767ee8d7430f",
+    "C:\\repositories\\sage-boost\\perf\\build\\catchup.o": "3bb83f393743dfb08c50835bc59d59749e3292bdc50d41090e3cc28a50ea7d8b",
+    "C:\\repositories\\sage-boost\\perf\\build\\clock.o": "14628a7fc38e261dd99ef723b22efd08cbb2b2517c2fd13dc993d551aebf7abd",
+    "C:\\repositories\\sage-boost\\perf\\build\\config.o": "37d4e470d27f37a6db336b4a2bb2fdb99aaaf9fe2331381cd191bc78beb93b29",
+    "C:\\repositories\\sage-boost\\perf\\build\\csvrow.o": "964f8854733f75a8fe2c761fd0fea524e3c757fc0c28bd510a46f748d2742046",
+    "C:\\repositories\\sage-boost\\perf\\build\\cusites.o": "8058679c2f67073dc28d1ccff1161fb26e95452a1bff77cd07393227cd290fa8",
+    "C:\\repositories\\sage-boost\\perf\\build\\declcache.o": "9c03db2b527773c6468c813d2c554e403efe5bb5f19eac7a806b3e322432ea22",
+    "C:\\repositories\\sage-boost\\perf\\build\\effect_filter_bench.o": "f68d9f1c26cebd9f57e84e2cc1ea5fa18aaaa54a1601ac655dab082fb7b7d23f",
+    "C:\\repositories\\sage-boost\\perf\\build\\extraprofile.o": "7c910f105813a0f1efe1a91f09f9077ba2ac5fdfe22ac9b5f2923add7122eb8a",
+    "C:\\repositories\\sage-boost\\perf\\build\\fps.o": "6fdf1a6900847a5e158507ea2b234070b5da957223afd6c93c5c704120014aa0",
+    "C:\\repositories\\sage-boost\\perf\\build\\fps_extra_bench.o": "5e473e63f697020499c20398e7056d476ee74aba69fa53266567e0559d1b783e",
+    "C:\\repositories\\sage-boost\\perf\\build\\fpsites.o": "813926b61f15f6f55717443aef322cd55e0e93e14fa16cfb46449ce72b3a5920",
+    "C:\\repositories\\sage-boost\\perf\\build\\fpsmath.o": "6b47356e8dd85e5a71cf981bff398709acf06305d14ebefdefeacf0ef270f7af",
+    "C:\\repositories\\sage-boost\\perf\\build\\fxguard.o": "20f8f930b37b40018c49c5f53126a01d9da883c2a7b8a1f42aa362ff6f5c6dc5",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst.o": "5e02fd0dd9933cc911ccb30e605eba6468c687676ca7dcf753070a8006868018",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst_dispatch_engine.o": "9b41a1f38e37848d7aea454c4f0b0dfb282c83d07f1aa5c3247b8dddf008b88f",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst_gpu_fault_engine.o": "f0a7883e890425f9fb35e4d68b23a32ea3a266a271cca2b9c70ac16800267c39",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst_leader_engine.o": "8820119aafe0c69f4f039f8d553966571cf43d01909302621b21af7f18349b0a",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst_native_fallback_engine.o": "7f80014fd7dc478d6f2c7b4ecc7263d275260f73b90f41c3ba5dd3fa723ac0f7",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst_native_leader_engine.o": "e8b4e18904667d7ee1a20795b338cd0b56c8cf90bae0ace1713d767362a085c2",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst_recovery_engine.o": "ae330ae4dafc54e9c3557908bc026a84d4dc0ab7b6d371bd274c5a775a457ee5",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst_recovery_fault_engine.o": "de2044f8704fa9ac86a32e1056969d70be8ea8e5b869e37621a797110fddf93d",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst_retained_engine.o": "5add50c94ae9bae3823fc9358cb89d4b4844a8dc5af80e1006fadf20a65e20db",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst_runtime_fallback_engine.o": "1d8990f61b9d8661918babb9b314053d4ff6a821dd2c3c6e16d8462b70ab4e1a",
+    "C:\\repositories\\sage-boost\\perf\\build\\inst_verify_old_engine.o": "e3bb8b95b08a49bade8d290febe2745774a97d68775d1568017d7be414ceb78a",
+    "C:\\repositories\\sage-boost\\perf\\build\\instsubmit.o": "f90f195f108e703c2611dc175395f1e03378e667d096290b064e92a13927b5da",
+    "C:\\repositories\\sage-boost\\perf\\build\\lights.o": "be9fbae7b81417f11c4efd25f7c5a7d8adde77d3aac139cb270f53a18733d217",
+    "C:\\repositories\\sage-boost\\perf\\build\\log.o": "b75e4ca21d62049be336edb758327fbe6a7b5e7c8509e78044dc18bd6d7c979f",
+    "C:\\repositories\\sage-boost\\perf\\build\\ltsites.o": "38fe46efe3c4fc6055c5b96c32f8befd0e60ef61f9133f9e663e2fc9b9e5764a",
+    "C:\\repositories\\sage-boost\\perf\\build\\main.o": "67cbd06f7bc8e52e3ba670aa3b62fb19007af6ef1c400ca9e6832cfbf77a3558",
+    "C:\\repositories\\sage-boost\\perf\\build\\material_fixture.o": "95ef54071e8259c201ec7b5e6137c30a6261dc81372418d3c66a5b6541e6c4a5",
+    "C:\\repositories\\sage-boost\\perf\\build\\native_group_gpu_bridge.o": "4063ff312474a3acaada2f20569ff008852d2f5a1b51565c9cc05b5ce361756d",
+    "C:\\repositories\\sage-boost\\perf\\build\\native_insert_fixture.o": "6603918b070804757a297ca5cb0ac642d8beec685bdfcb49a4d600b1d5015219",
+    "C:\\repositories\\sage-boost\\perf\\build\\native_pose_capture.o": "db81d5eac78f538ab5d8979dcdcb04bdce92039b62cc48ccb274883f232045a9",
+    "C:\\repositories\\sage-boost\\perf\\build\\native_sort_fixture.o": "51382f318e871b964b1fad3ecebe755b5ac4aa7879be61c083c9e6a0a75f5b9e",
+    "C:\\repositories\\sage-boost\\perf\\build\\native_source_capture.o": "aad2ffdaea92a5c525b7a8e1b5573dba6796cd257ea91ad2d7749066359f0ba9",
+    "C:\\repositories\\sage-boost\\perf\\build\\nativecontract.o": "5fec2349db2ade207fd397349ea534f284d95e8effa6815d029568e531345e56",
+    "C:\\repositories\\sage-boost\\perf\\build\\notice.o": "8936a26e26c372f6d2c5a7a1d751658de20ff14d7b1b4c38f0645933dbe97616",
+    "C:\\repositories\\sage-boost\\perf\\build\\passflag.o": "6d62a8041f59039b6623f8213f2e74c9146081c26c2b3e090c2ffc95f12ede33",
+    "C:\\repositories\\sage-boost\\perf\\build\\patch.o": "1e1da760443ebcb1cb10db1188a16e42e6f87b9ce1f72ba912e05f655eeacc69",
+    "C:\\repositories\\sage-boost\\perf\\build\\presentgap.o": "9a81a3542d3c3bd025f841e81b1ccefc3678aa17d4ca3770bb38e568a27e3e4a",
+    "C:\\repositories\\sage-boost\\perf\\build\\queueinsert.o": "75d34d3c06fd1fba6047a013219aba1ed9ab1c3f9338f6d2bfc9b7471426dee0",
+    "C:\\repositories\\sage-boost\\perf\\build\\queuesort.o": "e6c04449f30f8fc100256598ad0b116cb8b75f01ed2b58f773aeb02d7f327fd2",
+    "C:\\repositories\\sage-boost\\perf\\build\\reflect.o": "919642b9c326fe1cdc5c64f1d221c0401260089b11ab7bfd795558bbe9e5aaab",
+    "C:\\repositories\\sage-boost\\perf\\build\\rt.o": "4cec2b277adc439c2eb481fe6f1073047c469aa80114bf3559e760da40dbbe82",
+    "C:\\repositories\\sage-boost\\perf\\build\\scan.o": "6228d4a360328a4c636432fe7e4ce3406236a63639caff23d0443806fca2c1f0",
+    "C:\\repositories\\sage-boost\\perf\\build\\shadowpass.o": "f3bdfdf706d8ba9b6fce572ea3a71ed208023d3d0dd1e158f2effc545c0acb0d",
+    "C:\\repositories\\sage-boost\\perf\\build\\sites.o": "e195418a6fed93aed32baba2102b44676c4a76dedc786273c1df810facb851c5",
+    "C:\\repositories\\sage-boost\\perf\\build\\spsites.o": "5cf3cf012afd00d59c67a79a52fd1d2f018191868d7de059ef7fe7234039b47e",
+    "C:\\repositories\\sage-boost\\perf\\build\\stubs.o": "b6629e027c2d493891fe24431b50deacce67bfb18c9b2162059c40ca49d732cf",
+    "C:\\repositories\\sage-boost\\perf\\build\\timing.o": "dff900a7788d821baa2bcbd92f9ca4bbd43f4174aa0d09f845e84a1df2d4f472",
+    "C:\\repositories\\sage-boost\\perf\\build\\timing_bulk_bench.o": "bd65fe73488d3f44f7ea81d5bc6e99457d7304b5a40039ed1ffddbfd531483df",
+    "C:\\repositories\\sage-boost\\perf\\build\\uistate.o": "072b9968db0c0ee195f8759c388f26026658c69d62563f0919156e430bc8cb9f",
+    "C:\\repositories\\sage-boost\\perf\\build\\version.o": "1d67acfa00674dddce328839ed3d1ab0ca849d2e7280cc03bc959aa910577d2d",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big": "353c835b0e77387b322a094b62477b35c34e8e1cea6d75f5844a20b9e36b091b",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll": "8094af5ee310714caebccaeee7769ffb08048503ba478b879edfef5f1a24fefe",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\d3dx9_27.dll": "a70d571cd675c97c9eeb4a234dba1d667ffb54ec3bb14defb36b3e2f605ae257",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\d3d9.dll": "00bc142e98ddad1e334a4d88fa630038e092b0758b3d79e295172b181a4c772d",
+    "C:\\repositories\\sage-boost\\tools\\test_mesh_draw_contract.py": "0d5d51695ff904a05a38001a5cf70ceaafd0fb8902e1833aba4db593348878af",
+    "C:\\repositories\\sage-boost\\tools\\test_group_contract.py": "83d296949d492571a63c825f8c7a7f4de0ba933485c4daacd4afb54e02f9e359",
+    "C:\\repositories\\Open-BFME-2\\baselines\\bfme2\\workshop-vanilla-1.06\\files\\game.dat": "f008b587570bad693981dc7218588c81d192a1e064b0f7f861539c51156a7640",
+    "C:\\repositories\\sage-boost\\perf\\build\\bench_group_commands.exe": "dc31e4d7cd1db1fd18c75f1506eed894a6ef83d186f3cd24f526858664628315",
+    "C:\\repositories\\sage-boost\\perf\\build\\bench_group_consumer.exe": "044076d4716a36c7930d934711af6665d14426affb4a31f7d97d6ac9fbcfd137"
+  },
+  "installed_sha256": {
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\mss\\bfme2perf.asi": "976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd",
+    "C:\\Jogos\\AgeoftheRing\\rotwk\\mss\\bfme2perf.ini": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b"
+  },
+  "reports": [
+    {
+      "path": "perf/build/group-profile-dxvk-final.json",
+      "sha256": "1ebbdb7cc1c47f687fd79ea1dd5d14422463baa26e1f803bdb86603997d63891",
+      "report": {
+        "base_commit": "dd4c0eb21eecd797c6ee771355daeecab7c77249",
+        "backend": "dxvk",
+        "commands": true,
+        "profile": true,
+        "directory": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-unfvoxm6",
+        "images": [
+          {
+            "path": "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+            "sha256": "035da15c626af6cd1663d1886deea605464ec6776f2c5f1d24570c2be6d73e61",
+            "mesh_manifest": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-unfvoxm6\\mesh-0.txt",
+            "mesh_sha256": "51fd33a156702e42085342da627852336395abcc2388c304d6f349b27ff72fd2",
+            "group_manifest": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-unfvoxm6\\group-0.txt",
+            "group_sha256": "8af4dc39975bef8d356be6373c845e57fbaa9f16cfe87d525eeed917d1ad6438"
+          }
+        ],
+        "runs": [
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-unfvoxm6\\bench_group_profile.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "lit",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-unfvoxm6\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-unfvoxm6\\group-0.txt",
+              "0"
+            ],
+            "returncode": 0,
+            "fault": 0,
+            "seconds": 3.8535327999852598,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-unfvoxm6\\0-lit-0.log",
+            "log_sha256": "a51b716e86ae19fe42ebdb90950b62f7796a7bf2dcca513801999966330ac28c",
+            "correctness": "NATIVE GROUP COMMANDS: 12 image/state cases; lit pixels and state exact, shadow max difference=0/2^24 (existing tolerance=256); actual Begin reply, alternating effect identity, copied palette poisoning and native method ownership pass",
+            "audit": "COMMAND AUDIT: effects=3456 callbacks=113850 restored_groups=3450 outstanding_refs=0; no producer device/state-block calls; all audit wrappers removed before timing",
+            "batches": "COMMAND BATCHES: 4104; maximum_bytes=178432; groups_per_batch=16; retained references balanced",
+            "results": "RESULTS: successful_begins=65658 failed_begins=6 captured_meshes=1641450 worker_commands=2396; no game or runtime hook",
+            "oracles": [
+              "GROUP ORACLE: phase=0 covered=17382 changed=0 hash=2DBB90E5",
+              "GROUP ORACLE: phase=1 covered=17456 changed=21750 hash=975B7245",
+              "GROUP ORACLE: phase=2 covered=17456 changed=17848 hash=6B1AB7C5"
+            ],
+            "samples": [
+              [
+                0.0,
+                5.5457,
+                12.9624,
+                14.5707,
+                -9.025
+              ],
+              [
+                1.0,
+                5.7906,
+                9.7038,
+                8.4903,
+                -2.6997
+              ],
+              [
+                2.0,
+                5.5539,
+                9.0256,
+                7.756,
+                -2.2021
+              ],
+              [
+                3.0,
+                5.7939,
+                8.7957,
+                7.979,
+                -2.1851
+              ],
+              [
+                4.0,
+                5.4401,
+                8.6063,
+                7.6882,
+                -2.2481
+              ],
+              [
+                5.0,
+                5.8897,
+                8.8675,
+                9.4497,
+                -3.56
+              ],
+              [
+                6.0,
+                5.6587,
+                12.0949,
+                7.9734,
+                -2.3147
+              ],
+              [
+                7.0,
+                6.3345,
+                8.6231,
+                8.1095,
+                -1.775
+              ],
+              [
+                8.0,
+                5.9237,
+                8.5696,
+                8.4208,
+                -2.4971
+              ],
+              [
+                9.0,
+                5.4974,
+                8.5691,
+                7.7206,
+                -2.2232
+              ],
+              [
+                10.0,
+                5.7288,
+                8.8612,
+                8.1663,
+                -2.4375
+              ],
+              [
+                11.0,
+                5.9742,
+                8.625,
+                9.1411,
+                -3.1669
+              ]
+            ],
+            "medians_ms_per_pair": {
+              "native_bulk_complete_ms": 5.7597000000000005,
+              "direct_capture_complete_ms": 8.82845,
+              "worker_capture_complete_ms": 8.1379,
+              "saved_vs_native_ms": -2.3761
+            },
+            "profile_columns": [
+              "round",
+              "mode",
+              "complete_ms",
+              "effect_record_ms",
+              "native_traversal_ms",
+              "publish_replay_or_wait_ms",
+              "other_group_ms",
+              "outside_groups_ms",
+              "paired_unprofiled_complete_ms"
+            ],
+            "profiles": [
+              [
+                0.0,
+                3.0,
+                8.9753,
+                2.511,
+                3.2497,
+                1.6524,
+                0.3088,
+                1.2534,
+                8.6875
+              ],
+              [
+                0.0,
+                4.0,
+                8.0969,
+                2.6076,
+                3.2443,
+                0.4493,
+                0.306,
+                1.4897,
+                8.3884
+              ],
+              [
+                1.0,
+                4.0,
+                8.2578,
+                2.6015,
+                3.3724,
+                0.559,
+                0.3466,
+                1.3783,
+                7.511
+              ],
+              [
+                1.0,
+                3.0,
+                8.8161,
+                2.5529,
+                3.2571,
+                1.6795,
+                0.2896,
+                1.037,
+                9.0514
+              ],
+              [
+                2.0,
+                3.0,
+                8.9652,
+                2.5136,
+                3.2137,
+                1.6373,
+                0.3247,
+                1.2759,
+                8.9549
+              ],
+              [
+                2.0,
+                4.0,
+                8.9303,
+                2.5941,
+                3.9138,
+                0.434,
+                0.3312,
+                1.6572,
+                8.044
+              ],
+              [
+                3.0,
+                4.0,
+                8.3249,
+                2.7255,
+                3.3693,
+                0.6372,
+                0.3525,
+                1.2404,
+                7.7258
+              ],
+              [
+                3.0,
+                3.0,
+                9.1563,
+                2.5137,
+                3.3122,
+                1.6752,
+                0.3402,
+                1.315,
+                8.9039
+              ],
+              [
+                4.0,
+                3.0,
+                8.7118,
+                2.5188,
+                3.2212,
+                1.6601,
+                0.296,
+                1.0157,
+                8.8722
+              ],
+              [
+                4.0,
+                4.0,
+                7.945,
+                2.5932,
+                3.259,
+                0.5545,
+                0.2964,
+                1.2419,
+                7.8068
+              ],
+              [
+                5.0,
+                4.0,
+                8.2073,
+                2.6082,
+                3.3007,
+                0.436,
+                0.348,
+                1.5144,
+                8.7338
+              ],
+              [
+                5.0,
+                3.0,
+                9.1116,
+                2.5241,
+                3.2459,
+                1.6659,
+                0.3367,
+                1.339,
+                8.848
+              ],
+              [
+                6.0,
+                3.0,
+                9.1334,
+                2.5144,
+                3.4781,
+                1.6448,
+                0.3519,
+                1.1442,
+                8.6774
+              ],
+              [
+                6.0,
+                4.0,
+                9.0557,
+                2.611,
+                3.6007,
+                0.6696,
+                0.3419,
+                1.8325,
+                8.4302
+              ],
+              [
+                7.0,
+                4.0,
+                8.1462,
+                2.6033,
+                3.2732,
+                0.456,
+                0.309,
+                1.5047,
+                7.9569
+              ],
+              [
+                7.0,
+                3.0,
+                9.0308,
+                2.5339,
+                3.3725,
+                1.7239,
+                0.336,
+                1.0645,
+                8.6725
+              ],
+              [
+                8.0,
+                3.0,
+                9.2397,
+                2.5438,
+                3.2759,
+                1.6775,
+                0.3203,
+                1.4222,
+                8.6233
+              ],
+              [
+                8.0,
+                4.0,
+                11.1852,
+                3.2371,
+                4.4732,
+                0.8494,
+                0.3997,
+                2.2258,
+                7.8243
+              ],
+              [
+                9.0,
+                4.0,
+                8.1755,
+                2.6628,
+                3.2979,
+                0.6392,
+                0.3476,
+                1.228,
+                7.5229
+              ],
+              [
+                9.0,
+                3.0,
+                8.8477,
+                2.5426,
+                3.2383,
+                1.6667,
+                0.332,
+                1.0681,
+                8.7393
+              ],
+              [
+                10.0,
+                3.0,
+                9.2385,
+                2.5683,
+                3.2585,
+                1.6985,
+                0.318,
+                1.3952,
+                9.1226
+              ],
+              [
+                10.0,
+                4.0,
+                7.8263,
+                2.6006,
+                3.2906,
+                0.4038,
+                0.3109,
+                1.2204,
+                7.9921
+              ],
+              [
+                11.0,
+                4.0,
+                8.358,
+                2.6889,
+                3.3699,
+                0.6595,
+                0.3698,
+                1.2699,
+                7.474
+              ],
+              [
+                11.0,
+                3.0,
+                9.2457,
+                2.5281,
+                3.3027,
+                1.6822,
+                0.3629,
+                1.3698,
+                8.8932
+              ]
+            ]
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-unfvoxm6\\bench_group_profile.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "shadow",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-unfvoxm6\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-unfvoxm6\\group-0.txt",
+              "0"
+            ],
+            "returncode": 0,
+            "fault": 0,
+            "seconds": 3.6987496000074316,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-unfvoxm6\\0-shadow-0.log",
+            "log_sha256": "ce9a7647f0e67872c20837f4f33669912c79379facdddd4ec328a5c2364afc9a",
+            "correctness": "NATIVE GROUP COMMANDS: 12 image/state cases; lit pixels and state exact, shadow max difference=1/2^24 (existing tolerance=256); actual Begin reply, alternating effect identity, copied palette poisoning and native method ownership pass",
+            "audit": "COMMAND AUDIT: effects=3456 callbacks=89700 restored_groups=3450 outstanding_refs=0; no producer device/state-block calls; all audit wrappers removed before timing",
+            "batches": "COMMAND BATCHES: 4104; maximum_bytes=172800; groups_per_batch=16; retained references balanced",
+            "results": "RESULTS: successful_begins=65658 failed_begins=6 captured_meshes=1641450 worker_commands=2396; no game or runtime hook",
+            "oracles": [
+              "GROUP ORACLE: phase=0 covered=17342 changed=0 hash=B1071094",
+              "GROUP ORACLE: phase=1 covered=17428 changed=21898 hash=C50CC0D6",
+              "GROUP ORACLE: phase=2 covered=17428 changed=2004 hash=89EC0221"
+            ],
+            "samples": [
+              [
+                0.0,
+                5.2328,
+                11.7739,
+                12.0599,
+                -6.8271
+              ],
+              [
+                1.0,
+                4.7358,
+                10.4081,
+                13.8202,
+                -9.0844
+              ],
+              [
+                2.0,
+                4.5903,
+                8.3096,
+                8.1399,
+                -3.5496
+              ],
+              [
+                3.0,
+                5.8035,
+                8.5556,
+                9.229,
+                -3.4255
+              ],
+              [
+                4.0,
+                4.5301,
+                8.4091,
+                7.7413,
+                -3.2112
+              ],
+              [
+                5.0,
+                4.9006,
+                9.1729,
+                9.7351,
+                -4.8345
+              ],
+              [
+                6.0,
+                5.042,
+                8.4317,
+                8.1133,
+                -3.0713
+              ],
+              [
+                7.0,
+                7.4938,
+                9.2074,
+                10.2248,
+                -2.731
+              ],
+              [
+                8.0,
+                5.6455,
+                8.8963,
+                9.02,
+                -3.3745
+              ],
+              [
+                9.0,
+                4.8795,
+                9.4631,
+                9.1352,
+                -4.2557
+              ],
+              [
+                10.0,
+                5.2311,
+                9.3658,
+                8.5563,
+                -3.3252
+              ],
+              [
+                11.0,
+                4.7271,
+                8.0428,
+                7.5802,
+                -2.8531
+              ]
+            ],
+            "medians_ms_per_pair": {
+              "native_bulk_complete_ms": 4.971299999999999,
+              "direct_capture_complete_ms": 9.034600000000001,
+              "worker_capture_complete_ms": 9.0776,
+              "saved_vs_native_ms": -3.4
+            },
+            "profile_columns": [
+              "round",
+              "mode",
+              "complete_ms",
+              "effect_record_ms",
+              "native_traversal_ms",
+              "publish_replay_or_wait_ms",
+              "other_group_ms",
+              "outside_groups_ms",
+              "paired_unprofiled_complete_ms"
+            ],
+            "profiles": [
+              [
+                0.0,
+                3.0,
+                8.8113,
+                1.6823,
+                3.5719,
+                1.5726,
+                0.3845,
+                1.6,
+                9.0144
+              ],
+              [
+                0.0,
+                4.0,
+                7.2878,
+                1.6949,
+                3.1672,
+                0.444,
+                0.3423,
+                1.6394,
+                7.2321
+              ],
+              [
+                1.0,
+                4.0,
+                7.7086,
+                1.7495,
+                3.6143,
+                0.5535,
+                0.3836,
+                1.4077,
+                6.9858
+              ],
+              [
+                1.0,
+                3.0,
+                8.4386,
+                1.8048,
+                3.2895,
+                1.6299,
+                0.3677,
+                1.3467,
+                8.5826
+              ],
+              [
+                2.0,
+                3.0,
+                8.1389,
+                1.6071,
+                3.1235,
+                1.5058,
+                0.2906,
+                1.6119,
+                7.8996
+              ],
+              [
+                2.0,
+                4.0,
+                6.8212,
+                1.6846,
+                3.133,
+                0.3835,
+                0.2891,
+                1.331,
+                6.8162
+              ],
+              [
+                3.0,
+                4.0,
+                7.4472,
+                1.7102,
+                3.2505,
+                0.6175,
+                0.3714,
+                1.4976,
+                6.9247
+              ],
+              [
+                3.0,
+                3.0,
+                8.3981,
+                1.7461,
+                3.1802,
+                1.6252,
+                0.348,
+                1.4986,
+                8.4379
+              ],
+              [
+                4.0,
+                3.0,
+                7.9935,
+                1.785,
+                3.1732,
+                1.6224,
+                0.2702,
+                1.1427,
+                7.6091
+              ],
+              [
+                4.0,
+                4.0,
+                7.3319,
+                1.717,
+                3.1705,
+                0.4354,
+                0.3327,
+                1.6763,
+                6.6989
+              ],
+              [
+                5.0,
+                4.0,
+                7.245,
+                1.6778,
+                3.1725,
+                0.3646,
+                0.3539,
+                1.6762,
+                7.0022
+              ],
+              [
+                5.0,
+                3.0,
+                8.286,
+                1.6226,
+                3.2158,
+                1.4997,
+                0.3644,
+                1.5835,
+                7.7761
+              ],
+              [
+                6.0,
+                3.0,
+                8.3194,
+                1.8131,
+                3.2741,
+                1.6201,
+                0.3016,
+                1.3105,
+                7.8534
+              ],
+              [
+                6.0,
+                4.0,
+                7.2702,
+                1.6798,
+                3.2032,
+                0.3679,
+                0.3504,
+                1.6689,
+                7.9907
+              ],
+              [
+                7.0,
+                4.0,
+                7.7215,
+                1.7168,
+                3.1912,
+                0.4877,
+                0.3443,
+                1.9815,
+                6.7753
+              ],
+              [
+                7.0,
+                3.0,
+                9.167,
+                1.6441,
+                3.8297,
+                1.5233,
+                0.3692,
+                1.8007,
+                7.9243
+              ],
+              [
+                8.0,
+                3.0,
+                8.387,
+                1.6646,
+                3.3096,
+                1.5273,
+                0.3268,
+                1.5587,
+                8.1239
+              ],
+              [
+                8.0,
+                4.0,
+                7.0722,
+                1.6853,
+                3.151,
+                0.5695,
+                0.3271,
+                1.3393,
+                7.3514
+              ],
+              [
+                9.0,
+                4.0,
+                7.5731,
+                1.7359,
+                3.2367,
+                0.8883,
+                0.3425,
+                1.3697,
+                6.5498
+              ],
+              [
+                9.0,
+                3.0,
+                7.9902,
+                1.6208,
+                3.1354,
+                1.4796,
+                0.2887,
+                1.4657,
+                8.0991
+              ],
+              [
+                10.0,
+                3.0,
+                8.4949,
+                1.6296,
+                3.336,
+                1.5239,
+                0.3172,
+                1.6882,
+                7.8349
+              ],
+              [
+                10.0,
+                4.0,
+                7.0445,
+                1.7768,
+                3.1708,
+                0.418,
+                0.314,
+                1.3649,
+                7.1154
+              ],
+              [
+                11.0,
+                4.0,
+                7.5418,
+                1.6919,
+                3.146,
+                0.5377,
+                0.3391,
+                1.8271,
+                7.1576
+              ],
+              [
+                11.0,
+                3.0,
+                8.6761,
+                1.7654,
+                3.1669,
+                1.644,
+                0.3402,
+                1.7596,
+                8.6294
+              ]
+            ]
+          }
+        ],
+        "game_launched": false,
+        "runtime_changed": false,
+        "sample_columns": [
+          "round",
+          "native_bulk_complete_ms",
+          "direct_capture_complete_ms",
+          "worker_capture_complete_ms",
+          "saved_vs_native_ms"
+        ]
+      }
+    },
+    {
+      "path": "perf/build/group-profile-native-final.json",
+      "sha256": "1c428c4666b0605c4b375d369d00c1fa8dca1713e988a3a0ecaeb3c3b7dd2bf4",
+      "report": {
+        "base_commit": "dd4c0eb21eecd797c6ee771355daeecab7c77249",
+        "backend": "native",
+        "commands": true,
+        "profile": true,
+        "directory": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-6ucm5y05",
+        "images": [
+          {
+            "path": "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+            "sha256": "035da15c626af6cd1663d1886deea605464ec6776f2c5f1d24570c2be6d73e61",
+            "mesh_manifest": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-6ucm5y05\\mesh-0.txt",
+            "mesh_sha256": "51fd33a156702e42085342da627852336395abcc2388c304d6f349b27ff72fd2",
+            "group_manifest": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-6ucm5y05\\group-0.txt",
+            "group_sha256": "8af4dc39975bef8d356be6373c845e57fbaa9f16cfe87d525eeed917d1ad6438"
+          }
+        ],
+        "runs": [
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-6ucm5y05\\bench_group_profile.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "lit",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-6ucm5y05\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-6ucm5y05\\group-0.txt",
+              "0"
+            ],
+            "returncode": 0,
+            "fault": 0,
+            "seconds": 4.129714799986687,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-6ucm5y05\\0-lit-0.log",
+            "log_sha256": "f7708e358745a4cd945531edf72c943e03fb043d56c53040c1f928c7b3fff7f0",
+            "correctness": "NATIVE GROUP COMMANDS: 12 image/state cases; lit pixels and state exact, shadow max difference=0/2^24 (existing tolerance=256); actual Begin reply, alternating effect identity, copied palette poisoning and native method ownership pass",
+            "audit": "COMMAND AUDIT: effects=3456 callbacks=113850 restored_groups=3450 outstanding_refs=0; no producer device/state-block calls; all audit wrappers removed before timing",
+            "batches": "COMMAND BATCHES: 4104; maximum_bytes=178432; groups_per_batch=16; retained references balanced",
+            "results": "RESULTS: successful_begins=65658 failed_begins=6 captured_meshes=1641450 worker_commands=2396; no game or runtime hook",
+            "oracles": [
+              "GROUP ORACLE: phase=0 covered=17382 changed=0 hash=2DBB90E5",
+              "GROUP ORACLE: phase=1 covered=17456 changed=21750 hash=975B7245",
+              "GROUP ORACLE: phase=2 covered=17456 changed=17848 hash=6B1AB7C5"
+            ],
+            "samples": [
+              [
+                0.0,
+                7.8912,
+                10.8154,
+                7.537,
+                0.3542
+              ],
+              [
+                1.0,
+                8.2193,
+                11.9011,
+                7.3046,
+                0.9147
+              ],
+              [
+                2.0,
+                9.6299,
+                10.9291,
+                8.8314,
+                0.7985
+              ],
+              [
+                3.0,
+                8.0579,
+                10.9883,
+                7.6552,
+                0.4027
+              ],
+              [
+                4.0,
+                8.1699,
+                11.1501,
+                7.3494,
+                0.8205
+              ],
+              [
+                5.0,
+                8.1824,
+                12.1138,
+                8.5296,
+                -0.3472
+              ],
+              [
+                6.0,
+                8.0883,
+                10.9822,
+                7.4205,
+                0.6678
+              ],
+              [
+                7.0,
+                8.3661,
+                12.041,
+                8.438,
+                -0.0719
+              ],
+              [
+                8.0,
+                8.4649,
+                11.4167,
+                9.1173,
+                -0.6524
+              ],
+              [
+                9.0,
+                8.0065,
+                10.9823,
+                7.3289,
+                0.6776
+              ],
+              [
+                10.0,
+                8.0821,
+                11.098,
+                7.6401,
+                0.442
+              ],
+              [
+                11.0,
+                8.0144,
+                11.0073,
+                7.5613,
+                0.4531
+              ]
+            ],
+            "medians_ms_per_pair": {
+              "native_bulk_complete_ms": 8.129100000000001,
+              "direct_capture_complete_ms": 11.05265,
+              "worker_capture_complete_ms": 7.6007,
+              "saved_vs_native_ms": 0.44755
+            },
+            "profile_columns": [
+              "round",
+              "mode",
+              "complete_ms",
+              "effect_record_ms",
+              "native_traversal_ms",
+              "publish_replay_or_wait_ms",
+              "other_group_ms",
+              "outside_groups_ms",
+              "paired_unprofiled_complete_ms"
+            ],
+            "profiles": [
+              [
+                0.0,
+                3.0,
+                11.6421,
+                2.5514,
+                3.4819,
+                4.5636,
+                0.3438,
+                0.7014,
+                11.2751
+              ],
+              [
+                0.0,
+                4.0,
+                7.4274,
+                2.6538,
+                3.0947,
+                0.3796,
+                0.2976,
+                1.0017,
+                7.9192
+              ],
+              [
+                1.0,
+                4.0,
+                7.881,
+                2.7019,
+                3.2142,
+                0.5206,
+                0.3579,
+                1.0864,
+                7.5129
+              ],
+              [
+                1.0,
+                3.0,
+                11.3193,
+                2.5804,
+                3.2004,
+                4.5166,
+                0.3443,
+                0.6776,
+                11.1521
+              ],
+              [
+                2.0,
+                3.0,
+                11.1766,
+                2.5598,
+                3.1047,
+                4.5338,
+                0.3082,
+                0.6701,
+                10.9876
+              ],
+              [
+                2.0,
+                4.0,
+                7.7505,
+                2.681,
+                3.1483,
+                0.4472,
+                0.3637,
+                1.1103,
+                7.6334
+              ],
+              [
+                3.0,
+                4.0,
+                7.9699,
+                2.6689,
+                3.1132,
+                0.7455,
+                0.3323,
+                1.11,
+                7.1913
+              ],
+              [
+                3.0,
+                3.0,
+                11.0364,
+                2.5602,
+                3.114,
+                4.4269,
+                0.2882,
+                0.6471,
+                10.9706
+              ],
+              [
+                4.0,
+                3.0,
+                11.8761,
+                2.6719,
+                3.3806,
+                4.7274,
+                0.3411,
+                0.7551,
+                11.4621
+              ],
+              [
+                4.0,
+                4.0,
+                7.8214,
+                2.6714,
+                3.3551,
+                0.3753,
+                0.3583,
+                1.0613,
+                8.6455
+              ],
+              [
+                5.0,
+                4.0,
+                8.6446,
+                2.6965,
+                3.5613,
+                0.4202,
+                0.353,
+                1.6136,
+                7.9563
+              ],
+              [
+                5.0,
+                3.0,
+                11.5674,
+                2.5986,
+                3.4328,
+                4.4498,
+                0.3488,
+                0.7374,
+                11.3049
+              ],
+              [
+                6.0,
+                3.0,
+                11.5194,
+                2.5607,
+                3.3642,
+                4.5359,
+                0.345,
+                0.7136,
+                11.3752
+              ],
+              [
+                6.0,
+                4.0,
+                8.6133,
+                2.7435,
+                3.6535,
+                0.5485,
+                0.3574,
+                1.3104,
+                8.208
+              ],
+              [
+                7.0,
+                4.0,
+                9.2461,
+                2.8231,
+                3.9979,
+                0.6692,
+                0.3896,
+                1.3663,
+                9.1529
+              ],
+              [
+                7.0,
+                3.0,
+                11.7463,
+                2.5714,
+                3.5539,
+                4.5118,
+                0.355,
+                0.7542,
+                11.2191
+              ],
+              [
+                8.0,
+                3.0,
+                11.2495,
+                2.565,
+                3.2332,
+                4.4235,
+                0.348,
+                0.6798,
+                11.5628
+              ],
+              [
+                8.0,
+                4.0,
+                8.0695,
+                2.7696,
+                3.3785,
+                0.4509,
+                0.3585,
+                1.112,
+                8.3905
+              ],
+              [
+                9.0,
+                4.0,
+                7.7173,
+                2.6804,
+                3.2327,
+                0.4205,
+                0.3576,
+                1.0261,
+                7.4063
+              ],
+              [
+                9.0,
+                3.0,
+                11.4067,
+                2.5898,
+                3.2828,
+                4.4492,
+                0.3512,
+                0.7337,
+                11.2878
+              ],
+              [
+                10.0,
+                3.0,
+                11.4027,
+                2.626,
+                3.2041,
+                4.5327,
+                0.3268,
+                0.7131,
+                11.317
+              ],
+              [
+                10.0,
+                4.0,
+                7.7766,
+                2.7465,
+                3.1558,
+                0.5181,
+                0.3074,
+                1.0488,
+                7.638
+              ],
+              [
+                11.0,
+                4.0,
+                8.0103,
+                2.7093,
+                3.2927,
+                0.4818,
+                0.365,
+                1.1615,
+                8.1086
+              ],
+              [
+                11.0,
+                3.0,
+                11.3404,
+                2.5643,
+                3.2004,
+                4.4867,
+                0.352,
+                0.737,
+                11.0631
+              ]
+            ]
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-6ucm5y05\\bench_group_profile.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "shadow",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-6ucm5y05\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-6ucm5y05\\group-0.txt",
+              "0"
+            ],
+            "returncode": 0,
+            "fault": 0,
+            "seconds": 3.907382100005634,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-6ucm5y05\\0-shadow-0.log",
+            "log_sha256": "cb1fd21f2534f67d19147e799cf51fa2b8db8bbf9c718843a1aaac1bd641a9d4",
+            "correctness": "NATIVE GROUP COMMANDS: 12 image/state cases; lit pixels and state exact, shadow max difference=1/2^24 (existing tolerance=256); actual Begin reply, alternating effect identity, copied palette poisoning and native method ownership pass",
+            "audit": "COMMAND AUDIT: effects=3456 callbacks=89700 restored_groups=3450 outstanding_refs=0; no producer device/state-block calls; all audit wrappers removed before timing",
+            "batches": "COMMAND BATCHES: 4104; maximum_bytes=172800; groups_per_batch=16; retained references balanced",
+            "results": "RESULTS: successful_begins=65658 failed_begins=6 captured_meshes=1641450 worker_commands=2396; no game or runtime hook",
+            "oracles": [
+              "GROUP ORACLE: phase=0 covered=17342 changed=0 hash=4E0EA635",
+              "GROUP ORACLE: phase=1 covered=17428 changed=21898 hash=414F2327",
+              "GROUP ORACLE: phase=2 covered=17428 changed=2004 hash=9A837D21"
+            ],
+            "samples": [
+              [
+                0.0,
+                7.4693,
+                9.943,
+                6.4448,
+                1.0245
+              ],
+              [
+                1.0,
+                6.8947,
+                9.8669,
+                6.1561,
+                0.7386
+              ],
+              [
+                2.0,
+                6.8198,
+                9.8754,
+                6.3064,
+                0.5134
+              ],
+              [
+                3.0,
+                7.1157,
+                10.0604,
+                6.8098,
+                0.3059
+              ],
+              [
+                4.0,
+                7.9019,
+                10.2162,
+                6.5632,
+                1.3387
+              ],
+              [
+                5.0,
+                6.7306,
+                9.8264,
+                7.1441,
+                -0.4135
+              ],
+              [
+                6.0,
+                7.0216,
+                9.6412,
+                6.2336,
+                0.788
+              ],
+              [
+                7.0,
+                6.7635,
+                9.6409,
+                6.9117,
+                -0.1482
+              ],
+              [
+                8.0,
+                6.6885,
+                9.6241,
+                6.4398,
+                0.2487
+              ],
+              [
+                9.0,
+                6.7754,
+                9.6861,
+                6.1701,
+                0.6053
+              ],
+              [
+                10.0,
+                6.7423,
+                9.6235,
+                6.462,
+                0.2803
+              ],
+              [
+                11.0,
+                6.6598,
+                9.6289,
+                6.6776,
+                -0.0178
+              ]
+            ],
+            "medians_ms_per_pair": {
+              "native_bulk_complete_ms": 6.7976,
+              "direct_capture_complete_ms": 9.75625,
+              "worker_capture_complete_ms": 6.4534,
+              "saved_vs_native_ms": 0.40964999999999996
+            },
+            "profile_columns": [
+              "round",
+              "mode",
+              "complete_ms",
+              "effect_record_ms",
+              "native_traversal_ms",
+              "publish_replay_or_wait_ms",
+              "other_group_ms",
+              "outside_groups_ms",
+              "paired_unprofiled_complete_ms"
+            ],
+            "profiles": [
+              [
+                0.0,
+                3.0,
+                10.2557,
+                1.6255,
+                3.3323,
+                4.2847,
+                0.3299,
+                0.6833,
+                9.8363
+              ],
+              [
+                0.0,
+                4.0,
+                6.7837,
+                1.7684,
+                3.1687,
+                0.4054,
+                0.356,
+                1.0852,
+                6.3193
+              ],
+              [
+                1.0,
+                4.0,
+                6.4381,
+                1.7013,
+                3.0867,
+                0.3558,
+                0.3189,
+                0.9754,
+                6.2138
+              ],
+              [
+                1.0,
+                3.0,
+                10.7903,
+                1.7504,
+                3.4753,
+                4.5156,
+                0.3698,
+                0.6792,
+                10.1053
+              ],
+              [
+                2.0,
+                3.0,
+                9.9431,
+                1.6265,
+                3.1065,
+                4.2431,
+                0.3026,
+                0.6644,
+                9.7623
+              ],
+              [
+                2.0,
+                4.0,
+                6.7262,
+                1.6943,
+                3.261,
+                0.336,
+                0.3052,
+                1.1297,
+                6.4226
+              ],
+              [
+                3.0,
+                4.0,
+                6.5928,
+                1.7329,
+                3.1394,
+                0.3842,
+                0.3388,
+                0.9975,
+                6.8299
+              ],
+              [
+                3.0,
+                3.0,
+                10.0645,
+                1.6257,
+                3.1931,
+                4.207,
+                0.3493,
+                0.6894,
+                9.8174
+              ],
+              [
+                4.0,
+                3.0,
+                9.9923,
+                1.6351,
+                3.1193,
+                4.2661,
+                0.3127,
+                0.6591,
+                10.0122
+              ],
+              [
+                4.0,
+                4.0,
+                6.502,
+                1.7059,
+                3.0824,
+                0.37,
+                0.2885,
+                1.0552,
+                6.4283
+              ],
+              [
+                5.0,
+                4.0,
+                7.1914,
+                1.7956,
+                3.213,
+                0.8082,
+                0.3798,
+                0.9948,
+                7.027
+              ],
+              [
+                5.0,
+                3.0,
+                10.6353,
+                1.6328,
+                3.4859,
+                4.374,
+                0.376,
+                0.7666,
+                10.7533
+              ],
+              [
+                6.0,
+                3.0,
+                10.0161,
+                1.6384,
+                3.1503,
+                4.228,
+                0.3297,
+                0.6697,
+                10.1265
+              ],
+              [
+                6.0,
+                4.0,
+                6.4214,
+                1.6783,
+                3.0924,
+                0.3489,
+                0.3043,
+                0.9975,
+                7.5376
+              ],
+              [
+                7.0,
+                4.0,
+                6.9692,
+                1.7435,
+                3.1459,
+                0.4804,
+                0.3594,
+                1.24,
+                6.4162
+              ],
+              [
+                7.0,
+                3.0,
+                10.0509,
+                1.6263,
+                3.1024,
+                4.2585,
+                0.346,
+                0.7177,
+                9.8402
+              ],
+              [
+                8.0,
+                3.0,
+                9.8879,
+                1.6074,
+                3.1078,
+                4.2031,
+                0.3115,
+                0.6581,
+                9.8384
+              ],
+              [
+                8.0,
+                4.0,
+                7.1524,
+                1.8711,
+                3.2176,
+                0.6514,
+                0.3462,
+                1.0661,
+                7.0284
+              ],
+              [
+                9.0,
+                4.0,
+                7.2521,
+                1.8282,
+                3.2779,
+                0.6099,
+                0.4099,
+                1.1262,
+                6.5641
+              ],
+              [
+                9.0,
+                3.0,
+                10.4349,
+                1.6589,
+                3.4538,
+                4.23,
+                0.3571,
+                0.7351,
+                9.8543
+              ],
+              [
+                10.0,
+                3.0,
+                10.2268,
+                1.621,
+                3.093,
+                4.4821,
+                0.3602,
+                0.6705,
+                10.6564
+              ],
+              [
+                10.0,
+                4.0,
+                8.5808,
+                1.9035,
+                3.523,
+                0.7712,
+                0.4386,
+                1.9445,
+                9.3315
+              ],
+              [
+                11.0,
+                4.0,
+                6.8021,
+                1.7219,
+                3.2724,
+                0.3593,
+                0.358,
+                1.0905,
+                6.7907
+              ],
+              [
+                11.0,
+                3.0,
+                10.3445,
+                1.6718,
+                3.3586,
+                4.2132,
+                0.3459,
+                0.755,
+                10.1769
+              ]
+            ]
+          }
+        ],
+        "game_launched": false,
+        "runtime_changed": false,
+        "sample_columns": [
+          "round",
+          "native_bulk_complete_ms",
+          "direct_capture_complete_ms",
+          "worker_capture_complete_ms",
+          "saved_vs_native_ms"
+        ]
+      }
+    },
+    {
+      "path": "perf/build/group-profile-commands-regression-final.json",
+      "sha256": "4311544cdaa8105b4e2a33860a62f34cfe211141c26b706a83f31bef8ac4dbb3",
+      "report": {
+        "base_commit": "dd4c0eb21eecd797c6ee771355daeecab7c77249",
+        "backend": "dxvk",
+        "commands": true,
+        "profile": false,
+        "directory": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj",
+        "images": [
+          {
+            "path": "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+            "sha256": "035da15c626af6cd1663d1886deea605464ec6776f2c5f1d24570c2be6d73e61",
+            "mesh_manifest": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\mesh-0.txt",
+            "mesh_sha256": "51fd33a156702e42085342da627852336395abcc2388c304d6f349b27ff72fd2",
+            "group_manifest": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\group-0.txt",
+            "group_sha256": "8af4dc39975bef8d356be6373c845e57fbaa9f16cfe87d525eeed917d1ad6438"
+          }
+        ],
+        "runs": [
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\bench_group_commands.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "lit",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\group-0.txt",
+              "0"
+            ],
+            "returncode": 0,
+            "fault": 0,
+            "seconds": 2.513899700017646,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\0-lit-0.log",
+            "log_sha256": "d0047eda19079692154e0d4e998b0fc58e8ce6f63be36d0308ed97a46abdc6df",
+            "correctness": "NATIVE GROUP COMMANDS: 12 image/state cases; lit pixels and state exact, shadow max difference=0/2^24 (existing tolerance=256); actual Begin reply, alternating effect identity, copied palette poisoning and native method ownership pass",
+            "audit": "COMMAND AUDIT: effects=3456 callbacks=113850 restored_groups=3450 outstanding_refs=0; no producer device/state-block calls; all audit wrappers removed before timing",
+            "batches": "COMMAND BATCHES: 1512; maximum_bytes=178432; groups_per_batch=16; retained references balanced",
+            "results": "RESULTS: successful_begins=24186 failed_begins=6 captured_meshes=604650 worker_commands=884; no game or runtime hook",
+            "oracles": [
+              "GROUP ORACLE: phase=0 covered=17382 changed=0 hash=2DBB90E5",
+              "GROUP ORACLE: phase=1 covered=17456 changed=21750 hash=975B7245",
+              "GROUP ORACLE: phase=2 covered=17456 changed=17848 hash=6B1AB7C5"
+            ],
+            "samples": [
+              [
+                0.0,
+                5.5893,
+                9.2378,
+                9.1298,
+                -3.5405
+              ],
+              [
+                1.0,
+                5.703,
+                9.2178,
+                7.9703,
+                -2.2673
+              ],
+              [
+                2.0,
+                5.5401,
+                9.2618,
+                8.8647,
+                -3.3246
+              ],
+              [
+                3.0,
+                6.6585,
+                12.0375,
+                9.0767,
+                -2.4182
+              ],
+              [
+                4.0,
+                5.8173,
+                9.0814,
+                8.1791,
+                -2.3618
+              ],
+              [
+                5.0,
+                5.7556,
+                9.3326,
+                8.8699,
+                -3.1143
+              ],
+              [
+                6.0,
+                5.7218,
+                11.0127,
+                8.3595,
+                -2.6377
+              ],
+              [
+                7.0,
+                6.3482,
+                8.7992,
+                8.2018,
+                -1.8536
+              ],
+              [
+                8.0,
+                5.9796,
+                8.8683,
+                9.2942,
+                -3.3146
+              ],
+              [
+                9.0,
+                5.7725,
+                8.8657,
+                8.3051,
+                -2.5326
+              ],
+              [
+                10.0,
+                5.9063,
+                9.2974,
+                8.3757,
+                -2.4694
+              ],
+              [
+                11.0,
+                5.7335,
+                9.0898,
+                8.5483,
+                -2.8148
+              ]
+            ],
+            "medians_ms_per_pair": {
+              "native_bulk_complete_ms": 5.76405,
+              "direct_capture_complete_ms": 9.2278,
+              "worker_capture_complete_ms": 8.462,
+              "saved_vs_native_ms": -2.58515
+            }
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\bench_group_commands.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "lit",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\group-0.txt",
+              "1"
+            ],
+            "returncode": 1,
+            "fault": 1,
+            "seconds": 1.6072008999763057,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\0-lit-1.log",
+            "log_sha256": "45a19e30fd24885a71daaf765aeb0c98900b881e564044e2c8fbd9fbc9673d3f",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\bench_group_commands.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "lit",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\group-0.txt",
+              "2"
+            ],
+            "returncode": 1,
+            "fault": 2,
+            "seconds": 1.6139509000058752,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\0-lit-2.log",
+            "log_sha256": "3c3eb993c519c5555743ee7a592e6aa70154180015ead5e0517f57d300d8b4ec",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\bench_group_commands.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "lit",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\group-0.txt",
+              "3"
+            ],
+            "returncode": 1,
+            "fault": 3,
+            "seconds": 1.5722180999873672,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\0-lit-3.log",
+            "log_sha256": "c348b5b3ef203411d0277898293fbcc231be92b1c83358f4ebcd8dad2172c0fe",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\bench_group_commands.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "lit",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\group-0.txt",
+              "4"
+            ],
+            "returncode": 1,
+            "fault": 4,
+            "seconds": 1.5796450000198092,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\0-lit-4.log",
+            "log_sha256": "c8dc9282461e79d0d4d10cb0917cb9c828af62fe7fb718a92bf69299d46e09cb",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\bench_group_commands.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "lit",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\group-0.txt",
+              "5"
+            ],
+            "returncode": 1,
+            "fault": 5,
+            "seconds": 1.510865099990042,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\0-lit-5.log",
+            "log_sha256": "f8f63180209c8fcdda2fab37ea83e7f10ed6884d53ea082742b9b5f9890f09db",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\bench_group_commands.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "lit",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\group-0.txt",
+              "6"
+            ],
+            "returncode": 1,
+            "fault": 6,
+            "seconds": 1.553508499986492,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\0-lit-6.log",
+            "log_sha256": "139e40e54f945cb894bdd9834ddc89b991c5899e90c0d035c3fcdc9c862e13a1",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\bench_group_commands.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "lit",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\group-0.txt",
+              "7"
+            ],
+            "returncode": 1,
+            "fault": 7,
+            "seconds": 1.5167951000039466,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\0-lit-7.log",
+            "log_sha256": "3b65341a1c07af49c1a19829ea5b1df5a426d0821707a76b8abf0b2dfa012cf1",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\bench_group_commands.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "lit",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\group-0.txt",
+              "8"
+            ],
+            "returncode": 1,
+            "fault": 8,
+            "seconds": 1.558349900005851,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\0-lit-8.log",
+            "log_sha256": "9f9be962fb71b22df8b3146921e804454761f5bf95fb6f43f42b8f5cc4b9f6a0",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\bench_group_commands.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "shadow",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\group-0.txt",
+              "0"
+            ],
+            "returncode": 0,
+            "fault": 0,
+            "seconds": 2.3568159000133164,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\0-shadow-0.log",
+            "log_sha256": "c5b8e62369f33e3e1ced0f9e06ac82079304e5363f7d5d12dc1dd6aa660706a4",
+            "correctness": "NATIVE GROUP COMMANDS: 12 image/state cases; lit pixels and state exact, shadow max difference=1/2^24 (existing tolerance=256); actual Begin reply, alternating effect identity, copied palette poisoning and native method ownership pass",
+            "audit": "COMMAND AUDIT: effects=3456 callbacks=89700 restored_groups=3450 outstanding_refs=0; no producer device/state-block calls; all audit wrappers removed before timing",
+            "batches": "COMMAND BATCHES: 1512; maximum_bytes=172800; groups_per_batch=16; retained references balanced",
+            "results": "RESULTS: successful_begins=24186 failed_begins=6 captured_meshes=604650 worker_commands=884; no game or runtime hook",
+            "oracles": [
+              "GROUP ORACLE: phase=0 covered=17342 changed=0 hash=B1071094",
+              "GROUP ORACLE: phase=1 covered=17428 changed=21898 hash=C50CC0D6",
+              "GROUP ORACLE: phase=2 covered=17428 changed=2004 hash=89EC0221"
+            ],
+            "samples": [
+              [
+                0.0,
+                4.4195,
+                8.1491,
+                8.0628,
+                -3.6433
+              ],
+              [
+                1.0,
+                4.4811,
+                7.997,
+                9.8093,
+                -5.3282
+              ],
+              [
+                2.0,
+                6.4262,
+                10.4825,
+                7.7825,
+                -1.3563
+              ],
+              [
+                3.0,
+                6.4291,
+                9.5869,
+                9.3674,
+                -2.9383
+              ],
+              [
+                4.0,
+                4.4258,
+                7.7853,
+                7.2107,
+                -2.7849
+              ],
+              [
+                5.0,
+                4.6011,
+                8.7094,
+                7.9322,
+                -3.3311
+              ],
+              [
+                6.0,
+                4.7829,
+                7.618,
+                6.9914,
+                -2.2085
+              ],
+              [
+                7.0,
+                4.6986,
+                7.7211,
+                7.8386,
+                -3.14
+              ],
+              [
+                8.0,
+                5.2242,
+                8.1583,
+                9.3401,
+                -4.1159
+              ],
+              [
+                9.0,
+                5.4285,
+                7.6886,
+                7.8034,
+                -2.3749
+              ],
+              [
+                10.0,
+                4.8158,
+                8.1578,
+                7.5032,
+                -2.6874
+              ],
+              [
+                11.0,
+                4.4626,
+                7.6362,
+                7.3171,
+                -2.8545
+              ]
+            ],
+            "medians_ms_per_pair": {
+              "native_bulk_complete_ms": 4.74075,
+              "direct_capture_complete_ms": 8.07305,
+              "worker_capture_complete_ms": 7.821,
+              "saved_vs_native_ms": -2.8964
+            }
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\bench_group_commands.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "shadow",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\group-0.txt",
+              "1"
+            ],
+            "returncode": 1,
+            "fault": 1,
+            "seconds": 1.577060999989044,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\0-shadow-1.log",
+            "log_sha256": "ddf64293799940b4806f5f679e725e573131e841290b3a3d7559d22dff678476",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\bench_group_commands.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "shadow",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\group-0.txt",
+              "2"
+            ],
+            "returncode": 1,
+            "fault": 2,
+            "seconds": 1.59461009997176,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\0-shadow-2.log",
+            "log_sha256": "635cdb1055f31f9e77b7c66031134def3f09b8679b94a23e6404e7e09b7e1a24",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\bench_group_commands.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "shadow",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\group-0.txt",
+              "3"
+            ],
+            "returncode": 1,
+            "fault": 3,
+            "seconds": 1.5299732999992557,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\0-shadow-3.log",
+            "log_sha256": "a3ee8f9b2a182334c71245f8cf177d727da19e4290a770cba4ba239d344ff653",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\bench_group_commands.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "shadow",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\group-0.txt",
+              "4"
+            ],
+            "returncode": 1,
+            "fault": 4,
+            "seconds": 1.5214704000100028,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\0-shadow-4.log",
+            "log_sha256": "dc8deedd95e50a7b005e1281a8e19f7f4a815638c2ea80e41e54f373f409d590",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\bench_group_commands.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "shadow",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\group-0.txt",
+              "5"
+            ],
+            "returncode": 1,
+            "fault": 5,
+            "seconds": 1.5315007999888621,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\0-shadow-5.log",
+            "log_sha256": "029f118a99d3689fdacad23f8626a5f58cb02fd8d6cee52df16ffe0ef5ec25b5",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\bench_group_commands.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "shadow",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\group-0.txt",
+              "6"
+            ],
+            "returncode": 1,
+            "fault": 6,
+            "seconds": 1.582018999994034,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\0-shadow-6.log",
+            "log_sha256": "d493c1954a5eafb2b5125fde71e06cdc788c3db391a53ca11b7766dd71207475",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\bench_group_commands.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "shadow",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\group-0.txt",
+              "7"
+            ],
+            "returncode": 1,
+            "fault": 7,
+            "seconds": 1.5090657999971882,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\0-shadow-7.log",
+            "log_sha256": "07ec463e21fb0b50540d715784749e1844640184140403f8521f9a21b7ce4955",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\bench_group_commands.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "shadow",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\group-0.txt",
+              "8"
+            ],
+            "returncode": 1,
+            "fault": 8,
+            "seconds": 1.5427331999817397,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-f1my33zj\\0-shadow-8.log",
+            "log_sha256": "5a48c374694a5d5eb3ec1f0f8a44a5000fb0005424baa601fa72a5746b43d764",
+            "fault_detected": true
+          }
+        ],
+        "game_launched": false,
+        "runtime_changed": false,
+        "sample_columns": [
+          "round",
+          "native_bulk_complete_ms",
+          "direct_capture_complete_ms",
+          "worker_capture_complete_ms",
+          "saved_vs_native_ms"
+        ]
+      }
+    },
+    {
+      "path": "perf/build/group-profile-original-regression-final.json",
+      "sha256": "7178c7d923df733f9a210a8fb8e7394143c09bbcfa1c27c32a651c667328b2a7",
+      "report": {
+        "base_commit": "dd4c0eb21eecd797c6ee771355daeecab7c77249",
+        "backend": "dxvk",
+        "commands": false,
+        "profile": false,
+        "directory": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t",
+        "images": [
+          {
+            "path": "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+            "sha256": "035da15c626af6cd1663d1886deea605464ec6776f2c5f1d24570c2be6d73e61",
+            "mesh_manifest": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\mesh-0.txt",
+            "mesh_sha256": "51fd33a156702e42085342da627852336395abcc2388c304d6f349b27ff72fd2",
+            "group_manifest": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\group-0.txt",
+            "group_sha256": "8af4dc39975bef8d356be6373c845e57fbaa9f16cfe87d525eeed917d1ad6438"
+          }
+        ],
+        "runs": [
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\bench_group_consumer.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "lit",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\group-0.txt",
+              "0"
+            ],
+            "returncode": 0,
+            "fault": 0,
+            "seconds": 2.7513822999899276,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\0-lit-0.log",
+            "log_sha256": "72ba7c5f3a6e76eeb2b7d9bd69bd4c9fbd05ec836dd552794d7598a26144a1ee",
+            "correctness": "NATIVE GROUP CONSUMER: 12 image/state cases; lit pixels and state exact, shadow max difference=0/2^24 (existing tolerance=256); actual Begin reply, alternating effect identity, copied palette poisoning and native method ownership pass",
+            "results": "RESULTS: successful_begins=24186 failed_begins=6 captured_meshes=604650 worker_commands=24317; no game or runtime hook",
+            "oracles": [
+              "GROUP ORACLE: phase=0 covered=17382 changed=0 hash=2DBB90E5",
+              "GROUP ORACLE: phase=1 covered=17456 changed=21750 hash=975B7245",
+              "GROUP ORACLE: phase=2 covered=17456 changed=17848 hash=6B1AB7C5"
+            ],
+            "samples": [
+              [
+                0.0,
+                5.5413,
+                8.382,
+                19.6916,
+                -14.1503
+              ],
+              [
+                1.0,
+                6.0086,
+                8.5298,
+                18.6797,
+                -12.6711
+              ],
+              [
+                2.0,
+                5.5652,
+                8.4465,
+                19.1936,
+                -13.6284
+              ],
+              [
+                3.0,
+                5.7467,
+                8.2239,
+                18.8596,
+                -13.1129
+              ],
+              [
+                4.0,
+                5.6243,
+                8.0503,
+                20.6584,
+                -15.0341
+              ],
+              [
+                5.0,
+                5.6989,
+                8.3624,
+                20.0686,
+                -14.3697
+              ],
+              [
+                6.0,
+                5.8964,
+                10.236,
+                19.8664,
+                -13.97
+              ],
+              [
+                7.0,
+                7.0107,
+                8.4278,
+                24.6624,
+                -17.6517
+              ],
+              [
+                8.0,
+                5.95,
+                8.1245,
+                20.8807,
+                -14.9307
+              ],
+              [
+                9.0,
+                5.5117,
+                8.044,
+                18.2257,
+                -12.714
+              ],
+              [
+                10.0,
+                5.5404,
+                8.1378,
+                19.0006,
+                -13.4602
+              ],
+              [
+                11.0,
+                5.593,
+                7.9996,
+                20.476,
+                -14.883
+              ]
+            ],
+            "medians_ms_per_pair": {
+              "native_bulk_complete_ms": 5.6616,
+              "direct_capture_complete_ms": 8.29315,
+              "worker_capture_complete_ms": 19.779,
+              "saved_vs_native_ms": -14.06015
+            }
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\bench_group_consumer.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "lit",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\group-0.txt",
+              "1"
+            ],
+            "returncode": 1,
+            "fault": 1,
+            "seconds": 1.5384311999951024,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\0-lit-1.log",
+            "log_sha256": "0becf70965a6f8ad099168915c82ccc6236b7afe4d0cb496dde209dfa142a0fc",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\bench_group_consumer.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "lit",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\group-0.txt",
+              "2"
+            ],
+            "returncode": 1,
+            "fault": 2,
+            "seconds": 1.6183466000074986,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\0-lit-2.log",
+            "log_sha256": "d97b4355f532693c8db9422e241443f8b64380e8e6adb7e14596433ddc938fbd",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\bench_group_consumer.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "lit",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\group-0.txt",
+              "3"
+            ],
+            "returncode": 1,
+            "fault": 3,
+            "seconds": 1.5806141000066418,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\0-lit-3.log",
+            "log_sha256": "236d5e99497e20016b3763d9ce7736c444736c35863a3def74a38745c5b13b40",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\bench_group_consumer.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "lit",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\group-0.txt",
+              "4"
+            ],
+            "returncode": 1,
+            "fault": 4,
+            "seconds": 1.5299290000111796,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\0-lit-4.log",
+            "log_sha256": "61f2f92844af5dfa98047dc3e29dc711310461895f69e308bd33bf6ade97c725",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\bench_group_consumer.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "shadow",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\group-0.txt",
+              "0"
+            ],
+            "returncode": 0,
+            "fault": 0,
+            "seconds": 2.6431837999843992,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\0-shadow-0.log",
+            "log_sha256": "71a50546c09075ccccf530f8f209b2d4f205a5c52af8a87f609ada20c7d1ff6c",
+            "correctness": "NATIVE GROUP CONSUMER: 12 image/state cases; lit pixels and state exact, shadow max difference=1/2^24 (existing tolerance=256); actual Begin reply, alternating effect identity, copied palette poisoning and native method ownership pass",
+            "results": "RESULTS: successful_begins=24186 failed_begins=6 captured_meshes=604650 worker_commands=24317; no game or runtime hook",
+            "oracles": [
+              "GROUP ORACLE: phase=0 covered=17342 changed=0 hash=B1071094",
+              "GROUP ORACLE: phase=1 covered=17428 changed=21898 hash=C50CC0D6",
+              "GROUP ORACLE: phase=2 covered=17428 changed=2004 hash=89EC0221"
+            ],
+            "samples": [
+              [
+                0.0,
+                4.2703,
+                7.794,
+                17.0068,
+                -12.7365
+              ],
+              [
+                1.0,
+                5.2096,
+                7.8524,
+                17.4178,
+                -12.2082
+              ],
+              [
+                2.0,
+                4.8393,
+                8.7614,
+                20.4691,
+                -15.6298
+              ],
+              [
+                3.0,
+                4.6573,
+                7.3534,
+                17.5128,
+                -12.8555
+              ],
+              [
+                4.0,
+                4.9032,
+                7.1257,
+                18.7108,
+                -13.8076
+              ],
+              [
+                5.0,
+                5.4532,
+                8.0831,
+                19.509,
+                -14.0558
+              ],
+              [
+                6.0,
+                4.7316,
+                7.2251,
+                17.8263,
+                -13.0947
+              ],
+              [
+                7.0,
+                5.3257,
+                7.191,
+                17.7069,
+                -12.3812
+              ],
+              [
+                8.0,
+                5.771,
+                7.1068,
+                17.6889,
+                -11.9179
+              ],
+              [
+                9.0,
+                4.3746,
+                7.2655,
+                19.2772,
+                -14.9026
+              ],
+              [
+                10.0,
+                5.2721,
+                7.4434,
+                17.7531,
+                -12.481
+              ],
+              [
+                11.0,
+                5.2169,
+                7.6006,
+                17.6425,
+                -12.4256
+              ]
+            ],
+            "medians_ms_per_pair": {
+              "native_bulk_complete_ms": 5.0564,
+              "direct_capture_complete_ms": 7.3984,
+              "worker_capture_complete_ms": 17.73,
+              "saved_vs_native_ms": -12.796
+            }
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\bench_group_consumer.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "shadow",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\group-0.txt",
+              "1"
+            ],
+            "returncode": 1,
+            "fault": 1,
+            "seconds": 1.504301899985876,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\0-shadow-1.log",
+            "log_sha256": "b411754195ae19dd2c70ed83d6ee364093a50a0ebf70e6441a70f20191c01366",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\bench_group_consumer.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "shadow",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\group-0.txt",
+              "2"
+            ],
+            "returncode": 1,
+            "fault": 2,
+            "seconds": 1.5817537999828346,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\0-shadow-2.log",
+            "log_sha256": "4d862eb42a41357fe17ca8ea7f698bec0a63b9d5ab1d67e39dde1e61c3dc0903",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\bench_group_consumer.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "shadow",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\group-0.txt",
+              "3"
+            ],
+            "returncode": 1,
+            "fault": 3,
+            "seconds": 1.6139037999964785,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\0-shadow-3.log",
+            "log_sha256": "0fc863f4793f4e54001af04eeb4868a33a92e5cdfc2af6bbb00873a0068bca44",
+            "fault_detected": true
+          },
+          {
+            "command": [
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\bench_group_consumer.exe",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\Shaders.big",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\msvcr71.dll",
+              "shadow",
+              "narrow",
+              "100",
+              "leader-bulk-first",
+              "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\mesh-0.txt",
+              "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\group-0.txt",
+              "4"
+            ],
+            "returncode": 1,
+            "fault": 4,
+            "seconds": 1.5402403999760281,
+            "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-native-group-consumer-5wohs50t\\0-shadow-4.log",
+            "log_sha256": "81fac413a9a6275b7e63cab483bf4fc8ae54be70efd1109e398801d376a62ba0",
+            "fault_detected": true
+          }
+        ],
+        "game_launched": false,
+        "runtime_changed": false,
+        "sample_columns": [
+          "round",
+          "native_bulk_complete_ms",
+          "direct_capture_complete_ms",
+          "worker_capture_complete_ms",
+          "saved_vs_native_ms"
+        ]
+      }
+    }
+  ],
+  "regressions": {
+    "directory": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-group-profile-bl9ncqi3",
+    "runs": [
+      {
+        "name": "dxvk",
+        "command": [
+          "rtk",
+          "C:\\Python313\\python.exe",
+          "-X",
+          "utf8",
+          "tools/bench_group_consumer.py",
+          "C:/Jogos/AgeoftheRing/rotwk",
+          "--image",
+          "C:/Jogos/AgeoftheRing/rotwk/game.dat",
+          "--profile",
+          "--pilot",
+          "--output",
+          "perf/build/group-profile-dxvk-final.json"
+        ],
+        "returncode": 0,
+        "seconds": 18.42207539998344,
+        "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-group-profile-bl9ncqi3\\dxvk.log",
+        "sha256": "27208986da3f6fa8c610f221b7d0ffddb87b4bc647da9ed8ae92acb84cb98fa4"
+      },
+      {
+        "name": "native",
+        "command": [
+          "rtk",
+          "C:\\Python313\\python.exe",
+          "-X",
+          "utf8",
+          "tools/bench_group_consumer.py",
+          "C:/Jogos/AgeoftheRing/rotwk",
+          "--image",
+          "C:/Jogos/AgeoftheRing/rotwk/game.dat",
+          "--profile",
+          "--pilot",
+          "--backend",
+          "native",
+          "--output",
+          "perf/build/group-profile-native-final.json"
+        ],
+        "returncode": 0,
+        "seconds": 19.05422959997668,
+        "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-group-profile-bl9ncqi3\\native.log",
+        "sha256": "e444a74a175c60f5c3a72ae19f1a79b6051a3df4126539774511fa7c0c626491"
+      },
+      {
+        "name": "commands-regression",
+        "command": [
+          "rtk",
+          "C:\\Python313\\python.exe",
+          "-X",
+          "utf8",
+          "tools/bench_group_consumer.py",
+          "C:/Jogos/AgeoftheRing/rotwk",
+          "--image",
+          "C:/Jogos/AgeoftheRing/rotwk/game.dat",
+          "--commands",
+          "--output",
+          "perf/build/group-profile-commands-regression-final.json"
+        ],
+        "returncode": 0,
+        "seconds": 51.81815090001328,
+        "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-group-profile-bl9ncqi3\\commands-regression.log",
+        "sha256": "82974832effa83df1b3d126cca30a186ea85a5ab596f7612754791987add884f"
+      },
+      {
+        "name": "original-regression",
+        "command": [
+          "rtk",
+          "C:\\Python313\\python.exe",
+          "-X",
+          "utf8",
+          "tools/bench_group_consumer.py",
+          "C:/Jogos/AgeoftheRing/rotwk",
+          "--image",
+          "C:/Jogos/AgeoftheRing/rotwk/game.dat",
+          "--output",
+          "perf/build/group-profile-original-regression-final.json"
+        ],
+        "returncode": 0,
+        "seconds": 34.33456270000897,
+        "log": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-group-profile-bl9ncqi3\\original-regression.log",
+        "sha256": "428babd178bb883b5a69977c25ab49826cc93c7cb05aec13efc245e118ee74c3"
+      }
+    ]
+  },
+  "limits": [
+    "Fixed AotR image, lit and shadow fixture on native D3D9 and installed DXVK; no gameplay FPS measurement.",
+    "Intervals partition producer wall time under worker contention, not CPU cycles or total GPU time. Direct publication includes replay; worker publication includes copying and waiting for a free slot.",
+    "Traversal includes native per-mesh control/events, palette copies and the first palette CommitChanges. It is not all removable overhead.",
+    "Profile probes add paired median 0.13-0.61 ms per pair across these workloads; retain uninstrumented comparisons and do not convert the profile into a promised speedup.",
+    "Original and command-specific fault regressions use DXVK; profile runs additionally validate both backends. Full plugin suite from dd4c0eb is not rerun because production and shared fixture support are unchanged."
+  ],
+  "next_experiment": "Capture qualified follower palettes at the verified native group loop boundary, with original event/ownership accounting and fallback; compare complete native baseline, previous command worker and bulk-capture worker."
+}

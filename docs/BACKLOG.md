@@ -119,7 +119,12 @@ Strike an item through, with the date, when it's done.
   producer state-block calls in this fixture. DXVK regresses 2.31-3.08 ms
   per pair; native D3D9 saves only 0.10-0.73 ms. No runtime promotion. See
   `benchmarks/2026-10-18-group-command-batches.json`.
-- [ ] Measure/reduce producer capture cost, including redundant native
+- [x] 2026-10-18: measure producer command capture. Native per-mesh
+  traversal occupies 3.17-3.34 ms per pair in the worker, including palette
+  copies and first CommitChanges; queue publication/waits occupy 0.39-0.56 ms.
+  Both backends/workloads retain prior image/state oracles. See
+  `benchmarks/2026-10-18-group-capture-profile.json`.
+- [ ] Reduce producer capture cost, including redundant native
   per-mesh dispatch in already-qualified bulk groups. Preserve native
   events, ownership and ordinary fallback; do not omit capture cost from
   comparisons. The changed flags=7 Begin contract, deferred driver errors,
