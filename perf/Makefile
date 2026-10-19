@@ -433,6 +433,20 @@ $(BUILD)/timing_bulk_bench.o: tests/timing_bulk_bench.c src/timing.c src/*.h | $
 $(BUILD)/bench_material_queue.exe: tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
 	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
 
+$(BUILD)/bench_material_multi.exe: tests/bench_material_multi.c tests/bench_retained_multi.c tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
+
+.PHONY: bench-material-multi
+bench-material-multi: $(BUILD)/bench_material_multi.exe
+	./$(BUILD)/bench_material_multi.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit
+	./$(BUILD)/bench_material_multi.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow
+	@test -f "$(DXVK_D3D9)" || { echo "error: bench-material-multi requires DXVK_D3D9"; exit 1; }
+	mkdir -p $(BUILD)/material_multi_dxvk
+	cp $(BUILD)/bench_material_multi.exe "$(DXVK_D3D9)" $(BUILD)/material_multi_dxvk/
+	cd $(BUILD)/material_multi_dxvk && \
+	  DXVK_LOG_LEVEL=none ./bench_material_multi.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit && \
+	  DXVK_LOG_LEVEL=none ./bench_material_multi.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow
+
 $(BUILD)/bench_external_draw.exe: tests/bench_external_draw.c tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
 	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
 

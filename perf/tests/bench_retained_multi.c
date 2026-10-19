@@ -1,6 +1,10 @@
 /* Offline amortization screen; no runtime hooks or game entry point. */
+#ifndef PF_MULTI_EMBED
 #define PF_RETAINED_EMBED
 #include "bench_retained.c"
+#endif
+
+static void (*multi_validate)(void);
 
 static void multi_pose(unsigned phase)
 {
@@ -23,6 +27,7 @@ static multi_time multi_cycle(unsigned extras, int retained, unsigned (*pixels)[
     multi_pose(0);
     drain();
     pair_optimized = retained;
+    dispatch_bulk_now = !retained && baseline_bulk_enabled;
     retain_now = retained;
     long long start = ticks();
     frame_draw(0, 0, NULL);
@@ -62,7 +67,7 @@ static unsigned compare_pixels(const unsigned *a, const unsigned *b, int matchin
     return different;
 }
 
-int main(int argc, char **argv)
+static int multi_benchmark(int argc, char **argv)
 {
     static unsigned baseline[3][RT*RT], replay[3][RT*RT], stale[RT*RT];
     REQUIRE(bench_no_game());
@@ -71,6 +76,7 @@ int main(int argc, char **argv)
     pf_timing_set_detail(1);
     REQUIRE(!bench_replay(GROUPS, records[0], records[0]+sizeof records[0]));
     REQUIRE(!bench_replay(0, records[0], records[0]+sizeof records[0]));
+    if (multi_validate) multi_validate();
     multi_cycle(3, 0, baseline);
     multi_cycle(3, 1, replay);
     for (unsigned e = 0; e < 3; e++) {
@@ -89,6 +95,7 @@ int main(int argc, char **argv)
             for (unsigned i = 0; i < 2; i++) {
                 unsigned m = i ^ (r & 1);
                 for (unsigned rep = 0; rep < FRAMES_PER_SAMPLE; rep++) {
+                    if (prepare_sample) prepare_sample(r, rep);
                     multi_time t = multi_cycle(extras, m, NULL);
                     times[m].regular += t.regular / FRAMES_PER_SAMPLE;
                     times[m].extras += t.extras / FRAMES_PER_SAMPLE;
@@ -116,3 +123,7 @@ int main(int argc, char **argv)
     IDirect3DQuery9_Release(fence);
     return 0;
 }
+
+#ifndef PF_MULTI_EMBED
+int main(int argc, char **argv) { return multi_benchmark(argc, argv); }
+#endif

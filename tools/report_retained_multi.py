@@ -53,20 +53,39 @@ def main():
     p.add_argument('log', type=Path)
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--samples', type=Path, required=True)
+    p.add_argument('--variant', choices=['setup', 'material'], default='setup')
     args = p.parse_args()
     cases = summarize(args.log.read_text(errors='replace'))
     flat = [dict(backend=c['backend'], mode=c['mode'], **r) for c in cases for r in c.pop('samples')]
     with args.samples.open('w', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=list(flat[0]))
+        writer = csv.DictWriter(f, fieldnames=list(flat[0]), lineterminator='\n')
         writer.writeheader()
         writer.writerows(flat)
-    files = [args.log, ROOT/'perf/tests/bench_retained_multi.c', ROOT/'perf/build/bench_retained_multi.exe']
-    result = {'cases': cases, 'hashes': {str(f): hashlib.sha256(f.read_bytes()).hexdigest() for f in files},
+    stem = 'bench_material_multi' if args.variant == 'material' else 'bench_retained_multi'
+    sources = ['perf/tests/bench_retained_multi.c', 'perf/tests/bench_retained.c',
+               'perf/tests/bench_dispatch.c', 'perf/tests/inst_retained_engine.c',
+               'perf/tests/inst_dispatch_engine.c', 'perf/tests/fps_extra_bench.c']
+    if args.variant == 'material':
+        sources += ['perf/tests/bench_material_multi.c', 'perf/tests/bench_material_queue.c',
+                    'perf/tests/material_fixture.c', 'perf/tests/timing_bulk_bench.c',
+                    'perf/tests/effect_filter_bench.c']
+    files = [args.log, ROOT/f'perf/build/{stem}.exe', *[ROOT/s for s in sources]]
+    limits = ['Controlled synthetic scene and borrowed resource lifetimes.',
+              'No native FX loop, parameter source callbacks, scene traversal, UI, Present or scheduler.',
+              'Not an end-to-end beta.17 comparison.',
+              'Lit and shadow are alternative full workloads; do not add their savings.']
+    if args.variant == 'material':
+        limits += ['Real local effect Begin/End, exact keys and per-group touched-state restoration.',
+                   'Baseline uses the existing bulk-after-second fixture; native runtime dispatch is outside this screen.',
+                   'Time advances between cycles but stays fixed inside each cycle; changing extra inputs can eliminate hits.',
+                   'Capture misses use per-member dispatch and recapture all 288 groups every ordinary frame.']
+    else:
+        limits += ['Narrow fixture state mask and no material effect callbacks.',
+                   'Original retained fixture baseline.']
+    result = {'variant': args.variant, 'cases': cases,
+              'selected_input_hashes': {str(f): hashlib.sha256(f.read_bytes()).hexdigest() for f in files},
               'installed_changes': False, 'gameplay_fps_measured': False,
-              'limits': ['Controlled synthetic scene, borrowed lifetimes and narrow state mask.',
-                         'No native effect callbacks, scene traversal, UI, Present or scheduler.',
-                         'Original retained fixture baseline; not an end-to-end beta.17 comparison.',
-                         'Lit and shadow are alternative full workloads; do not add their savings.']}
+              'limits': limits}
     args.output.write_text(json.dumps(result, indent=2)+'\n')
     for case in cases:
         print(case['backend'], case['mode'], case['summary'])

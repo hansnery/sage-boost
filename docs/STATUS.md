@@ -27,11 +27,18 @@ measures capture-once/replay-three, with complete capture costs and fresh
 poses/shadows: [design](specs/2026-10-19-120fps-retained-screen-design.md),
 [plan](plans/2026-10-19-120fps-retained-screen.md).
 
-`bench-retained-multi` now builds a separate one/three-extra GPU screen with
-per-phase pose/image controls, fresh shadow redraws and charged capture cost.
-Its initial run refused before GPU setup because the game was open. No new
-timing or correctness result is claimed. The current installed beta.17 is
-unchanged; wait for the user's session to finish before running this target.
+The game closed and both one/three-extra GPU matrices completed. The simple
+setup-only screen initially saved 2.77/2.45 ms per three-extra cycle on DXVK
+(lit/shadow, separate workloads). The stronger `bench-material-multi` screen
+retains real effect Begin/End, exact input keys, per-group state restoration,
+advancing cycle Time and a bulk-dispatch baseline. It instead regresses by
+2.52/2.11 ms. All phase-image, stale-pose, material-invalidation and state
+controls pass; this is a performance rejection, not a runtime qualification.
+
+Do not install this cache or request another gameplay test for it. Beta.17
+and the INI are unchanged. The [design/results](specs/2026-10-19-120fps-retained-screen-design.md)
+link both sample sets. The failed initial run while the game was open is
+superseded only by these subsequent guarded executions, not counted as a pass.
 
 ### Beta.17 budget-gap recovery (2026-10-19)
 

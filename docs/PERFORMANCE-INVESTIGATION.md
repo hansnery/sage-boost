@@ -4,8 +4,9 @@ Evidence through 2026-10-19. Initially consolidated from development commit
 `79d58c5`; subsequent experiments cite their own reports below.
 Written at Hans's request after repeated reports of approximately 30 FPS.
 
-**Beta.14 is the first user-confirmed heavy-scene improvement, around 55 FPS;
-the sustained 60 FPS target remains unmet.** Earlier builds sometimes felt
+**Beta.14 is the first user-confirmed heavy-scene improvement, around 55 FPS.
+Hans accepts near-60 as a milestone and now targets 120 FPS.** The older
+settled 59/s gate is unproven but no longer blocks this research. Earlier builds sometimes felt
 smoother but remained around 30 in Hans's heavy tests. The new copied capture
 supports a real increase in presentation calls. It does not establish a
 fixed-scene 59/s result, an exact A/B gain or matching-beta multiplayer sync.
@@ -19,9 +20,9 @@ or insufficient outcomes below; beta.14 does not retroactively qualify them.
 
 This is the concise outcome record. [STATUS.md](STATUS.md) retains the
 chronology; the linked reports retain measurements, controls and provenance.
-Read this before reviving an old approach. The latest gameplay evidence is
-from **0.9.11-beta.14**, whose paired-cadence adapter is installed; see STATUS.md and the
-[installation receipt](benchmarks/2026-10-19-paired-cadence-install.json). Worker experiments remain
+Read this before reviving an old approach. Subsequent beta.16 captures and
+the current beta.17 installation are recorded in STATUS.md and the
+[installation receipt](benchmarks/2026-10-19-beta17-install.json). Worker experiments remain
 offline harnesses, not installed game features.
 
 ## First partial gameplay success: paired cadence (beta.14)
@@ -181,6 +182,7 @@ CPU shadow/render scopes.
 | Cache plus aggregate accounting | Fixed-clock results suggested about 3.0-3.5 ms/pair. Advancing `Time` reduced this to 0.61-1.08 ms; restoring required state at every hit produced a **0.26-0.87 ms DXVK regression**. | Do not promote the fixed-clock cache. [Initial combined screen](specs/2026-10-17-material-bulk-accounting-screen.md), [clock/state follow-up](specs/2026-10-18-material-cache-boundary-clock.md). |
 | Device-state write filter | With the complete effect lifecycle, standalone DXVK regressed about 0.48-0.50 ms. Combined with bulk accounting it saved only 1.47-2.11 ms/pair. | No standalone runtime change. [Screen](specs/2026-10-18-effect-state-filter-screen.md). |
 | Shared material cache with eight exact fixture keys | Against the already-bulk baseline, DXVK regressed about **0.79 ms lit / 0.97 ms shadow**. Native D3D9 saved about 1.80 / 1.67 ms. | Backend-specific native wins do not justify installing on DXVK. [Report](benchmarks/2026-10-18-shared-material-cache.json). |
+| Capture once, replay three for 120 FPS | Setup-only DXVK saved 2.77/2.45 ms per four-draw cycle. Real effect lifecycle, exact keys, per-group restoration and a bulk baseline reverse that to **2.52/2.11 ms regression**. | Three-extra amortization does not rescue this implementation. All phase/material/state controls pass; no runtime promotion. [Results](specs/2026-10-19-120fps-retained-screen-design.md#results-and-decision). |
 
 Revisit caching only with a demonstrated expensive repeated input, correct
 time/identity/invalidation semantics, and a completed-work comparison against

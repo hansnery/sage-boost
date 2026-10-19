@@ -1,0 +1,165 @@
+{
+  "cases": [
+    {
+      "backend": "native",
+      "mode": "lit",
+      "controls": [
+        {
+          "phase": 1,
+          "different": 0,
+          "stale_changed": 20255
+        },
+        {
+          "phase": 2,
+          "different": 0,
+          "stale_changed": 20269
+        },
+        {
+          "phase": 3,
+          "different": 0,
+          "stale_changed": 20261
+        }
+      ],
+      "summary": [
+        {
+          "extras": 1,
+          "samples": 21,
+          "cpu_cycle_saving_median_ms": 1.439,
+          "completion_cycle_saving_median_ms": 1.2007000000000003,
+          "completion_cycle_saving_p10_ms": 0.7827000000000002
+        },
+        {
+          "extras": 3,
+          "samples": 21,
+          "cpu_cycle_saving_median_ms": 5.1904,
+          "completion_cycle_saving_median_ms": 5.128800000000001,
+          "completion_cycle_saving_p10_ms": 4.461
+        }
+      ]
+    },
+    {
+      "backend": "native",
+      "mode": "shadow",
+      "controls": [
+        {
+          "phase": 1,
+          "different": 68,
+          "stale_changed": 15207
+        },
+        {
+          "phase": 2,
+          "different": 52,
+          "stale_changed": 15183
+        },
+        {
+          "phase": 3,
+          "different": 58,
+          "stale_changed": 15162
+        }
+      ],
+      "summary": [
+        {
+          "extras": 1,
+          "samples": 21,
+          "cpu_cycle_saving_median_ms": 1.4115000000000002,
+          "completion_cycle_saving_median_ms": 1.2123,
+          "completion_cycle_saving_p10_ms": 0.7295000000000007
+        },
+        {
+          "extras": 3,
+          "samples": 21,
+          "cpu_cycle_saving_median_ms": 4.952500000000001,
+          "completion_cycle_saving_median_ms": 4.8269,
+          "completion_cycle_saving_p10_ms": 3.8473000000000006
+        }
+      ]
+    },
+    {
+      "backend": "dxvk",
+      "mode": "lit",
+      "controls": [
+        {
+          "phase": 1,
+          "different": 0,
+          "stale_changed": 20255
+        },
+        {
+          "phase": 2,
+          "different": 0,
+          "stale_changed": 20269
+        },
+        {
+          "phase": 3,
+          "different": 0,
+          "stale_changed": 20261
+        }
+      ],
+      "summary": [
+        {
+          "extras": 1,
+          "samples": 21,
+          "cpu_cycle_saving_median_ms": -0.13820000000000032,
+          "completion_cycle_saving_median_ms": -0.3647,
+          "completion_cycle_saving_p10_ms": -2.4506000000000014
+        },
+        {
+          "extras": 3,
+          "samples": 21,
+          "cpu_cycle_saving_median_ms": 2.949600000000001,
+          "completion_cycle_saving_median_ms": 2.7692000000000005,
+          "completion_cycle_saving_p10_ms": 0.7373000000000012
+        }
+      ]
+    },
+    {
+      "backend": "dxvk",
+      "mode": "shadow",
+      "controls": [
+        {
+          "phase": 1,
+          "different": 29,
+          "stale_changed": 15207
+        },
+        {
+          "phase": 2,
+          "different": 26,
+          "stale_changed": 15183
+        },
+        {
+          "phase": 3,
+          "different": 42,
+          "stale_changed": 15162
+        }
+      ],
+      "summary": [
+        {
+          "extras": 1,
+          "samples": 21,
+          "cpu_cycle_saving_median_ms": 0.4455999999999998,
+          "completion_cycle_saving_median_ms": 0.20110000000000028,
+          "completion_cycle_saving_p10_ms": -0.8877999999999995
+        },
+        {
+          "extras": 3,
+          "samples": 21,
+          "cpu_cycle_saving_median_ms": 2.9120999999999997,
+          "completion_cycle_saving_median_ms": 2.4526000000000003,
+          "completion_cycle_saving_p10_ms": 1.7644000000000002
+        }
+      ]
+    }
+  ],
+  "hashes": {
+    "perf\\build\\retained-multi-screen.log": "9aef77e3d056fe30c55ea0d1cc376b96457be37d2ce1ca58912bbdd9a2ac6b10",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_retained_multi.c": "30a742299790baab6a338f4b4bd5266688a4a9ec0c6a8f5feecfb0d62e9a084d",
+    "C:\\repositories\\sage-boost\\perf\\build\\bench_retained_multi.exe": "54093e85113b7a72b91c6247b8591f87e0d216793221da3f3639b29c3196b301"
+  },
+  "installed_changes": false,
+  "gameplay_fps_measured": false,
+  "limits": [
+    "Controlled synthetic scene, borrowed lifetimes and narrow state mask.",
+    "No native effect callbacks, scene traversal, UI, Present or scheduler.",
+    "Original retained fixture baseline; not an end-to-end beta.17 comparison.",
+    "Lit and shadow are alternative full workloads; do not add their savings."
+  ]
+}

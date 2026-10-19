@@ -1,0 +1,180 @@
+{
+  "variant": "material",
+  "cases": [
+    {
+      "backend": "native",
+      "mode": "lit",
+      "controls": [
+        {
+          "phase": 1,
+          "different": 0,
+          "stale_changed": 18738
+        },
+        {
+          "phase": 2,
+          "different": 0,
+          "stale_changed": 18648
+        },
+        {
+          "phase": 3,
+          "different": 0,
+          "stale_changed": 18632
+        }
+      ],
+      "summary": [
+        {
+          "extras": 1,
+          "samples": 21,
+          "cpu_cycle_saving_median_ms": -0.7844999999999995,
+          "completion_cycle_saving_median_ms": -0.7963999999999993,
+          "completion_cycle_saving_p10_ms": -1.4210999999999991
+        },
+        {
+          "extras": 3,
+          "samples": 21,
+          "cpu_cycle_saving_median_ms": 2.2713,
+          "completion_cycle_saving_median_ms": 2.3065000000000015,
+          "completion_cycle_saving_p10_ms": 1.3828000000000014
+        }
+      ]
+    },
+    {
+      "backend": "native",
+      "mode": "shadow",
+      "controls": [
+        {
+          "phase": 1,
+          "different": 0,
+          "stale_changed": 19062
+        },
+        {
+          "phase": 2,
+          "different": 0,
+          "stale_changed": 19032
+        },
+        {
+          "phase": 3,
+          "different": 0,
+          "stale_changed": 18980
+        }
+      ],
+      "summary": [
+        {
+          "extras": 1,
+          "samples": 21,
+          "cpu_cycle_saving_median_ms": -0.8132999999999999,
+          "completion_cycle_saving_median_ms": -0.7342000000000004,
+          "completion_cycle_saving_p10_ms": -2.1350999999999996
+        },
+        {
+          "extras": 3,
+          "samples": 21,
+          "cpu_cycle_saving_median_ms": 2.1763000000000012,
+          "completion_cycle_saving_median_ms": 2.1639999999999997,
+          "completion_cycle_saving_p10_ms": 1.8218999999999994
+        }
+      ]
+    },
+    {
+      "backend": "dxvk",
+      "mode": "lit",
+      "controls": [
+        {
+          "phase": 1,
+          "different": 0,
+          "stale_changed": 18738
+        },
+        {
+          "phase": 2,
+          "different": 0,
+          "stale_changed": 18648
+        },
+        {
+          "phase": 3,
+          "different": 0,
+          "stale_changed": 18632
+        }
+      ],
+      "summary": [
+        {
+          "extras": 1,
+          "samples": 21,
+          "cpu_cycle_saving_median_ms": -2.9463999999999997,
+          "completion_cycle_saving_median_ms": -2.8626999999999994,
+          "completion_cycle_saving_p10_ms": -4.3806
+        },
+        {
+          "extras": 3,
+          "samples": 21,
+          "cpu_cycle_saving_median_ms": -2.9735999999999994,
+          "completion_cycle_saving_median_ms": -2.5174000000000003,
+          "completion_cycle_saving_p10_ms": -3.1692
+        }
+      ]
+    },
+    {
+      "backend": "dxvk",
+      "mode": "shadow",
+      "controls": [
+        {
+          "phase": 1,
+          "different": 0,
+          "stale_changed": 19062
+        },
+        {
+          "phase": 2,
+          "different": 0,
+          "stale_changed": 19032
+        },
+        {
+          "phase": 3,
+          "different": 0,
+          "stale_changed": 18980
+        }
+      ],
+      "summary": [
+        {
+          "extras": 1,
+          "samples": 21,
+          "cpu_cycle_saving_median_ms": -3.1303,
+          "completion_cycle_saving_median_ms": -2.233500000000001,
+          "completion_cycle_saving_p10_ms": -3.1223
+        },
+        {
+          "extras": 3,
+          "samples": 21,
+          "cpu_cycle_saving_median_ms": -3.3946000000000005,
+          "completion_cycle_saving_median_ms": -2.106300000000001,
+          "completion_cycle_saving_p10_ms": -2.7478999999999996
+        }
+      ]
+    }
+  ],
+  "selected_input_hashes": {
+    "perf\\build\\material-multi-screen.log": "b0db92bb7d9701b4676a1d9a80b69e060876e3f83cd0890213b539ac84208696",
+    "C:\\repositories\\sage-boost\\perf\\build\\bench_material_multi.exe": "5ea8d56143ddfde9fb8308efc85a2255d1244af128b666ad3af4381f1bde139c",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_retained_multi.c": "6fcb207372a171ebd19d22e4cbf99198ac7aa6104a60b11f61e210a7305d1122",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_retained.c": "f90ea726b19dc01e856bbbc06d8c3afaa5934276cdab5c7825160e4c8993f473",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_dispatch.c": "3a28461c0d6ddf7fb200a8714c7c5efbc13886b414eb2a8ed432b4667fb076b1",
+    "C:\\repositories\\sage-boost\\perf\\tests\\inst_retained_engine.c": "b1d3d466ca49a621626607ec32c0223d18bd6b6fa0cadce6fb2b9bea36481135",
+    "C:\\repositories\\sage-boost\\perf\\tests\\inst_dispatch_engine.c": "c6e0a5476f00e9adc9432cdfde13e9897eec66750e4a623e920aeae78350a23b",
+    "C:\\repositories\\sage-boost\\perf\\tests\\fps_extra_bench.c": "f5b7cb49d42c61b78f8f6f2e8d5736bbed726f080b4971b6976dea1886e8323e",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_material_multi.c": "8b59526d403d6a1ff5a5d863b4815b74cf2b1b7512d6ac34f481daa30f20ffb5",
+    "C:\\repositories\\sage-boost\\perf\\tests\\bench_material_queue.c": "fe33d04874dc6aa17de77767766da8677c125511430912cd430708a8e7452f25",
+    "C:\\repositories\\sage-boost\\perf\\tests\\material_fixture.c": "5770f7e62e2f92158f605f4ca30ae9dc6fe8b83d5cac98753cc0e8adecf9fc60",
+    "C:\\repositories\\sage-boost\\perf\\tests\\timing_bulk_bench.c": "2ea8a7a8aa3451a1cca4b5b00e14de261556f2ba1c5dc3a762788200b827d3b1",
+    "C:\\repositories\\sage-boost\\perf\\tests\\effect_filter_bench.c": "85e8da48832e61011a5315ef27b22674b1ab5aa429d20d89e5a8ff83d467cbc4"
+  },
+  "installed_changes": false,
+  "gameplay_fps_measured": false,
+  "limits": [
+    "Controlled synthetic scene and borrowed resource lifetimes.",
+    "No native FX loop, parameter source callbacks, scene traversal, UI, Present or scheduler.",
+    "Not an end-to-end beta.17 comparison.",
+    "Lit and shadow are alternative full workloads; do not add their savings.",
+    "Real local effect Begin/End, exact keys and per-group touched-state restoration.",
+    "Baseline uses the existing bulk-after-second fixture; native runtime dispatch is outside this screen.",
+    "Time advances between cycles but stays fixed inside each cycle; changing extra inputs can eliminate hits.",
+    "Capture misses use per-member dispatch and recapture all 288 groups every ordinary frame."
+  ]
+}
