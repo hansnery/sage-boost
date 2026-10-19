@@ -1,0 +1,234 @@
+{
+  "version": "bfme2perf 0.9.11-beta.16",
+  "backup": "C:\\Users\\Hans\\AppData\\Local\\Temp\\bfme2perf-beta16-before-beta17-20261019-132723",
+  "rows": 145,
+  "eligible_windows": 27,
+  "timing_sha256": "11c096adfba556d54a36d9aa898db609e175336fa19a66076fab924bbf092e79",
+  "exact_scene_interval_verified": false,
+  "highest_mesh_window": {
+    "window": {
+      "start_s": 1193,
+      "end_s_exclusive": 1253,
+      "nominal_seconds": 60,
+      "at_least_60_seconds": true
+    },
+    "presentation_calls": 3304,
+    "presentation_calls_per_nominal_second": 55.06666666666667,
+    "nominal_rate_at_least_59": false,
+    "rate_bounds_from_timestamp_quantization": {
+      "lower": 54.16393442622951,
+      "upper": 56.0
+    },
+    "per_row_calls": {
+      "min": 39,
+      "max": 62
+    },
+    "regular_frame_updates": 1810,
+    "extra_frames": 1505,
+    "pacing": {
+      "gaps": 3304,
+      "histogram_counts": {
+        "present_gap_le_8333us": 29,
+        "present_gap_le_12500us": 310,
+        "present_gap_le_16667us": 1194,
+        "present_gap_le_20000us": 1119,
+        "present_gap_le_25000us": 356,
+        "present_gap_le_33334us": 169,
+        "present_gap_le_50000us": 111,
+        "present_gap_le_100000us": 14,
+        "present_gap_le_200000us": 2,
+        "present_gap_le_500000us": 0,
+        "present_gap_le_1000000us": 0,
+        "present_gap_over_1000000us": 0
+      },
+      "p50": {
+        "lower_exclusive_ms": 16.667,
+        "upper_ms": 20.0
+      },
+      "p95": {
+        "lower_exclusive_ms": 25.0,
+        "upper_ms": 33.334
+      },
+      "fraction_over_25_ms": 0.08958837772397095,
+      "fraction_over_50_ms": 0.004842615012106538
+    },
+    "shadows": {
+      "extra_draw_calls": 1505,
+      "extra_completed_pass_samples": 1505,
+      "valid_extra_profiles": 1505,
+      "invalid_extra_profiles": 0,
+      "regular_shadow_skips": 0,
+      "extra_counts_match_each_row": true
+    },
+    "verification_failures": {
+      "verify_bad": 0,
+      "shadow_verify_bad": 0,
+      "spv_bad": 0,
+      "lt_verify_bad": 0
+    },
+    "bulk_coverage": {
+      "available": true,
+      "instrumented_rows": 60,
+      "selected_rows": 60,
+      "regular": {
+        "consumed_followers_by_method_count": {
+          "1": 1591867,
+          "2": 1178926,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "consumed_followers": 2770793,
+        "multi_method_followers": 1178926,
+        "multi_method_fraction": 0.425483246132064,
+        "frame_denominator": 1810,
+        "consumed_followers_per_frame": 1530.824861878453
+      },
+      "extra": {
+        "consumed_followers_by_method_count": {
+          "1": 924703,
+          "2": 984605,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "consumed_followers": 1909308,
+        "multi_method_followers": 984605,
+        "multi_method_fraction": 0.5156868352303557,
+        "frame_denominator": 1505,
+        "consumed_followers_per_frame": 1268.6431893687707
+      },
+      "limits": [
+        "Consumed follower records across render passes; not unique units or successful draws.",
+        "Deferred leaders are excluded; no total eligible-record denominator is recorded.",
+        "Regular per-frame values include updates whose render was skipped.",
+        "Method counts measure use of the path, not time saved or FPS gained."
+      ]
+    },
+    "limits": [
+      "Completed flip-enabled EndScene calls; not measured display refresh or GPU success.",
+      "Row timestamps quantize duration; reported FPS uses the nominal interval.",
+      "Percentiles are pooled histogram bounds, not exact gaps or averaged row percentiles.",
+      "The first gap may begin before the selected interval.",
+      "Matching shadow counts do not prove correct pixels or per-frame correspondence.",
+      "Confirm the saved-game scene, loaded version/settings, visual output and runtime log.",
+      "Simulation/network/input/camera invariants require separate evidence."
+    ],
+    "weighted_inst_meshes": 1822.6701657458564
+  },
+  "fastest_eligible_window": {
+    "window": {
+      "start_s": 1199,
+      "end_s_exclusive": 1259,
+      "nominal_seconds": 60,
+      "at_least_60_seconds": true
+    },
+    "presentation_calls": 3315,
+    "presentation_calls_per_nominal_second": 55.25,
+    "nominal_rate_at_least_59": false,
+    "rate_bounds_from_timestamp_quantization": {
+      "lower": 54.34426229508197,
+      "upper": 56.186440677966104
+    },
+    "per_row_calls": {
+      "min": 40,
+      "max": 62
+    },
+    "regular_frame_updates": 1815,
+    "extra_frames": 1512,
+    "pacing": {
+      "gaps": 3315,
+      "histogram_counts": {
+        "present_gap_le_8333us": 17,
+        "present_gap_le_12500us": 292,
+        "present_gap_le_16667us": 1231,
+        "present_gap_le_20000us": 1168,
+        "present_gap_le_25000us": 327,
+        "present_gap_le_33334us": 149,
+        "present_gap_le_50000us": 114,
+        "present_gap_le_100000us": 14,
+        "present_gap_le_200000us": 3,
+        "present_gap_le_500000us": 0,
+        "present_gap_le_1000000us": 0,
+        "present_gap_over_1000000us": 0
+      },
+      "p50": {
+        "lower_exclusive_ms": 16.667,
+        "upper_ms": 20.0
+      },
+      "p95": {
+        "lower_exclusive_ms": 25.0,
+        "upper_ms": 33.334
+      },
+      "fraction_over_25_ms": 0.08446455505279035,
+      "fraction_over_50_ms": 0.005128205128205128
+    },
+    "shadows": {
+      "extra_draw_calls": 1512,
+      "extra_completed_pass_samples": 1512,
+      "valid_extra_profiles": 1512,
+      "invalid_extra_profiles": 0,
+      "regular_shadow_skips": 0,
+      "extra_counts_match_each_row": true
+    },
+    "verification_failures": {
+      "verify_bad": 0,
+      "shadow_verify_bad": 0,
+      "spv_bad": 0,
+      "lt_verify_bad": 0
+    },
+    "bulk_coverage": {
+      "available": true,
+      "instrumented_rows": 60,
+      "selected_rows": 60,
+      "regular": {
+        "consumed_followers_by_method_count": {
+          "1": 1486954,
+          "2": 1082121,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "consumed_followers": 2569075,
+        "multi_method_followers": 1082121,
+        "multi_method_fraction": 0.42121035781360994,
+        "frame_denominator": 1815,
+        "consumed_followers_per_frame": 1415.4683195592286
+      },
+      "extra": {
+        "consumed_followers_by_method_count": {
+          "1": 855066,
+          "2": 913533,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "consumed_followers": 1768599,
+        "multi_method_followers": 913533,
+        "multi_method_fraction": 0.5165291849650486,
+        "frame_denominator": 1512,
+        "consumed_followers_per_frame": 1169.7083333333333
+      },
+      "limits": [
+        "Consumed follower records across render passes; not unique units or successful draws.",
+        "Deferred leaders are excluded; no total eligible-record denominator is recorded.",
+        "Regular per-frame values include updates whose render was skipped.",
+        "Method counts measure use of the path, not time saved or FPS gained."
+      ]
+    },
+    "limits": [
+      "Completed flip-enabled EndScene calls; not measured display refresh or GPU success.",
+      "Row timestamps quantize duration; reported FPS uses the nominal interval.",
+      "Percentiles are pooled histogram bounds, not exact gaps or averaged row percentiles.",
+      "The first gap may begin before the selected interval.",
+      "Matching shadow counts do not prove correct pixels or per-frame correspondence.",
+      "Confirm the saved-game scene, loaded version/settings, visual output and runtime log.",
+      "Simulation/network/input/camera invariants require separate evidence."
+    ]
+  },
+  "limits": "Same session versus earlier capture is unverified; highest mesh count is not a fixed-view proof. Fastest window is not proof of the heavy-scene target."
+}

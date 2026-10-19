@@ -45,6 +45,15 @@ The INI is byte-identical; beta.16, its INI/logs and the old shortcut are in
 shortcut now pins beta.17 and passes CheckOnly. No game was launched.
 [Installation receipt](benchmarks/2026-10-19-beta17-install.json).
 
+Review of the newer beta.16 logs preserved by that installation found 145
+CSV rows and 27 eligible complete gameplay windows. The highest weighted
+mesh-count minute (1193..1252 seconds) averages 55.07 presentations/s; the
+fastest eligible minute averages 55.25/s. The former has p95 presentation
+gaps in (25,33.334] ms. This is a different copied log from the earlier
+180-row capture; exact view/scene and session continuity are unverified.
+It supports near-60 observations but still does not meet the 59/s target.
+[Final beta.16 backup analysis](benchmarks/2026-10-19-beta16-final-backup-check.json).
+
 ### Beta.16 intermittent recovery fix (2026-10-19)
 
 Follow-up offline screening reproduces another credit reset: intermittent
