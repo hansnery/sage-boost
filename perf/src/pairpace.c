@@ -3,7 +3,8 @@
 void pf_pair_reset(pf_pairpace *p)
 {
     p->deadline = p->period = p->sequence = p->observed = 0;
-    p->active = p->used = 0;
+    p->active = p->limited = 0;
+    p->quota = p->used = 0;
 }
 
 void pf_pair_begin(pf_pairpace *p, unsigned sequence, unsigned now,
@@ -37,14 +38,34 @@ void pf_pair_begin(pf_pairpace *p, unsigned sequence, unsigned now,
     p->observed = now;
     p->active = 1;
     p->used = 0;
+    p->quota = 1;
+    p->limited = 0;
+}
+
+void pf_pair_limit(pf_pairpace *p, unsigned now, unsigned expected, unsigned limit)
+{
+    int remaining;
+    if (!p->active || p->used || p->limited) return;
+    p->limited = 1;
+    if (limit < 2 || limit > 3 || !expected || expected > p->period) return;
+    remaining = (int)(p->deadline - now);
+    while (limit > 1) {
+        if ((int)(limit * (expected + PF_PAIR_RESERVE_US)) <= remaining) {
+            p->quota = limit;
+            return;
+        }
+        limit--;
+    }
 }
 
 static int fits(const pf_pairpace *p, unsigned now, unsigned expected)
 {
     int remaining;
-    if (!p->active || p->used || !expected || expected > p->period)
+    if (!p->active || p->used >= p->quota || !expected || expected > p->period)
         return 0;
     remaining = (int)(p->deadline - now);
+    if (p->quota > 1)
+        return (int)(expected + PF_PAIR_RESERVE_US) <= remaining;
     /* All arithmetic below is bounded by the validated native period. */
     return remaining >= -(int)PF_PAIR_BORROW_US &&
            (int)(expected + PF_PAIR_RESERVE_US) <=
@@ -58,6 +79,21 @@ int pf_pair_plan(const pf_pairpace *p, unsigned now, unsigned expected,
     unsigned ideal, latest, start;
     if (!delay || !fits(p, now, expected) || !average || average > expected)
         return 0;
+    if (p->quota > 1) {
+        unsigned pending = p->quota - p->used;
+        int target = (int)(p->period * (p->used + 1u) / (p->quota + 1u)) -
+                     (int)average - (int)(now - p->observed);
+        int remaining = (int)(p->deadline - now);
+        /* If a draw was slower than expected, do not reserve time for draws
+         * which no longer fit. Never move the native deadline to fit them. */
+        while (pending > 1 && (int)(pending * (expected + PF_PAIR_RESERVE_US)) > remaining)
+            pending--;
+        slack = remaining - (int)(pending * (expected + PF_PAIR_RESERVE_US));
+        ideal = target > 0 ? (unsigned)target : 0;
+        latest = slack > 0 ? (unsigned)slack : 0;
+        *delay = ideal < latest ? ideal : latest;
+        return 1;
+    }
     /* Prefer the midpoint, but do not deliberately spend the borrow on
      * pacing. Borrow is only for work that cannot otherwise fit at once. */
     ideal = average < p->period / 2u ? p->period / 2u - average : 0;
@@ -74,7 +110,7 @@ int pf_pair_claim(pf_pairpace *p, unsigned now, unsigned expected)
 {
     if (!fits(p, now, expected))
         return 0;
-    p->used = 1;
+    p->used++;
     return 1;
 }
 

@@ -97,6 +97,8 @@ void pf_config_load(pf_config *cfg, const WCHAR *ini_path)
         cfg->frame_smoothing = 3;
     cfg->extra_shadows = read_int(L"Render", L"ExtraFrameShadows", 0, ini_path) != 0;
     cfg->pair_pacing = read_int(L"Experimental", L"PairPacing", 0, ini_path) == 1;
+    cfg->pair_max_extras = read_int(L"Experimental", L"PairMaxExtras", 1, ini_path);
+    if (cfg->pair_max_extras < 1 || cfg->pair_max_extras > 3) cfg->pair_max_extras = 1;
     cfg->extra_reflections = read_int(L"Render", L"ExtraFrameReflections", 0, ini_path) != 0;
     cfg->shadow_batch = read_int(L"Render", L"ShadowBatchIgnoreLight", 1, ini_path) != 0;
     cfg->stencil_flushes = read_int(L"Render", L"NoStencilFlushes", 1, ini_path);

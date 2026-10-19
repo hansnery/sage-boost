@@ -108,6 +108,13 @@ See the [release notes](docs/releases/perf-0.9.11-beta.14.md) and
 [gameplay report](docs/benchmarks/2026-10-19-beta14-gameplay-check.json).
 See the [behavior and verification limits](docs/specs/2026-10-19-paired-cadence-runtime.md).
 
+The development candidate **0.9.11-beta.15** adds `PairMaxExtras=1..3`
+(default 1), also capped by MaxFPS. It can draw two or three extras when
+the measured work fits, retaining fresh shadows. Controlled adapter tests
+exercise roughly 90/120 schedules; actual gameplay gains remain unverified.
+The launcher Beta and local installation remain on beta.14. See the
+[adaptive design](docs/specs/2026-10-19-adaptive-cadence-design.md).
+
 1. Copy `bfme2perf.asi` and `bfme2perf.ini` into the `mss\` folder next to
    `game.dat` (for Age of the Ring: `...\AgeoftheRing\rotwk\mss\`). That
    folder already holds the game's own Miles plugins, such as `mssmp3.asi`.

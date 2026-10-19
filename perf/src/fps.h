@@ -89,6 +89,8 @@ void pf_fps_set_passes(int shadows, int reflections);
 /* Opt-in paired cadence. Requires the verified game/limiter/UI sites plus
  * the frame hook. Returns 1 only when the existing checked draw is ready. */
 int pf_fps_set_pair_pacing(const pf_cu_sites *sites, int frame_hook);
+/* Opt-in 1..3 extra ceiling (default 1); also capped by MaxFPS. */
+void pf_fps_set_pair_limit(unsigned limit);
 /* True while this controller owns the current limiter epoch. Catch-up must
  * not skip a render or impose another wait deadline while this is true. */
 int pf_fps_pair_owner(void);

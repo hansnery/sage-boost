@@ -14,7 +14,37 @@ gains and untested alternatives. On October 19 Hans reported the first clear
 heavy-scene improvement with beta.14, around 55 FPS. The settled 59/s target
 and multiplayer qualification remain unmet.
 
-## Next target: 60 visual FPS with shadows at 60 (2026-10-17)
+## Performance beta and 120 FPS research (2026-10-19)
+
+### Adaptive candidate beta.15 (2026-10-19)
+
+The next development candidate adds `[Experimental] PairMaxExtras=1..3`,
+default 1, also capped by MaxFPS. It retains the published beta.14 path for
+one extra; after eight measured successful draws it can select two or three
+when their full predicted costs and reserves fit before the native deadline.
+Each extra uses the same checked draw/restoration/fresh-shadow path. Multiple
+draws share one deadline and cannot each borrow another 4 ms. State/UI changes
+or increased costs cancel remaining work; recovery probes remain single-draw.
+
+Controlled production-object tests show 1,800 ordinary updates plus 5,400
+extras in 59.4 virtual seconds with 6 ms regular / 4 ms extra inputs. The
+maximum modeled presentation gap is 8.77 ms. Inputs of 12/7 ms select two
+extras, and 18/8.9 ms select one. These are correctness tests, not game FPS
+or a replay of the user's capture. A second-draw stall cancels the third,
+later recovery succeeds, and 6,000 changing native periods retain cadence.
+No new game capture or multiplayer qualification exists.
+
+The complete `perf` suite passes (exit 0), the 160,438-check one-extra policy
+screen still passes, and six production integer objects pass the instruction
+audit. [Versioned runtime evidence](benchmarks/2026-10-19-adaptive-cadence-runtime.json)
+records the candidate binary/source hashes, suite-log hash and limitations.
+
+Beta.14 remains installed and published. Beta.15 is not installed because
+the controlled results do not demonstrate another significant heavy-scene
+gain, which Hans requested before the next gameplay test. The next work is
+to reduce actual complete-frame rendering cost and qualify this candidate
+in gameplay. See [design](specs/2026-10-19-adaptive-cadence-design.md) and
+[plan](plans/2026-10-19-adaptive-cadence.md).
 
 ### Beta.14 published; next research target 120 FPS (2026-10-19)
 

@@ -28,7 +28,7 @@
 #include "timing.h"
 #include "uistate.h"
 
-#define PERF_VERSION "0.9.11-beta.14"
+#define PERF_VERSION "0.9.11-beta.15"
 
 static WCHAR g_log_path[MAX_PATH];
 
@@ -524,8 +524,9 @@ static void install_hooks(const pf_config *cfg, const WCHAR *csv_path, const WCH
                 all_set(installed, PF_BIT(PF_FRAME) | PF_BIT(PF_DISPLAY_DRAW) |
                                   PF_BIT(PF_SHADOW) | PF_BIT(PF_SHADOW_INFO) | PF_BIT(PF_REFLECT));
             pair_active = ready && pf_fps_set_pair_pacing(&cu, 1);
+            pf_fps_set_pair_limit((unsigned)cfg->pair_max_extras);
             fu_logf("experimental: PairPacing=%d: %s", pair_active,
-                    pair_active ? "one extra draw per native update, at most 4 ms predicted debt; "
+                    pair_active ? "adaptive extra draws per native update; one-draw path permits 4 ms predicted debt; "
                              "later waits repay it; fresh shadows, reflection preferences retained; matching-beta "
                              "multiplayer and gameplay FPS unqualified" :
                              "prerequisites missing; requires FrameSmoothing=3, full-rate shadows "
@@ -658,7 +659,7 @@ BOOL WINAPI DllMain(HINSTANCE inst, DWORD reason, LPVOID reserved)
             "ShadowPassVerify=%d LightSkipShadow=%d LightCull=%d LightReuse=%d LightVerify=%d, "
             "[CatchUp] Enabled=%d MaxSkips=%d Notice=%d NoticeText=%s NoticeMinSkips=%d, "
             "[Skeleton] Threads=%d Verify=%d (the skeleton pre-pass is not in this build), "
-            "[Experimental] PairPacing=%d",
+            "[Experimental] PairPacing=%d PairMaxExtras=%d",
             cfg.enabled, cfg.log, cfg.timing, cfg.detail, cfg.reflect_interval,
             cfg.shadow_interval, cfg.shadow_scrolling, cfg.batching, cfg.queue_insert, cfg.queue_sort, cfg.bulk_render, cfg.instancing,
             cfg.instancing_verify, cfg.shadow_instancing, cfg.max_fps, cfg.frame_smoothing,
@@ -666,7 +667,7 @@ BOOL WINAPI DllMain(HINSTANCE inst, DWORD reason, LPVOID reserved)
             cfg.shadow_particles, cfg.shadow_verify, cfg.light_skip, cfg.light_cull,
             cfg.light_reuse, cfg.light_verify, cfg.catchup, cfg.catchup_max_skips,
             cfg.catchup_notice, cfg.catchup_text, cfg.catchup_notice_min, cfg.threads,
-            cfg.verify, cfg.pair_pacing);
+            cfg.verify, cfg.pair_pacing, cfg.pair_max_extras);
     if (cfg.pair_pacing && cfg.max_fps <= 30)
         fu_logf("experimental: PairPacing requires MaxFPS>=60; native pacing retained");
     if (!cfg.instancing)

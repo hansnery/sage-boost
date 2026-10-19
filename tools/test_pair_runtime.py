@@ -18,15 +18,17 @@ def main():
     parser.add_argument("--executable", type=Path, default=ROOT / "perf/build/test_pair_runtime.exe")
     parser.add_argument("--objdump", default="objdump")
     parser.add_argument("--suite-log", type=Path)
+    parser.add_argument("--run-log", type=Path, help="Parse an already completed fixture/suite run")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    run = subprocess.run([str(args.executable.resolve())], capture_output=True, text=True, check=True)
-    assert "paired runtime adapter: PASS (0 failures)" in run.stdout
-    assert "FAIL" not in run.stdout
+    output = args.run_log.read_text(errors="replace") if args.run_log else subprocess.run(
+        [str(args.executable.resolve())], capture_output=True, text=True, check=True).stdout
+    assert "paired runtime adapter: PASS (0 failures)" in output
+    assert "FAIL tests/" not in output and "mingw32-make: ***" not in output
     pattern = (r"adapter paired=(\d) regular=(\d+) jitter=(\d): (\d+) ordinary, (\d+) extra, "
                r"(\d+) us, (\d+) shortened waits, (\d+) late, stop=([^\n]+)")
     rows = []
-    for match in re.finditer(pattern, run.stdout):
+    for match in re.finditer(pattern, output):
         values = list(map(int, match.groups()[:8]))
         row = dict(zip(["paired", "regular_cost_us", "jitter", "ordinary_updates", "extra_draws",
                         "virtual_elapsed_us", "shortened_waits", "late_predictions"], values))
@@ -36,9 +38,27 @@ def main():
         assert row["late_predictions"] == 0 and match.group(9) == "none"
         rows.append(row)
     assert len(rows) == 3
-    assert "3 probes, 3 failed, resting=three paired recovery probes" in run.stdout
-    recovery = re.search(r"adapter recovery: (\d+) extra draws after the spike, 1 late, (\d+) us", run.stdout)
+    assert "3 probes, 3 failed, resting=three paired recovery probes" in output
+    recovery = re.search(r"adapter recovery: (\d+) extra draws after the spike, 1 late, (\d+) us", output)
     assert recovery and int(recovery.group(1)) > 100
+    adaptive = []
+    pattern = (r"adaptive max=(\d+) limit=(\d+) regular=(\d+) cost=(\d+): (\d+) ordinary, "
+               r"(\d+) extra, (\d+) us, max gap (\d+) us, (\d+) late")
+    for match in re.finditer(pattern, output):
+        row = dict(zip(["max_fps", "pair_max_extras", "regular_cost_us", "extra_cost_us",
+                        "ordinary_updates", "extra_draws", "virtual_elapsed_us", "gap_max_us",
+                        "late_predictions"], map(int, match.groups())))
+        assert row["ordinary_updates"] == 1800 and row["late_predictions"] == 0
+        assert 59390000 <= row["virtual_elapsed_us"] <= 59410000
+        row["modeled_presentations_per_second"] = 1e6 * (
+            row["ordinary_updates"] + row["extra_draws"]) / row["virtual_elapsed_us"]
+        adaptive.append(row)
+    assert len(adaptive) == 6
+    assert [r["extra_draws"] for r in adaptive] == [5400, 1800, 3600, 1800, 3600, 1800]
+    assert adaptive[0]["gap_max_us"] < 10000
+    period_case = re.search(r"adaptive changing-period updates: 6000 ordinary, (\d+) extra, (\d+) us, 0 late", output)
+    assert period_case and int(period_case.group(1)) >= 12000
+    assert "adaptive second-draw spike/recovery/cost/state guards: checked" in output
     objects = {}
     for name in ["fps", "pairpace", "catchup", "config", "main", "stubs"]:
         path = ROOT / f"perf/build/{name}.o"
@@ -55,7 +75,8 @@ def main():
     paths = ["perf/src/fps.c", "perf/src/fps.h", "perf/src/pairpace.c", "perf/src/pairpace.h",
              "perf/src/catchup.c", "perf/src/catchup.h", "perf/src/config.c", "perf/src/config.h",
              "perf/src/main.c", "perf/src/version.rc", "perf/tests/test_pair_runtime.c",
-             "perf/tests/test_fps.c", "tools/test_pair_runtime.py"]
+             "perf/tests/test_fps.c", "perf/tests/test_config.c", "perf/bfme2perf.ini",
+             "tools/test_pair_runtime.py"]
     suite = None
     if args.suite_log:
         log = args.suite_log.read_text(errors="replace")
@@ -66,7 +87,8 @@ def main():
         suite = {"path": str(args.suite_log), "sha256": sha(args.suite_log),
                  "required_markers_present": True, "failure_markers": False}
     result = {
-        "version": "0.9.11-beta.14",
+        "version": re.search(r'#define PERF_VERSION "([^"]+)"',
+                             (ROOT / 'perf/src/main.c').read_text()).group(1),
         "kind": "production adapter correctness test with controlled virtual timing",
         "gameplay_target_verified": False,
         "plugin_sha256": sha(ROOT / "perf/build/bfme2perf.asi"),
@@ -75,7 +97,12 @@ def main():
         "integer_object_audit": objects,
         "full_suite_log": suite,
         "closed_loop_cases": rows,
-        "raw_output": run.stdout,
+        "adaptive_cases": adaptive,
+        "changing_period_case": {"ordinary_updates": 6000,
+                                 "extra_draws": int(period_case.group(1)),
+                                 "virtual_elapsed_us": int(period_case.group(2))},
+        "raw_output": '\n'.join(line for line in output.splitlines()
+                                if line.startswith(('adaptive ', 'adapter ', 'paired runtime adapter:'))),
         "coverage": [
             "Production fps/catch-up/pairpace object files, not alternate implementations",
             "One pacing owner, real saved wait-threshold adapter and exact ordinary update count",
@@ -84,6 +111,9 @@ def main():
             "Native period change and logic-random, engine-counter, client-frame and camera failure guards",
             "One transient recovery with a more expensive ordinary reference draw",
             "Persistent expensive draws: at most five draws, three failed bounded probes, then rest",
+            "Adaptive one/two/three draws, MaxFPS ceiling, shared deadline, repeated observations and clock wrap",
+            "Second-draw cost/state failures, UI eligibility lost after first draw and later recovery",
+            "6000 changing native periods with preserved ordinary cadence",
         ],
         "limits": [
             "No game, game entry point, native update, GPU scene, Present or multiplayer peer executes.",
@@ -91,6 +121,7 @@ def main():
             "The hook adapter is called through its C interface; unchanged assembly/site behavior is checked by the full existing hook/site suite.",
             "Shadow invocation is checked here; pixel correctness relies on the unchanged rendering path and prior GPU qualification.",
             "Matching-beta multiplayer, real game speed/input behavior and the settled heavy-scene 59/s target still require gameplay capture.",
+            "120 is a controlled timing result. The heavier input falls back to one extra; actual heavy-scene 120 FPS is not achieved.",
         ],
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)

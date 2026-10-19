@@ -4,12 +4,14 @@
 #include "test_fps.c"
 #undef main
 #include "catchup.h"
+#include "pairpace.h"
 
 static unsigned long long run_us;
 static unsigned extra_us, sim_sequence, sim_draws, cut_waits;
 static unsigned char logic_data[128], ui_data[32], limit_on = 1;
 static void *ui_ptr = ui_data;
 static int in_game = 1;
+static unsigned frame_extra_no, slow_on, fail_on, gate_after;
 
 static unsigned runtime_fine(void)
 {
@@ -30,9 +32,14 @@ static unsigned char __attribute__((thiscall)) runtime_in_game(void *logic)
 
 static void runtime_extra(int on)
 {
+    if (on) {
+        frame_extra_no++;
+        if (frame_extra_no == fail_on) g_misbehave = 1;
+    }
     if (!on) {
-        run_us += extra_us;
+        run_us += frame_extra_no == slow_on ? 30000u : extra_us;
         sim_draws++;
+        if (frame_extra_no == gate_after) ui_data[8] = 1;
     }
 }
 
@@ -56,7 +63,7 @@ static pf_cu_sites runtime_sites(void)
     return s;
 }
 
-static void setup_runtime(int paired)
+static void setup_runtime_limit(int paired, unsigned max_fps, unsigned limit)
 {
     pf_fps_sites s;
     pf_cu_sites cu;
@@ -87,7 +94,8 @@ static void setup_runtime(int paired)
     *(unsigned **)(g_site + 16) = &g_frame_start;
     s = sites();
     s.is_in_game = (void *)runtime_in_game;
-    pf_fps_init(&s, NULL, 60, 3, 0);
+    pf_fps_init(&s, NULL, max_fps, 3, 0);
+    pf_fps_set_pair_limit(limit);
     installed();
     pf_fps_set_units(1, 1);
     pf_fps_set_passes(1, 1);
@@ -108,7 +116,10 @@ static void setup_runtime(int paired)
     extra_us = 12849;
     run_us = 1000000u;
     sim_sequence = sim_draws = cut_waits = 0;
+    frame_extra_no = slow_on = fail_on = gate_after = 0;
 }
+
+static void setup_runtime(int paired) { setup_runtime_limit(paired, 60, 1); }
 
 static unsigned runtime_wait(unsigned period_ms)
 {
@@ -132,6 +143,7 @@ static unsigned runtime_wait(unsigned period_ms)
 static void runtime_frame(unsigned regular_us, unsigned period_ms)
 {
     unsigned attempts = 0;
+    frame_extra_no = 0;
     g_frame_start = runtime_time();
     pf_fps_frame_edge(1);
     pf_cu_frame_edge(1);
@@ -149,6 +161,148 @@ static void runtime_frame(unsigned regular_us, unsigned period_ms)
         CHECK(++attempts < 3000, "native wait failed to terminate");
         if (attempts >= 3000) break;
     }
+}
+
+static void adaptive_loop(unsigned max_fps, unsigned limit, unsigned regular,
+                          unsigned extra, unsigned count)
+{
+    unsigned i, before;
+    unsigned long long start, elapsed;
+    pf_fps_row row;
+    setup_runtime_limit(1, max_fps, limit);
+    extra_us = extra;
+    for (i = 0; i < 30; i++) runtime_frame(regular, 33);
+    before = sim_draws;
+    start = run_us;
+    pf_fps_take_row(&row);
+    for (i = 0; i < 1800; i++) {
+        runtime_frame(regular, 33);
+        CHECK(frame_extra_no == count, "adaptive count %u != %u", frame_extra_no, count);
+    }
+    elapsed = run_us - start;
+    pf_fps_take_row(&row);
+    CHECK(elapsed >= 59390000ull && elapsed <= 59410000ull,
+          "adaptive ordinary cadence drifted: %llu", elapsed);
+    CHECK(row.extra == count * 1800 && row.extra == sim_draws - before,
+          "adaptive extras missing or miscounted");
+    CHECK(row.shadows == row.extra && row.reflections == row.extra &&
+          (unsigned)g_shadow_ran == sim_draws, "adaptive shadow/reflection count mismatch");
+    CHECK(g_client_obj.frame == sim_sequence && sim_sequence == 1830 &&
+          *(unsigned *)(logic_data + 64) == 305 && g_seed == 17 &&
+          !g_views_ran && !g_particles_ran && g_camera_obj.m[3] == 123.0f,
+          "adaptive changed ordinary counters, random state or camera");
+    CHECK(!pf_fps_stopped() && !row.late, "adaptive stable workload triggered backoff");
+    printf("adaptive max=%u limit=%u regular=%u cost=%u: 1800 ordinary, %u extra, "
+           "%llu us, max gap %u us, %u late\n", max_fps, limit, regular, extra,
+           row.extra, elapsed, row.gap_max_us, row.late);
+}
+
+static void adaptive_faults(void)
+{
+    unsigned i, before;
+    pf_fps_row row;
+    setup_runtime_limit(1, 120, 3);
+    extra_us = 4000;
+    for (i = 0; i < 30; i++) runtime_frame(6000, 33);
+    slow_on = 2;
+    pf_fps_take_row(&row);
+    runtime_frame(6000, 33);
+    pf_fps_take_row(&row);
+    CHECK(frame_extra_no == 2 && row.late == 1,
+          "second-draw spike did not cancel third draw");
+    slow_on = 0;
+    before = sim_draws;
+    for (i = 0; i < 500; i++) runtime_frame(6000, 33);
+    CHECK(sim_draws - before > 600 && frame_extra_no == 3 && !pf_fps_stopped(),
+          "adaptive failed to recover after spike");
+    extra_us = 10000;
+    for (i = 0; i < 30; i++) runtime_frame(6000, 33);
+    CHECK(frame_extra_no <= 2, "increased cost retained three draws");
+    /* Return to cheap work with a fresh controller for precise fault order. */
+    setup_runtime_limit(1, 120, 3);
+    extra_us = 4000;
+    for (i = 0; i < 30; i++) runtime_frame(6000, 33);
+    fail_on = 2;
+    runtime_frame(6000, 33);
+    CHECK(frame_extra_no == 2 && pf_fps_stopped() && !pf_fps_pair_owner(),
+          "second-draw state fault allowed a third draw or retained ownership");
+    setup_runtime_limit(1, 120, 3);
+    extra_us = 4000;
+    for (i = 0; i < 30; i++) runtime_frame(6000, 33);
+    gate_after = 1;
+    runtime_frame(6000, 33);
+    CHECK(frame_extra_no == 1 && !pf_fps_pair_owner(),
+          "UI eligibility change after first draw allowed another draw");
+    gate_after = ui_data[8] = 0;
+    runtime_frame(6000, 33);
+    CHECK(frame_extra_no == 3, "adaptive did not resume after UI gate");
+    runtime_frame(35000, 33);
+    runtime_frame(35000, 33);
+    CHECK(!pf_fps_pair_owner() && !frame_extra_no, "adaptive retained no-wait ownership");
+    printf("adaptive second-draw spike/recovery/cost/state guards: checked\n");
+}
+
+static void adaptive_periods(void)
+{
+    unsigned i;
+    unsigned long long start, expected = 0;
+    pf_fps_row row;
+    setup_runtime_limit(1, 120, 3);
+    extra_us = 4000;
+    for (i = 0; i < 30; i++) runtime_frame(6000, 33);
+    start = run_us;
+    pf_fps_take_row(&row);
+    for (i = 0; i < 6000; i++) {
+        unsigned period = 31 + i % 7;
+        expected += period * 1000u;
+        runtime_frame(5000 + (i % 7) * 1000, period);
+        CHECK(frame_extra_no >= 2 && frame_extra_no <= 3 && pf_fps_pair_owner(),
+              "changing native period lost or exceeded adaptive allowance");
+    }
+    pf_fps_take_row(&row);
+    CHECK(run_us - start + 2000 >= expected && run_us - start <= expected + 2000 && !row.late,
+          "adaptive native period changes drifted cadence");
+    printf("adaptive changing-period updates: 6000 ordinary, %u extra, %llu us, %u late\n",
+           row.extra, run_us - start, row.late);
+}
+
+static void adaptive_boundaries(void)
+{
+    pf_pairpace p;
+    unsigned delay = 0, start, i;
+    for (i = 0; i < 2; i++) {
+        /* Same schedule near unsigned-clock wrap. */
+        start = i ? 0xfffff000u : 1000000u;
+        pf_pair_reset(&p);
+        pf_pair_begin(&p, 1, start + 6000, 6000, 33000, 1);
+        pf_pair_limit(&p, start + 6000, 4000, 3);
+        CHECK(p.quota == 3, "cheap work did not qualify three extras");
+        CHECK(pf_pair_plan(&p, start + 6000, 4000, 4000, &delay) && delay == 4250,
+              "first subdivision not paced");
+        CHECK(pf_pair_claim(&p, start + 10250, 4000), "first claim failed");
+        pf_pair_begin(&p, 1, start + 14000, 14000, 33000, 1);
+        pf_pair_limit(&p, start + 14000, 100, 3);
+        CHECK(p.used == 1 && p.quota == 3, "repeat observation reopened allowance");
+        CHECK(pf_pair_plan(&p, start + 14250, 4000, 4000, &delay) && delay == 4250,
+              "second subdivision drifted from original anchor");
+        CHECK(pf_pair_claim(&p, start + 18500, 4000), "second claim failed");
+        CHECK(!pf_pair_claim(&p, start + 30000, 4000),
+              "third draw borrowed another deadline allowance");
+        CHECK(pf_pair_claim(&p, start + 26750, 4000), "third claim failed");
+        CHECK(!pf_pair_claim(&p, start + 26750, 1), "fourth draw allowed");
+        CHECK(p.deadline == start + 33000, "draws changed absolute deadline");
+    }
+    pf_pair_reset(&p);
+    pf_pair_begin(&p, 1, 18000, 18000, 33000, 1);
+    pf_pair_limit(&p, 18000, 8900, 3);
+    CHECK(p.quota == 1, "heavy aggregate was allowed three draws");
+    pf_pair_limit(&p, 18000, 100, 3);
+    CHECK(p.quota == 1, "same-frame reconfiguration enlarged quota");
+    pf_pair_reset(&p);
+    pf_pair_begin(&p, 1, 6000, 6000, 33000, 1);
+    pf_pair_limit(&p, 6000, ~0u, 3);
+    CHECK(p.quota == 1, "cost overflow enlarged quota");
+    printf("adaptive policy: deadline, anchor, wrap and quota boundaries checked\n");
 }
 
 static void closed_loop(int paired, unsigned regular, int jitter)
@@ -187,6 +341,15 @@ int main(void)
 {
     unsigned i;
     pf_cu_sites cu;
+    adaptive_boundaries();
+    adaptive_loop(120, 3, 6000, 4000, 3);
+    adaptive_loop(120, 1, 6000, 4000, 1);
+    adaptive_loop(90, 3, 6000, 4000, 2);
+    adaptive_loop(60, 3, 6000, 4000, 1);
+    adaptive_loop(120, 3, 12000, 7000, 2);
+    adaptive_loop(120, 3, 18000, 8900, 1);
+    adaptive_faults();
+    adaptive_periods();
     closed_loop(0, 19854, 0);
     closed_loop(1, 19854, 0);
     closed_loop(1, 19854, 1);

@@ -168,6 +168,7 @@ static pf_ep g_extra_profile;
 static pf_pairpace g_pair;
 static pf_cu_sites g_pair_sites;
 static int g_pair_enabled;
+static unsigned g_pair_limit;
 static unsigned g_pair_sequence, g_pair_frames, g_pair_draws, g_pair_cuts;
 static unsigned g_pair_peak_debt, g_pair_misses;
 static unsigned g_pair_good_cost, g_pair_good_samples, g_pair_probe_frames, g_pair_probe_failures;
@@ -479,6 +480,7 @@ void pf_fps_init(const pf_fps_sites *sites, const char *why_not, unsigned max_fp
     }
     g_on = g_in_extra = g_seen_frame = 0;
     g_pair_enabled = 0;
+    g_pair_limit = 1;
     g_pair_sequence = g_pair_frames = g_pair_draws = g_pair_cuts = 0;
     g_pair_peak_debt = g_pair_misses = 0;
     g_pair_good_cost = g_pair_good_samples = g_pair_probe_frames = g_pair_probe_failures = 0;
@@ -1282,6 +1284,12 @@ int pf_fps_set_pair_pacing(const pf_cu_sites *sites, int frame_hook)
     return 1;
 }
 
+void pf_fps_set_pair_limit(unsigned limit)
+{
+    g_pair_limit = limit >= 1 && limit <= 3 ? limit : 1;
+    if (g_pair_limit > g_extras) g_pair_limit = g_extras;
+}
+
 int pf_fps_pair_owner(void)
 {
     return g_pair_enabled && g_on && !g_stopped && g_pair.active;
@@ -1325,106 +1333,115 @@ static void pair_wait(void **slot, const unsigned *engine, unsigned period_ms)
     }
     if (!g_pair.used && !g_paused && !g_pair_attempted) {
         g_pair_attempted = 1;
-        expected = expected_cost();
-        guess = cost_is_guess();
-        avg = g_cost_avg_us ? g_cost_avg_us : expected;
-        if (avg > expected) avg = expected;
-        planned = pf_pair_plan(&g_pair, now, expected, avg, &delay);
-        if (!planned) {
-            /* A regular draw includes work the checked extra path holds.
-             * Prefer its own established successful cost. Requiring the
-             * larger ordinary draw to fit can permanently forbid recovery.
-             * A probe is bounded by frequency and failure count below. */
-            unsigned candidate = g_pair_good_samples >= 8 ? g_pair_good_cost :
-                                 g_ref_n >= PF_FPS_REF_DRAWS ? g_ref_us : 0;
-            if (candidate && pf_pair_plan(&g_pair, now, candidate, candidate, &delay)) {
-                if (++g_pair_probe_frames >= 60) {
-                    planned = probe = 1;
-                    expected = avg = candidate;
-                    guess = 0;
-                }
-            } else {
-                g_pair_probe_frames = 0;
-            }
-        } else {
-            g_pair_probe_frames = 0;
-        }
-        if (planned) {
-            unsigned start = g_fine();
-            LONGLONG wait_start = qpc();
-            /* The fine clock only paces starts. Absolute cadence always uses
-             * the same native clock that the surrounding limiter reads. */
-            while (g_fine() - start < delay)
-                Sleep(0);
-            g_idle_ticks += qpc() - wait_start;
-            if (!pair_allowed()) {
-                pf_pair_reset(&g_pair);
-                g_prev_wait = qpc();
-                return;
-            }
+        pf_pair_limit(&g_pair, now, expected_cost(),
+                      g_pair_good_samples >= 8 ? g_pair_limit : 1);
+        while (g_pair.used < g_pair.quota && !g_paused && !g_stopped) {
             now = g_time() * 1000u;
-            if (pf_pair_claim(&g_pair, now, expected)) {
-                if (probe) {
-                    g_pair_probe_frames = 0;
-                    g_row.probes[0]++;
-                }
-                before = g_fine();
-                disp = before - g_shown_us + avg;
-                f = g_shown_us - g_prev_shown_us > 200000u ? PF_FPS_NONE :
-                    (unsigned)((unsigned long long)disp * 65536u / g_period_us);
-                if (!extra_frame(engine, f, &cost)) {
-                    pf_pair_reset(&g_pair);
-                    return;
-                }
-                end = g_fine();
-                cost = end - before; /* include the checked draw's restoration */
-                shown(end);
-                g_drawn++;
-                g_done++;
-                g_pair_draws++;
-                g_row.extra++;
-                g_row.extra_us += cost;
-                if (cost > g_row.extra_max_us) g_row.extra_max_us = cost;
-                cost_measured(cost);
-                end -= g_shown_us;
-                g_row.disp_err_us += end > disp ? end - disp : disp - end;
-                now = g_time() * 1000u;
-                debt = (int)(now - g_pair.deadline);
-                if (debt > 0 && (unsigned)debt > g_pair_peak_debt)
-                    g_pair_peak_debt = (unsigned)debt;
-                if (debt > (int)PF_PAIR_BORROW_US) {
-                    g_pair_misses++;
-                    if (probe) g_row.probes[2]++;
-                    late_frame(cost, expected, ((unsigned)debt + 999u) / 1000u,
-                               guess);
-                    if (probe && ++g_pair_probe_failures >= 3 && !g_stopped) {
-                        g_pair_probe_failures = 0;
-                        if (!g_rest_why) rest("three paired recovery probes exceeded their debt allowance");
+            probe = 0;
+            expected = expected_cost();
+            guess = cost_is_guess();
+            avg = g_cost_avg_us ? g_cost_avg_us : expected;
+            if (avg > expected) avg = expected;
+            planned = pf_pair_plan(&g_pair, now, expected, avg, &delay);
+            if (!planned && !g_pair.used) {
+                /* A regular draw includes work the checked extra path holds.
+                 * Prefer its own established successful cost. Requiring the
+                 * larger ordinary draw to fit can permanently forbid recovery.
+                 * A probe is bounded by frequency and failure count below. */
+                unsigned candidate = g_pair_good_samples >= 8 ? g_pair_good_cost :
+                                     g_ref_n >= PF_FPS_REF_DRAWS ? g_ref_us : 0;
+                if (candidate && pf_pair_plan(&g_pair, now, candidate, candidate, &delay)) {
+                    if (++g_pair_probe_frames >= 60) {
+                        planned = probe = 1;
+                        expected = avg = candidate;
+                        guess = 0;
                     }
                 } else {
-                    g_pair_good_cost = cost ? cost : 1;
-                    if (g_pair_good_samples < 8) g_pair_good_samples++;
-                    g_pair_probe_failures = 0;
-                    if (probe) {
-                        unsigned i;
-                        g_row.probes[1]++;
-                        g_learned_us = g_cost_us = g_cost_avg_us = g_pair_good_cost;
-                        g_cost_guess = 0;
-                        for (i = 0; i < PF_FPS_COST_FRAMES; i++) {
-                            g_cost_ring[i] = g_pair_good_cost;
-                            g_cost_given[i] = 0;
-                        }
-                        fu_log_event("paired cadence: bounded recovery probe fit in %u us; "
-                                     "stale cost history reset", cost);
-                    }
+                    g_pair_probe_frames = 0;
                 }
+            } else if (planned) {
+                g_pair_probe_frames = 0;
             }
-        } else {
-            unsigned unused;
-            blocked(0);
-            /* Age an excessive estimate only when the reference itself
-             * would fit this new policy, never just because time passed. */
-            g_blocked = pf_pair_plan(&g_pair, now, reference_cost(), reference_cost(), &unused);
+            if (planned) {
+                unsigned start = g_fine();
+                LONGLONG wait_start = qpc();
+                /* The fine clock only paces starts. Absolute cadence always uses
+                 * the same native clock that the surrounding limiter reads. */
+                while (g_fine() - start < delay)
+                    Sleep(0);
+                g_idle_ticks += qpc() - wait_start;
+                if (!pair_allowed()) {
+                    pf_pair_reset(&g_pair);
+                    g_prev_wait = qpc();
+                    return;
+                }
+                now = g_time() * 1000u;
+                if (pf_pair_claim(&g_pair, now, expected)) {
+                    if (probe) {
+                        g_pair_probe_frames = 0;
+                        g_row.probes[0]++;
+                    }
+                    before = g_fine();
+                    disp = before - g_shown_us + avg;
+                    f = g_shown_us - g_prev_shown_us > 200000u ? PF_FPS_NONE :
+                        (unsigned)((unsigned long long)disp * 65536u / g_period_us);
+                    if (!extra_frame(engine, f, &cost)) {
+                        pf_pair_reset(&g_pair);
+                        return;
+                    }
+                    end = g_fine();
+                    cost = end - before; /* include the checked draw's restoration */
+                    shown(end);
+                    g_drawn++;
+                    g_done++;
+                    g_pair_draws++;
+                    g_row.extra++;
+                    g_row.extra_us += cost;
+                    if (cost > g_row.extra_max_us) g_row.extra_max_us = cost;
+                    cost_measured(cost);
+                    end -= g_shown_us;
+                    g_row.disp_err_us += end > disp ? end - disp : disp - end;
+                    now = g_time() * 1000u;
+                    debt = (int)(now - g_pair.deadline);
+                    if (debt > 0 && (unsigned)debt > g_pair_peak_debt)
+                        g_pair_peak_debt = (unsigned)debt;
+                    if (debt > (int)PF_PAIR_BORROW_US) {
+                        g_pair_misses++;
+                        if (probe) g_row.probes[2]++;
+                        late_frame(cost, expected, ((unsigned)debt + 999u) / 1000u,
+                                   guess);
+                        if (probe && ++g_pair_probe_failures >= 3 && !g_stopped) {
+                            g_pair_probe_failures = 0;
+                            if (!g_rest_why) rest("three paired recovery probes exceeded their debt allowance");
+                        }
+                    } else {
+                        g_pair_good_cost = cost ? cost : 1;
+                        if (g_pair_good_samples < 8) g_pair_good_samples++;
+                        g_pair_probe_failures = 0;
+                        if (probe) {
+                            unsigned i;
+                            g_row.probes[1]++;
+                            g_learned_us = g_cost_us = g_cost_avg_us = g_pair_good_cost;
+                            g_cost_guess = 0;
+                            for (i = 0; i < PF_FPS_COST_FRAMES; i++) {
+                                g_cost_ring[i] = g_pair_good_cost;
+                                g_cost_given[i] = 0;
+                            }
+                            fu_log_event("paired cadence: bounded recovery probe fit in %u us; "
+                                         "stale cost history reset", cost);
+                        }
+                    }
+                } else break;
+            } else {
+                unsigned unused;
+                blocked(0);
+                /* Age an excessive estimate only when the reference itself
+                 * would fit this new policy, never just because time passed. */
+                g_blocked = pf_pair_plan(&g_pair, now, reference_cost(), reference_cost(), &unused);
+                break;
+            }
+            /* A recovery probe is a single draw even if its result is cheap. */
+            if (probe) break;
         }
     } else if (g_paused) {
         g_pair_probe_frames = 0;

@@ -11,7 +11,8 @@
 
 typedef struct {
     unsigned deadline, period, sequence, observed;
-    int active, used;
+    unsigned quota, used;
+    int active, limited;
 } pf_pairpace;
 
 void pf_pair_reset(pf_pairpace *p);
@@ -24,12 +25,16 @@ void pf_pair_reset(pf_pairpace *p);
  * network adjustment cannot repeatedly erase borrowed time. */
 void pf_pair_begin(pf_pairpace *p, unsigned sequence, unsigned now,
                    unsigned elapsed, unsigned period, int eligible);
+/* Select once per frame, before any claim. Default one retains beta.14.
+ * Multiple extras require all costs plus reserves to fit without borrowing;
+ * repeated calls cannot enlarge the allowance. Invalid limits keep one. */
+void pf_pair_limit(pf_pairpace *p, unsigned now, unsigned expected, unsigned limit);
 /* Returns 1 and a delay before one extra draw, or 0 without changing delay.
  * expected is a conservative complete extra-draw cost; average predicts
  * presentation time. Calling plan does not consume the frame's allowance. */
 int pf_pair_plan(const pf_pairpace *p, unsigned now, unsigned expected,
                  unsigned average, unsigned *delay);
-/* Recheck after pacing and claim the one extra draw before invoking it. */
+/* Recheck after pacing and consume one draw before invoking it. */
 int pf_pair_claim(pf_pairpace *p, unsigned now, unsigned expected);
 /* End the native wait only when the absolute schedule has been reached.
  * A caller may shorten the native wait; it must never extend it here. */

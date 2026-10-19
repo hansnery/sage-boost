@@ -32,10 +32,14 @@ Strike an item through, with the date, when it's done.
   FrameView, pacing, fresh shadows and game-speed/input checks. The new
   capture varies in complexity and still has cost/backoff blocks. Qualify
   matching-beta multiplayer separately; the full target remains unmet.
-- [ ] Investigate 90/120 feasibility after preserving the beta.14 checkpoint.
-  Paired mode currently permits only one extra per native update; three are
-  needed for about 120. Raising the limit alone cannot fit the measured
-  heavy-scene costs. Keep full-rate shadows and normal gameplay behavior.
+- [x] 2026-10-19: implement an opt-in adaptive beta.15 controller, capped by
+  PairMaxExtras and MaxFPS. Controlled production-object cases retain
+  ordinary cadence with one, two or three extra draws, fresh shadows,
+  second-draw fault cancellation, recovery and changing native periods.
+  [Design](specs/2026-10-19-adaptive-cadence-design.md). This is not game FPS.
+- [ ] Reduce actual complete rendering cost for heavy-scene 120. Beta.15's
+  controlled heavier case still selects one extra; do not ask for another
+  gameplay test or replace the known-good beta.14 based only on that model.
 
 - [x] 2026-10-18: execute native float/uint/ushort/byte duration conversions
   with explicit fixture dependencies on both images. Confirm rate-setter
@@ -59,12 +63,12 @@ Strike an item through, with the date, when it's done.
   Its computed 5/30 values differ from file startup by one ULP in two scales;
   reset through the setter is not exact. The native duration follow-up above
   covers this boundary effect in isolation. [Report](benchmarks/2026-10-18-native-rates.json).
-- [ ] Prioritize the approved simulation-timing route: audit native integer
+- [ ] Alternative simulation-timing route: audit native integer
   duration rounding, startup-derived constants, values parsed before Miles
   loads the ASI, per-tick movement/combat/economy and network phase admission.
   Verify normal game speed and matching-beta sync before claiming success.
-  Keep render-thread work available, but do not resume small worker changes
-  in place of this approved change of approach.
+  Beta.14 established an improvement through paired rendering; the latest
+  approved work extends that controller before broad simulation changes.
 - [x] 2026-10-19: Hans accepts the roughly 55 FPS Ultra High heavy-scene
   improvement and authorizes publication. Publish the exact beta.14 through
   Launcher Beta; all four signed downloads match, Stable/other components
