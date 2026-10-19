@@ -23,7 +23,12 @@ Execute inline under Hans's standing preapproval; no delegation needed.
   Bump the plugin/resource version only when integrating the qualified change.
 - [x] Run focused policy/runtime tests, the full plugin suite and integer
   instruction audit. Preserve failures and report modeled pacing/counts.
-- [ ] Commit/push explicit changes. Decide whether the evidence justifies a
+- [x] Commit/push explicit changes. Decide whether the evidence justifies a
   local beta with PairMaxExtras=3; preserve all existing INI values and back up
   all installation state before any authorized deployment. Verify hashes and
   the shortcut without launching the game. Public releases remain unchanged.
+
+Completed as beta.18 in `2ff5d2f`, then installed locally with the three-extra
+opt-in. All original INI bytes were retained and the old installation and
+shortcut backed up. See the [receipt](../benchmarks/2026-10-19-beta18-install.json).
+The 120 FPS gameplay target remains unverified.

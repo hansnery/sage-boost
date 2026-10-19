@@ -1,0 +1,41 @@
+{
+    "backed_up_files":  [
+                            {
+                                "sha256":  "6be4b0434f4db825d17d12809d66947442e8c63b704d866399a6e66cbbfae6ba",
+                                "name":  "bfme2perf.asi"
+                            },
+                            {
+                                "sha256":  "778f8032ff41fdad7437aaf7b43e717457d3e86e898a638c80409b1961a0bdd7",
+                                "name":  "bfme2perf.ini"
+                            },
+                            {
+                                "sha256":  "fcbe7620042c2f463b17c80a7fff8005bb2e43236596dda644c4b3b1775a7f7c",
+                                "name":  "bfme2perf.log"
+                            },
+                            {
+                                "sha256":  "d5933724f0fff69d33f181d129d56359c7b5db3aca3713ed611e7b28da6b6f13",
+                                "name":  "bfme2perf_scopes.csv"
+                            },
+                            {
+                                "sha256":  "66588ef93901d92d88eed1c5e7c164120d517618b97299fed46f9055006b6404",
+                                "name":  "bfme2perf_timing.csv"
+                            }
+                        ],
+    "version":  "0.9.11-beta.18",
+    "added_settings":  {
+                           "PairMaxExtras":  3
+                       },
+    "original_ini_bytes_preserved":  true,
+    "check_only_output":  "Beta binary, settings, game path and mod path verified. Nothing launched.",
+    "backup":  "C:\\Users\\Hans\\AppData\\Local\\Temp\\bfme2perf-beta17-before-beta18-20261019-144727",
+    "ini_before_sha256":  "778f8032ff41fdad7437aaf7b43e717457d3e86e898a638c80409b1961a0bdd7",
+    "mod_path":  "C:\\Jogos\\AgeoftheRing\\realms",
+    "gameplay_target_verified":  false,
+    "shortcut":  "C:\\Users\\Hans\\Desktop\\Realms - sage-boost beta test.lnk",
+    "published_releases_changed":  false,
+    "ini_after_sha256":  "28cde567797666b7512e04b2581e594eb6b286e0eb5d781d28de67b9c8f8340d",
+    "game_launched":  false,
+    "source_commit":  "2ff5d2fde8192e3ee6155e89e16cdc64cc1e2b26",
+    "installed_sha256":  "da6a45e616653ba9d4496f88631c969ca7614207998e69f93bad5134267dc111",
+    "build_sha256":  "da6a45e616653ba9d4496f88631c969ca7614207998e69f93bad5134267dc111"
+}

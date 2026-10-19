@@ -21,8 +21,8 @@ and multiplayer qualification remain unmet.
 Hans explicitly accepts the near-60 result as a milestone and asks to pursue
 120 FPS and another substantial breakthrough. The historical 59/s acceptance
 record remains unproven, but is no longer a gate for moving forward or a
-reason to keep requesting near-60 tests. Beta.17 remains the installed
-baseline while the next scheduler candidate is qualified. The first new screen
+reason to keep requesting near-60 tests. Beta.18 is now the local test build,
+with PairMaxExtras=3; its qualification and backup are below. The first new screen
 measures capture-once/replay-three, with complete capture costs and fresh
 poses/shadows: [design](specs/2026-10-19-120fps-retained-screen-design.md),
 [plan](plans/2026-10-19-120fps-retained-screen.md).
@@ -52,7 +52,7 @@ explicit restoration fixed the test without relaxing any check.
 [report](benchmarks/2026-10-19-palette-texture.json).
 No new installed build or gameplay test is justified by either screen.
 
-### Beta.18 sequential extras candidate (2026-10-19)
+### Beta.18 sequential extras installed locally (2026-10-19)
 
 The next change targets scheduling headroom. The old multi-extra policy
 reserved the recent worst-case cost for every extra upfront. Beta.18 selects
@@ -74,8 +74,16 @@ outdated beta.17 version assertion. After correcting that expected version,
 the full suite passes, as does the six-object integer instruction audit.
 The report rejects both an incomplete matrix and the original failed suite.
 [Qualification report](benchmarks/2026-10-19-sequential-runtime.json).
-The evidence supports a local beta with PairMaxExtras=3 after a full backup
-and hash/shortcut verification. Public launcher Stable/beta.14 remain unchanged.
+Installed from pushed commit `2ff5d2f` after confirming the game and launcher
+were closed. Build and installed SHA-256 both equal
+`da6a45e616653ba9d4496f88631c969ca7614207998e69f93bad5134267dc111`.
+All original INI bytes remain intact; only comments and `PairMaxExtras=3`
+were appended to the existing Experimental section. The previous ASI,
+INI/logs/CSVs and shortcut are backed up in
+`%TEMP%\bfme2perf-beta17-before-beta18-20261019-144727`.
+The desktop **Realms - sage-boost beta test** shortcut pins the new ASI and
+INI hashes; CheckOnly passes. Nothing was launched. Public launcher
+Stable/beta.14 remain unchanged. [Receipt](benchmarks/2026-10-19-beta18-install.json).
 
 ### Beta.17 budget-gap recovery (2026-10-19)
 
