@@ -1,0 +1,1209 @@
+{
+  "schema": 1,
+  "created_utc": "2026-10-19T06:17:47.046806+00:00",
+  "purpose": "native rate-setter correctness only; no runtime integration or FPS measurement",
+  "reference": {
+    "path": "C:\\repositories\\Open-BFME-2\\baselines\\bfme2\\workshop-vanilla-1.06\\files\\game.dat",
+    "sha256": "f008b587570bad693981dc7218588c81d192a1e064b0f7f861539c51156a7640"
+  },
+  "executable": {
+    "path": "C:\\repositories\\sage-boost\\perf\\build\\test_native_rates.exe",
+    "sha256": "34bc567b1c38323aeacd7dd8a7547af5fb3c759fbf4b75380ca8c06359c4c9e5"
+  },
+  "source_sha256": {
+    "tools/test_native_rates.py": "90ac862d4934f72c295d78979a1caa196d03a38e767067905fc74f1480753dc1",
+    "tools/port_sites.py": "af6a2840a67c03a03c654962c520f4cc4eeebb3d53e5f09e42fbd33b604e68c4",
+    "tools/verify_sites.py": "0a7160d2c0c8803110147c7f462992c929e6121730bff70f0d54cbac9db85155",
+    "tools/test_fx_lifecycle.py": "4c572e4303041ec2f820ffe0afb4e110be0f2beefccaa952974ac00e1122a3ed",
+    "perf/tests/test_native_rates.c": "0bd9a6df8e77ebe4da20e431e4c0d616887507e02f059fafabe5926b1f46994c"
+  },
+  "images": [
+    {
+      "path": "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+      "sha256": "035da15c626af6cd1663d1886deea605464ec6776f2c5f1d24570c2be6d73e61",
+      "contract": {
+        "rva": 2379537,
+        "size": 191,
+        "fnv1a": 3021236073,
+        "body_sha256": "2803af2c998aec96841ddc3347106b66210902b887453978bb1df8753d7220e4",
+        "patches": [
+          [
+            46,
+            0
+          ],
+          [
+            73,
+            1
+          ],
+          [
+            96,
+            2
+          ],
+          [
+            65,
+            5
+          ],
+          [
+            88,
+            6
+          ],
+          [
+            111,
+            7
+          ],
+          [
+            127,
+            9
+          ],
+          [
+            142,
+            10
+          ],
+          [
+            151,
+            3
+          ],
+          [
+            161,
+            4
+          ],
+          [
+            169,
+            8
+          ],
+          [
+            177,
+            11
+          ],
+          [
+            185,
+            12
+          ]
+        ],
+        "globals_rva": 10089992,
+        "initial_words": [
+          5,
+          30,
+          1000593162,
+          1128792064,
+          1084227584,
+          1045220557,
+          1107645781,
+          1022739087,
+          1106247680,
+          1023969417
+        ],
+        "constant_rvas": [
+          8226976,
+          8209288,
+          8198408
+        ]
+      },
+      "preflight_faults": [
+        {
+          "fault": "changed_return_instruction",
+          "rejected": true,
+          "reason": "full native rate body not unique"
+        },
+        {
+          "fault": "wrong_conversion_constant",
+          "rejected": true,
+          "reason": "wrong conversion constant"
+        },
+        {
+          "fault": "aliased_output",
+          "rejected": true,
+          "reason": "output identities"
+        }
+      ],
+      "positive": {
+        "returncode": 0,
+        "stdout": "RATE,5,30,00000005,0000001e,3ba3d70b,43480000,40a00000,3e4ccccd,42055555,3cf5c290,41f00000,3d088889\nRATE,10,60,0000000a,0000003c,3c23d70b,42c80000,41200000,3dcccccd,41855555,3d75c290,42700000,3c888889\nRATE,5,60,00000005,0000001e,3ba3d70b,43480000,40a00000,3e4ccccd,42055555,3cf5c290,41f00000,3d088889\nRATE,10,120,0000000a,0000003c,3c23d70b,42c80000,41200000,3dcccccd,41855555,3d75c290,42700000,3c888889\nRATE,0,0,00000001,00000001,3a83126f,447a0000,3f800000,3f800000,447a0000,3a83126f,3f800000,3f800000\nRATE,-7,-2,00000001,00000001,3a83126f,447a0000,3f800000,3f800000,447a0000,3a83126f,3f800000,3f800000\nRATE,10,5,0000000a,0000000a,3c23d70b,42c80000,41200000,3dcccccd,42c80000,3c23d70b,41200000,3dcccccd\nRATE,5,34,00000005,00000022,3ba3d70b,43480000,40a00000,3e4ccccd,41eb4b4b,3d0b4396,42080000,3cf0f0f1\nRATE,5,35,00000005,0000001e,3ba3d70b,43480000,40a00000,3e4ccccd,42055555,3cf5c290,41f00000,3d088889\nRATE,1,60,00000001,00000006,3a83126f,447a0000,3f800000,3f800000,4326aaab,3bc49ba6,40c00000,3e2aaaab\nRATE,30,60,0000001e,0000003c,3cf5c290,42055555,41f00000,3d088889,41855555,3d75c290,42700000,3c888889\nRATE,60,60,0000003c,0000003c,3d75c290,41855555,42700000,3c888889,41855555,3d75c290,42700000,3c888889\nRATE,5,30,00000005,0000001e,3ba3d70b,43480000,40a00000,3e4ccccd,42055555,3cf5c290,41f00000,3d088889\nPASS,13,512,ABI,0\n",
+        "stderr": ""
+      },
+      "rows": [
+        {
+          "requested_logic": 5,
+          "requested_client": 30,
+          "native_output": {
+            "logic_hz": 5,
+            "client_hz": 30,
+            "logic_frames_per_ms": 0.005000000353902578,
+            "ms_per_logic_frame": 200.0,
+            "logic_rate_real": 5.0,
+            "seconds_per_logic_frame": 0.20000000298023224,
+            "ms_per_client_frame": 33.33333206176758,
+            "client_frames_per_ms": 0.030000001192092896,
+            "client_rate_real": 30.0,
+            "seconds_per_client_frame": 0.03333333507180214
+          },
+          "raw_words": [
+            "00000005",
+            "0000001e",
+            "3ba3d70b",
+            "43480000",
+            "40a00000",
+            "3e4ccccd",
+            "42055555",
+            "3cf5c290",
+            "41f00000",
+            "3d088889"
+          ]
+        },
+        {
+          "requested_logic": 10,
+          "requested_client": 60,
+          "native_output": {
+            "logic_hz": 10,
+            "client_hz": 60,
+            "logic_frames_per_ms": 0.010000000707805157,
+            "ms_per_logic_frame": 100.0,
+            "logic_rate_real": 10.0,
+            "seconds_per_logic_frame": 0.10000000149011612,
+            "ms_per_client_frame": 16.66666603088379,
+            "client_frames_per_ms": 0.06000000238418579,
+            "client_rate_real": 60.0,
+            "seconds_per_client_frame": 0.01666666753590107
+          },
+          "raw_words": [
+            "0000000a",
+            "0000003c",
+            "3c23d70b",
+            "42c80000",
+            "41200000",
+            "3dcccccd",
+            "41855555",
+            "3d75c290",
+            "42700000",
+            "3c888889"
+          ]
+        },
+        {
+          "requested_logic": 5,
+          "requested_client": 60,
+          "native_output": {
+            "logic_hz": 5,
+            "client_hz": 30,
+            "logic_frames_per_ms": 0.005000000353902578,
+            "ms_per_logic_frame": 200.0,
+            "logic_rate_real": 5.0,
+            "seconds_per_logic_frame": 0.20000000298023224,
+            "ms_per_client_frame": 33.33333206176758,
+            "client_frames_per_ms": 0.030000001192092896,
+            "client_rate_real": 30.0,
+            "seconds_per_client_frame": 0.03333333507180214
+          },
+          "raw_words": [
+            "00000005",
+            "0000001e",
+            "3ba3d70b",
+            "43480000",
+            "40a00000",
+            "3e4ccccd",
+            "42055555",
+            "3cf5c290",
+            "41f00000",
+            "3d088889"
+          ]
+        },
+        {
+          "requested_logic": 10,
+          "requested_client": 120,
+          "native_output": {
+            "logic_hz": 10,
+            "client_hz": 60,
+            "logic_frames_per_ms": 0.010000000707805157,
+            "ms_per_logic_frame": 100.0,
+            "logic_rate_real": 10.0,
+            "seconds_per_logic_frame": 0.10000000149011612,
+            "ms_per_client_frame": 16.66666603088379,
+            "client_frames_per_ms": 0.06000000238418579,
+            "client_rate_real": 60.0,
+            "seconds_per_client_frame": 0.01666666753590107
+          },
+          "raw_words": [
+            "0000000a",
+            "0000003c",
+            "3c23d70b",
+            "42c80000",
+            "41200000",
+            "3dcccccd",
+            "41855555",
+            "3d75c290",
+            "42700000",
+            "3c888889"
+          ]
+        },
+        {
+          "requested_logic": 0,
+          "requested_client": 0,
+          "native_output": {
+            "logic_hz": 1,
+            "client_hz": 1,
+            "logic_frames_per_ms": 0.0010000000474974513,
+            "ms_per_logic_frame": 1000.0,
+            "logic_rate_real": 1.0,
+            "seconds_per_logic_frame": 1.0,
+            "ms_per_client_frame": 1000.0,
+            "client_frames_per_ms": 0.0010000000474974513,
+            "client_rate_real": 1.0,
+            "seconds_per_client_frame": 1.0
+          },
+          "raw_words": [
+            "00000001",
+            "00000001",
+            "3a83126f",
+            "447a0000",
+            "3f800000",
+            "3f800000",
+            "447a0000",
+            "3a83126f",
+            "3f800000",
+            "3f800000"
+          ]
+        },
+        {
+          "requested_logic": -7,
+          "requested_client": -2,
+          "native_output": {
+            "logic_hz": 1,
+            "client_hz": 1,
+            "logic_frames_per_ms": 0.0010000000474974513,
+            "ms_per_logic_frame": 1000.0,
+            "logic_rate_real": 1.0,
+            "seconds_per_logic_frame": 1.0,
+            "ms_per_client_frame": 1000.0,
+            "client_frames_per_ms": 0.0010000000474974513,
+            "client_rate_real": 1.0,
+            "seconds_per_client_frame": 1.0
+          },
+          "raw_words": [
+            "00000001",
+            "00000001",
+            "3a83126f",
+            "447a0000",
+            "3f800000",
+            "3f800000",
+            "447a0000",
+            "3a83126f",
+            "3f800000",
+            "3f800000"
+          ]
+        },
+        {
+          "requested_logic": 10,
+          "requested_client": 5,
+          "native_output": {
+            "logic_hz": 10,
+            "client_hz": 10,
+            "logic_frames_per_ms": 0.010000000707805157,
+            "ms_per_logic_frame": 100.0,
+            "logic_rate_real": 10.0,
+            "seconds_per_logic_frame": 0.10000000149011612,
+            "ms_per_client_frame": 100.0,
+            "client_frames_per_ms": 0.010000000707805157,
+            "client_rate_real": 10.0,
+            "seconds_per_client_frame": 0.10000000149011612
+          },
+          "raw_words": [
+            "0000000a",
+            "0000000a",
+            "3c23d70b",
+            "42c80000",
+            "41200000",
+            "3dcccccd",
+            "42c80000",
+            "3c23d70b",
+            "41200000",
+            "3dcccccd"
+          ]
+        },
+        {
+          "requested_logic": 5,
+          "requested_client": 34,
+          "native_output": {
+            "logic_hz": 5,
+            "client_hz": 34,
+            "logic_frames_per_ms": 0.005000000353902578,
+            "ms_per_logic_frame": 200.0,
+            "logic_rate_real": 5.0,
+            "seconds_per_logic_frame": 0.20000000298023224,
+            "ms_per_client_frame": 29.41176414489746,
+            "client_frames_per_ms": 0.03400000184774399,
+            "client_rate_real": 34.0,
+            "seconds_per_client_frame": 0.029411764815449715
+          },
+          "raw_words": [
+            "00000005",
+            "00000022",
+            "3ba3d70b",
+            "43480000",
+            "40a00000",
+            "3e4ccccd",
+            "41eb4b4b",
+            "3d0b4396",
+            "42080000",
+            "3cf0f0f1"
+          ]
+        },
+        {
+          "requested_logic": 5,
+          "requested_client": 35,
+          "native_output": {
+            "logic_hz": 5,
+            "client_hz": 30,
+            "logic_frames_per_ms": 0.005000000353902578,
+            "ms_per_logic_frame": 200.0,
+            "logic_rate_real": 5.0,
+            "seconds_per_logic_frame": 0.20000000298023224,
+            "ms_per_client_frame": 33.33333206176758,
+            "client_frames_per_ms": 0.030000001192092896,
+            "client_rate_real": 30.0,
+            "seconds_per_client_frame": 0.03333333507180214
+          },
+          "raw_words": [
+            "00000005",
+            "0000001e",
+            "3ba3d70b",
+            "43480000",
+            "40a00000",
+            "3e4ccccd",
+            "42055555",
+            "3cf5c290",
+            "41f00000",
+            "3d088889"
+          ]
+        },
+        {
+          "requested_logic": 1,
+          "requested_client": 60,
+          "native_output": {
+            "logic_hz": 1,
+            "client_hz": 6,
+            "logic_frames_per_ms": 0.0010000000474974513,
+            "ms_per_logic_frame": 1000.0,
+            "logic_rate_real": 1.0,
+            "seconds_per_logic_frame": 1.0,
+            "ms_per_client_frame": 166.6666717529297,
+            "client_frames_per_ms": 0.006000000052154064,
+            "client_rate_real": 6.0,
+            "seconds_per_client_frame": 0.1666666716337204
+          },
+          "raw_words": [
+            "00000001",
+            "00000006",
+            "3a83126f",
+            "447a0000",
+            "3f800000",
+            "3f800000",
+            "4326aaab",
+            "3bc49ba6",
+            "40c00000",
+            "3e2aaaab"
+          ]
+        },
+        {
+          "requested_logic": 30,
+          "requested_client": 60,
+          "native_output": {
+            "logic_hz": 30,
+            "client_hz": 60,
+            "logic_frames_per_ms": 0.030000001192092896,
+            "ms_per_logic_frame": 33.33333206176758,
+            "logic_rate_real": 30.0,
+            "seconds_per_logic_frame": 0.03333333507180214,
+            "ms_per_client_frame": 16.66666603088379,
+            "client_frames_per_ms": 0.06000000238418579,
+            "client_rate_real": 60.0,
+            "seconds_per_client_frame": 0.01666666753590107
+          },
+          "raw_words": [
+            "0000001e",
+            "0000003c",
+            "3cf5c290",
+            "42055555",
+            "41f00000",
+            "3d088889",
+            "41855555",
+            "3d75c290",
+            "42700000",
+            "3c888889"
+          ]
+        },
+        {
+          "requested_logic": 60,
+          "requested_client": 60,
+          "native_output": {
+            "logic_hz": 60,
+            "client_hz": 60,
+            "logic_frames_per_ms": 0.06000000238418579,
+            "ms_per_logic_frame": 16.66666603088379,
+            "logic_rate_real": 60.0,
+            "seconds_per_logic_frame": 0.01666666753590107,
+            "ms_per_client_frame": 16.66666603088379,
+            "client_frames_per_ms": 0.06000000238418579,
+            "client_rate_real": 60.0,
+            "seconds_per_client_frame": 0.01666666753590107
+          },
+          "raw_words": [
+            "0000003c",
+            "0000003c",
+            "3d75c290",
+            "41855555",
+            "42700000",
+            "3c888889",
+            "41855555",
+            "3d75c290",
+            "42700000",
+            "3c888889"
+          ]
+        },
+        {
+          "requested_logic": 5,
+          "requested_client": 30,
+          "native_output": {
+            "logic_hz": 5,
+            "client_hz": 30,
+            "logic_frames_per_ms": 0.005000000353902578,
+            "ms_per_logic_frame": 200.0,
+            "logic_rate_real": 5.0,
+            "seconds_per_logic_frame": 0.20000000298023224,
+            "ms_per_client_frame": 33.33333206176758,
+            "client_frames_per_ms": 0.030000001192092896,
+            "client_rate_real": 30.0,
+            "seconds_per_client_frame": 0.03333333507180214
+          },
+          "raw_words": [
+            "00000005",
+            "0000001e",
+            "3ba3d70b",
+            "43480000",
+            "40a00000",
+            "3e4ccccd",
+            "42055555",
+            "3cf5c290",
+            "41f00000",
+            "3d088889"
+          ]
+        }
+      ],
+      "output_faults": [
+        {
+          "fault": "stale_client_rate",
+          "returncode": 1,
+          "stdout": "RATE,5,30,00000005,0000001e,3ba3d70b,43480000,40a00000,3e4ccccd,42055555,3cf5c290,41f00000,3d088889\n",
+          "stderr": "rate check refused line 76: !rate_abi_errors && storage.values[0]==(unsigned)logic && storage.values[1]==(unsigned)client\n"
+        },
+        {
+          "fault": "stale_duration_scale",
+          "returncode": 1,
+          "stdout": "RATE,5,30,00000005,0000001e,3ba3d70a,43480000,40a00000,3e4ccccd,42055555,3cf5c290,41f00000,3d088889\n",
+          "stderr": "rate check refused line 82: error<=expected[i]*2e-7\n"
+        },
+        {
+          "fault": "stale_client_step",
+          "returncode": 1,
+          "stdout": "RATE,5,30,00000005,0000001e,3ba3d70b,43480000,40a00000,3e4ccccd,42055555,3cf5c290,41f00000,3d088889\n",
+          "stderr": "rate check refused line 82: error<=expected[i]*2e-7\n"
+        }
+      ],
+      "startup_vs_configured_baseline": [
+        {
+          "field": "logic_frames_per_ms",
+          "startup_word": "3ba3d70a",
+          "configured_word": "3ba3d70b"
+        },
+        {
+          "field": "client_frames_per_ms",
+          "startup_word": "3cf5c28f",
+          "configured_word": "3cf5c290"
+        }
+      ],
+      "duration_rounding_from_native_factors": {
+        "scope": "arithmetic model using executed setter factors; native integer parser not executed",
+        "examples": [
+          {
+            "requested_ms": 200,
+            "results": [
+              {
+                "mode": "startup_5hz",
+                "ticks": 1,
+                "elapsed_ms": 200
+              },
+              {
+                "mode": "setter_5hz",
+                "ticks": 2,
+                "elapsed_ms": 400
+              },
+              {
+                "mode": "setter_10hz",
+                "ticks": 3,
+                "elapsed_ms": 300
+              }
+            ]
+          },
+          {
+            "requested_ms": 250,
+            "results": [
+              {
+                "mode": "startup_5hz",
+                "ticks": 2,
+                "elapsed_ms": 400
+              },
+              {
+                "mode": "setter_5hz",
+                "ticks": 2,
+                "elapsed_ms": 400
+              },
+              {
+                "mode": "setter_10hz",
+                "ticks": 3,
+                "elapsed_ms": 300
+              }
+            ]
+          },
+          {
+            "requested_ms": 1000,
+            "results": [
+              {
+                "mode": "startup_5hz",
+                "ticks": 5,
+                "elapsed_ms": 1000
+              },
+              {
+                "mode": "setter_5hz",
+                "ticks": 6,
+                "elapsed_ms": 1200
+              },
+              {
+                "mode": "setter_10hz",
+                "ticks": 11,
+                "elapsed_ms": 1100
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "path": "C:\\Jogos\\AgeoftheRing\\rotwk\\game820.dat",
+      "sha256": "bcf4c85ec72ecb9eb95a844fc0072434fdcef49a5b2c59abb77ac04af29c277e",
+      "contract": {
+        "rva": 2379537,
+        "size": 191,
+        "fnv1a": 3021236073,
+        "body_sha256": "2803af2c998aec96841ddc3347106b66210902b887453978bb1df8753d7220e4",
+        "patches": [
+          [
+            46,
+            0
+          ],
+          [
+            73,
+            1
+          ],
+          [
+            96,
+            2
+          ],
+          [
+            65,
+            5
+          ],
+          [
+            88,
+            6
+          ],
+          [
+            111,
+            7
+          ],
+          [
+            127,
+            9
+          ],
+          [
+            142,
+            10
+          ],
+          [
+            151,
+            3
+          ],
+          [
+            161,
+            4
+          ],
+          [
+            169,
+            8
+          ],
+          [
+            177,
+            11
+          ],
+          [
+            185,
+            12
+          ]
+        ],
+        "globals_rva": 10089992,
+        "initial_words": [
+          5,
+          30,
+          1000593162,
+          1128792064,
+          1084227584,
+          1045220557,
+          1107645781,
+          1022739087,
+          1106247680,
+          1023969417
+        ],
+        "constant_rvas": [
+          8226976,
+          8209288,
+          8198408
+        ]
+      },
+      "preflight_faults": [
+        {
+          "fault": "changed_return_instruction",
+          "rejected": true,
+          "reason": "full native rate body not unique"
+        },
+        {
+          "fault": "wrong_conversion_constant",
+          "rejected": true,
+          "reason": "wrong conversion constant"
+        },
+        {
+          "fault": "aliased_output",
+          "rejected": true,
+          "reason": "output identities"
+        }
+      ],
+      "positive": {
+        "returncode": 0,
+        "stdout": "RATE,5,30,00000005,0000001e,3ba3d70b,43480000,40a00000,3e4ccccd,42055555,3cf5c290,41f00000,3d088889\nRATE,10,60,0000000a,0000003c,3c23d70b,42c80000,41200000,3dcccccd,41855555,3d75c290,42700000,3c888889\nRATE,5,60,00000005,0000001e,3ba3d70b,43480000,40a00000,3e4ccccd,42055555,3cf5c290,41f00000,3d088889\nRATE,10,120,0000000a,0000003c,3c23d70b,42c80000,41200000,3dcccccd,41855555,3d75c290,42700000,3c888889\nRATE,0,0,00000001,00000001,3a83126f,447a0000,3f800000,3f800000,447a0000,3a83126f,3f800000,3f800000\nRATE,-7,-2,00000001,00000001,3a83126f,447a0000,3f800000,3f800000,447a0000,3a83126f,3f800000,3f800000\nRATE,10,5,0000000a,0000000a,3c23d70b,42c80000,41200000,3dcccccd,42c80000,3c23d70b,41200000,3dcccccd\nRATE,5,34,00000005,00000022,3ba3d70b,43480000,40a00000,3e4ccccd,41eb4b4b,3d0b4396,42080000,3cf0f0f1\nRATE,5,35,00000005,0000001e,3ba3d70b,43480000,40a00000,3e4ccccd,42055555,3cf5c290,41f00000,3d088889\nRATE,1,60,00000001,00000006,3a83126f,447a0000,3f800000,3f800000,4326aaab,3bc49ba6,40c00000,3e2aaaab\nRATE,30,60,0000001e,0000003c,3cf5c290,42055555,41f00000,3d088889,41855555,3d75c290,42700000,3c888889\nRATE,60,60,0000003c,0000003c,3d75c290,41855555,42700000,3c888889,41855555,3d75c290,42700000,3c888889\nRATE,5,30,00000005,0000001e,3ba3d70b,43480000,40a00000,3e4ccccd,42055555,3cf5c290,41f00000,3d088889\nPASS,13,512,ABI,0\n",
+        "stderr": ""
+      },
+      "rows": [
+        {
+          "requested_logic": 5,
+          "requested_client": 30,
+          "native_output": {
+            "logic_hz": 5,
+            "client_hz": 30,
+            "logic_frames_per_ms": 0.005000000353902578,
+            "ms_per_logic_frame": 200.0,
+            "logic_rate_real": 5.0,
+            "seconds_per_logic_frame": 0.20000000298023224,
+            "ms_per_client_frame": 33.33333206176758,
+            "client_frames_per_ms": 0.030000001192092896,
+            "client_rate_real": 30.0,
+            "seconds_per_client_frame": 0.03333333507180214
+          },
+          "raw_words": [
+            "00000005",
+            "0000001e",
+            "3ba3d70b",
+            "43480000",
+            "40a00000",
+            "3e4ccccd",
+            "42055555",
+            "3cf5c290",
+            "41f00000",
+            "3d088889"
+          ]
+        },
+        {
+          "requested_logic": 10,
+          "requested_client": 60,
+          "native_output": {
+            "logic_hz": 10,
+            "client_hz": 60,
+            "logic_frames_per_ms": 0.010000000707805157,
+            "ms_per_logic_frame": 100.0,
+            "logic_rate_real": 10.0,
+            "seconds_per_logic_frame": 0.10000000149011612,
+            "ms_per_client_frame": 16.66666603088379,
+            "client_frames_per_ms": 0.06000000238418579,
+            "client_rate_real": 60.0,
+            "seconds_per_client_frame": 0.01666666753590107
+          },
+          "raw_words": [
+            "0000000a",
+            "0000003c",
+            "3c23d70b",
+            "42c80000",
+            "41200000",
+            "3dcccccd",
+            "41855555",
+            "3d75c290",
+            "42700000",
+            "3c888889"
+          ]
+        },
+        {
+          "requested_logic": 5,
+          "requested_client": 60,
+          "native_output": {
+            "logic_hz": 5,
+            "client_hz": 30,
+            "logic_frames_per_ms": 0.005000000353902578,
+            "ms_per_logic_frame": 200.0,
+            "logic_rate_real": 5.0,
+            "seconds_per_logic_frame": 0.20000000298023224,
+            "ms_per_client_frame": 33.33333206176758,
+            "client_frames_per_ms": 0.030000001192092896,
+            "client_rate_real": 30.0,
+            "seconds_per_client_frame": 0.03333333507180214
+          },
+          "raw_words": [
+            "00000005",
+            "0000001e",
+            "3ba3d70b",
+            "43480000",
+            "40a00000",
+            "3e4ccccd",
+            "42055555",
+            "3cf5c290",
+            "41f00000",
+            "3d088889"
+          ]
+        },
+        {
+          "requested_logic": 10,
+          "requested_client": 120,
+          "native_output": {
+            "logic_hz": 10,
+            "client_hz": 60,
+            "logic_frames_per_ms": 0.010000000707805157,
+            "ms_per_logic_frame": 100.0,
+            "logic_rate_real": 10.0,
+            "seconds_per_logic_frame": 0.10000000149011612,
+            "ms_per_client_frame": 16.66666603088379,
+            "client_frames_per_ms": 0.06000000238418579,
+            "client_rate_real": 60.0,
+            "seconds_per_client_frame": 0.01666666753590107
+          },
+          "raw_words": [
+            "0000000a",
+            "0000003c",
+            "3c23d70b",
+            "42c80000",
+            "41200000",
+            "3dcccccd",
+            "41855555",
+            "3d75c290",
+            "42700000",
+            "3c888889"
+          ]
+        },
+        {
+          "requested_logic": 0,
+          "requested_client": 0,
+          "native_output": {
+            "logic_hz": 1,
+            "client_hz": 1,
+            "logic_frames_per_ms": 0.0010000000474974513,
+            "ms_per_logic_frame": 1000.0,
+            "logic_rate_real": 1.0,
+            "seconds_per_logic_frame": 1.0,
+            "ms_per_client_frame": 1000.0,
+            "client_frames_per_ms": 0.0010000000474974513,
+            "client_rate_real": 1.0,
+            "seconds_per_client_frame": 1.0
+          },
+          "raw_words": [
+            "00000001",
+            "00000001",
+            "3a83126f",
+            "447a0000",
+            "3f800000",
+            "3f800000",
+            "447a0000",
+            "3a83126f",
+            "3f800000",
+            "3f800000"
+          ]
+        },
+        {
+          "requested_logic": -7,
+          "requested_client": -2,
+          "native_output": {
+            "logic_hz": 1,
+            "client_hz": 1,
+            "logic_frames_per_ms": 0.0010000000474974513,
+            "ms_per_logic_frame": 1000.0,
+            "logic_rate_real": 1.0,
+            "seconds_per_logic_frame": 1.0,
+            "ms_per_client_frame": 1000.0,
+            "client_frames_per_ms": 0.0010000000474974513,
+            "client_rate_real": 1.0,
+            "seconds_per_client_frame": 1.0
+          },
+          "raw_words": [
+            "00000001",
+            "00000001",
+            "3a83126f",
+            "447a0000",
+            "3f800000",
+            "3f800000",
+            "447a0000",
+            "3a83126f",
+            "3f800000",
+            "3f800000"
+          ]
+        },
+        {
+          "requested_logic": 10,
+          "requested_client": 5,
+          "native_output": {
+            "logic_hz": 10,
+            "client_hz": 10,
+            "logic_frames_per_ms": 0.010000000707805157,
+            "ms_per_logic_frame": 100.0,
+            "logic_rate_real": 10.0,
+            "seconds_per_logic_frame": 0.10000000149011612,
+            "ms_per_client_frame": 100.0,
+            "client_frames_per_ms": 0.010000000707805157,
+            "client_rate_real": 10.0,
+            "seconds_per_client_frame": 0.10000000149011612
+          },
+          "raw_words": [
+            "0000000a",
+            "0000000a",
+            "3c23d70b",
+            "42c80000",
+            "41200000",
+            "3dcccccd",
+            "42c80000",
+            "3c23d70b",
+            "41200000",
+            "3dcccccd"
+          ]
+        },
+        {
+          "requested_logic": 5,
+          "requested_client": 34,
+          "native_output": {
+            "logic_hz": 5,
+            "client_hz": 34,
+            "logic_frames_per_ms": 0.005000000353902578,
+            "ms_per_logic_frame": 200.0,
+            "logic_rate_real": 5.0,
+            "seconds_per_logic_frame": 0.20000000298023224,
+            "ms_per_client_frame": 29.41176414489746,
+            "client_frames_per_ms": 0.03400000184774399,
+            "client_rate_real": 34.0,
+            "seconds_per_client_frame": 0.029411764815449715
+          },
+          "raw_words": [
+            "00000005",
+            "00000022",
+            "3ba3d70b",
+            "43480000",
+            "40a00000",
+            "3e4ccccd",
+            "41eb4b4b",
+            "3d0b4396",
+            "42080000",
+            "3cf0f0f1"
+          ]
+        },
+        {
+          "requested_logic": 5,
+          "requested_client": 35,
+          "native_output": {
+            "logic_hz": 5,
+            "client_hz": 30,
+            "logic_frames_per_ms": 0.005000000353902578,
+            "ms_per_logic_frame": 200.0,
+            "logic_rate_real": 5.0,
+            "seconds_per_logic_frame": 0.20000000298023224,
+            "ms_per_client_frame": 33.33333206176758,
+            "client_frames_per_ms": 0.030000001192092896,
+            "client_rate_real": 30.0,
+            "seconds_per_client_frame": 0.03333333507180214
+          },
+          "raw_words": [
+            "00000005",
+            "0000001e",
+            "3ba3d70b",
+            "43480000",
+            "40a00000",
+            "3e4ccccd",
+            "42055555",
+            "3cf5c290",
+            "41f00000",
+            "3d088889"
+          ]
+        },
+        {
+          "requested_logic": 1,
+          "requested_client": 60,
+          "native_output": {
+            "logic_hz": 1,
+            "client_hz": 6,
+            "logic_frames_per_ms": 0.0010000000474974513,
+            "ms_per_logic_frame": 1000.0,
+            "logic_rate_real": 1.0,
+            "seconds_per_logic_frame": 1.0,
+            "ms_per_client_frame": 166.6666717529297,
+            "client_frames_per_ms": 0.006000000052154064,
+            "client_rate_real": 6.0,
+            "seconds_per_client_frame": 0.1666666716337204
+          },
+          "raw_words": [
+            "00000001",
+            "00000006",
+            "3a83126f",
+            "447a0000",
+            "3f800000",
+            "3f800000",
+            "4326aaab",
+            "3bc49ba6",
+            "40c00000",
+            "3e2aaaab"
+          ]
+        },
+        {
+          "requested_logic": 30,
+          "requested_client": 60,
+          "native_output": {
+            "logic_hz": 30,
+            "client_hz": 60,
+            "logic_frames_per_ms": 0.030000001192092896,
+            "ms_per_logic_frame": 33.33333206176758,
+            "logic_rate_real": 30.0,
+            "seconds_per_logic_frame": 0.03333333507180214,
+            "ms_per_client_frame": 16.66666603088379,
+            "client_frames_per_ms": 0.06000000238418579,
+            "client_rate_real": 60.0,
+            "seconds_per_client_frame": 0.01666666753590107
+          },
+          "raw_words": [
+            "0000001e",
+            "0000003c",
+            "3cf5c290",
+            "42055555",
+            "41f00000",
+            "3d088889",
+            "41855555",
+            "3d75c290",
+            "42700000",
+            "3c888889"
+          ]
+        },
+        {
+          "requested_logic": 60,
+          "requested_client": 60,
+          "native_output": {
+            "logic_hz": 60,
+            "client_hz": 60,
+            "logic_frames_per_ms": 0.06000000238418579,
+            "ms_per_logic_frame": 16.66666603088379,
+            "logic_rate_real": 60.0,
+            "seconds_per_logic_frame": 0.01666666753590107,
+            "ms_per_client_frame": 16.66666603088379,
+            "client_frames_per_ms": 0.06000000238418579,
+            "client_rate_real": 60.0,
+            "seconds_per_client_frame": 0.01666666753590107
+          },
+          "raw_words": [
+            "0000003c",
+            "0000003c",
+            "3d75c290",
+            "41855555",
+            "42700000",
+            "3c888889",
+            "41855555",
+            "3d75c290",
+            "42700000",
+            "3c888889"
+          ]
+        },
+        {
+          "requested_logic": 5,
+          "requested_client": 30,
+          "native_output": {
+            "logic_hz": 5,
+            "client_hz": 30,
+            "logic_frames_per_ms": 0.005000000353902578,
+            "ms_per_logic_frame": 200.0,
+            "logic_rate_real": 5.0,
+            "seconds_per_logic_frame": 0.20000000298023224,
+            "ms_per_client_frame": 33.33333206176758,
+            "client_frames_per_ms": 0.030000001192092896,
+            "client_rate_real": 30.0,
+            "seconds_per_client_frame": 0.03333333507180214
+          },
+          "raw_words": [
+            "00000005",
+            "0000001e",
+            "3ba3d70b",
+            "43480000",
+            "40a00000",
+            "3e4ccccd",
+            "42055555",
+            "3cf5c290",
+            "41f00000",
+            "3d088889"
+          ]
+        }
+      ],
+      "output_faults": [
+        {
+          "fault": "stale_client_rate",
+          "returncode": 1,
+          "stdout": "RATE,5,30,00000005,0000001e,3ba3d70b,43480000,40a00000,3e4ccccd,42055555,3cf5c290,41f00000,3d088889\n",
+          "stderr": "rate check refused line 76: !rate_abi_errors && storage.values[0]==(unsigned)logic && storage.values[1]==(unsigned)client\n"
+        },
+        {
+          "fault": "stale_duration_scale",
+          "returncode": 1,
+          "stdout": "RATE,5,30,00000005,0000001e,3ba3d70a,43480000,40a00000,3e4ccccd,42055555,3cf5c290,41f00000,3d088889\n",
+          "stderr": "rate check refused line 82: error<=expected[i]*2e-7\n"
+        },
+        {
+          "fault": "stale_client_step",
+          "returncode": 1,
+          "stdout": "RATE,5,30,00000005,0000001e,3ba3d70b,43480000,40a00000,3e4ccccd,42055555,3cf5c290,41f00000,3d088889\n",
+          "stderr": "rate check refused line 82: error<=expected[i]*2e-7\n"
+        }
+      ],
+      "startup_vs_configured_baseline": [
+        {
+          "field": "logic_frames_per_ms",
+          "startup_word": "3ba3d70a",
+          "configured_word": "3ba3d70b"
+        },
+        {
+          "field": "client_frames_per_ms",
+          "startup_word": "3cf5c28f",
+          "configured_word": "3cf5c290"
+        }
+      ],
+      "duration_rounding_from_native_factors": {
+        "scope": "arithmetic model using executed setter factors; native integer parser not executed",
+        "examples": [
+          {
+            "requested_ms": 200,
+            "results": [
+              {
+                "mode": "startup_5hz",
+                "ticks": 1,
+                "elapsed_ms": 200
+              },
+              {
+                "mode": "setter_5hz",
+                "ticks": 2,
+                "elapsed_ms": 400
+              },
+              {
+                "mode": "setter_10hz",
+                "ticks": 3,
+                "elapsed_ms": 300
+              }
+            ]
+          },
+          {
+            "requested_ms": 250,
+            "results": [
+              {
+                "mode": "startup_5hz",
+                "ticks": 2,
+                "elapsed_ms": 400
+              },
+              {
+                "mode": "setter_5hz",
+                "ticks": 2,
+                "elapsed_ms": 400
+              },
+              {
+                "mode": "setter_10hz",
+                "ticks": 3,
+                "elapsed_ms": 300
+              }
+            ]
+          },
+          {
+            "requested_ms": 1000,
+            "results": [
+              {
+                "mode": "startup_5hz",
+                "ticks": 5,
+                "elapsed_ms": 1000
+              },
+              {
+                "mode": "setter_5hz",
+                "ticks": 6,
+                "elapsed_ms": 1200
+              },
+              {
+                "mode": "setter_10hz",
+                "ticks": 11,
+                "elapsed_ms": 1100
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "duration_rounding_model": {
+    "scope": "integer arithmetic illustration; native integer INI parser not executed",
+    "milliseconds": 250,
+    "baseline": {
+      "hz": 5,
+      "ticks": 2,
+      "elapsed_ms": 400
+    },
+    "uncompensated_beta": {
+      "hz": 10,
+      "ticks": 3,
+      "elapsed_ms": 300
+    }
+  },
+  "limits": [
+    "no real game or network executed",
+    "no startup/load-order verification in installed images",
+    "no full gameplay-time compensation",
+    "no measured frame time or FPS",
+    "no files installed"
+  ],
+  "source_review": {
+    "root": "C:\\repositories\\Open-BFME-2",
+    "commit": "ff1544d9fef63a5460d1fcd012cea309c13f7dff",
+    "files": {
+      "Code/GameEngine/Source/Common/FrameRateConfiguration.cpp": "d3870f20c26a96dbc569b40fcb95236326fa889c87ab4e5e102053f90b5934ff",
+      "Code/GameEngine/Source/Common/GameEngineFrameTiming.cpp": "5507b332f1f8370f4e8626f5b8fc4456df990b7cd013692bf3b1da2190fca892",
+      "Code/GameEngine/Source/Common/GameEngineNetworkHelpers.cpp": "5c9aa8850c511117b92a9ce5d5ad0d80044247803956a3973948af1745227cbc",
+      "Code/GameEngine/Source/Common/NetworkInterfaceFrameAdvance.cpp": "5b2c70986fd5d747b98a332dff861237ddf292cb1a53dbc6741b82c4c699370f",
+      "Code/GameEngine/Source/Common/NetworkInterfaceFramePacing.cpp": "e87d7dc6c26457a8a7145e23c8df310e55529d16fb0bc9ab42cdf6af5ba3e0a9",
+      "Code/GameEngine/Source/Common/GameEngineInit.cpp": "db8b307a83353c6e139c1e10f1f9d9ceecaca2ed657e3ed8f9b777644857f109",
+      "Code/GameEngine/Source/Common/Rva007AB7F0HalfRateInits.cpp": "519f861c591bd9f894359f1a4f4bd2bf7f31e531fbd3fea82e4c7cef774f16d4",
+      "Code/GameEngine/Source/Common/Rva007ABC6FFrameRateInits.cpp": "b55fdd5af0b83908f22cbb27406ade2ae2a0ee95920f3fb73e63c36d4814faaf",
+      "Code/GameEngine/Source/Common/System/INI_parseDurationUnsignedInt.cpp": "027d5feff82ffa4ab1562231703383c431fc2cc254b5499cdcb6b9dd6f7c4217"
+    },
+    "limit": "Source review only except the independently executed rate setter; installed startup/network/parser behavior remains unqualified."
+  },
+  "installed_checkpoint": {
+    "version": "0.9.11-beta.13",
+    "sha256": {
+      "bfme2perf.asi": "976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd",
+      "bfme2perf.ini": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b"
+    },
+    "changed": false,
+    "launcher_changed": false
+  },
+  "attempt_notes": [
+    {
+      "result": "initial preflight refused before native execution",
+      "reason": "reference PE marks .rdata writable; initial checker incorrectly required read-only constants",
+      "correction": "check readable non-executable region, exact scalar values and separation from output block"
+    }
+  ]
+}

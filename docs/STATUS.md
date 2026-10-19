@@ -15,6 +15,47 @@ troop-heavy scene has been demonstrated; the target remains unmet.
 
 ## Next target: 60 visual FPS with shadows at 60 (2026-10-17)
 
+### Approved simulation-timing investigation (2026-10-18)
+
+Hans approved relaxing exact game-logic invariance for the development beta
+and pre-approved the plan while he is away. Normal gameplay speed/balance,
+camera/input behavior, fresh full-rate shadows and matching-beta multiplayer
+sync remain required. Stable versions stay unchanged. He explicitly deferred
+launcher beta integration/publication; it is only a future option if this
+work succeeds. The [accepted scope](specs/2026-10-18-simulation-beta-design.md)
+supersedes the stored goal's older unchanged-logic clause, not its FPS target.
+
+The first native rate-setter check passes on both local executable variants:
+13 explicit rate/clamp cases and 512 reconfiguration calls per image, zero ABI
+or write-boundary failures, and six rejected negative controls per image.
+The complete 191-byte body matches in each at research RVA `0x00244F11`.
+It accepts 10 Hz logic / 60 Hz client and produces the expected ten integer/
+float outputs, but clamps 5/60 to 5/30. This is a possible building block,
+not a working 60 FPS mode or evidence of lower complete-frame cost.
+
+The setter's computed 5/30 result is **not identical to the file's startup
+state**: logic/client frames-per-millisecond each increase by one ULP.
+The report's arithmetic examples using those actual native factors predict
+an extra tick when an integer duration is rounded up at an exact boundary
+(for example, 200 ms becomes two 5 Hz ticks instead of one). Native integer
+parser execution is still pending. Do not use the setter as a transparent
+reset; restore captured values exactly and compensate timing deliberately.
+
+The reference also exposes startup-derived timers and a six-phase scheduler.
+The current rate test does not run either. Integer duration rounding can
+change gameplay: a hypothetical 250 ms field rounds to 400 ms at 5 Hz but
+300 ms at 10 Hz. Native parser execution, startup compensation, per-tick
+behavior, actual installed load order and multiplayer remain unqualified.
+Next audit those dependencies before implementing a runtime switch.
+
+See [the report](benchmarks/2026-10-18-native-rates.json) and
+[plan](plans/2026-10-18-simulation-rate-screen.md). No production source,
+installed beta.13, INI, launcher or stable release changed. The first test
+attempt refused the reference's writable `.rdata` header before executing
+native code; the corrected checker verifies read access, exact constants
+and separation from the output block instead of assuming that section is
+read-only. The full dedicated check then passes.
+
 ### Matched GPU-completion control (2026-10-18)
 
 `bench_group_completion.exe` compares native bulk, direct capture and the
@@ -43,7 +84,8 @@ frames, retaining this matched native per-batch control.
 
 Hans also linked MetaIdea's 60 FPS mod converter. Its code rescales gameplay
 INI data and rebuilds mod archives; SageMetaTool's wiki describes scaling
-engine/INI values too. These mechanisms do not satisfy unchanged game logic.
+engine/INI values too. These mechanisms did not satisfy the former unchanged
+game-logic requirement; the newly approved experiment now permits retiming.
 Neither was run. Sources and limits are in the
 [alternative review](PERFORMANCE-INVESTIGATION.md#approaches-not-tested-or-excluded-by-the-requested-behavior).
 

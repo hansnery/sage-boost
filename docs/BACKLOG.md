@@ -7,6 +7,27 @@ Strike an item through, with the date, when it's done.
 
 ## Full-rate 60 FPS investigation (2026-10-17)
 
+- [x] 2026-10-18: record Hans's approved simulation-beta scope and explicit
+  deferral of launcher integration/publication. Normal speed/balance,
+  camera/input behavior, full-rate fresh shadows and matching-beta sync
+  remain required. [Scope](specs/2026-10-18-simulation-beta-design.md).
+- [x] 2026-10-18: qualify the native rate setter on both installed executable
+  variants in private fixture memory: 26 rate/clamp cases, 1,024 additional
+  reconfiguration calls, 12 rejected negative controls, no ABI/boundary failure.
+  10/60 is accepted; 5/60 clamps to 5/30. No runtime integration or FPS result.
+  Its computed 5/30 values differ from file startup by one ULP in two scales;
+  reset through the setter is not exact. Native integer duration checks must
+  cover this boundary effect. [Report](benchmarks/2026-10-18-native-rates.json).
+- [ ] Prioritize the approved simulation-timing route: audit native integer
+  duration rounding, startup-derived constants, values parsed before Miles
+  loads the ASI, per-tick movement/combat/economy and network phase admission.
+  Verify normal game speed and matching-beta sync before claiming success.
+  Keep render-thread work available, but do not resume small worker changes
+  in place of this approved change of approach.
+- [ ] Launcher beta distribution is deferred. If the experiment demonstrates
+  a worthwhile improvement and Hans requests publication, provide an opt-in
+  beta with stable default/rollback and explicit matching-peer requirements.
+
 - [x] 2026-10-18: qualify equal final GPU completion for native/direct/worker
   paths at batch depths 2/4/8. All intermediate images/states are checked;
   stale-image and premature-mode-change controls fail as intended. DXVK

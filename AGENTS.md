@@ -39,7 +39,16 @@ Related repos:
 - **Never touch the x87 control word or MXCSR.** Hook stubs use general
   registers only; floating point lives in `perf/src/fpsmath.c` (SSE scalar,
   no vectorising).
-- **Multiplayer safety: nothing that logic, input, the network or the CRC
+- **Experimental beta exception (Hans, 2026-10-18):** on `codex/perf-beta`,
+  game-logic changes and frame retiming may be researched to reach 60 FPS.
+  Preserve normal gameplay speed/balance, working multiplayer between
+  matching beta peers, camera/input behavior and full-rate fresh shadows.
+  This supersedes exact logic/CRC/frame-counter invariance for that
+  experiment only; stock-peer compatibility is not assumed. Keep stable
+  builds unchanged. Launcher beta integration/publication is deferred until
+  worthwhile improvement is demonstrated and Hans requests publication.
+  See [the experimental scope](docs/specs/2026-10-18-simulation-beta-design.md).
+- **Stable multiplayer safety: nothing that logic, input, the network or the CRC
   sees may change.** No retiming of game frames, no writes to the frame
   counters or the frame limit, no logic random draws. The plugin is
   visual-only: extra frames, catch-up, instancing and the shadow-pass cuts

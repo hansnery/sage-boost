@@ -26,8 +26,11 @@ offline harnesses, not installed game features.
 
 The [approved target](specs/2026-10-17-60fps-full-shadows-design.md) is at least
 59 presentation calls/s over a settled 60-second troop-heavy interval, with
-pacing reported and fresh shadows on every rendered frame. Simulation,
-networking, input, camera behavior and graphics quality must be preserved.
+pacing reported and fresh shadows on every rendered frame. Hans subsequently
+[approved game-logic changes in the experimental beta](specs/2026-10-18-simulation-beta-design.md),
+while retaining normal gameplay speed/balance, matching-beta multiplayer
+sync, input/camera behavior and graphics quality. Earlier exclusions below
+describe the former visual-only requirement; stable builds retain it.
 The internal counter records completed flip-enabled `EndScene` calls, not
 physical display refresh or proof of successful GPU output. FrameView and
 visual checks remain necessary for the gameplay claim.
@@ -214,7 +217,9 @@ do not establish that threading as a whole has failed or succeeded.
   established. The author discontinued it in favor of SageMetaTool. That
   successor's wiki also describes scaling engine values and rewriting
   gameplay INI values during parsing; it does not establish unchanged logic
-  or lower rendering cost. Neither tool was executed here.
+  or lower rendering cost. Neither tool was executed here. Hans's subsequent
+  approval allows investigating retiming in our own experimental beta; it
+  does not establish either external tool's performance or compatibility.
   [README](https://github.com/MetaIdea/bfme2-60fps-mod-updater-tool),
   [factors](https://github.com/MetaIdea/bfme2-60fps-mod-updater-tool/blob/main/ExecuteModDefinitionScript.lua#L1-L5),
   [conversion rules](https://github.com/MetaIdea/bfme2-60fps-mod-updater-tool/blob/main/ModDefinitionScript.lua),
@@ -231,11 +236,20 @@ do not establish that threading as a whole has failed or succeeded.
   capture; missing shader counts were small relative to instanced meshes.
   Neither was supported as a sufficient standalone route to doubling FPS.
   [Original workload evidence](STATUS.md#first-beta-gameplay-report-2026-10-17).
-- **Reducing shadow rate, moving the camera, changing simulation cadence or
-  weakening multiplayer deadlines does not meet this target.** Hans chose
+- **Reducing shadow rate, moving the camera or breaking multiplayer sync
+  does not meet this target.** Hans chose
   shadows at 60 too. Earlier camera smoothing also caused drift and a black
   strip by bypassing native camera/shadow/terrain updates; it was removed in
   0.9.10. Do not revive it as a performance fix. [Rules](../AGENTS.md).
+
+The first [native rate-setter check](benchmarks/2026-10-18-native-rates.json)
+accepts 10 Hz logic / 60 Hz client on both installed executable variants and
+rejects deliberately stale output scales. A 5/60 request is clamped to 5/30.
+Calling 5/30 also changes two startup conversion constants by one ULP;
+recomputed rates are not an exact rollback and can affect duration rounding.
+Only that isolated native leaf ran. Startup-derived timers, rounded duration
+fields, the complete loop and matching-peer sync still need qualification;
+no runtime switch was installed and no gameplay improvement was measured.
 
 ## What future attempts must do differently
 

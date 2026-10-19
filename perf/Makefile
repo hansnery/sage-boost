@@ -70,6 +70,14 @@ $(BUILD)/bfme2perf.asi: $(OBJS) src/bfme2perf.def
 $(BUILD)/test_load.exe: tests/test_load.c | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -static -o $@ $<
 
+# Native timing research only: no game entry, runtime hooks or GPU work.
+$(BUILD)/test_native_rates.exe: tests/test_native_rates.c | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -msse2 -mfpmath=sse -static -o $@ $<
+
+.PHONY: test-native-rates
+test-native-rates: $(BUILD)/test_native_rates.exe
+	python ../tools/test_native_rates.py --image "$(AOTR_DAT)" --image "$(ROTWK_DAT)" --executable $< --output $(BUILD)/native-rate-screen.json
+
 # Offline CPU screen only; native bodies are read from local images at run time.
 $(BUILD)/bench_native_decode.exe: tests/bench_native_decode.c tests/bench_guard.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $<

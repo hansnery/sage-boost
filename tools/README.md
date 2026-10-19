@@ -8,6 +8,20 @@ user's own installs at run time.
 
 ## Build and verification
 
+`make test-native-rates` in `perf/` runs `test_native_rates.py` against the
+two local executable images. It validates the complete native rate setter,
+executes only that leaf in private fixture memory, checks all rate/time
+outputs and repeated reconfiguration, and rejects changed bodies/constants/
+output identities plus stale output controls. No game entry, imports,
+assets, runtime hooks or GPU work run. `perf/build/native-rate-screen.json`
+contains the result. This is simulation-beta research, not a frame-time or
+FPS benchmark; no gameplay or multiplayer qualification follows from it.
+The report distinguishes the setter's computed 5/30 result from file startup
+values: two conversion constants differ by one ULP. Returning to 5/30 through
+the setter is therefore not an exact restoration of the original state.
+Use `--output` to preserve a report elsewhere. See the
+[accepted experiment](../docs/specs/2026-10-18-simulation-beta-design.md).
+
 | script | what |
 |---|---|
 | `verify_sites.py` | unlocker: checks every signature against each game's baseline image and regenerates `dll/src/patch_table.c` and `dll/tests/baseline_expect.h` (`--write`). Run by `make test` in `dll/`. Needs `pefile` and `capstone`. |
