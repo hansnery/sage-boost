@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-18T17:35:54.207684-07:00",
+  "reason": "Launcher replaced beta.13 with published 0.9.10 and removed only three beta settings during external evaluation.",
+  "backup": "C:\\Users\\Hans\\AppData\\Local\\Temp\\bfme2perf-0.9.10-installed-20261018-173552-501397",
+  "backup_sha256": {
+    "bfme2perf.asi": "db65e51d42bb7f49947631a17b9aeebc0604f3cd9e2c055d8e8a35daf65408e5",
+    "bfme2perf.ini": "79bbb612a6ce22e76f930e9334a6e650bc2c49c3d28260c6bc716c026da94c54",
+    "bfme2perf.log": "641a72011d6149859c11012c613db4f08d22abf0a6487f8c74168e58e01693e9",
+    "bfme2perf_scopes.csv": "136ac43dc9dbb8c4c551967598a3b84c7b90d3b02da7c8399aba18da8c70f2d5",
+    "bfme2perf_timing.csv": "79ec885b1bff0033d6ca7b89db39dd866a0af43410b2e75af4137a2cb9990ff8"
+  },
+  "restored_sha256": {
+    "bfme2perf.asi": "976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd",
+    "bfme2perf.ini": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b"
+  },
+  "source_commit": "5e94796dc7491a9a8fc5202f68c07ee60c329a15",
+  "full_suite_receipt": "2026-10-18-material-chain-install.json",
+  "existing_ini_bytes_preserved": true,
+  "new_runtime_build": false,
+  "game_launched": false
+}

@@ -16,6 +16,21 @@ Strike an item through, with the date, when it's done.
   SAGE Unlocked's reported sync fix does not establish Realms compatibility.
   Preserve the faction unlocker, full-rate fresh shadows and gameplay rules.
   No combined default install or diagnostic-only gameplay request.
+- [x] 2026-10-18: run the matching upstream standalone harness against the
+  official Accelerator DLL. All 600 frame hashes match with an active worker.
+  Its periodic toggles prevent a sustained-throughput interpretation.
+- [x] 2026-10-18: independently test actual local effect lifecycles through
+  the external DLL. Backend state, input-change and poison controls pass;
+  84 paired samples show near-neutral or negative completion deltas. See
+  `benchmarks/2026-10-18-external-render-thread-screen.json`.
+- [ ] Extend the external comparison to actual geometry and fresh shadow
+  draws, accounting for queue drain and complete frame submission. Qualify
+  resource lifetimes and production-hook coexistence before a live trial.
+  The effect-only result is not an architecture rejection or an FPS estimate.
+- [x] 2026-10-18: back up a second launcher replacement of beta.13 by
+  0.9.10, restore the identical tested binary and only the three missing beta
+  keys, and verify the shortcut with CheckOnly. No game launched; see
+  `benchmarks/2026-10-18-beta13-second-restoration.json`.
 - [x] 2026-10-18: close the shared exact-key material-cache screen. Twelve
   GPU runs and 252 pairs pass correctness checks, but the stricter DXVK bulk
   baseline makes the candidate slower. Reject standalone runtime promotion;

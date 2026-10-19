@@ -15,7 +15,8 @@ The user requests reassessing BFME2 Accelerator and SAGE Unlocked after the
 repeated ~30 FPS gameplay results. Small material/cache experiments are no
 longer the primary next step. Study documented approaches and stage external
 releases separately; the repository's independent-code and multiplayer rules
-remain in force. No alternative is installed or executed.
+remain in force. No alternative is installed into or executed with the game.
+Accelerator has now run in isolated offline harnesses (below).
 
 - Accelerator 2.0 queues D3D work to another thread, which directly addresses
   a plausible part of the measured CPU rendering cost. Its shipped README
@@ -33,17 +34,44 @@ remain in force. No alternative is installed or executed.
   remains open. Its BFME loader occupies `dinput8.dll`, already used by our
   faction unlocker. Do not overwrite that component to try it.
 - Official Accelerator 2.0 build 73 and SAGE Unlocked 1.9.5 ZIPs are staged,
-  hash-verified, unextracted and unexecuted at
+  hash-verified at
   `%TEMP%\sage-boost-alternatives-20261018-v0jfrn7o`; `receipt.json` records
   URLs, archive hashes and member names. A tracked
   [preflight receipt](benchmarks/2026-10-18-alternative-release-preflight.json)
-  preserves that inventory. No external source was imported.
+  preserves that inventory. SAGE Unlocked remains unextracted/unexecuted;
+  Accelerator's DLL is extracted only into the separate harness directory.
+  No external implementation was imported into sage-boost.
 - Next: determine whether render threading can be isolated and qualified
   without changing simulation, input or camera, and without overlapping
   competing hooks. Default frame interpolation is not proof of fresh
   shadows at 60. Keep separate stock, beta and alternative measurements;
   resolve a reproducible multiplayer divergence only after one is observed.
   No promised FPS gain, deployment or new gameplay request from this review.
+
+### External render-thread screen (2026-10-18)
+
+The matching upstream harness for official Accelerator 2.0 build 73 runs
+offline against the installed DXVK/D3DX27 dependencies. All **600 frame
+hashes match** between off/on runs; its log confirms the worker executes.
+The harness toggles threading every 50 frames, so total elapsed time cannot
+measure sustained threaded throughput. Its enqueue microbench is also not
+a full-frame benchmark.
+
+An independently written optional adapter, `bench_external_rt.exe`, now
+loads that external DLL by explicit path and exercises the local unit and
+shadow effects. Eight in-pass/post-End comparisons match an unhooked
+backend oracle, with changed-input and deliberate constant-poison controls.
+The oracle bypasses mirrored getters and drains queued resource operations.
+No external implementation, shader bytecode or rendered image is committed.
+
+Two runs preserve **84 paired samples**. Median drained-completion savings
+per 1,222 synthetic groups are -0.1158/-0.0824 ms lit and -0.4526/+0.2162 ms
+shadow. This no-draw lifecycle workload shows no substantial benefit; it
+does not reject the wider architecture. Geometry, fresh shadow images,
+complete frame submission and coexistence with production hooks remain
+unqualified. See the [report](benchmarks/2026-10-18-external-render-thread-screen.json)
+and [scope](specs/2026-10-18-external-render-thread-screen.md). No new
+performance build or gameplay test is justified yet.
 
 ### Shared material cache: do not promote (2026-10-18)
 
@@ -59,15 +87,17 @@ and reject standalone runtime promotion. Production and installed beta.13
 ASI/INI are unchanged; no additional game test is warranted.
 
 **Current installed build: 0.9.11-beta.13**, from pushed commit `5e94796`,
-restored 2026-10-18 16:21 PDT after replacement by 0.9.10.
+restored again 2026-10-18 17:35 PDT after replacement by 0.9.10.
 Tested/build/installed ASI SHA256:
 `976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd`.
 The current INI had lost only the QueueInsert/QueueSort/BulkRender block.
 Restoring that block preserves every existing byte and recovers the exact
 previous preferences (SHA256 `e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b`).
 The replaced binary, INI and capture are backed up at
-`%TEMP%\bfme2perf-0.9.10-installed-20261018-162129-216626`.
-See [restoration receipt](benchmarks/2026-10-18-beta13-restoration.json) and
+`%TEMP%\bfme2perf-0.9.10-installed-20261018-173552-501397`.
+The beta shortcut's CheckOnly verifies both hashes and launches nothing.
+See [latest restoration receipt](benchmarks/2026-10-18-beta13-second-restoration.json),
+the [earlier restoration](benchmarks/2026-10-18-beta13-restoration.json) and
 the [original installation](benchmarks/2026-10-18-material-chain-install.json).
 
 ## Beta.13 gameplay: active batching, insufficient render budget (2026-10-18)

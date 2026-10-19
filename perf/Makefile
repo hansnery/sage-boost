@@ -355,6 +355,9 @@ $(BUILD)/bench_effect.exe: tests/bench_effect.c tests/effect_source_audit.h test
 $(BUILD)/bench_typed_effect.exe: tests/bench_typed_effect.c tests/bench_effect.c tests/effect_source_audit.h tests/bench_guard.h tests/shadow_fx/shadow_fx.c src/shadowfx_table.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -static -o $@ $<
 
+$(BUILD)/bench_external_rt.exe: tests/bench_external_rt.c tests/bench_effect.c tests/effect_source_audit.h tests/bench_guard.h tests/shadow_fx/shadow_fx.c src/shadowfx_table.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $<
+
 $(BUILD)/inst_retained_engine.o: tests/inst_retained_engine.c tests/inst_dispatch_engine.c src/inst.c src/*.h | $(BUILD)
 	$(CC) $(CFLAGS) -Isrc -c -o $@ $<
 
