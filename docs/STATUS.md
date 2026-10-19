@@ -1,4 +1,4 @@
-# Status and handoff (2026-10-18)
+# Status and handoff (2026-10-19)
 
 Where the three repositories and the installed game stand, for a model or
 person picking the work up. Rules, build steps and branches are in
@@ -15,10 +15,33 @@ troop-heavy scene has been demonstrated; the target remains unmet.
 
 ## Next target: 60 visual FPS with shadows at 60 (2026-10-17)
 
+### Paired-cadence runtime beta.14 (2026-10-19)
+
+The opt-in adapter is implemented and the final full `perf` test suite
+passes. `[Experimental] PairPacing=1` allows one checked extra draw per
+native update with small predicted deadline borrowing and later repayment.
+It retains fresh shadows, the camera and existing rendering preferences.
+The shipped setting defaults off; launcher/stable publication is deferred.
+
+Production-object tests preserve 1,800 ordinary updates in about 59.4
+virtual seconds while adding 1,800 extra draws for the controlled workload;
+the legacy comparison admits none. A transient expensive draw recovers with
+211 later extras; persistent expensive work makes three failed recovery
+probes, then rests. Pause/UI/loading gates, changed native periods, state
+guards and catch-up ownership pass. Six compiled integer objects contain no
+FP instructions. The full suite passed with exit 0; its log hash and the
+tested plugin hash are in the [runtime report](benchmarks/2026-10-19-paired-cadence-runtime.json).
+
+These are controlled virtual timings, not game FPS. No game was launched.
+Normal gameplay speed/input, matching-beta multiplayer and the settled
+heavy-scene 59/s target still require Hans's test. See
+[behavior and limits](specs/2026-10-19-paired-cadence-runtime.md).
+Installation and shortcut verification will be recorded separately below.
+
 ### Paired-cadence policy screen (2026-10-18)
 
-Route 2 now has a tested integer-only controller, **not yet linked into the
-plugin**. It allows at most one extra draw per native update and up to 4 ms
+At this historical checkpoint, route 2 had a tested integer-only controller,
+not yet linked into the plugin. It allows at most one extra draw per native update and up to 4 ms
 of predicted deadline borrowing, repaid by shortening subsequent waits. It
 retains the native period, including network adjustments. Small debt survives
 period changes; pause, long stalls and missing observations reset the epoch.

@@ -206,6 +206,13 @@ void pf_cu_set_extras(unsigned (*extras_in)(unsigned frame_start_ms))
     g_extras_in = extras_in;
 }
 
+static int (*g_pacing_owner)(void);
+
+void pf_cu_set_pacing_owner(int (*owns)(void))
+{
+    g_pacing_owner = owns;
+}
+
 int pf_cu_on(void)
 {
     return g_on;
@@ -219,6 +226,8 @@ int pf_cu_on(void)
 static int allowed(void)
 {
     unsigned char *logic = *S.logic, *client = *S.client;
+    if (g_pacing_owner && g_pacing_owner())
+        return 0;
     if (!*S.limit_on || !logic || !client || logic[S.logic_paused] || !client[S.client_running])
         return 0;
     if (!((bool_fn)S.is_in_game)(logic) || *S.screenshots > 0)
@@ -385,6 +394,8 @@ void *pf_cu_render(void **slot, void *next)
     unsigned now;
     if (!g_on || !g_in_draw || GetCurrentThreadId() != g_main)
         return next;
+    if (g_pacing_owner && g_pacing_owner())
+        return next;
     if (!g_site_t)
         g_site_t = qpc();
     now = now_ms();
@@ -413,6 +424,8 @@ void pf_cu_wait(void **slot)
 {
     unsigned period = (unsigned)(UINT_PTR)slot[-9];
     if (!g_on || GetCurrentThreadId() != g_main || g_cut_this_frame)
+        return;
+    if (g_pacing_owner && g_pacing_owner())
         return;
     /* The game's wait spins on this call: the clock is read only when behind. */
     if (!pf_cu_core_behind(&g_core)) {

@@ -28,6 +28,7 @@ typedef struct {
     int max_fps_requested; /* [Render] MaxFPS as written, default 30 */
     int max_fps;           /* 30 (off), 60, 90 or 120 */
     int frame_smoothing;   /* [Render] FrameSmoothing 0..3: what extra frames move */
+    int pair_pacing;       /* [Experimental] PairPacing=1, default off */
     int extra_shadows;     /* [Render] ExtraFrameShadows, default 0: extra frames redraw the
                             * shadow map instead of reusing the game frame's */
     int extra_reflections; /* [Render] ExtraFrameReflections, default 0: the same for the

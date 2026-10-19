@@ -40,7 +40,17 @@ quantization. It checks debt repayment, changing native periods, wrap,
 missing observations and deliberate broken scheduling policies. The wrapper
 also audits the compiled controller for FP instructions. No scene, game, GPU
 or multiplayer code runs; rates in this report are modeled, not measured FPS.
-The controller is not yet linked into the plugin.
+Beta.14 links the same controller into an opt-in runtime adapter.
+
+`make test-pair-runtime` exercises the production `fps.o`, `pairpace.o` and
+`catchup.o` through their C hook interfaces with owned state and virtual
+clocks. It also runs in the full `make test` suite. The fixture checks
+ordinary-update cadence, one pacing owner, fresh shadow calls, eligibility,
+state-guard failures and bounded recovery; it does not execute a game or GPU
+scene. `test_pair_runtime.py --objdump <objdump.exe> --suite-log <log>
+--output <report.json>` captures its output, audits six integer objects and
+records source/build hashes. Run it after a successful full suite; marker
+checks in the wrapper do not independently establish that suite's exit code.
 
 | script | what |
 |---|---|

@@ -28,7 +28,7 @@
 #include "timing.h"
 #include "uistate.h"
 
-#define PERF_VERSION "0.9.11-beta.13"
+#define PERF_VERSION "0.9.11-beta.14"
 
 static WCHAR g_log_path[MAX_PATH];
 
@@ -322,7 +322,7 @@ static void install_hooks(const pf_config *cfg, const WCHAR *csv_path, const WCH
     const volatile unsigned char *shadow_flag = 0;
     const char *shadow_flag_why = 0, *cu_why = "off";
     pf_cu_sites cu;
-    int lights;
+    int lights, pair_active = 0;
     pf_bulk_sites bulk;
     const char *bulk_why = "off";
 
@@ -398,7 +398,7 @@ static void install_hooks(const pf_config *cfg, const WCHAR *csv_path, const WCH
             enabled[PF_CLOCK_SET] = enabled[PF_CLOCK_SET_LEFT] = !why;
         }
     }
-    if (cfg->catchup) {
+    if (cfg->catchup || cfg->pair_pacing) {
         cu_why = pf_cu_find(&img, &cu);
         if (cu_why) {
             fu_logf("render: catch-up: %s not found, renders are never skipped", cu_why);
@@ -502,6 +502,7 @@ static void install_hooks(const pf_config *cfg, const WCHAR *csv_path, const WCH
     }
     if (cfg->catchup && !cu_why)
         setup_catchup(cfg, &cu, installed, img.base);
+    pf_cu_set_pacing_owner(pf_fps_pair_owner);
     pf_timing_set_installed(installed);
     log_shadow_pass(cfg, &img, res, installed);
     if (lights)
@@ -517,6 +518,19 @@ static void install_hooks(const pf_config *cfg, const WCHAR *csv_path, const WCH
         pf_fps_set_units(all_set(installed, PF_BIT(PF_HLOD_SET) | PF_BIT(PF_HLOD_DTOR)),
                          (installed & PF_BIT(PF_DISPLAY_DRAW)) != 0);
         pf_fps_set_passes(cfg->extra_shadows, cfg->extra_reflections);
+        if (cfg->pair_pacing) {
+            int ready = !cu_why && cfg->frame_smoothing == 3 &&
+                cfg->shadow_interval == 1 &&
+                all_set(installed, PF_BIT(PF_FRAME) | PF_BIT(PF_DISPLAY_DRAW) |
+                                  PF_BIT(PF_SHADOW) | PF_BIT(PF_SHADOW_INFO) | PF_BIT(PF_REFLECT));
+            pair_active = ready && pf_fps_set_pair_pacing(&cu, 1);
+            fu_logf("experimental: PairPacing=%d: %s", pair_active,
+                    pair_active ? "one extra draw per native update, at most 4 ms predicted debt; "
+                             "later waits repay it; fresh shadows, reflection preferences retained; matching-beta "
+                             "multiplayer and gameplay FPS unqualified" :
+                             "prerequisites missing; requires FrameSmoothing=3, full-rate shadows "
+                             "and verified frame/limiter/game-state hooks; legacy pacing retained");
+        }
         if (installed & PF_BIT(PF_BUTTON_DRAW)) {
             pf_btn_init(btn_data_off);
             if (!pf_fps_stopped())
@@ -541,7 +555,7 @@ static void install_hooks(const pf_config *cfg, const WCHAR *csv_path, const WCH
                     cfg->extra_shadows ? "redraw" : "reuse the game frame's", cfg->extra_shadows,
                     cfg->extra_reflections ? "redraw" : "reuse the game frame's",
                     cfg->extra_reflections);
-        if (!pf_fps_stopped())
+        if (!pf_fps_stopped() && !pair_active)
             fu_logf("render: MaxFPS=%d: up to %d extra frame(s) per game frame, drawn only in the "
                     "frame limiter's idle time; logic, input and network stay on the game's own "
                     "frames; particles, the view update and the scene's update list (W3D "
@@ -554,7 +568,7 @@ static void install_hooks(const pf_config *cfg, const WCHAR *csv_path, const WCH
                         ? "units moved ahead, the camera as the game has it"
                         : "units between the last two game frames, the camera as the game "
                           "has it");
-        if (!pf_fps_stopped())
+        if (!pf_fps_stopped() && !pair_active)
             fu_logf("render: an extra frame's expected cost is the slowest of the last 64 game "
                     "frames that drew one, changed only by extra frames drawn or by frames "
                     "where only it kept them out; until measured, and as its floor, %s. Lates "
@@ -643,7 +657,8 @@ BOOL WINAPI DllMain(HINSTANCE inst, DWORD reason, LPVOID reserved)
             "ShadowBatchIgnoreLight=%d NoStencilFlushes=%d ShadowSkipParticles=%d "
             "ShadowPassVerify=%d LightSkipShadow=%d LightCull=%d LightReuse=%d LightVerify=%d, "
             "[CatchUp] Enabled=%d MaxSkips=%d Notice=%d NoticeText=%s NoticeMinSkips=%d, "
-            "[Skeleton] Threads=%d Verify=%d (the skeleton pre-pass is not in this build)",
+            "[Skeleton] Threads=%d Verify=%d (the skeleton pre-pass is not in this build), "
+            "[Experimental] PairPacing=%d",
             cfg.enabled, cfg.log, cfg.timing, cfg.detail, cfg.reflect_interval,
             cfg.shadow_interval, cfg.shadow_scrolling, cfg.batching, cfg.queue_insert, cfg.queue_sort, cfg.bulk_render, cfg.instancing,
             cfg.instancing_verify, cfg.shadow_instancing, cfg.max_fps, cfg.frame_smoothing,
@@ -651,7 +666,9 @@ BOOL WINAPI DllMain(HINSTANCE inst, DWORD reason, LPVOID reserved)
             cfg.shadow_particles, cfg.shadow_verify, cfg.light_skip, cfg.light_cull,
             cfg.light_reuse, cfg.light_verify, cfg.catchup, cfg.catchup_max_skips,
             cfg.catchup_notice, cfg.catchup_text, cfg.catchup_notice_min, cfg.threads,
-            cfg.verify);
+            cfg.verify, cfg.pair_pacing);
+    if (cfg.pair_pacing && cfg.max_fps <= 30)
+        fu_logf("experimental: PairPacing requires MaxFPS>=60; native pacing retained");
     if (!cfg.instancing)
         fu_logf("render: Instancing=0, the game draws every unit mesh (no hook)");
     if (cfg.max_fps_requested != cfg.max_fps)

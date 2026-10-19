@@ -3,6 +3,7 @@
 #include "btnclock.h"
 #include "fpsmath.h"
 #include "log.h"
+#include "pairpace.h"
 #include "sites.h"
 #include "stubs.h"
 
@@ -164,6 +165,13 @@ static LONGLONG g_prev_wait, g_idle_ticks; /* summed in ticks: the gaps are sub-
 static int g_seen_frame;
 static pf_fps_row g_row;
 static pf_ep g_extra_profile;
+static pf_pairpace g_pair;
+static pf_cu_sites g_pair_sites;
+static int g_pair_enabled;
+static unsigned g_pair_sequence, g_pair_frames, g_pair_draws, g_pair_cuts;
+static unsigned g_pair_peak_debt, g_pair_misses;
+static unsigned g_pair_good_cost, g_pair_good_samples, g_pair_probe_frames, g_pair_probe_failures;
+static int g_pair_cut, g_pair_attempted;
 static void blocked(unsigned reason)
 {
     if (!(g_block_bits & (1u << reason))) {
@@ -470,6 +478,12 @@ void pf_fps_init(const pf_fps_sites *sites, const char *why_not, unsigned max_fp
         }
     }
     g_on = g_in_extra = g_seen_frame = 0;
+    g_pair_enabled = 0;
+    g_pair_sequence = g_pair_frames = g_pair_draws = g_pair_cuts = 0;
+    g_pair_peak_debt = g_pair_misses = 0;
+    g_pair_good_cost = g_pair_good_samples = g_pair_probe_frames = g_pair_probe_failures = 0;
+    g_pair_cut = g_pair_attempted = 0;
+    pf_pair_reset(&g_pair);
     g_stopped = 0;
     g_done = g_drawn = g_cost_us = g_cost_avg_us = g_dry = g_cost_head = g_cost_frame_max = 0;
     g_cost_guess = g_blocked = g_draw_skipped = 0;
@@ -620,6 +634,13 @@ void pf_fps_frame_edge(int entering)
     LONGLONG t;
     if (!g_on)
         return;
+    if (entering) {
+        g_pair_sequence++;
+        if (g_after_update && !g_waited) {
+            pf_pair_reset(&g_pair);
+            g_pair_probe_frames = 0;
+        }
+    }
     t = qpc();
     if (!entering) {
         g_update_exit = t;
@@ -1245,6 +1266,182 @@ static void plan_frame(unsigned period_ms, unsigned elapsed_ms)
 
 /* At the limiter's Sleep call. slot[0] is the return address (the site + 5),
  * slot[-9] ESI = the frame time in ms, slot[-8] EBP: [EBP-0x20] = GameEngine. */
+int pf_fps_set_pair_pacing(const pf_cu_sites *sites, int frame_hook)
+{
+    g_pair_enabled = 0;
+    pf_pair_reset(&g_pair);
+    if (!g_on || g_stopped || !frame_hook || !sites ||
+        !g_redraw_shadows || !g_units_on || !g_lag_on ||
+        !sites->frame_start || !sites->limit_on || !sites->client || !sites->logic ||
+        !sites->is_in_game || !sites->screenshots ||
+        (const void *)sites->client != (const void *)S.client ||
+        (const void *)sites->logic != (const void *)S.logic)
+        return 0;
+    g_pair_sites = *sites;
+    g_pair_enabled = 1;
+    return 1;
+}
+
+int pf_fps_pair_owner(void)
+{
+    return g_pair_enabled && g_on && !g_stopped && g_pair.active;
+}
+
+static int pair_allowed(void)
+{
+    const pf_cu_sites *s = &g_pair_sites;
+    unsigned char *logic, *client;
+    void *hwnd;
+    if (!g_pair_enabled || g_stopped || g_draw_skipped || !*S.display ||
+        (const void *)s->frame_start != (const void *)g_frame_start_ms)
+        return 0;
+    logic = *s->logic;
+    client = *s->client;
+    hwnd = *S.hwnd;
+    if (!*s->limit_on || !logic || !client || logic[s->logic_paused] ||
+        !client[s->client_running] || *s->screenshots > 0 || !hwnd ||
+        ((iconic_fn)S.is_iconic)(hwnd) || !((bool_fn)s->is_in_game)(logic))
+        return 0;
+    if (pf_ui_placing(&s->ui) || pf_ui_scrolling(&s->ui))
+        return 0;
+    return !g_hold || !g_hold();
+}
+
+static void pair_wait(void **slot, const unsigned *engine, unsigned period_ms)
+{
+    unsigned now_ms = g_time(), now, delay, expected, avg, before, end, cost = 0;
+    unsigned disp, f;
+    int debt, guess, planned, probe = 0;
+    if (!pair_allowed()) {
+        pf_pair_reset(&g_pair);
+        g_pair_probe_frames = 0;
+        g_prev_wait = qpc();
+        return;
+    }
+    now = now_ms * 1000u;
+    if (g_paused && (int)(g_frame_ms - g_pause_until) >= 0) {
+        g_paused = 0;
+        g_rest_why = 0;
+    }
+    if (!g_pair.used && !g_paused && !g_pair_attempted) {
+        g_pair_attempted = 1;
+        expected = expected_cost();
+        guess = cost_is_guess();
+        avg = g_cost_avg_us ? g_cost_avg_us : expected;
+        if (avg > expected) avg = expected;
+        planned = pf_pair_plan(&g_pair, now, expected, avg, &delay);
+        if (!planned) {
+            /* A regular draw includes work the checked extra path holds.
+             * Prefer its own established successful cost. Requiring the
+             * larger ordinary draw to fit can permanently forbid recovery.
+             * A probe is bounded by frequency and failure count below. */
+            unsigned candidate = g_pair_good_samples >= 8 ? g_pair_good_cost :
+                                 g_ref_n >= PF_FPS_REF_DRAWS ? g_ref_us : 0;
+            if (candidate && pf_pair_plan(&g_pair, now, candidate, candidate, &delay)) {
+                if (++g_pair_probe_frames >= 60) {
+                    planned = probe = 1;
+                    expected = avg = candidate;
+                    guess = 0;
+                }
+            } else {
+                g_pair_probe_frames = 0;
+            }
+        } else {
+            g_pair_probe_frames = 0;
+        }
+        if (planned) {
+            unsigned start = g_fine();
+            LONGLONG wait_start = qpc();
+            /* The fine clock only paces starts. Absolute cadence always uses
+             * the same native clock that the surrounding limiter reads. */
+            while (g_fine() - start < delay)
+                Sleep(0);
+            g_idle_ticks += qpc() - wait_start;
+            if (!pair_allowed()) {
+                pf_pair_reset(&g_pair);
+                g_prev_wait = qpc();
+                return;
+            }
+            now = g_time() * 1000u;
+            if (pf_pair_claim(&g_pair, now, expected)) {
+                if (probe) {
+                    g_pair_probe_frames = 0;
+                    g_row.probes[0]++;
+                }
+                before = g_fine();
+                disp = before - g_shown_us + avg;
+                f = g_shown_us - g_prev_shown_us > 200000u ? PF_FPS_NONE :
+                    (unsigned)((unsigned long long)disp * 65536u / g_period_us);
+                if (!extra_frame(engine, f, &cost)) {
+                    pf_pair_reset(&g_pair);
+                    return;
+                }
+                end = g_fine();
+                cost = end - before; /* include the checked draw's restoration */
+                shown(end);
+                g_drawn++;
+                g_done++;
+                g_pair_draws++;
+                g_row.extra++;
+                g_row.extra_us += cost;
+                if (cost > g_row.extra_max_us) g_row.extra_max_us = cost;
+                cost_measured(cost);
+                end -= g_shown_us;
+                g_row.disp_err_us += end > disp ? end - disp : disp - end;
+                now = g_time() * 1000u;
+                debt = (int)(now - g_pair.deadline);
+                if (debt > 0 && (unsigned)debt > g_pair_peak_debt)
+                    g_pair_peak_debt = (unsigned)debt;
+                if (debt > (int)PF_PAIR_BORROW_US) {
+                    g_pair_misses++;
+                    if (probe) g_row.probes[2]++;
+                    late_frame(cost, expected, ((unsigned)debt + 999u) / 1000u,
+                               guess);
+                    if (probe && ++g_pair_probe_failures >= 3 && !g_stopped) {
+                        g_pair_probe_failures = 0;
+                        if (!g_rest_why) rest("three paired recovery probes exceeded their debt allowance");
+                    }
+                } else {
+                    g_pair_good_cost = cost ? cost : 1;
+                    if (g_pair_good_samples < 8) g_pair_good_samples++;
+                    g_pair_probe_failures = 0;
+                    if (probe) {
+                        unsigned i;
+                        g_row.probes[1]++;
+                        g_learned_us = g_cost_us = g_cost_avg_us = g_pair_good_cost;
+                        g_cost_guess = 0;
+                        for (i = 0; i < PF_FPS_COST_FRAMES; i++) {
+                            g_cost_ring[i] = g_pair_good_cost;
+                            g_cost_given[i] = 0;
+                        }
+                        fu_log_event("paired cadence: bounded recovery probe fit in %u us; "
+                                     "stale cost history reset", cost);
+                    }
+                }
+            }
+        } else {
+            unsigned unused;
+            blocked(0);
+            /* Age an excessive estimate only when the reference itself
+             * would fit this new policy, never just because time passed. */
+            g_blocked = pf_pair_plan(&g_pair, now, reference_cost(), reference_cost(), &unused);
+        }
+    } else if (g_paused) {
+        g_pair_probe_frames = 0;
+        blocked(2);
+    }
+    /* The existing verified wait-hook protocol: zero the saved threshold,
+     * never the game's frame clock or counters. The next native comparison
+     * exits, and the game records its actual clock as the next frame start. */
+    if (!g_pair_cut && pf_pair_wait_done(&g_pair, g_time() * 1000u) &&
+        g_time() - g_frame_ms < period_ms) {
+        slot[-9] = 0;
+        g_pair_cut = 1;
+        g_pair_cuts++;
+    }
+    g_prev_wait = qpc();
+}
+
 static void wait(void **slot)
 {
     const unsigned char *site = (const unsigned char *)slot[0] - 5;
@@ -1285,6 +1482,8 @@ static void wait(void **slot)
             g_probe_ready = 0;
         g_block_bits = 0;
         g_done = g_drawn = 0;
+        g_plan_n = 0;
+        g_pair_cut = g_pair_attempted = 0;
         g_row.waits++;
         g_prev_wait = now;
         /* The game's frame was presented just before this first wait: the
@@ -1301,13 +1500,37 @@ static void wait(void **slot)
             btn_report();
             frame_seq();
             units_steps();
-            if (period_ms >= 10 && period_ms <= 200)
+            if (g_pair_enabled) {
+                int eligible = pair_allowed();
+                unsigned stamp = g_time();
+                pf_pair_begin(&g_pair, g_pair_sequence, stamp * 1000u,
+                              (stamp - g_frame_ms) * 1000u, period_ms * 1000u, eligible);
+                if (!g_pair.active) g_pair_probe_frames = 0;
+                if (g_pair.active) {
+                    g_period_us = period_ms * 1000u;
+                    if (g_pair_frames >= 60) {
+                        fu_log_event("paired cadence: %u eligible frames, %u extra draws, %u "
+                                     "waits shortened, peak debt %u us, %u prediction misses; "
+                                     "native period %u ms, expected extra %u us",
+                                     g_pair_frames, g_pair_draws, g_pair_cuts,
+                                     g_pair_peak_debt, g_pair_misses, period_ms, expected_cost());
+                        g_pair_frames = g_pair_draws = g_pair_cuts = 0;
+                        g_pair_peak_debt = g_pair_misses = 0;
+                    }
+                    g_pair_frames++;
+                }
+            }
+            if (!g_pair.active && period_ms >= 10 && period_ms <= 200)
                 plan_frame(period_ms, elapsed_ms);
         }
     }
     g_row.sleeps++;
     g_idle_ticks += now - g_prev_wait;
     g_prev_wait = now;
+    if (pf_fps_pair_owner()) {
+        pair_wait(slot, engine, period_ms);
+        return;
+    }
     if (period_ms < 10 || period_ms > 200) {
         g_probe_ready = g_probe_cost = 0;
         return;

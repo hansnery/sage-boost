@@ -1,6 +1,6 @@
 # Performance investigation: what did not deliver the target
 
-Evidence through 2026-10-18. Initially consolidated from development commit
+Evidence through 2026-10-19. Initially consolidated from development commit
 `79d58c5`; subsequent experiments cite their own reports below.
 Written at Hans's request after repeated reports of approximately 30 FPS.
 
@@ -18,9 +18,27 @@ successful optimizations or separate gameplay tests.
 
 This is the concise outcome record. [STATUS.md](STATUS.md) retains the
 chronology; the linked reports retain measurements, controls and provenance.
-Read this before reviving an old approach. Installed performance code at the
-last verified checkpoint is **0.9.11-beta.13**. Later worker experiments are
+Read this before reviving an old approach. The latest gameplay evidence is
+from **0.9.11-beta.13**. Beta.14's paired-cadence adapter now passes offline
+qualification; see STATUS.md for installation. Worker experiments remain
 offline harnesses, not installed game features.
+
+## New candidate awaiting gameplay: paired cadence (beta.14)
+
+The new policy relaxes the old per-frame admission margin and repays small
+overruns by shortening later waits. It adds at most one extra draw per
+ordinary update, with the existing shadow and state-check paths. This is a
+change to scheduling, not another claim of cheaper rendering. It follows
+route 2 of the approved timing experiment, without a complete 10/60 retime.
+
+Production-object tests admit 1,800 extra draws in a controlled workload
+where legacy admission allows none, preserving 1,800 ordinary updates in
+about 59.4 virtual seconds. Tests also cover jitter, transient recovery,
+persistent overload, eligibility and ownership. The full suite passes.
+There is no gameplay result or FPS forecast from these tests; the earlier,
+heavier cost model does not sustain 60.6 even with this policy. See the
+[runtime report](benchmarks/2026-10-19-paired-cadence-runtime.json) and
+[verification limits](specs/2026-10-19-paired-cadence-runtime.md).
 
 ## Target and evidence standard
 

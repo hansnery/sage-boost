@@ -32,10 +32,13 @@ No runtime integration or installation follows from the model alone.
 - [x] Check independent regular-update counts across different render costs.
   This is a scheduling test, not multiplayer synchronization qualification.
 - [x] Keep raw model results and limitations; decide whether to integrate.
-- [ ] If warranted, integrate only behind a new opt-in beta setting, using
+- [x] 2026-10-19: integrate behind a new opt-in beta setting, using
   verified existing frame/limiter hooks and one owner of pacing. Qualify
   production hooks, pause/loading gates, diagnostics and fallback; run the
-  full plugin suite before any installation.
+  full plugin suite before any installation. Both pass; see the
+  [runtime report](../benchmarks/2026-10-19-paired-cadence-runtime.json).
+- [ ] Verify the settled heavy-scene target and matching-beta multiplayer
+  in game. No offline result completes this requirement.
 
 Native source inspected: `GameEngineExecuteRva0022D290.cpp` computes each
 period from the configured cap and network scale, waits from the previous
@@ -54,7 +57,9 @@ also increase CPU work. No duration parser or shared rate is changed here.
 [the report](../benchmarks/2026-10-18-paired-cadence.json) for input costs,
 fault controls, model omissions and the unchanged installation hashes.
 The modeled benefit warrants an opt-in adapter; it does not qualify an
-installation. The controller is not currently in `SRCS`.
+installation by itself. At that checkpoint the controller was not in
+`SRCS`; beta.14 now integrates the items below. See the
+[runtime behavior](../specs/2026-10-19-paired-cadence-runtime.md).
 
 - `perf/src/pairpace.[ch]`: controller, compiled with production integer-only
   flags; tested by `perf/tests/test_pairpace.c` and `tools/test_pairpace.py`.

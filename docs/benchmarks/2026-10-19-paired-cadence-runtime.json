@@ -1,0 +1,109 @@
+{
+  "version": "0.9.11-beta.14",
+  "kind": "production adapter correctness test with controlled virtual timing",
+  "gameplay_target_verified": false,
+  "plugin_sha256": "320f99d66269265c069388bc0231233e0ce234d26e78adad36a20bca9a9ba630",
+  "fixture_sha256": "91eb635c1c989f2af748cc7eb3b748ac6b78b162cb4f378fe036f64c1217230d",
+  "sources": {
+    "perf/src/fps.c": "a45fce9308c0bc788316e646a3091004c3446bb65e762d30a430c428129ffeb8",
+    "perf/src/fps.h": "73569273d772391f58baced77751e8bd51a91db457b5b79eb2e89c1979bd6628",
+    "perf/src/pairpace.c": "0eb5907f50c73b9312d00a51b57fc31bf048fcee9604ed06f9b5239df6356c69",
+    "perf/src/pairpace.h": "1784361678f438728a3cdee54c8f999491009b43f1dfb55431a62c0f9ebcd93c",
+    "perf/src/catchup.c": "f784a2afa7fbddd5f48f7beaa2df35ac89790f50d849bf0c05e2f2fcb2c1cc07",
+    "perf/src/catchup.h": "313504c392567003e2d6eb267cee2861e8161daac63b545e0571d4ab8655f8a3",
+    "perf/src/config.c": "582f8844859e741e53acf85131de203172f648d1d9ed962ddac2e67304ab1c79",
+    "perf/src/config.h": "be75fb716a0cb8a1ca039f50f4254161aa30bc67fe167f890ceb2da84ea31969",
+    "perf/src/main.c": "43c73c90ba9e4fbff2aec607dd288c2db42a25822a046f9d37e405750dcd1960",
+    "perf/src/version.rc": "10f8c408ebf717de54743fdf350f2861e72ccb886a3073ca628c482b6136c6c0",
+    "perf/tests/test_pair_runtime.c": "d4d5ec00d50552d1f576da71273f5185995085006b58a653015fd3c7c5c73b62",
+    "perf/tests/test_fps.c": "dcd2e8249f36ec17f5f6bac94a08404c46be0db0edeb2a4162db68b257e0ed31",
+    "tools/test_pair_runtime.py": "fd1640f9146d538da6893988e9240a172877031415f21a5c80e350c04bf9ee38"
+  },
+  "integer_object_audit": {
+    "fps": {
+      "sha256": "bdb3496c8582720505a522d92b0b93f45370b19a2cf314a262914b90a958ef54",
+      "instructions_checked": 4622,
+      "forbidden_fp_instructions": []
+    },
+    "pairpace": {
+      "sha256": "f8a8db5facbb21bc878ff152ac86c33a2115e40dbe01be42bfd33bc1f1be2b70",
+      "instructions_checked": 214,
+      "forbidden_fp_instructions": []
+    },
+    "catchup": {
+      "sha256": "36cc28bde9717dd25fb4de46a2b635bc4f82bf88a4a001972bf4685a9c7b7756",
+      "instructions_checked": 1399,
+      "forbidden_fp_instructions": []
+    },
+    "config": {
+      "sha256": "5c1b08bc7913e10065d2158a7bcfeead74b78a66c8afb896977a74dd03903c00",
+      "instructions_checked": 811,
+      "forbidden_fp_instructions": []
+    },
+    "main": {
+      "sha256": "07999849e1f727ab7a997ff6d34620bbbf43bf743ae5f2803f84774cc9367882",
+      "instructions_checked": 1846,
+      "forbidden_fp_instructions": []
+    },
+    "stubs": {
+      "sha256": "b6629e027c2d493891fe24431b50deacce67bfb18c9b2162059c40ca49d732cf",
+      "instructions_checked": 333,
+      "forbidden_fp_instructions": []
+    }
+  },
+  "full_suite_log": {
+    "path": "perf\\build\\beta14-suite.log",
+    "sha256": "343d515e3a431700f8d621856831361f79de7275d1c45f2e694e9bad03a221d7",
+    "required_markers_present": true,
+    "failure_markers": false
+  },
+  "closed_loop_cases": [
+    {
+      "paired": 0,
+      "regular_cost_us": 19854,
+      "jitter": 0,
+      "ordinary_updates": 1800,
+      "extra_draws": 0,
+      "virtual_elapsed_us": 59399970,
+      "shortened_waits": 0,
+      "late_predictions": 0
+    },
+    {
+      "paired": 1,
+      "regular_cost_us": 19854,
+      "jitter": 0,
+      "ordinary_updates": 1800,
+      "extra_draws": 1800,
+      "virtual_elapsed_us": 59400000,
+      "shortened_waits": 0,
+      "late_predictions": 0
+    },
+    {
+      "paired": 1,
+      "regular_cost_us": 19854,
+      "jitter": 1,
+      "ordinary_updates": 1800,
+      "extra_draws": 1800,
+      "virtual_elapsed_us": 59401890,
+      "shortened_waits": 899,
+      "late_predictions": 0
+    }
+  ],
+  "raw_output": "adapter paired=0 regular=19854 jitter=0: 1800 ordinary, 0 extra, 59399970 us, 0 shortened waits, 0 late, stop=none\nadapter paired=1 regular=19854 jitter=0: 1800 ordinary, 1800 extra, 59400000 us, 0 shortened waits, 0 late, stop=none\nadapter paired=1 regular=19854 jitter=1: 1800 ordinary, 1800 extra, 59401890 us, 899 shortened waits, 0 late, stop=none\nadapter persistent cost: 5 extra, 3 probes, 3 failed, resting=three paired recovery probes exceeded their debt allowance\nadapter recovery: 211 extra draws after the spike, 1 late, 9932983 us for 301 updates\npaired runtime adapter: PASS (0 failures)\n",
+  "coverage": [
+    "Production fps/catch-up/pairpace object files, not alternate implementations",
+    "One pacing owner, real saved wait-threshold adapter and exact ordinary update count",
+    "Held view/particle updates, unchanged camera, fresh shadow calls, preserved reflection option",
+    "Pause, shell, minimization, screenshots, placement, scrolling and frames without a wait",
+    "Native period change and logic-random, engine-counter, client-frame and camera failure guards",
+    "One transient recovery with a more expensive ordinary reference draw",
+    "Persistent expensive draws: at most five draws, three failed bounded probes, then rest"
+  ],
+  "limits": [
+    "No game, game entry point, native update, GPU scene, Present or multiplayer peer executes.",
+    "Draw costs and the timeline are controlled fixture inputs; these rates are not measured gameplay FPS.",
+    "The hook adapter is called through its C interface; unchanged assembly/site behavior is checked by the full existing hook/site suite.",
+    "Shadow invocation is checked here; pixel correctness relies on the unchanged rendering path and prior GPU qualification.",
+    "Matching-beta multiplayer, real game speed/input behavior and the settled heavy-scene 59/s target still require gameplay capture."
+  ]
+}

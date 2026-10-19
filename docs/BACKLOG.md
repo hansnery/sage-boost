@@ -11,11 +11,18 @@ Strike an item through, with the date, when it's done.
   comparison, native-clock quantization, bounded predicted borrowing and
   later debt repayment. Controlled costs give 60.6/45.45/30.3 modeled rates
   depending on workload; no gameplay FPS result. [Report](benchmarks/2026-10-18-paired-cadence.json).
-- [ ] Integrate paired cadence behind an opt-in experimental setting using
+- [x] 2026-10-19: integrate paired cadence behind an opt-in setting using
   the verified frame and limiter hooks. Require one pacing owner, complete
   runtime cost/backoff behavior, pause/loading/UI gates, fresh shadows and
   existing state guards. Test the actual hook adapter in a closed loop and
-  run the full plugin suite before deciding whether to install.
+  run the full plugin suite before deciding whether to install. Production
+  adapter tests and the full suite pass; bounded probes recover after a
+  transient and rest after three persistent failures.
+  [Report](benchmarks/2026-10-19-paired-cadence-runtime.json).
+- [ ] Capture beta.14 in the settled heavy save for at least 60 seconds,
+  including FrameView, pacing, fresh shadows and game-speed/input checks.
+  Qualify matching-beta multiplayer separately. Virtual test timings are
+  not measured gameplay FPS; the target remains unmet.
 
 - [x] 2026-10-18: execute native float/uint/ushort/byte duration conversions
   with explicit fixture dependencies on both images. Confirm rate-setter

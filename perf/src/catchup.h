@@ -102,6 +102,9 @@ void pf_cu_init(const pf_cu_settings *s, const pf_cu_sites *sites);
 /* Extra frames drawn in the wait of the frame that started at a given time
  * (fps.c): a frame after one that drew extra frames never skips. */
 void pf_cu_set_extras(unsigned (*extras_in)(unsigned frame_start_ms));
+/* A second controller owns this frame's deadline. Observation continues,
+ * but catch-up cannot skip its render or shorten its limiter wait. */
+void pf_cu_set_pacing_owner(int (*owns)(void));
 int pf_cu_on(void);
 /* From timing.c, on the main thread: GameEngine::update (1 entry, 0 return),
  * W3DDisplay::draw of a game frame (the same), GameLogic::update's return. */

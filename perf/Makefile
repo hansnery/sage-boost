@@ -13,7 +13,7 @@ WINDRES  := $(CROSS)windres
 BUILD := build
 SRCS  := src/main.c src/log.c src/rt.c src/scan.c src/sites.c src/patch.c src/stubs.c \
          src/timing.c src/presentgap.c src/csvrow.c src/clock.c src/reflect.c src/config.c src/uistate.c \
-         src/inst.c src/declcache.c src/fpsites.c src/fps.c src/extraprofile.c src/fpsmath.c src/btnclock.c src/passflag.c \
+         src/inst.c src/declcache.c src/fpsites.c src/fps.c src/pairpace.c src/extraprofile.c src/fpsmath.c src/btnclock.c src/passflag.c \
          src/shadowpass.c src/spsites.c src/fxguard.c src/catchup.c src/cusites.c src/notice.c \
          src/lights.c src/ltsites.c src/queueinsert.c src/nativecontract.c src/queuesort.c src/instsubmit.c src/bulk.c src/bulkcontract.c src/bulkpatch.c
 OBJS  := $(SRCS:src/%.c=$(BUILD)/%.o) $(BUILD)/version.o
@@ -200,23 +200,32 @@ $(BUILD)/test_btn.exe: tests/test_btn.c src/btnclock.c src/scan.c src/sites.c sr
 	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
 
 $(BUILD)/test_hooks.exe: tests/test_hooks.c src/scan.c src/patch.c src/stubs.c src/timing.c \
-                         src/presentgap.c src/csvrow.c src/clock.c src/reflect.c src/uistate.c src/fps.c src/extraprofile.c src/log.c \
+                         src/presentgap.c src/csvrow.c src/clock.c src/reflect.c src/uistate.c src/fps.c src/pairpace.c src/extraprofile.c src/log.c \
                          src/fpsmath.c src/btnclock.c src/shadowpass.c src/catchup.c src/notice.c \
                          src/lights.c src/*.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
 
-$(BUILD)/test_fps.exe: tests/test_fps.c src/fps.c src/extraprofile.c src/stubs.c src/log.c src/fpsmath.c \
+$(BUILD)/test_fps.exe: tests/test_fps.c src/fps.c src/pairpace.c src/uistate.c src/extraprofile.c src/stubs.c src/log.c src/fpsmath.c \
                        src/btnclock.c src/scan.c src/*.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
 
-# Policy screen only: pairpace is not yet part of the shipped plugin.
-$(BUILD)/test_pairpace.exe: tests/test_pairpace.c $(BUILD)/pairpace.o src/fps.c src/extraprofile.c src/stubs.c src/log.c src/fpsmath.c \
+# Controlled-cost policy screen; it does not execute the runtime adapter.
+$(BUILD)/test_pairpace.exe: tests/test_pairpace.c $(BUILD)/pairpace.o src/fps.c src/uistate.c src/extraprofile.c src/stubs.c src/log.c src/fpsmath.c \
                             src/btnclock.c src/scan.c src/*.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c %.o,$^)
 
 .PHONY: test-pairpace
 test-pairpace: $(BUILD)/test_pairpace.exe
 	python ../tools/test_pairpace.py --executable $< --output $(BUILD)/pairpace-screen.json
+
+PAIR_RUNTIME_OBJS := $(addprefix $(BUILD)/,fps.o pairpace.o uistate.o extraprofile.o stubs.o log.o \
+                                         fpsmath.o btnclock.o scan.o catchup.o notice.o)
+$(BUILD)/test_pair_runtime.exe: tests/test_pair_runtime.c tests/test_fps.c $(PAIR_RUNTIME_OBJS) src/*.h | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -static -o $@ $< $(PAIR_RUNTIME_OBJS)
+
+.PHONY: test-pair-runtime
+test-pair-runtime: $(BUILD)/test_pair_runtime.exe
+	./$(BUILD)/test_pair_runtime.exe
 
 $(BUILD)/test_extraprofile.exe: tests/test_extraprofile.c src/extraprofile.c src/*.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
@@ -226,18 +235,18 @@ $(BUILD)/test_declcache.exe: tests/test_declcache.c src/declcache.c src/*.h | $(
 
 $(BUILD)/test_inst.exe: tests/test_inst.c src/inst.c src/instsubmit.c src/declcache.c src/log.c src/scan.c src/patch.c src/stubs.c \
                         src/timing.c src/presentgap.c src/csvrow.c src/clock.c src/reflect.c src/uistate.c \
-                        src/fps.c src/extraprofile.c src/fpsmath.c src/btnclock.c src/shadowpass.c src/catchup.c \
+                        src/fps.c src/pairpace.c src/extraprofile.c src/fpsmath.c src/btnclock.c src/shadowpass.c src/catchup.c \
                         src/notice.c src/lights.c src/*.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
 
 $(BUILD)/test_catchup.exe: tests/test_catchup.c src/catchup.c src/notice.c src/log.c src/uistate.c \
                            src/scan.c src/patch.c src/stubs.c src/timing.c src/presentgap.c src/csvrow.c src/clock.c \
-                           src/reflect.c src/fps.c src/extraprofile.c src/fpsmath.c src/btnclock.c src/shadowpass.c \
+                           src/reflect.c src/fps.c src/pairpace.c src/extraprofile.c src/fpsmath.c src/btnclock.c src/shadowpass.c \
                            src/lights.c src/*.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
 
 $(BUILD)/test_shadowpass.exe: tests/test_shadowpass.c src/shadowpass.c src/fxguard.c src/spsites.c \
-                              src/scan.c src/fps.c src/extraprofile.c src/stubs.c src/log.c src/fpsmath.c \
+                              src/scan.c src/fps.c src/pairpace.c src/uistate.c src/extraprofile.c src/stubs.c src/log.c src/fpsmath.c \
                               src/btnclock.c src/*.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
 
@@ -250,7 +259,7 @@ test: all test-bulk-lifetime test-bulk-install $(BUILD)/test_row.exe $(BUILD)/te
       $(BUILD)/test_inst.exe $(BUILD)/test_declcache.exe $(BUILD)/test_btn.exe $(BUILD)/test_shadowpass.exe \
       $(BUILD)/test_catchup.exe $(BUILD)/test_lights.exe $(BUILD)/test_extraprofile.exe $(BUILD)/test_presentgap.exe \
       $(BUILD)/test_queueinsert.exe $(BUILD)/test_queuesort.exe $(BUILD)/test_inst_ownership.exe $(BUILD)/test_instsubmit.exe \
-      $(BUILD)/test_inst_verify_policy.exe
+      $(BUILD)/test_inst_verify_policy.exe $(BUILD)/test_pair_runtime.exe
 	./$(BUILD)/test_row.exe
 	./$(BUILD)/test_reflect.exe
 	./$(BUILD)/test_btn.exe
@@ -266,6 +275,7 @@ test: all test-bulk-lifetime test-bulk-install $(BUILD)/test_row.exe $(BUILD)/te
 	./$(BUILD)/test_sites.exe $(SITE_TEST_ARGS)
 	./$(BUILD)/test_hooks.exe
 	./$(BUILD)/test_fps.exe
+	./$(BUILD)/test_pair_runtime.exe
 	./$(BUILD)/test_load.exe "$(BUILD)/bfme2perf.asi"
 	./$(BUILD)/test_presentgap.exe
 	./$(BUILD)/test_extraprofile.exe
@@ -385,7 +395,7 @@ $(BUILD)/bench_external_rt.exe: tests/bench_external_rt.c tests/bench_effect.c t
 $(BUILD)/inst_retained_engine.o: tests/inst_retained_engine.c tests/inst_dispatch_engine.c src/inst.c src/*.h | $(BUILD)
 	$(CC) $(CFLAGS) -Isrc -c -o $@ $<
 
-$(BUILD)/fps_extra_bench.o: tests/fps_extra_bench.c src/fps.c src/*.h | $(BUILD)
+$(BUILD)/fps_extra_bench.o: tests/fps_extra_bench.c src/fps.c src/pairpace.c src/uistate.c src/*.h | $(BUILD)
 	$(CC) $(CFLAGS) -Isrc -c -o $@ $<
 
 $(BUILD)/bench_scopes.exe: tests/bench_scopes.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/inst_dispatch_engine.o $(BUILD)/fps_extra_bench.o $(DISPATCH_OBJS) src/*.h

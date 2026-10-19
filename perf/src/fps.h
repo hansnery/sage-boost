@@ -10,6 +10,7 @@
 
 #include "fpsites.h"
 #include "extraprofile.h"
+#include "cusites.h"
 
 /* The extra frames of one game frame, all times in microseconds from when
  * the game's frame was shown (its first wait, just after it presented). */
@@ -85,6 +86,12 @@ void pf_fps_set_units(int installed, int lag_installed);
 /* ExtraFrameShadows / ExtraFrameReflections: 1 = extra frames redraw the
  * shadow map / the water reflection instead of reusing the game frame's. */
 void pf_fps_set_passes(int shadows, int reflections);
+/* Opt-in paired cadence. Requires the verified game/limiter/UI sites plus
+ * the frame hook. Returns 1 only when the existing checked draw is ready. */
+int pf_fps_set_pair_pacing(const pf_cu_sites *sites, int frame_hook);
+/* True while this controller owns the current limiter epoch. Catch-up must
+ * not skip a render or impose another wait deadline while this is true. */
+int pf_fps_pair_owner(void);
 /* From the wrapped display draw, on the game's own frames: 1 at entry, 0 at
  * return. It is timed (what an extra frame not measured yet is expected to
  * cost), and FrameSmoothing=3 puts the units back there. */

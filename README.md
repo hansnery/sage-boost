@@ -93,6 +93,16 @@ and nothing in its added code jumps into a hooked prologue.
 
 ### Performance plugin
 
+The development branch includes an opt-in **0.9.11-beta.14 paired cadence**
+experiment. `[Experimental] PairPacing=1` allows one extra draw per native
+update and repays small deadline overruns in later waits. It requires
+`MaxFPS>=60`, `FrameSmoothing=3`, `ShadowInterval=1` and
+`ExtraFrameShadows=1`; reflection preferences remain unchanged. Missing
+requirements leave the old scheduler active. The default is `PairPacing=0`.
+Offline adapter tests pass, but gameplay FPS and matching-beta multiplayer
+still need in-game verification. This is not a launcher/stable release.
+See the [behavior and verification limits](docs/specs/2026-10-19-paired-cadence-runtime.md).
+
 1. Copy `bfme2perf.asi` and `bfme2perf.ini` into the `mss\` folder next to
    `game.dat` (for Age of the Ring: `...\AgeoftheRing\rotwk\mss\`). That
    folder already holds the game's own Miles plugins, such as `mssmp3.asi`.
@@ -196,8 +206,8 @@ handling. A live two-PC lobby/match test remains pending; this is not a claim
 that all possible multiplayer desyncs or the reported crash are fixed.
 See [the launcher release notes](docs/releases/unlocker-0.5.0.md).
 
-**Performance plugin: nothing the game logic or the sync check sees
-changes.** BFME2 counts its logic in client frames: six per 5 Hz logic step,
+**Standard performance policy (`PairPacing=0`): nothing the game logic or
+the sync check sees changes.** BFME2 counts its logic in client frames: six per 5 Hz logic step,
 30 per second. Running the frame loop more often would run the game faster,
 and online the frame rate is shared by all players. So bfme2perf leaves that
 loop alone, and a player with it can play with players without it:
@@ -238,6 +248,13 @@ both regular and extra frames. Earlier versions could reuse an extra
 frame's map on the next regular frame even at interval 1. This correction
 is tested offline but not installed or released, and does not establish
 a performance improvement. See the [beta.3 notes](docs/releases/perf-0.9.11-beta.3.md).
+
+**Experimental beta.14 exception:** `PairPacing=1` permits small predicted
+deadline overruns and repays them in later waits. The standard strict
+fit-before-next-frame policy above does not describe this opt-in mode.
+Native rates and counters remain unchanged, but gameplay speed/input and
+matching-beta multiplayer still require testing. Do not infer compatibility
+with other performance builds from the earlier multiplayer result.
 
 ## Building
 

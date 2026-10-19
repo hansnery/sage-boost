@@ -255,6 +255,20 @@ int main(void)
     pf_config_load(&c, g_ini);
     CHECK(c.extra_shadows == 0, "junk -> %d", c.extra_shadows);
 
+    printf("experimental paired cadence is strictly opt-in\n");
+    write_ini("");
+    pf_config_load(&c, g_ini);
+    CHECK(c.pair_pacing == 0, "missing PairPacing enabled experiment");
+    write_ini("[Experimental]\nPairPacing=1\n");
+    pf_config_load(&c, g_ini);
+    CHECK(c.pair_pacing == 1, "explicit PairPacing=1 ignored");
+    write_ini("[Experimental]\nPairPacing=2\n");
+    pf_config_load(&c, g_ini);
+    CHECK(c.pair_pacing == 0, "unsupported PairPacing enabled experiment");
+    write_ini("[Experimental]\nPairPacing=yes\n");
+    pf_config_load(&c, g_ini);
+    CHECK(c.pair_pacing == 0, "invalid PairPacing enabled experiment");
+
     printf("catch-up\n");
     DeleteFileW(g_ini);
     pf_config_load(&c, g_ini);

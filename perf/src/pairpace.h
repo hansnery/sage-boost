@@ -1,5 +1,5 @@
-/* Experimental paired-frame admission/cadence. Pure integer policy only;
- * not connected to runtime hooks until the integration checks pass. */
+/* Experimental paired-frame admission/cadence. Pure integer policy shared
+ * by the runtime adapter and its closed-loop model. */
 #ifndef PF_PAIRPACE_H
 #define PF_PAIRPACE_H
 
