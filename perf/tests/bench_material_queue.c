@@ -39,6 +39,75 @@ static unsigned preserve_lifecycle;
 static unsigned restore_group_state;
 static unsigned advancing_clock;
 static unsigned state_filter_mode;
+/* Offline only: the fixture owns stable geometry/method/buffer lifetimes.
+ * Equal complete keys may share a retained snapshot across fixture groups.
+ * This is not a cache key or invalidation contract for live game objects. */
+static unsigned shared_material,shared_capacity=GROUPS;
+static unsigned material_hashes[GROUPS],material_slots[GROUPS];
+static unsigned last_material_slot,shared_cross_group_hits;
+static unsigned material_owners[GROUPS];
+
+static unsigned fixture_key(unsigned group,unsigned char *key,unsigned capacity)
+{
+    if(!shared_material) return material_fixture_key(group,key,capacity);
+    const unsigned char *record=records[group];
+    const unsigned char *mesh=*(const unsigned char *const *)record;
+    const void *model=*(const void *const *)(mesh+PF_MESH_MODEL);
+    unsigned prefix[]={
+        (unsigned)model,*(const unsigned *)(mesh+PF_MESH_BASE_VERTEX),
+        (unsigned)g_vb,(unsigned)g_ib,(unsigned)g_decl,(unsigned)g_ea,
+        (unsigned)g_v,(unsigned)&g_method
+    };
+    REQUIRE(capacity>sizeof prefix+28);
+    memcpy(key,prefix,sizeof prefix);
+    memcpy(key+sizeof prefix,record+4,28); /* complete ordered method array */
+    unsigned n=material_fixture_key(group,key+sizeof prefix+28,capacity-sizeof prefix-28);
+    return (unsigned)sizeof prefix+28+n;
+}
+static unsigned shared_slot(const unsigned char *key,unsigned n,unsigned *hash)
+{
+    unsigned h=2166136261u;
+    for(unsigned i=0;i<n;i++)h=(h^key[i])*16777619u;
+    *hash=h;
+    unsigned first=h%shared_capacity;
+    for(unsigned step=0;step<shared_capacity;step++) {
+        unsigned slot=(first+step)%shared_capacity;
+        if(!material_sizes[slot] || (material_hashes[slot]==h &&
+           material_sizes[slot]==n && !memcmp(material_keys[slot],key,n))) return slot;
+    }
+    return first; /* Full table: exact comparison fails and capture replaces it. */
+}
+static unsigned shared_stale_replay(void)
+{
+    for(unsigned group=0;group<GROUPS;group++)
+        REQUIRE(bench_replay(material_slots[group],records[group],records[group]+sizeof records[0]));
+    return GROUPS;
+}
+static void shared_key_controls(void)
+{
+    unsigned char key[8192],changed[8192];
+    unsigned n=fixture_key(0,key,sizeof key),hash;
+    unsigned slot=shared_slot(key,n,&hash);
+    memcpy(material_keys[slot],key,n);material_sizes[slot]=n;material_hashes[slot]=hash;
+    unsigned char *mesh=*(unsigned char **)records[0];
+    void *model=*(void **)(mesh+PF_MESH_MODEL);
+    *(void **)(mesh+PF_MESH_MODEL)=(unsigned char *)model+4;
+    REQUIRE(fixture_key(0,changed,sizeof changed)==n && memcmp(changed,key,n));
+    *(void **)(mesh+PF_MESH_MODEL)=model;
+    unsigned other=shared_slot(changed,n,&hash);
+    REQUIRE(other!=slot);
+    unsigned vertex=*(unsigned *)(mesh+PF_MESH_BASE_VERTEX);
+    *(unsigned *)(mesh+PF_MESH_BASE_VERTEX)=vertex+1;
+    REQUIRE(fixture_key(0,changed,sizeof changed)==n && memcmp(changed,key,n));
+    *(unsigned *)(mesh+PF_MESH_BASE_VERTEX)=vertex;
+    /* A hash collision is never equality. Exhausting a one-slot table
+     * selects that slot, but the caller's exact byte comparison must miss. */
+    shared_capacity=1;
+    memcpy(material_keys[0],key,n);material_sizes[0]=n;material_hashes[0]=hash;
+    REQUIRE(shared_slot(changed,n,&hash)==0 && memcmp(material_keys[0],changed,n));
+    shared_capacity=GROUPS;memset(material_sizes,0,sizeof material_sizes);
+    puts("SHARED KEYS: changed model identity separates entries; full-table collision requires recapture");
+}
 #ifdef PF_BENCH_LEADER
 extern void bench_leader_mode(unsigned,unsigned);
 extern unsigned bench_leader_suppressed(void);
@@ -172,15 +241,15 @@ static void validate_materials(void)
     material_fixture_clock_probe();
     pair(1,&regular,&extra,&total,old);
     if(restore_group_state) {
-        REQUIRE(bench_retained_boundary_negative(0));
-        REQUIRE(bench_retained_boundary_bindings(0));
+        REQUIRE(bench_retained_boundary_negative(shared_material?last_material_slot:0));
+        REQUIRE(bench_retained_boundary_bindings(shared_material?last_material_slot:0));
     }
     material_fixture_epoch(1);
     pair(0,&regular,&extra,&total,stock);
     /* Negative control: replay the previous material generation. */
     {
         unsigned (*saved_extra)(void)=cached_extra;
-        cached_extra=NULL; /* Deliberately bypass invalidation for this control. */
+        cached_extra=shared_material?shared_stale_replay:NULL; /* Deliberately bypass invalidation. */
         pose(1); frame_draw(1,1,stale);
         cached_extra=saved_extra;
     }
@@ -211,7 +280,7 @@ static void validate_materials(void)
                 for(unsigned i=0;i<RT*RT;i++)
                     REQUIRE(shadow_mode?pf_depth_diff(stock[i],fresh[i])<=PF_DEPTH_TOLERANCE:stock[i]==fresh[i]);
                 REQUIRE(persistent_hits-h+persistent_misses-m==(2+preserve_lifecycle)*GROUPS);
-                if(phase) {
+                if(phase && !shared_material) {
                     unsigned expected_misses=changes[trial]==100?GROUPS:changes[trial]==10?30:0;
                     REQUIRE(persistent_misses-m==expected_misses);
                 }
@@ -240,9 +309,12 @@ static void validate_materials(void)
         pose(1); frame_draw(1,0,stock); frame_draw(1,1,fresh);
         for(unsigned i=0;i<RT*RT;i++)
             REQUIRE(shadow_mode?pf_depth_diff(stock[i],fresh[i])<=PF_DEPTH_TOLERANCE:stock[i]==fresh[i]);
-        REQUIRE(persistent_misses-misses==GROUPS && persistent_hits==hits);
+        unsigned changed_misses=persistent_misses-misses,changed_hits=persistent_hits-hits;
+        if(shared_material) REQUIRE(changed_misses+changed_hits==GROUPS);
+        else REQUIRE(changed_misses==GROUPS && !changed_hits);
         frame_draw(1,1,fresh);
-        REQUIRE(persistent_misses-misses==GROUPS && persistent_hits-hits==GROUPS);
+        if(shared_material) REQUIRE(persistent_misses-misses+ persistent_hits-hits==2*GROUPS);
+        else REQUIRE(persistent_misses-misses==GROUPS && persistent_hits-hits==GROUPS);
         for(unsigned i=0;i<RT*RT;i++)
             REQUIRE(shadow_mode?pf_depth_diff(stock[i],fresh[i])<=PF_DEPTH_TOLERANCE:stock[i]==fresh[i]);
         REQUIRE(g_method.refs==refs);
@@ -259,16 +331,32 @@ static void validate_materials(void)
         material_fixture_clock(1033);
         pair(0,&regular,&extra,&total,stock);
         pair(1,&regular,&extra,&total,fresh);
-        REQUIRE(persistent_misses-misses==GROUPS && persistent_hits-hits==GROUPS);
+        if(shared_material) {
+            unsigned m=persistent_misses-misses,h=persistent_hits-hits;
+            REQUIRE(m>0 && m<GROUPS/2 && m+h==2*GROUPS && shared_cross_group_hits>GROUPS);
+            printf("SHARED CLOCK: %u recaptures, %u hits across regular/extra pair; exact Time key retained\n",m,h);
+        } else REQUIRE(persistent_misses-misses==GROUPS && persistent_hits-hits==GROUPS);
         for(unsigned i=0;i<RT*RT;i++)
             REQUIRE(shadow_mode?pf_depth_diff(stock[i],fresh[i])<=PF_DEPTH_TOLERANCE:stock[i]==fresh[i]);
-        puts("ADVANCING CLOCK: all regular groups invalidate; same-time extra hits preserve output");
+        puts("ADVANCING CLOCK: changed keys invalidate; same-time extra hits preserve output");
     }
     if(restore_group_state) {
         unsigned checks,changed;
         bench_retained_boundary_counts(&checks,&changed);
         REQUIRE(checks>1000 && changed>1000);
         printf("GROUP STATE: %u full input/output state checks; %u changed boundaries; omitted-restore control rejected; binding poison restored\n",checks,changed);
+    }
+    if(shared_material) {
+        /* With only one slot the eight alternating material inputs collide.
+         * Real recapture, output and restoration must still remain correct. */
+        shared_capacity=1;memset(material_sizes,0,sizeof material_sizes);
+        unsigned misses=persistent_misses;
+        pair(0,&regular,&extra,&total,stock);pair(1,&regular,&extra,&total,fresh);
+        REQUIRE(persistent_misses-misses>GROUPS);
+        for(unsigned i=0;i<RT*RT;i++)
+            REQUIRE(shadow_mode?pf_depth_diff(stock[i],fresh[i])<=PF_DEPTH_TOLERANCE:stock[i]==fresh[i]);
+        shared_capacity=GROUPS;memset(material_sizes,0,sizeof material_sizes);
+        puts("SHARED COLLISIONS: one-slot cache recaptures without stale output");
     }
 }
 
@@ -277,15 +365,18 @@ static unsigned persistent_regular(void)
     unsigned hits=0;
     for(unsigned group=0;group<GROUPS;group++) {
         unsigned char key[8192];
-        unsigned n=material_fixture_key(group,key,sizeof key);
+        unsigned n=fixture_key(group,key,sizeof key),hash=0;
         REQUIRE(n && n<=sizeof key);
+        unsigned slot=shared_material?shared_slot(key,n,&hash):group;
         current_records=records[group];
-        if(n==material_sizes[group] && !memcmp(key,material_keys[group],n)) {
+        if(n==material_sizes[slot] && !memcmp(key,material_keys[slot],n)) {
+            if(shared_material && material_owners[slot]!=group) shared_cross_group_hits++;
             if(preserve_lifecycle) material_fixture_open();
-            if(restore_group_state) REQUIRE(bench_retained_boundary_begin(group));
-            REQUIRE(bench_replay(group,current_records,current_records+sizeof records[0]));
+            if(restore_group_state) REQUIRE(bench_retained_boundary_begin(slot));
+            REQUIRE(bench_replay(slot,current_records,current_records+sizeof records[0]));
             if(preserve_lifecycle) material_fixture_close();
             if(restore_group_state) REQUIRE(bench_retained_boundary_end());
+            material_slots[group]=slot;last_material_slot=slot;
             hits++; persistent_hits++;
             continue;
         }
@@ -302,10 +393,11 @@ static unsigned persistent_regular(void)
         *(unsigned char **)(frame_ptr+PF_FRAME_GROUP_END)=current_records+sizeof records[0];
         for(unsigned i=0;i<GROUP_SIZE;i++) {
             one_member(i);
-            if(!i) REQUIRE(bench_retain(group));
+            if(!i) REQUIRE(bench_retain(slot));
         }
         material_fixture_end();
-        memcpy(material_keys[group],key,n); material_sizes[group]=n;
+        memcpy(material_keys[slot],key,n); material_sizes[slot]=n;material_hashes[slot]=hash;
+        material_owners[slot]=group;material_slots[group]=slot;last_material_slot=slot;
     }
     return hits;
 }
@@ -382,7 +474,10 @@ int PF_MATERIAL_MAIN(int argc,char **argv)
             printf("STATE FILTER MODE: %u, bulk=%d; real effect lifecycle, advancing clock, per-group and per-frame mirror invalidation\n",
                    state_filter_mode,dispatch_bulk_enabled);
         } else {
-        advancing_clock=!strcmp(argv[6],"lifecycle-bulk-clock") || !strcmp(argv[6],"lifecycle-bulk-state-clock");
+        shared_material=!strcmp(argv[6],"lifecycle-bulk-shared-clock") ||
+                        !strcmp(argv[6],"lifecycle-bulk-shared-vs-bulk-clock");
+        baseline_bulk_enabled=!strcmp(argv[6],"lifecycle-bulk-shared-vs-bulk-clock");
+        advancing_clock=shared_material || !strcmp(argv[6],"lifecycle-bulk-clock") || !strcmp(argv[6],"lifecycle-bulk-state-clock");
         REQUIRE(argc==7 && (advancing_clock || !strcmp(argv[6],"lifecycle") || !strcmp(argv[6],"lifecycle-markers") || !strcmp(argv[6],"lifecycle-bulk-markers") || !strcmp(argv[6],"lifecycle-bulk-only") || !strcmp(argv[6],"lifecycle-bulk-state")));
         preserve_lifecycle=1;
         cached_extra=persistent_regular;
@@ -397,7 +492,7 @@ int PF_MATERIAL_MAIN(int argc,char **argv)
             bench_retained_bulk_markers(bench_scope_bulk_begin,bench_scope_bulk_end);
             validate_accounting=check_bulk_accounting;
             puts("BULK MARKERS: logical mesh counts and one measured aggregate interval; no native debug callbacks in fixture");
-            if(!strcmp(argv[6],"lifecycle-bulk-state") || !strcmp(argv[6],"lifecycle-bulk-state-clock")) {
+            if(shared_material || !strcmp(argv[6],"lifecycle-bulk-state") || !strcmp(argv[6],"lifecycle-bulk-state-clock")) {
                 restore_group_state=1;
                 bench_retained_boundary_config(1,material_fixture_state);
                 puts("GROUP STATE: capture and restore every replay boundary, including all palette registers");
@@ -413,6 +508,14 @@ int PF_MATERIAL_MAIN(int argc,char **argv)
             validate_accounting=check_bulk_accounting;
             puts("BULK ONLY: original effect/leader path each draw, aggregate accounting after second member; no retained cache");
         }
+        }
+    }
+    if(shared_material) {
+        comparison_name=argv[6];setup_complete=shared_key_controls;
+        if(baseline_bulk_enabled) {
+            dispatch_scope_begin=bench_scope_bulk_begin;
+            dispatch_scope_end=bench_scope_bulk_end;
+            puts("BASELINE: existing optimistic bulk-after-second prototype; not the full installed beta.13 native group path");
         }
     }
     if(cached_regular) printf("PERSISTENT material cache, %u percent selected groups alternate inputs each pair\n",persistent_churn);

@@ -1,0 +1,129 @@
+{
+  "checked_at_utc": "2026-10-19T00:17:56.425969+00:00",
+  "directory": "C:\\Users\\Hans\\AppData\\Local\\Temp\\sage-boost-alternatives-20261018-v0jfrn7o",
+  "installed": false,
+  "executed": false,
+  "archives": [
+    {
+      "name": "BFME2-Accelerator-2.0.zip",
+      "url": "https://github.com/OhadBaehr/bfme2-accelerator/raw/main/release/BFME2-Accelerator-2.0.zip",
+      "sha256": "0d19aad6f182dac9ea23470e348b79f4cdcf977ff34ceb6564cb9eab40db6d82",
+      "bytes": 1099406,
+      "members": [
+        {
+          "name": "BFME2 Accelerator/bfme2_accel_loader.exe",
+          "size": 598224
+        },
+        {
+          "name": "BFME2 Accelerator/bfme2_accel.dll",
+          "size": 1218256
+        },
+        {
+          "name": "BFME2 Accelerator/bfme2_accel.ini",
+          "size": 21921
+        },
+        {
+          "name": "BFME2 Accelerator/README.txt",
+          "size": 6428
+        }
+      ]
+    },
+    {
+      "name": "SAGE-Unlocked-1.9.5.zip",
+      "url": "https://github.com/TheeHorse/SAGE-Unlocked/releases/download/v1.9.5/SAGE-Unlocked.zip",
+      "sha256": "efdeabd50b2bea417403ac63da9d5bba1db5a3d3d96c2b4cc989ed0d47dc200a",
+      "bytes": 150781,
+      "members": [
+        {
+          "name": "SAGE-Unlocked/LICENSE.txt",
+          "size": 35150
+        },
+        {
+          "name": "SAGE-Unlocked/README.txt",
+          "size": 1560
+        },
+        {
+          "name": "SAGE-Unlocked/Battle for Middle-earth II/CnCFpsUnlocker.dll",
+          "size": 107520
+        },
+        {
+          "name": "SAGE-Unlocked/Battle for Middle-earth II/dinput8.dll",
+          "size": 8192
+        },
+        {
+          "name": "SAGE-Unlocked/Battle for Middle-earth II/SAGEUnlocked.ini",
+          "size": 130
+        },
+        {
+          "name": "SAGE-Unlocked/FPS presets/README.txt",
+          "size": 353
+        },
+        {
+          "name": "SAGE-Unlocked/FPS presets/120 fps/SAGEUnlocked.ini",
+          "size": 242
+        },
+        {
+          "name": "SAGE-Unlocked/FPS presets/135 fps/SAGEUnlocked.ini",
+          "size": 242
+        },
+        {
+          "name": "SAGE-Unlocked/FPS presets/165 fps/SAGEUnlocked.ini",
+          "size": 242
+        },
+        {
+          "name": "SAGE-Unlocked/FPS presets/240 fps (experimental)/SAGEUnlocked.ini",
+          "size": 242
+        },
+        {
+          "name": "SAGE-Unlocked/FPS presets/30 fps/SAGEUnlocked.ini",
+          "size": 241
+        },
+        {
+          "name": "SAGE-Unlocked/FPS presets/45 fps/SAGEUnlocked.ini",
+          "size": 241
+        },
+        {
+          "name": "SAGE-Unlocked/FPS presets/60 fps/SAGEUnlocked.ini",
+          "size": 241
+        },
+        {
+          "name": "SAGE-Unlocked/FPS presets/75 fps/SAGEUnlocked.ini",
+          "size": 241
+        },
+        {
+          "name": "SAGE-Unlocked/FPS presets/90 fps/SAGEUnlocked.ini",
+          "size": 241
+        },
+        {
+          "name": "SAGE-Unlocked/Red Alert 3/CnCFpsUnlocker.dll",
+          "size": 107520
+        },
+        {
+          "name": "SAGE-Unlocked/Red Alert 3/d3d9.dll",
+          "size": 9216
+        },
+        {
+          "name": "SAGE-Unlocked/Red Alert 3/SAGEUnlocked.ini",
+          "size": 213
+        },
+        {
+          "name": "SAGE-Unlocked/Tiberium Wars + Kane's Wrath/CnCFpsUnlocker.dll",
+          "size": 107520
+        },
+        {
+          "name": "SAGE-Unlocked/Tiberium Wars + Kane's Wrath/dinput8.dll",
+          "size": 8192
+        },
+        {
+          "name": "SAGE-Unlocked/Tiberium Wars + Kane's Wrath/SAGEUnlocked.ini",
+          "size": 130
+        }
+      ]
+    }
+  ],
+  "scope": "Official release archives only; no extraction, installation, execution or source import.",
+  "installed_unchanged_sha256": {
+    "bfme2perf.asi": "976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd",
+    "bfme2perf.ini": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b"
+  }
+}

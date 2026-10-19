@@ -9,6 +9,55 @@ files before relying on it.
 
 ## Next target: 60 visual FPS with shadows at 60 (2026-10-17)
 
+### Direction change: evaluate external render threading (2026-10-18)
+
+The user requests reassessing BFME2 Accelerator and SAGE Unlocked after the
+repeated ~30 FPS gameplay results. Small material/cache experiments are no
+longer the primary next step. Study documented approaches and stage external
+releases separately; the repository's independent-code and multiplayer rules
+remain in force. No alternative is installed or executed.
+
+- Accelerator 2.0 queues D3D work to another thread, which directly addresses
+  a plausible part of the measured CPU rendering cost. Its shipped README
+  explicitly says multiplayer is untested. Its default configuration also
+  changes frame scheduling, camera presentation and faction AI; a default
+  install is not a render-thread-only experiment. See the
+  [upstream README](https://github.com/OhadBaehr/bfme2-accelerator/blob/main/packaging/README.txt)
+  and [settings](https://github.com/OhadBaehr/bfme2-accelerator/blob/main/packaging/bfme2_accel.default.ini).
+- SAGE Unlocked's author reports a multiplayer-order fix in
+  [1.9.4](https://github.com/TheeHorse/SAGE-Unlocked/releases/tag/v1.9.4)
+  and subsequent logic corrections in stable
+  [1.9.5](https://github.com/TheeHorse/SAGE-Unlocked/releases/tag/v1.9.5).
+  This is not Realms validation; Hans's
+  [ROTWK effect-speed report](https://github.com/TheeHorse/SAGE-Unlocked/issues/32)
+  remains open. Its BFME loader occupies `dinput8.dll`, already used by our
+  faction unlocker. Do not overwrite that component to try it.
+- Official Accelerator 2.0 build 73 and SAGE Unlocked 1.9.5 ZIPs are staged,
+  hash-verified, unextracted and unexecuted at
+  `%TEMP%\sage-boost-alternatives-20261018-v0jfrn7o`; `receipt.json` records
+  URLs, archive hashes and member names. A tracked
+  [preflight receipt](benchmarks/2026-10-18-alternative-release-preflight.json)
+  preserves that inventory. No external source was imported.
+- Next: determine whether render threading can be isolated and qualified
+  without changing simulation, input or camera, and without overlapping
+  competing hooks. Default frame interpolation is not proof of fresh
+  shadows at 60. Keep separate stock, beta and alternative measurements;
+  resolve a reproducible multiplayer divergence only after one is observed.
+  No promised FPS gain, deployment or new gameplay request from this review.
+
+### Shared material cache: do not promote (2026-10-18)
+
+Twelve sequential native D3D9/DXVK lit/shadow runs preserve exact output,
+fresh poses, changed-input refusal, lifecycle restoration and collision
+controls. Sharing eight fixture keys avoids most per-group recaptures, but
+against the already-bulk prototype the DXVK completion medians regress by
+0.7895 ms lit and 0.9704 ms shadow per pair. Native D3D9 saves 1.7980 and
+1.6710 ms. These are separate modeled workloads, not additive game savings.
+The stricter baseline still does not contain the full beta.13 native path.
+Preserve the [252 samples and hashes](benchmarks/2026-10-18-shared-material-cache.json)
+and reject standalone runtime promotion. Production and installed beta.13
+ASI/INI are unchanged; no additional game test is warranted.
+
 **Current installed build: 0.9.11-beta.13**, from pushed commit `5e94796`,
 restored 2026-10-18 16:21 PDT after replacement by 0.9.10.
 Tested/build/installed ASI SHA256:

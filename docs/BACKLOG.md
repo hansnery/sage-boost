@@ -7,6 +7,21 @@ Strike an item through, with the date, when it's done.
 
 ## Full-rate 60 FPS investigation (2026-10-17)
 
+- [x] 2026-10-18: reassess external alternatives at the user's request.
+  Read upstream documentation/releases/issues; stage and hash-check official
+  Accelerator 2.0 build 73 and SAGE Unlocked 1.9.5 archives without installing
+  or executing them. See STATUS.md for evidence, conflicts and the receipt.
+- [ ] Prioritize render-thread isolation/compatibility over further small
+  material caches. Accelerator multiplayer remains untested upstream;
+  SAGE Unlocked's reported sync fix does not establish Realms compatibility.
+  Preserve the faction unlocker, full-rate fresh shadows and gameplay rules.
+  No combined default install or diagnostic-only gameplay request.
+- [x] 2026-10-18: close the shared exact-key material-cache screen. Twelve
+  GPU runs and 252 pairs pass correctness checks, but the stricter DXVK bulk
+  baseline makes the candidate slower. Reject standalone runtime promotion;
+  installed beta.13 and settings remain unchanged. See
+  `benchmarks/2026-10-18-shared-material-cache.json`.
+
 - [x] 2026-10-18: qualify multi-method bulk dispatch through native group/
   mesh/FX and real GPU with controlled child shader/state behavior. Sixteen
   normal runs pass; 22 deliberate corruptions are rejected. Nonempty pixel

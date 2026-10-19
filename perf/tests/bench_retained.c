@@ -26,6 +26,7 @@ static unsigned (*cached_extra)(void);
 static unsigned validate_markers;
 static void (*validate_accounting)(void);
 static int dispatch_only, dispatch_bulk_now;
+static unsigned baseline_bulk_enabled; /* explicit offline comparison only */
 static int dispatch_bulk_enabled=1, pair_optimized;
 static unsigned dispatch_first_member=2;
 static void (*frame_mode)(int);
@@ -157,7 +158,8 @@ static void pair(int retained, double *regular, double *extra, double *total,
     pose(0);
     drain();
     pair_optimized=retained;
-    dispatch_bulk_now=dispatch_only && retained && dispatch_bulk_enabled;
+    dispatch_bulk_now=(dispatch_only && retained && dispatch_bulk_enabled) ||
+                      (!retained && baseline_bulk_enabled);
     retain_now = retained && !dispatch_only;
     a = ticks();
     frame_draw(0, 0, NULL);
