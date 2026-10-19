@@ -106,7 +106,10 @@ D3D9 savings do not qualify a backend switch. [Design/results](specs/2026-10-19-
 [report](benchmarks/2026-10-19-ui-upload.json). Beta.18 and the INI are intact;
 no new game capture has appeared since its installation.
 
-### Current cost evidence and next beta.18 capture
+### Cost evidence before the beta.18 capture
+
+**Historical checkpoint:** the completed beta.18 test below supersedes this
+subsection's missing-capture status and earlier workload measurements.
 
 The preserved beta.16 interval 1193..1252 now has a reproducible
 [frame-cost report](benchmarks/2026-10-19-beta16-frame-costs.json). Ordinary
@@ -130,6 +133,45 @@ cost. Stable/Beta public releases remain unchanged; 120 FPS is unverified.
 `perf_capture.py` now reports count-weighted costs and distinguishes missing
 timings from unobserved passes. Its 24 counterexample tests pass, including
 unequal row weights, total-versus-average units and invalid numeric values.
+
+### Beta.18 gameplay result: around 50, heavy 120 not reached
+
+Hans completed the requested test and reports **"50~ 1 min in"** in FrameView.
+The closed game's ASI, INI, log and CSVs were preserved in
+`%TEMP%\bfme2perf-beta18-gameplay-20261019-161226` before analysis. The ASI and
+INI match the beta.18 installation receipt; the session confirms
+`PairMaxExtras=3`, MaxFPS=120 and fresh extra shadows. Its DXVK log confirms
+v2.6.2, RTX 3080 Ti and 3840x2160. This is not an installation rollback.
+
+The highest frame-weighted mesh-count eligible complete minute is seconds
+73..132: **2,609 presentation calls / 60 s = 43.48/s**, 1,816 ordinary updates
+and 806 extras. It averages about 9,817 instanced meshes per ordinary update.
+Later ten-second blocks 110..119 and 120..129 average **51.1 and 55.1/s**,
+consistent with the approximate FrameView report. The exact fixed-view minute
+is not identified, and internal presentation calls are not displayed FPS.
+All 33 eligible minutes range from 36.67 to 43.88 calls/s; early 120-call
+rows have no instanced meshes or logic work and do not establish heavy 120.
+
+All 806 selected-window extras have completed shadow samples and valid extra
+profiles. Recorded verification failures and regular shadow skips are zero.
+The window has 885 cost blocks, one successful recovery probe, one late
+extra and 13 skipped ordinary renders. Pacing p50 is (20,25] ms and p95 is
+(33.334,50] ms. These counters do not replace visual or multiplayer checks.
+
+Count-weighted ordinary work averages **21.626 ms** and admitted extra work
+**10.763 ms**. Extra shadows/views/UI average **4.765/4.343/0.828 ms** in their
+own scopes. Native skeleton work averages 2.004 ms; instanced-shadow submission
+averages only 0.212 ms inside the larger shadow scope. These scopes overlap,
+and CPU-side measurements do not isolate GPU completion or driver stalls.
+
+This capture removes the missing-evidence blocker, but does not establish
+a controlled beta.18 gain or regression against earlier, different workloads.
+Sequential admission alone has not delivered heavy-scene 120. Prioritize
+reducing actual shadow/main-view work; do not loosen admission again based
+only on an aggregate average. Installed beta.18 and public Stable/beta.14
+remain unchanged. [Capture report](benchmarks/2026-10-19-beta18-gameplay-check.json).
+The selected interval is reproducible with `tools/perf_capture.py` against
+the preserved timing CSV using `--start-s 73 --seconds 60`.
 
 ### Beta.17 budget-gap recovery (2026-10-19)
 

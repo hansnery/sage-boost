@@ -102,3 +102,20 @@ The controlled totals correspond to roughly 91 and 118 presentations/s in
 the first two cases. They are not forecasts for Hans's scene. This qualifies
 an opportunity to test a substantial scheduler change, while the unchanged
 expensive case still demonstrates the need to reduce actual rendering work.
+
+## First gameplay follow-up
+
+Hans reports roughly 50 FPS about a minute into the requested heavy-scene
+test. The preserved files confirm beta.18 and PairMaxExtras=3. The complete
+minute with the highest weighted mesh count records 43.48 presentation
+calls/s, while later ten-second blocks reach 51.1 and 55.1/s. All 806 extras
+in the selected minute have completed shadow samples, with no recorded
+verification failures. The exact fixed-view minute remains unidentified.
+
+Ordinary work averages 21.626 ms and complete admitted extras 10.763 ms;
+extra shadows and views average 4.765 and 4.343 ms in their own scopes.
+The controlled cheaper-work results above are not a forecast for this
+workload. No heavy-scene 120 result is established, nor a controlled gain
+or regression against prior builds. The next substantial improvement must
+reduce actual rendering work; this capture alone does not justify another
+admission relaxation. [Report](../benchmarks/2026-10-19-beta18-gameplay-check.json).

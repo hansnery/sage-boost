@@ -1,0 +1,603 @@
+{
+  "version": "bfme2perf 0.9.11-beta.18",
+  "capture": "C:\\Users\\Hans\\AppData\\Local\\Temp\\bfme2perf-beta18-gameplay-20261019-161226",
+  "copied_file_sha256": {
+    "bfme2perf.asi": "da6a45e616653ba9d4496f88631c969ca7614207998e69f93bad5134267dc111",
+    "bfme2perf.ini": "28cde567797666b7512e04b2581e594eb6b286e0eb5d781d28de67b9c8f8340d",
+    "bfme2perf.log": "feca2545a7aeb9b4ce6a535b7ba570bf36f53e53ce071e14b7370915b6d980e8",
+    "bfme2perf_scopes.csv": "adca2161ffcb9bbfd8d2599b68b608bfc388b28f38f9c99cbd756d30194043e3",
+    "bfme2perf_timing.csv": "b814d54ad203ec82a518f4fffed87ec4c83fbcacdb7f58bafc706fdfd7218a4e",
+    "game.dat_d3d9.log": "a077e90be7bd117138600b2d94d14cc09cb760004ac75ec134c6f48205ae7162"
+  },
+  "user_report": {
+    "verbatim": "50~ 1 min in",
+    "frameview_fps": "around 50",
+    "timing_description": "roughly one minute in; exact CSV interval unconfirmed"
+  },
+  "settings": {
+    "MaxFPS": 120,
+    "FrameSmoothing": 3,
+    "PairPacing": 1,
+    "PairMaxExtras": 3,
+    "ShadowInterval": 1,
+    "ExtraFrameShadows": 1
+  },
+  "backend_log": {
+    "version": "DXVK 2.6.2",
+    "gpu": "NVIDIA GeForce RTX 3080 Ti",
+    "buffer_size": [
+      3840,
+      2160
+    ],
+    "present_mode": "VK_PRESENT_MODE_FIFO_KHR (dynamic: yes)"
+  },
+  "analysis_source_sha256": {
+    "perf_capture.py": "e7b1db055191d915de9e9caeb47b380aea1b7a26f679e16732e5b8c9a7e8cfc6",
+    "test_perf_capture.py": "39d44b33afb5bcaa2f41a2fe96859b12ac2d587abea5cd9bf7256aae868570c4"
+  },
+  "rows": 130,
+  "eligible_complete_positive_logic_nonempty_windows": 33,
+  "eligible_window_rate_range": {
+    "min": 36.666666666666664,
+    "max": 43.88333333333333
+  },
+  "selection_rule": "Highest frame-weighted inst_meshes among complete positive-logic, nonempty 60-second windows, not highest FPS.",
+  "selected_heavy_window": {
+    "window": {
+      "start_s": 73,
+      "end_s_exclusive": 133,
+      "nominal_seconds": 60,
+      "at_least_60_seconds": true
+    },
+    "presentation_calls": 2609,
+    "presentation_calls_per_nominal_second": 43.483333333333334,
+    "nominal_rate_at_least_59": false,
+    "rate_bounds_from_timestamp_quantization": {
+      "lower": 42.77049180327869,
+      "upper": 44.220338983050844
+    },
+    "per_row_calls": {
+      "min": 26,
+      "max": 61
+    },
+    "regular_frame_updates": 1816,
+    "extra_frames": 806,
+    "extra_draws_per_regular_update": 0.44383259911894274,
+    "pacing": {
+      "gaps": 2609,
+      "histogram_counts": {
+        "present_gap_le_8333us": 0,
+        "present_gap_le_12500us": 85,
+        "present_gap_le_16667us": 753,
+        "present_gap_le_20000us": 448,
+        "present_gap_le_25000us": 365,
+        "present_gap_le_33334us": 577,
+        "present_gap_le_50000us": 363,
+        "present_gap_le_100000us": 17,
+        "present_gap_le_200000us": 0,
+        "present_gap_le_500000us": 1,
+        "present_gap_le_1000000us": 0,
+        "present_gap_over_1000000us": 0
+      },
+      "p50": {
+        "lower_exclusive_ms": 20.0,
+        "upper_ms": 25.0
+      },
+      "p95": {
+        "lower_exclusive_ms": 33.334,
+        "upper_ms": 50.0
+      },
+      "fraction_over_25_ms": 0.36719049444231505,
+      "fraction_over_50_ms": 0.006899195093905711
+    },
+    "shadows": {
+      "extra_draw_calls": 806,
+      "extra_completed_pass_samples": 806,
+      "valid_extra_profiles": 806,
+      "invalid_extra_profiles": 0,
+      "regular_shadow_skips": 0,
+      "extra_counts_match_each_row": true
+    },
+    "verification_failures": {
+      "verify_bad": 0,
+      "shadow_verify_bad": 0,
+      "spv_bad": 0,
+      "lt_verify_bad": 0
+    },
+    "bulk_coverage": {
+      "available": true,
+      "instrumented_rows": 60,
+      "selected_rows": 60,
+      "regular": {
+        "consumed_followers_by_method_count": {
+          "1": 10081622,
+          "2": 6825757,
+          "3": 7107,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "consumed_followers": 16914486,
+        "multi_method_followers": 6832864,
+        "multi_method_fraction": 0.40396521656052686,
+        "frame_denominator": 1816,
+        "consumed_followers_per_frame": 9314.144273127753
+      },
+      "extra": {
+        "consumed_followers_by_method_count": {
+          "1": 2879798,
+          "2": 2908842,
+          "3": 908,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        "consumed_followers": 5789548,
+        "multi_method_followers": 2909750,
+        "multi_method_fraction": 0.5025867304321512,
+        "frame_denominator": 806,
+        "consumed_followers_per_frame": 7183.062034739454
+      },
+      "limits": [
+        "Consumed follower records across render passes; not unique units or successful draws.",
+        "Deferred leaders are excluded; no total eligible-record denominator is recorded.",
+        "Regular per-frame values include updates whose render was skipped.",
+        "Method counts measure use of the path, not time saved or FPS gained."
+      ]
+    },
+    "frame_costs": {
+      "regular": {
+        "frame_avg_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "frames",
+          "input_is_per_sample_average": true,
+          "samples": 1816,
+          "summed_ms": 39272.02599999998,
+          "mean_ms": 21.62556497797356
+        },
+        "logic_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "frames",
+          "input_is_per_sample_average": true,
+          "samples": 1816,
+          "summed_ms": 4558.084,
+          "mean_ms": 2.5099581497797354
+        },
+        "render_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "frames",
+          "input_is_per_sample_average": true,
+          "samples": 1816,
+          "summed_ms": 24795.76099999999,
+          "mean_ms": 13.65405341409691
+        },
+        "present_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "frames",
+          "input_is_per_sample_average": true,
+          "samples": 1816,
+          "summed_ms": 18.315,
+          "mean_ms": 0.010085352422907489
+        },
+        "shadow_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "frames",
+          "input_is_per_sample_average": true,
+          "samples": 1816,
+          "summed_ms": 12484.814000000002,
+          "mean_ms": 6.874897577092512
+        },
+        "reflect_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "frames",
+          "input_is_per_sample_average": true,
+          "samples": 1816,
+          "summed_ms": 3931.6319999999996,
+          "mean_ms": 2.1649955947136563
+        },
+        "views_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "frames",
+          "input_is_per_sample_average": true,
+          "samples": 1816,
+          "summed_ms": 9294.401,
+          "mean_ms": 5.118062224669603
+        },
+        "ui_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "frames",
+          "input_is_per_sample_average": true,
+          "samples": 1816,
+          "summed_ms": 1613.425,
+          "mean_ms": 0.8884498898678413
+        },
+        "vis_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "frames",
+          "input_is_per_sample_average": true,
+          "samples": 1816,
+          "summed_ms": 1217.8300000000002,
+          "mean_ms": 0.6706112334801763
+        },
+        "cust_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "frames",
+          "input_is_per_sample_average": true,
+          "samples": 1816,
+          "summed_ms": 2200.782,
+          "mean_ms": 1.2118843612334802
+        },
+        "flush_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "frames",
+          "input_is_per_sample_average": true,
+          "samples": 1816,
+          "summed_ms": 22584.384,
+          "mean_ms": 12.436334801762113
+        },
+        "fx_batch_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "frames",
+          "input_is_per_sample_average": true,
+          "samples": 1816,
+          "summed_ms": 9766.194000000003,
+          "mean_ms": 5.377860132158592
+        },
+        "fx_mesh_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "frames",
+          "input_is_per_sample_average": true,
+          "samples": 1816,
+          "summed_ms": 5068.807,
+          "mean_ms": 2.791193281938326
+        },
+        "skel_render_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "frames",
+          "input_is_per_sample_average": true,
+          "samples": 1816,
+          "summed_ms": 3639.601,
+          "mean_ms": 2.004185572687225
+        },
+        "terrain_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "frames",
+          "input_is_per_sample_average": true,
+          "samples": 1816,
+          "summed_ms": 522.4029999999998,
+          "mean_ms": 0.2876668502202642
+        }
+      },
+      "extra": {
+        "extra_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "extra_frames",
+          "input_is_per_sample_average": true,
+          "samples": 806,
+          "summed_ms": 8674.857,
+          "mean_ms": 10.76284987593052
+        },
+        "extra_profile_total_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "extra_profile_valid",
+          "input_is_per_sample_average": false,
+          "samples": 806,
+          "summed_ms": 8673.819,
+          "mean_ms": 10.761562034739454
+        },
+        "extra_shadow_total_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "extra_shadow_samples",
+          "input_is_per_sample_average": false,
+          "samples": 806,
+          "summed_ms": 3840.5960000000014,
+          "mean_ms": 4.765007444168736
+        },
+        "extra_reflect_total_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "extra_reflect_samples",
+          "input_is_per_sample_average": false,
+          "samples": 806,
+          "summed_ms": 0.3210000000000002,
+          "mean_ms": 0.0003982630272952856
+        },
+        "extra_views_total_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "extra_views_samples",
+          "input_is_per_sample_average": false,
+          "samples": 806,
+          "summed_ms": 3500.556,
+          "mean_ms": 4.34312158808933
+        },
+        "extra_ui_total_ms": {
+          "available": true,
+          "measured_rows": 60,
+          "selected_rows": 60,
+          "sample_count_column": "extra_ui_samples",
+          "input_is_per_sample_average": false,
+          "samples": 806,
+          "summed_ms": 667.172,
+          "mean_ms": 0.82775682382134
+        }
+      },
+      "limits": [
+        "Regular fields are weighted by ordinary updates, including any skipped render.",
+        "Extra outer time uses all drawn extras; profiles use their own valid sample counts.",
+        "Nested scopes overlap: do not add render, shadow, views, FX, and mesh times.",
+        "Present scope is CPU call duration; it does not isolate GPU completion or display latency.",
+        "Row-average precision limits reconstructed sums; no individual frame timeline exists.",
+        "Admitted extras are selected by scheduling; refused-frame costs remain unknown.",
+        "These means do not predict 120 FPS, admission decisions, or future-frame deadlines."
+      ]
+    },
+    "limits": [
+      "Completed flip-enabled EndScene calls; not measured display refresh or GPU success.",
+      "Row timestamps quantize duration; reported FPS uses the nominal interval.",
+      "Percentiles are pooled histogram bounds, not exact gaps or averaged row percentiles.",
+      "The first gap may begin before the selected interval.",
+      "Matching shadow counts do not prove correct pixels or per-frame correspondence.",
+      "Confirm the saved-game scene, loaded version/settings, visual output and runtime log.",
+      "Simulation/network/input/camera invariants require separate evidence."
+    ],
+    "weighted_inst_meshes": 9817.433370044053,
+    "scheduling": {
+      "fps_block_cost": 885,
+      "fps_block_catchup": 84,
+      "fps_block_pause": 28,
+      "fps_block_stop": 0,
+      "fps_probe_attempts": 1,
+      "fps_probe_success": 1,
+      "fps_probe_late": 0,
+      "extra_late": 1,
+      "skipped_draws": 13,
+      "logic_ticks": 363
+    },
+    "estimate_row_snapshot_ms": {
+      "min": 11.599,
+      "max": 19.937
+    },
+    "regular_render_detail_per_update": {
+      "fx_groups": 579.1987885462555,
+      "fx_groups_shadow": 264.2995594713656,
+      "fx_groups_reflect": 105.3931718061674,
+      "fx_groups_view": 208.35517621145374,
+      "inst_meshes": 9817.433370044053,
+      "inst_groups": 260.01046255506606,
+      "inst_draws": 605.0275330396476,
+      "inst_small": 373.1387665198238,
+      "inst_leaders": 260.01046255506606,
+      "shadow_inst_meshes": 3984.773678414097,
+      "shadow_inst_draws": 249.85737885462555,
+      "shadow_inst_small": 174.613436123348,
+      "shadow_inst_ms": 0.21216574889867842,
+      "lt_ms_shadow": 3.13575936123348,
+      "lt_ms_views": 0.7903474669603524
+    }
+  },
+  "latest_eligible_window_start_s": 75,
+  "ten_second_blocks": [
+    {
+      "start_s": 30,
+      "end_s_exclusive": 40,
+      "presentation_calls_per_second": 80.7,
+      "extra_frames": 507,
+      "positive_logic_rows": 10,
+      "weighted_inst_meshes": 2060.9042904290427,
+      "p50": {
+        "lower_exclusive_ms": 8.333,
+        "upper_ms": 12.5
+      },
+      "p95": {
+        "lower_exclusive_ms": 25.0,
+        "upper_ms": 33.334
+      }
+    },
+    {
+      "start_s": 40,
+      "end_s_exclusive": 50,
+      "presentation_calls_per_second": 33.6,
+      "extra_frames": 34,
+      "positive_logic_rows": 7,
+      "weighted_inst_meshes": 5195.5331125827815,
+      "p50": {
+        "lower_exclusive_ms": 25.0,
+        "upper_ms": 33.334
+      },
+      "p95": {
+        "lower_exclusive_ms": 33.334,
+        "upper_ms": 50.0
+      }
+    },
+    {
+      "start_s": 50,
+      "end_s_exclusive": 60,
+      "presentation_calls_per_second": 36.0,
+      "extra_frames": 57,
+      "positive_logic_rows": 10,
+      "weighted_inst_meshes": 5510.844884488449,
+      "p50": {
+        "lower_exclusive_ms": 25.0,
+        "upper_ms": 33.334
+      },
+      "p95": {
+        "lower_exclusive_ms": 33.334,
+        "upper_ms": 50.0
+      }
+    },
+    {
+      "start_s": 60,
+      "end_s_exclusive": 70,
+      "presentation_calls_per_second": 40.4,
+      "extra_frames": 101,
+      "positive_logic_rows": 10,
+      "weighted_inst_meshes": 5416.907590759076,
+      "p50": {
+        "lower_exclusive_ms": 20.0,
+        "upper_ms": 25.0
+      },
+      "p95": {
+        "lower_exclusive_ms": 33.334,
+        "upper_ms": 50.0
+      }
+    },
+    {
+      "start_s": 70,
+      "end_s_exclusive": 80,
+      "presentation_calls_per_second": 31.9,
+      "extra_frames": 34,
+      "positive_logic_rows": 10,
+      "weighted_inst_meshes": 8765.4,
+      "p50": {
+        "lower_exclusive_ms": 25.0,
+        "upper_ms": 33.334
+      },
+      "p95": {
+        "lower_exclusive_ms": 33.334,
+        "upper_ms": 50.0
+      }
+    },
+    {
+      "start_s": 80,
+      "end_s_exclusive": 90,
+      "presentation_calls_per_second": 37.1,
+      "extra_frames": 67,
+      "positive_logic_rows": 10,
+      "weighted_inst_meshes": 10054.453947368422,
+      "p50": {
+        "lower_exclusive_ms": 25.0,
+        "upper_ms": 33.334
+      },
+      "p95": {
+        "lower_exclusive_ms": 33.334,
+        "upper_ms": 50.0
+      }
+    },
+    {
+      "start_s": 90,
+      "end_s_exclusive": 100,
+      "presentation_calls_per_second": 39.4,
+      "extra_frames": 92,
+      "positive_logic_rows": 10,
+      "weighted_inst_meshes": 10953.423841059603,
+      "p50": {
+        "lower_exclusive_ms": 25.0,
+        "upper_ms": 33.334
+      },
+      "p95": {
+        "lower_exclusive_ms": 33.334,
+        "upper_ms": 50.0
+      }
+    },
+    {
+      "start_s": 100,
+      "end_s_exclusive": 110,
+      "presentation_calls_per_second": 41.7,
+      "extra_frames": 116,
+      "positive_logic_rows": 10,
+      "weighted_inst_meshes": 10507.904290429044,
+      "p50": {
+        "lower_exclusive_ms": 20.0,
+        "upper_ms": 25.0
+      },
+      "p95": {
+        "lower_exclusive_ms": 33.334,
+        "upper_ms": 50.0
+      }
+    },
+    {
+      "start_s": 110,
+      "end_s_exclusive": 120,
+      "presentation_calls_per_second": 51.1,
+      "extra_frames": 207,
+      "positive_logic_rows": 10,
+      "weighted_inst_meshes": 9487.375,
+      "p50": {
+        "lower_exclusive_ms": 16.667,
+        "upper_ms": 20.0
+      },
+      "p95": {
+        "lower_exclusive_ms": 33.334,
+        "upper_ms": 50.0
+      }
+    },
+    {
+      "start_s": 120,
+      "end_s_exclusive": 130,
+      "presentation_calls_per_second": 55.1,
+      "extra_frames": 250,
+      "positive_logic_rows": 10,
+      "weighted_inst_meshes": 8554.41059602649,
+      "p50": {
+        "lower_exclusive_ms": 16.667,
+        "upper_ms": 20.0
+      },
+      "p95": {
+        "lower_exclusive_ms": 25.0,
+        "upper_ms": 33.334
+      }
+    },
+    {
+      "start_s": 130,
+      "end_s_exclusive": 140,
+      "presentation_calls_per_second": 42.1,
+      "extra_frames": 119,
+      "positive_logic_rows": 5,
+      "weighted_inst_meshes": 6452.4933774834435,
+      "p50": {
+        "lower_exclusive_ms": 20.0,
+        "upper_ms": 25.0
+      },
+      "p95": {
+        "lower_exclusive_ms": 33.334,
+        "upper_ms": 50.0
+      }
+    }
+  ],
+  "limits": [
+    "Exact alignment to the user fixed view is unknown; this is exploratory window selection.",
+    "Mesh counts are not unique troops and cannot prove unchanged view or scene.",
+    "Earlier beta.16 capture is not a controlled before/after comparison.",
+    "Internal presentation calls and FrameView recollection are separate evidence.",
+    "High menu/light-scene rows do not establish 120 FPS in the heavy scene."
+  ]
+}

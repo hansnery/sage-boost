@@ -30,6 +30,16 @@ variable costs, while the expensive case remains unchanged. It does not
 reduce rendering cost or establish 120 FPS in the heavy save. See the
 [sequential-admission qualification](specs/2026-10-19-sequential-extras-design.md).
 
+Hans's first beta.18 test reports roughly 50 FPS about a minute in. The
+preserved capture confirms the correct build/settings; later ten-second
+blocks record 51.1 and 55.1 presentation calls/s. The complete minute with
+the highest weighted mesh count records 43.48/s, with all 806 extras having
+completed shadow samples and no recorded verification failures. Ordinary
+work averages 21.626 ms and extra work 10.763 ms, mostly shadow/main-view
+work. The exact fixed-view interval is unknown; this is neither heavy 120
+nor a controlled gain/regression against previous captures.
+[Gameplay evidence](benchmarks/2026-10-19-beta18-gameplay-check.json).
+
 The subsequent UI upload screen preserves each draw/state boundary while
 combining small vertex-buffer locks. All eighteen native/DXVK cases pass
 image and state controls, but the large batched DXVK cases save only
@@ -104,6 +114,7 @@ save, requiring a replacement. Rates are internal calls per nominal second.
 | beta.13, later live capture | Dense exploratory window: 1,795 calls / 60 s = **29.92/s**. Later readings exceeded 60. | Hans identified the high readings as a **lighter scene or different match**. They do not demonstrate success in the heavy save. [Report](benchmarks/2026-10-18-beta13-live-gameplay-check.json). |
 | beta.13, latest "Still 30" report | Latest eligible window: 1,927 calls / 60 s = **32.12/s**, 113 extras. | Exact save/scene was not confirmed and workload varied within the window. This is neither a settled heavy-scene result nor proof of 32 displayed FPS. [Report](benchmarks/2026-10-18-beta13-still30-gameplay-check.json). |
 | beta.14, user reports around 55 in the heavy scene | Densest eligible window: 3,095 calls / 60 s = **51.58/s**, 1,295 extras. | First user-confirmed improvement above 30; varying workload, a slowdown and no raw FrameView trace prevent a settled 59/s claim. [Report](benchmarks/2026-10-19-beta14-gameplay-check.json). |
+| beta.18, user reports around 50 about a minute in | Highest mesh-count eligible minute: 2,609 calls / 60 s = **43.48/s**, 806 extras; later ten-second blocks 51.1/55.1/s. | Correct build/settings, matching completed extra-shadow samples and no recorded verification failures. Exact fixed-view interval unknown; no heavy 120 or controlled before/after result. [Report](benchmarks/2026-10-19-beta18-gameplay-check.json). |
 
 The last beta.13 capture's pacing histogram places p50 in **(25, 33.334] ms** and p95
 in **(33.334, 50] ms**. It recorded 1,155 cost blocks, no safety-stop blocks
