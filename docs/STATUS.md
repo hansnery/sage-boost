@@ -58,6 +58,39 @@ Accelerator has now run in isolated offline harnesses (below).
   resolve a reproducible multiplayer divergence only after one is observed.
   No promised FPS gain, deployment or new gameplay request from this review.
 
+### Window/device ownership and copied material values (2026-10-18)
+
+Both local executables' complete native Create_Device bodies omit the
+MULTITHREADED flag. A worker using the existing game window therefore needs
+a verified early creation change; Reset cannot add that flag. The previous
+beta.13 log shows the ASI loaded before `d3d9.dll` on that startup path.
+
+The new optional owner fixture initializes its hidden window and device on
+the producer with MULTITHREADED, then transfers exclusive drawing to the
+worker while the producer pumps messages. It exposed separate timing and
+instancing thread-ID assumptions, plus a one-bit opacity-state mismatch
+from evaluating the material expression on the worker. Test-only ownership
+transfers and copied producer-evaluated material values address these fixture
+failures. No floating-point control workaround or production change is made.
+
+Both executable variants pass 96 exact image/state cases, 16 deliberately
+wrong outputs, four missing-flag refusals and 16 alias/capacity controls each.
+Each positive process dispatches all 590 ordered worker messages on its
+window thread. The [report](benchmarks/2026-10-18-window-owner-worker.json)
+retains 168 three-mode samples: completion savings are 1.4908-1.9790 ms/pair
+lit and 1.4836-1.7123 ms shadow. This includes copied inputs, message handling,
+multithreaded device locking and GPU completion, but remains synthetic.
+Three original worker variants pass another 68 image/state cases and ten
+output faults with unchanged reference hashes. Installed beta.13 and its
+INI remain hash-identical to the existing restoration receipt.
+
+Native Reset_Device begins releasing resources before its D3D Reset call;
+the eventual queue must drain before that teardown, not merely before Reset.
+Live frame/render bookkeeping must also be separated; the fixture's exclusive
+thread-ID transfer is not a runtime implementation. Resource recreation,
+effect/Begin contracts, full scene/Present and gameplay FPS remain unproved.
+No installation or new gameplay test follows from this experiment.
+
 ### Native pose preparation overlapping rendering (2026-10-18)
 
 The optional owned-worker fixture now executes verified native vector

@@ -69,15 +69,21 @@ def main():
                         help='generate consumed bone positions with verified native vector decoding')
     parser.add_argument('--pose-step', type=int, choices=(0, 1), default=1,
                         help='warm decoder cursor advance; only used with --native-pose')
+    parser.add_argument('--window-owner', action='store_true',
+                        help='keep window/device initialization on producer; requires --native-pose')
     args = parser.parse_args()
+    if args.window_owner and not args.native_pose:
+        parser.error('--window-owner requires --native-pose')
     assert 1 <= args.repeat <= 3
     guard()
     root = Path(tempfile.mkdtemp(prefix='sage-native-source-worker-'))
     install = args.install.resolve()
-    exe = REPO/'perf/build'/('bench_native_pose_worker.exe' if args.native_pose else 'bench_native_source_worker.exe')
+    exe = REPO/'perf/build'/('bench_window_pose_worker.exe' if args.window_owner else
+                          'bench_native_pose_worker.exe' if args.native_pose else 'bench_native_source_worker.exe')
     shutil.copy2(exe, root/exe.name)
     shutil.copy2(install/'d3d9.dll', root/'d3d9.dll')
     sources = [Path(__file__), REPO/'tools/bench_native_matrix_sources.py', REPO/'tools/bench_native_decode.py',
+               REPO/'tools/verify_device_owner.py',
                REPO/'perf/Makefile', *sorted((REPO/'perf/tests').glob('*.c')),
                *sorted((REPO/'perf/tests').glob('*.h')), REPO/'perf/tests/shadow_fx/shadow_fx.c',
                *sorted((REPO/'perf/src').glob('*.c')), *sorted((REPO/'perf/src').glob('*.h')),
@@ -123,6 +129,8 @@ def main():
             for workload in workloads:
                 # The deliberate setter corruption must reach the image/state oracle.
                 faults = ['', 'wrong-setter', 'stale-source'] + (['stale-pose'] if args.native_pose else [])
+                if args.window_owner:
+                    faults.extend(['device-flags','stale-material'])
                 for fault in faults if repeat == 0 else ['']:
                     guard()
                     label = f'{index}-{repeat}-{workload}' + ('-'+fault if fault else '')
@@ -146,7 +154,11 @@ def main():
                               'seconds': time.monotonic()-start, 'log': str(log), 'log_sha256': sha(log)}
                     report['runs'].append(result)
                     args.output.write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
-                    if fault:
+                    if fault == 'device-flags':
+                        assert run.returncode == 1 and 'creation.BehaviorFlags & D3DCREATE_MULTITHREADED' in text
+                        assert 'WORKER: consumed=' not in text
+                        result['fault_detected_before_worker_start'] = True
+                    elif fault:
                         assert run.returncode == 1 and ('!memcmp(pixels,reference[p->oracle],sizeof pixels)' in text
                                                        or '!memcmp(state,reference_state[p->oracle],n*4)' in text), text[-3000:]
                         result['fault_detected_by_output_oracle'] = True
@@ -160,6 +172,10 @@ def main():
                             result['native_vector_calls'] = 25660800
                             result['pose_step'] = args.pose_step
                             result['pose_oracle'] = next(line for line in text.splitlines() if line.startswith('POSE ORACLE:'))
+                        if args.window_owner:
+                            assert 'WINDOW OWNER: 590 ordered worker messages dispatched on producer;' in text
+                            result['device_owner'] = next(line for line in text.splitlines() if line.startswith('DEVICE OWNER:'))
+                            result['window_messages'] = 590
                     args.output.write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
                     print(json.dumps({'case': label, 'returncode': run.returncode,
                                       'medians': result.get('medians_ms_per_pair'), 'log': str(log)}), flush=True)

@@ -56,6 +56,10 @@ typedef HRESULT(WINAPI *compile_fn)(const void *, SIZE_T, const char *, const vo
                                     const char *, const char *, UINT, UINT, ID3DBlob **,
                                     ID3DBlob **);
 static IDirect3DDevice9 *g_dev;
+#ifndef PF_FIXTURE_DEVICE_FLAGS
+#define PF_FIXTURE_DEVICE_FLAGS D3DCREATE_HARDWARE_VERTEXPROCESSING
+#endif
+static DWORD fixture_device_flags = PF_FIXTURE_DEVICE_FLAGS;
 static IDirect3DVertexShader9 *g_ea;
 static IDirect3DVertexDeclaration9 *g_decl;
 static IDirect3DVertexBuffer9 *g_vb;
@@ -724,7 +728,7 @@ int main(int argc, char **argv)
     pp.BackBufferWidth = pp.BackBufferHeight = 64;
     pp.hDeviceWindow = wnd;
     if (!d3d || FAILED(IDirect3D9_CreateDevice(d3d, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, wnd,
-                                               D3DCREATE_HARDWARE_VERTEXPROCESSING, &pp, &g_dev))) {
+                                               fixture_device_flags, &pp, &g_dev))) {
         printf("SKIP: no hardware D3D9 device\n");
         DestroyWindow(wnd);
         goto done;

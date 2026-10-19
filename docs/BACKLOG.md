@@ -78,6 +78,17 @@ Strike an item through, with the date, when it's done.
   0.75-1.94 ms per synthetic pair across warm zero/one cursor advances.
   Counts, cursors and resources remain synthetic; this qualifies overlap,
   not real animation capture, full-scene ownership or gameplay FPS.
+- [x] 2026-10-18: verify both native device-creation bodies omit MULTITHREADED,
+  then exercise producer-owned window/device creation and worker drawing with
+  that flag. Copy producer-evaluated material values after cross-thread
+  evaluation caused a one-bit opacity mismatch. Pass 96 image/state cases,
+  16 wrong-output controls and four missing-flag refusals; preserve 168 samples
+  in `benchmarks/2026-10-18-window-owner-worker.json`. Completion saves
+  1.48-1.98 ms per synthetic pair with message handling and locking included.
+- [ ] Qualify live lifecycle handoff: drain before native Reset_Device starts
+  releasing assets, retain window-thread lifecycle calls, invalidate resource
+  generations and separate frame/render bookkeeping. Offline thread-ID
+  transfers and fixed texture indices do not establish those live contracts.
 - [x] 2026-10-18: back up a second launcher replacement of beta.13 by
   0.9.10, restore the identical tested binary and only the three missing beta
   keys, and verify the shortcut with CheckOnly. No game launched; see

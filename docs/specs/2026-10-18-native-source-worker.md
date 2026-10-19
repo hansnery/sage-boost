@@ -137,3 +137,73 @@ with `--native-pose --pose-step 1`, both images and `--repeat 2`. Repeat with
 `--pose-step 0` for the lower-work sensitivity case. Each process receives
 separate numeric matrix and decoder manifests. Original matrix-worker CLI
 and target remain available by omitting `--native-pose`.
+
+## Device owner integration experiment
+
+Before moving this path into the game, verify the complete local native
+device-creation body and its flags. Microsoft requires MULTITHREADED when
+the window thread and D3D rendering thread differ; CreateDevice, Reset,
+TestCooperativeLevel and final device release remain on the window thread.
+An already-created device cannot gain the flag through Reset. A runtime
+bridge therefore needs an early verified creation hook or must stay off.
+
+Extend the existing optional pose fixture with an owner mode: initialize
+its hidden window/device/resources on the producer using MULTITHREADED,
+then transfer exclusive drawing to the worker. Pump window messages while
+collecting completions, and verify actual window/creation thread identity
+and flags. Retain the independent pre-handoff images and all ownership/
+stale-data controls. Compare completed work against the same serial/direct
+path with the same flags. This tests handoff and required locking overhead;
+Reset/resource recreation and final release need their own qualification.
+The fixture's legacy resource leaks mean process exit is not evidence of
+correct live-device destruction. Do not install this test-only mode.
+
+The native creation audit verifies the complete 460-byte body, jump targets,
+factory slots, one-time-init dependency and consistent global identities in
+both local images, with six altered-contract refusals each. The native path
+requests flags 0x20/0x22/0x40/0x42/0x50/0x52, never MULTITHREADED (0x4).
+These are disk-code semantics, not a read of a live device. The previous
+beta.13 gameplay log says `d3d9.dll` was not loaded when the ASI attached;
+that supports an early creation hook on that startup path, not every loader.
+An eventual hook must verify the device is not already created and preserve
+all existing creation flags, FPU behavior and native call results.
+
+Two hidden assumptions failed in the first owner-mode attempts: timing and
+instancing each retained the initialization thread ID. Test-only helpers now
+transfer their IDs only at an empty, exclusive handoff, and return them after
+worker completion. They are not production APIs: the live plugin must keep
+frame and renderer ownership separate while both threads can run.
+
+The next attempt matched images but failed state word 744: opacity was
+0x3F666666 on the initialization thread and 0x3F666667 when re-evaluated on
+the worker. No floating-point control workaround is used. Owner mode now
+evaluates opacity, diffuse color and time on the producer and copies their
+numeric values plus a fixture-local texture index into each packet. The
+worker resolves the texture against its fixed resource table. The ordinary
+reference still evaluates the original expressions independently. A stale
+material control must fail the image/state oracle. This proves the need to
+capture values for this fixture; it does not qualify all native source
+families or a live resource registry.
+
+Both images, lit/shadow, two repeats pass 96 exact packet image/state cases,
+16 output-corruption controls, four missing-MULTITHREADED refusals before
+worker startup, and 16 alias/capacity controls each. Each positive process
+dispatches 590 ordered worker messages on the window thread without calling
+D3D in the window procedure. Across 168 three-mode samples, paired completion
+savings are 1.4908-1.9790 ms/pair lit and 1.4836-1.7123 ms shadow, with copies,
+message handling, required device locking and GPU drains included. Separate
+process timings do not establish the incremental cost of MULTITHREADED alone.
+See the [owner report](../benchmarks/2026-10-18-window-owner-worker.json).
+
+The native Reset_Device source releases assets before calling the D3D Reset
+method, so flushing only at the latter would be too late for queued borrowed
+resources. A live bridge must stop publication and drain before native
+resource teardown, keep Reset/TestCooperativeLevel/final device release on
+the window owner, and reject stale resource generations after recreation.
+That lifecycle, native Begin/pass results, full-frame integration and real
+FPS remain open. Reproduce the owner mode by adding `--window-owner` to the
+native-pose runner and building `bench_window_pose_worker.exe`.
+
+Platform references: [D3DCREATE](https://learn.microsoft.com/en-us/windows/win32/direct3d9/d3dcreate),
+[CreateDevice](https://learn.microsoft.com/en-us/windows/win32/api/d3d9helper/nf-d3d9helper-idirect3d9-createdevice),
+[multithreading rules](https://learn.microsoft.com/en-us/windows/win32/direct3d9/multithreading-issues).

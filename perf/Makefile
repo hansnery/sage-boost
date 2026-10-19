@@ -373,7 +373,7 @@ bench-scopes: $(BUILD)/bench_scopes.exe
 $(BUILD)/bench_retained.exe: tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(DISPATCH_OBJS) src/*.h
 	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(filter-out $(BUILD)/fps.o,$(DISPATCH_OBJS))
 
-$(BUILD)/material_fixture.o: tests/material_fixture.c tests/source_packet.h tests/effect_filter_bench.h tests/shadow_fx/shadow_fx.c src/shadowfx_table.h | $(BUILD)
+$(BUILD)/material_fixture.o: tests/material_fixture.c tests/material_packet.h tests/source_packet.h tests/effect_filter_bench.h tests/shadow_fx/shadow_fx.c src/shadowfx_table.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -c -o $@ $<
 
 $(BUILD)/effect_filter_bench.o: tests/effect_filter_bench.c tests/effect_filter_bench.h | $(BUILD)
@@ -402,6 +402,9 @@ $(BUILD)/native_pose_capture.o: tests/native_pose_capture.c tests/pose_packet.h 
 
 $(BUILD)/bench_native_pose_worker.exe: tests/bench_batch_worker.c tests/source_packet.h tests/pose_packet.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/native_pose_capture.o $(BUILD)/native_source_capture.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
 	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_NATIVE_SOURCE_WORKER -DPF_NATIVE_POSE_WORKER -static -o $@ $< $(BUILD)/native_pose_capture.o $(BUILD)/native_source_capture.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
+
+$(BUILD)/bench_window_pose_worker.exe: tests/bench_batch_worker.c tests/material_packet.h tests/source_packet.h tests/pose_packet.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/native_pose_capture.o $(BUILD)/native_source_capture.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
+	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_NATIVE_SOURCE_WORKER -DPF_NATIVE_POSE_WORKER -DPF_WINDOW_DEVICE_OWNER -static -o $@ $< $(BUILD)/native_pose_capture.o $(BUILD)/native_source_capture.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
 
 $(BUILD)/bench_native_source_worker.exe: tests/bench_batch_worker.c tests/source_packet.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/native_source_capture.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
 	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -DPF_NATIVE_SOURCE_WORKER -static -o $@ $< $(BUILD)/native_source_capture.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_retained_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))

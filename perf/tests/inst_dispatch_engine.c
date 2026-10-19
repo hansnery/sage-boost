@@ -5,6 +5,15 @@
 #endif
 #include PF_BENCH_INST_SOURCE
 
+/* Exclusive offline handoff after all fixture draws have completed. This
+ * must not be used to transfer live native renderer state. */
+int bench_inst_transfer_owner(DWORD previous)
+{
+    if(g_thread!=previous || g.mode!=M_IDLE || g.armed || g.count || g_bulk_context)return 0;
+    g_thread=GetCurrentThreadId();
+    return 1;
+}
+
 /* After the regular path accepted the second member. Remaining records
  * borrow the group's method: no by-value temporary was constructed. The
  * benchmark deliberately omits marker accounting to establish whether even

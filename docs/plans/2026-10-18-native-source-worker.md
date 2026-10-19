@@ -34,3 +34,23 @@ This optional test-only extension passes 144 pose packet image/state cases,
 The unchanged worker variants pass another 44 image/state cases. The full
 production suite previously passed at base commit `da85d4e`; it was not
 repeated for this extension. Installed beta.13 and INI hashes match.
+
+## Window/device owner handoff
+
+- [x] Verify local native creation bodies and flag paths using read-only
+  `tools/verify_device_owner.py`; record both images and altered contracts.
+- [x] Add optional `bench_window_pose_worker.exe` over the existing worker,
+  with producer-owned initialization, MULTITHREADED creation and message-aware
+  collection. Require creation/window identity and exact pre-handoff images.
+- [x] Extend the runner with `--window-owner`; execute both lit/shadow paths,
+  stale-data faults and original-variant regressions. Preserve complete
+  timings, hashes and the unresolved Reset/destruction limitations.
+
+Native creation contracts pass both images and 12 altered-code refusals.
+Owner-mode GPU runs pass 96 image/state cases, 16 corrupted-output cases,
+four missing-flag refusals and all ordered window-message checks. Three old
+worker variants pass another 68 image/state cases and ten deliberate output
+faults with unchanged reference hashes. Installed beta.13/INI hashes match.
+No full-suite rerun or production change; the shared fixture's own instancing
+checks execute in each GPU process. Resource teardown and separate live
+frame/render bookkeeping are the next integration boundary.

@@ -5,6 +5,15 @@ int bench_scope_bulk_begin(void) { return pf_timing_bulk_begin(); }
 int bench_scope_bulk_end(unsigned n) { return pf_timing_bulk_end(n); }
 int bench_scope_bulk_cancel(void) { return pf_timing_bulk_cancel(); }
 
+/* Offline exclusive handoff only. Production currently identifies frame and
+ * rendering ownership with one ID; this helper is not a runtime solution. */
+int bench_scope_transfer_owner(DWORD previous)
+{
+    if(g_main!=previous || bulk_open || g_ssp || g_sp)return 0;
+    g_main=GetCurrentThreadId();
+    return 1;
+}
+
 extern void bench_extra_mode(int);
 
 /* Outside measured workloads. One actual interval supplies both scope and

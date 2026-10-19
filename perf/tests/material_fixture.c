@@ -5,6 +5,7 @@
 #undef main
 #include "effect_filter_bench.h"
 #include "source_packet.h"
+#include "material_packet.h"
 
 #define REQUIRE(c) do { if(!(c)) { fprintf(stderr,"material fixture refused %s:%d: %s\n",__FILE__,__LINE__,#c); exit(1); } } while(0)
 #define HR(c) REQUIRE(SUCCEEDED(c))
@@ -48,6 +49,23 @@ static unsigned captured_groups;
 static int captured_wrong_setter;
 static D3DXHANDLE captured_handles[3];
 static const float (*source_reference)[16];
+static const fixture_material_values *captured_material;
+static unsigned captured_material_groups;
+
+void material_fixture_capture(unsigned group,unsigned generation,unsigned change_percent,
+                              unsigned milliseconds,fixture_material_values *out)
+{
+    unsigned delta=group%100<change_percent?generation:0;
+    out->opacity=0.55f+((group+delta)%8)/20.f;
+    out->diffuse[0]=0.35f+((group+delta)%4)*0.15f;
+    out->diffuse[1]=0.8f;out->diffuse[2]=0.6f;
+    out->clock=milliseconds*0.001f;out->texture=(group+delta)&1;
+}
+
+void material_fixture_captured(const fixture_material_values *values,unsigned groups)
+{
+    captured_material=values;captured_material_groups=groups;
+}
 
 void material_fixture_source_seed(float out[3][16])
 {
@@ -178,16 +196,26 @@ unsigned material_fixture_state(IDirect3DDevice9 *dev,unsigned *out,unsigned cap
 
 void material_fixture_sources(unsigned group)
 {
-    unsigned delta=group%100<churn?epoch:0;
-    float opacity=0.55f+((group+delta)%8)/20.f;
-    float diffuse[3]={0.35f+((group+delta)%4)*0.15f,0.8f,0.6f};
+    float opacity,diffuse[3],clock=clock_value;unsigned texture;
+    if(captured_material) {
+        REQUIRE(group<captured_material_groups);
+        const fixture_material_values *p=&captured_material[group];
+        REQUIRE(p->texture<2);
+        opacity=p->opacity;memcpy(diffuse,p->diffuse,sizeof diffuse);
+        clock=p->clock;texture=p->texture;
+    } else {
+        unsigned delta=group%100<churn?epoch:0;
+        opacity=0.55f+((group+delta)%8)/20.f;
+        diffuse[0]=0.35f+((group+delta)%4)*0.15f;
+        diffuse[1]=0.8f;diffuse[2]=0.6f;texture=(group+delta)&1;
+    }
     /* Re-evaluate the fixed source values every group. This includes
      * their SetValue cost, but not the game's source-callback computation. */
     for(unsigned i=0;i<input_count;i++) HR(F(SetValue,inputs[i],input_values[i],input_bytes[i]));
     HR(F(SetFloat,opacity_handle,opacity));
     HR(F(SetValue,diffuse_handle,diffuse,sizeof diffuse));
-    HR(F(SetTexture,texture_handle,(IDirect3DBaseTexture9 *)textures[(group+delta)&1]));
-    if(clock_override) HR(F(SetFloat,clock_handle,clock_value));
+    HR(F(SetTexture,texture_handle,(IDirect3DBaseTexture9 *)textures[texture]));
+    if(clock_override || captured_material) HR(F(SetFloat,clock_handle,clock));
     if(source_reference)for(unsigned i=0;i<3;i++)
         HR(F(SetValue,captured_handles[i],source_reference[i],64));
     if(captured_sources) {

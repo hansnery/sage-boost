@@ -1,5 +1,11 @@
-/* Offline owned-packet screen. The worker owns the window/device/resources;
- * no game callback or borrowed engine object crosses the queue. */
+/* Offline owned-packet screen. By default the worker owns initialization;
+ * PF_WINDOW_DEVICE_OWNER keeps the window/device creation on the producer.
+ * No game callback or borrowed engine object crosses the queue. */
+#ifdef PF_WINDOW_DEVICE_OWNER
+#define PF_FIXTURE_DEVICE_FLAGS (D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED)
+#include "material_packet.h"
+static unsigned stale_material_values;
+#endif
 #define PF_MATERIAL_MAIN unused_material_benchmark_main
 #include "bench_material_queue.c"
 #ifdef PF_NATIVE_SOURCE_WORKER
@@ -25,6 +31,9 @@ typedef struct {
     unsigned source_phase;
     source_matrix_command sources[GROUPS*3];
 #endif
+#ifdef PF_WINDOW_DEVICE_OWNER
+    fixture_material_values materials[GROUPS];
+#endif
     float palettes[GROUPS*GROUP_SIZE][BONES][8];
 } render_packet;
 enum { SLOT_FREE, SLOT_WRITING, SLOT_READY, SLOT_READING, SLOT_DONE };
@@ -46,6 +55,61 @@ static unsigned integrity_checks=1;
 static int worker_argc;
 static char **worker_argv;
 static DWORD render_thread;
+#ifdef PF_WINDOW_DEVICE_OWNER
+static DWORD window_thread;
+extern int bench_scope_transfer_owner(DWORD);
+extern int bench_inst_transfer_owner(DWORD);
+static HWND owner_window;
+static WNDPROC owner_previous_proc;
+static unsigned owner_messages;
+#define OWNER_MESSAGE (WM_APP+90)
+
+static LRESULT CALLBACK owner_window_proc(HWND window,UINT message,WPARAM w,LPARAM l)
+{
+    REQUIRE(GetCurrentThreadId()==window_thread);
+    if(message==OWNER_MESSAGE) {
+        REQUIRE(w==++owner_messages);
+        return 0;
+    }
+    return CallWindowProcW(owner_previous_proc,window,message,w,l);
+}
+
+static void pump_owner_messages(void)
+{
+    REQUIRE(GetCurrentThreadId()==window_thread);
+    MSG message;
+    while(PeekMessageW(&message,NULL,0,0,PM_REMOVE)) {
+        TranslateMessage(&message);DispatchMessageW(&message);
+    }
+}
+
+static DWORD wait_owner(HANDLE handle,DWORD milliseconds)
+{
+    REQUIRE(GetCurrentThreadId()==window_thread);
+    ULONGLONG end=GetTickCount64()+milliseconds;
+    for(;;) {
+        ULONGLONG now=GetTickCount64();
+        if(now>=end)return WAIT_TIMEOUT;
+        DWORD status=MsgWaitForMultipleObjectsEx(1,&handle,(DWORD)(end-now),QS_ALLINPUT,MWMO_INPUTAVAILABLE);
+        pump_owner_messages();
+        if(status!=WAIT_OBJECT_0+1)return status;
+    }
+}
+
+static void verify_window_owner(void)
+{
+    D3DDEVICE_CREATION_PARAMETERS creation;
+    HR(IDirect3DDevice9_GetCreationParameters(g_dev,&creation));
+    REQUIRE(creation.BehaviorFlags & D3DCREATE_MULTITHREADED);
+    owner_window=creation.hFocusWindow;
+    REQUIRE(owner_window && GetWindowThreadProcessId(owner_window,NULL)==window_thread);
+    HR(IDirect3DDevice9_TestCooperativeLevel(g_dev));
+    owner_previous_proc=(WNDPROC)SetWindowLongPtrW(owner_window,GWLP_WNDPROC,(LONG_PTR)owner_window_proc);
+    REQUIRE(owner_previous_proc);
+    printf("DEVICE OWNER: window/create/cooperative-level thread=%lu flags=%08lX; worker drawing follows; Reset/destruction unqualified\n",
+           (unsigned long)window_thread,(unsigned long)creation.BehaviorFlags);
+}
+#endif
 #ifdef PF_NATIVE_SOURCE_WORKER
 static float source_seed[2][3][16];
 static int wrong_source_setter,stale_source_values;
@@ -106,13 +170,21 @@ static void render_packet_owned(const render_packet *p,unsigned *pixels,unsigned
     else for(unsigned i=0;i<GROUPS*GROUP_SIZE;i++)for(unsigned b=0;b<BONES;b++)
         memcpy(many_pivots[i]+g_bonemap[b]*0x58+0x30,p->palettes[i][b],28);
 #endif
-    material_fixture_epoch(p->epoch);material_fixture_clock(p->clock);
+    material_fixture_epoch(p->epoch);
+#ifdef PF_WINDOW_DEVICE_OWNER
+    material_fixture_captured(p->materials,GROUPS);
+#else
+    material_fixture_clock(p->clock);
+#endif
 #ifdef PF_NATIVE_SOURCE_WORKER
     material_fixture_source_packets(p->sources,GROUPS,wrong_source_setter);
 #endif
     pair_optimized=0;retain_now=0;dispatch_bulk_now=1;
     unsigned refs=g_method.refs;
     frame_draw(p->extra,0,pixels);drain();
+#ifdef PF_WINDOW_DEVICE_OWNER
+    material_fixture_captured(NULL,0);
+#endif
 #ifdef PF_NATIVE_SOURCE_WORKER
     material_fixture_source_packets(NULL,0,0);
 #endif
@@ -192,7 +264,14 @@ static void initialize_worker(void)
 
 static DWORD WINAPI worker_main(void *unused)
 {
-    (void)unused;render_thread=GetCurrentThreadId();initialize_worker();
+    (void)unused;render_thread=GetCurrentThreadId();
+#ifdef PF_WINDOW_DEVICE_OWNER
+    REQUIRE(render_thread!=window_thread);
+    REQUIRE(bench_scope_transfer_owner(window_thread));
+    REQUIRE(bench_inst_transfer_owner(window_thread));
+#else
+    initialize_worker();
+#endif
     REQUIRE(SetEvent(initialized));unsigned consumed=0;
     for(;;) {
         DWORD wait=MsgWaitForMultipleObjects(1,&available,FALSE,10000,QS_ALLINPUT);
@@ -218,12 +297,20 @@ static DWORD WINAPI worker_main(void *unused)
                 REQUIRE(p->oracle<WORKER_ORACLES);
                 unsigned n=backend_state(state);
                 REQUIRE(!memcmp(pixels,reference[p->oracle],sizeof pixels));
+                unsigned differences=0;
+                for(unsigned i=0;i<n && i<state_words[p->oracle];i++)if(state[i]!=reference_state[p->oracle][i]) {
+                    if(differences++<8)printf("STATE DIFFERENCE: oracle=%u word=%u expected=%08X actual=%08X\n",
+                                              p->oracle,i,reference_state[p->oracle][i],state[i]);
+                }
                 REQUIRE(n==state_words[p->oracle] && !memcmp(state,reference_state[p->oracle],n*4));
                 slot->pixel_hash=packet_hash(pixels,sizeof pixels);
             }
             if(slot->has_checksum)REQUIRE(packet_hash(p,bytes)==slot->checksum);
         }
         slot->render_ticks=ticks()-begin;
+#ifdef PF_WINDOW_DEVICE_OWNER
+        REQUIRE(PostMessageW(owner_window,OWNER_MESSAGE,consumed,0));
+#endif
         REQUIRE(InterlockedExchange(&slot->state,SLOT_DONE)==SLOT_READING);
         REQUIRE(SetEvent(slot->done));
     }
@@ -237,6 +324,10 @@ static void prepare(unsigned extra,unsigned epoch,unsigned clock,unsigned check,
 {
     scratch.sequence=submitted+1;scratch.extra=extra;scratch.epoch=epoch;scratch.clock=clock;
     scratch.check=check;scratch.oracle=oracle;
+#ifdef PF_WINDOW_DEVICE_OWNER
+    for(unsigned group=0;group<GROUPS;group++)
+        material_fixture_capture(group,stale_material_values?0:epoch,100,clock,&scratch.materials[group]);
+#endif
 #ifdef PF_NATIVE_SOURCE_WORKER
     scratch.source_phase=check?(oracle==3):(epoch&1);
     unsigned phase=stale_source_values?0:scratch.source_phase;
@@ -274,7 +365,11 @@ static void publish(unsigned fault_alias,unsigned direct)
 static void collect(unsigned expect_rejected,long long *worker,long long *queue)
 {
     packet_slot *slot=&slots[collected%WORKER_SLOTS];
+#ifdef PF_WINDOW_DEVICE_OWNER
+    REQUIRE(wait_owner(slot->done,10000)==WAIT_OBJECT_0);
+#else
     REQUIRE(WaitForSingleObject(slot->done,10000)==WAIT_OBJECT_0);
+#endif
     REQUIRE(slot->sequence==collected+1 && slot->rejected==expect_rejected);
     if(worker)*worker+=slot->render_ticks;
     if(queue)*queue+=slot->queue_ticks;
@@ -336,6 +431,11 @@ int main(int argc,char **argv)
     if((unsigned)argc>fault_arg) {
 #ifdef PF_NATIVE_POSE_WORKER
         stale_pose_values=!strcmp(argv[fault_arg],"stale-pose");
+#ifdef PF_WINDOW_DEVICE_OWNER
+        stale_material_values=!strcmp(argv[fault_arg],"stale-material");
+        if(!strcmp(argv[fault_arg],"device-flags"))fixture_device_flags&=~D3DCREATE_MULTITHREADED;
+        else if(!stale_material_values)
+#endif
         REQUIRE(stale_pose_values || !strcmp(argv[fault_arg],"wrong-setter") || !strcmp(argv[fault_arg],"stale-source"));
 #else
         REQUIRE(!strcmp(argv[fault_arg],"wrong-setter") || !strcmp(argv[fault_arg],"stale-source"));
@@ -352,14 +452,21 @@ int main(int argc,char **argv)
     initialized=CreateEventW(NULL,TRUE,FALSE,NULL);consume_gate=CreateEventW(NULL,TRUE,TRUE,NULL);
     REQUIRE(available && initialized && consume_gate);
     for(unsigned i=0;i<WORKER_SLOTS;i++){slots[i].done=CreateEventW(NULL,FALSE,FALSE,NULL);REQUIRE(slots[i].done);}
+#ifdef PF_WINDOW_DEVICE_OWNER
+    window_thread=GetCurrentThreadId();initialize_worker();verify_window_owner();
+#endif
     HANDLE worker=CreateThread(NULL,0,worker_main,NULL,0,NULL);REQUIRE(worker);
+#ifdef PF_WINDOW_DEVICE_OWNER
+    REQUIRE(wait_owner(initialized,60000)==WAIT_OBJECT_0);
+#else
     REQUIRE(WaitForSingleObject(initialized,60000)==WAIT_OBJECT_0);
+#endif
     REQUIRE(render_thread!=GetCurrentThreadId());
 #ifdef PF_NATIVE_SOURCE_WORKER
     native_source_capture_init(argv[5],argv[6],material_runtime);
 #endif
     ownership_controls();
-    printf("PACKET: %u bytes, %u owned slots; timed checksums=%u, all copies included; all GPU/resource calls stay on worker\n",(unsigned)sizeof(render_packet),WORKER_SLOTS,integrity_checks);
+    printf("PACKET: %u bytes, %u owned slots; timed checksums=%u, all copies included; worker owns drawing after initialization\n",(unsigned)sizeof(render_packet),WORKER_SLOTS,integrity_checks);
 #ifdef PF_NATIVE_SOURCE_WORKER
 #ifdef PF_NATIVE_POSE_WORKER
     puts("LIMITS: native matrix capture and 43,200 warm vector decodes per draw; decoded next endpoints feed geometry; synthetic channels/cursors, bulk-after-second, fixed resources; no simulation, interpolation/hierarchy composition, terrain/reflections/Present or gameplay FPS");
@@ -386,7 +493,17 @@ int main(int argc,char **argv)
     printf("SUMMARY: %s completion_saving_vs_direct=%.4f vs_serial_copy=%.4f ms per regular/extra pair\n",argv[3],saving[10],serial_saving[10]);
     ownership_controls(); /* Recheck output and ownership after sustained reuse. */
     REQUIRE(submitted==collected);InterlockedExchange(&stopping,1);REQUIRE(ReleaseSemaphore(available,1,NULL));
+#ifdef PF_WINDOW_DEVICE_OWNER
+    REQUIRE(wait_owner(worker,10000)==WAIT_OBJECT_0);
+    REQUIRE(owner_messages==submitted);
+    REQUIRE(bench_scope_transfer_owner(render_thread));
+    REQUIRE(bench_inst_transfer_owner(render_thread));
+    HR(IDirect3DDevice9_TestCooperativeLevel(g_dev));
+    REQUIRE((WNDPROC)SetWindowLongPtrW(owner_window,GWLP_WNDPROC,(LONG_PTR)owner_previous_proc)==owner_window_proc);
+    printf("WINDOW OWNER: %u ordered worker messages dispatched on producer; no Direct3D calls in window procedure\n",owner_messages);
+#else
     REQUIRE(WaitForSingleObject(worker,10000)==WAIT_OBJECT_0);
+#endif
     DWORD code;REQUIRE(GetExitCodeThread(worker,&code) && !code);CloseHandle(worker);
     for(unsigned i=0;i<WORKER_SLOTS;i++)CloseHandle(slots[i].done);
     CloseHandle(available);CloseHandle(initialized);CloseHandle(consume_gate);
