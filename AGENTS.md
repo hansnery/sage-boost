@@ -45,8 +45,10 @@ Related repos:
   matching beta peers, camera/input behavior and full-rate fresh shadows.
   This supersedes exact logic/CRC/frame-counter invariance for that
   experiment only; stock-peer compatibility is not assumed. Keep stable
-  builds unchanged. Launcher beta integration/publication is deferred until
-  worthwhile improvement is demonstrated and Hans requests publication.
+  builds unchanged. On 2026-10-19 Hans reported about 55 FPS in a very heavy
+  Ultra High scene, accepted this improvement, authorized launcher Beta
+  publication of beta.14 and continued research toward 120 FPS. Publish only
+  qualified checkpoints; do not treat this as permission to promote Stable.
   See [the experimental scope](docs/specs/2026-10-18-simulation-beta-design.md).
 - **Stable multiplayer safety: nothing that logic, input, the network or the CRC
   sees may change.** No retiming of game frames, no writes to the frame

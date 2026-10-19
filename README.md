@@ -101,8 +101,11 @@ update and repays small deadline overruns in later waits. It requires
 requirements leave the old scheduler active. The default is `PairPacing=0`.
 Offline adapter tests pass. Hans reports around 55 FPS in the heavy scene;
 the copied capture supports improvement, but a settled 59/s result and
-matching-beta multiplayer remain unverified. This is not a launcher/stable
-release. See the [gameplay report](docs/benchmarks/2026-10-19-beta14-gameplay-check.json).
+matching-beta multiplayer remain unverified. It is now available in the
+Realms Launcher **Beta** channel as `0.5.0.1-perf.0.9.11-beta.14`, with
+paired cadence enabled in its launcher profile. Stable is unchanged.
+See the [release notes](docs/releases/perf-0.9.11-beta.14.md) and
+[gameplay report](docs/benchmarks/2026-10-19-beta14-gameplay-check.json).
 See the [behavior and verification limits](docs/specs/2026-10-19-paired-cadence-runtime.md).
 
 1. Copy `bfme2perf.asi` and `bfme2perf.ini` into the `mss\` folder next to

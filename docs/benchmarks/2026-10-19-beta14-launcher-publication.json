@@ -1,0 +1,69 @@
+{
+  "version": "0.5.0.1-perf.0.9.11-beta.14",
+  "channel": "beta",
+  "previous_version": "0.5.0-perf.0.9.10",
+  "source_commit": "f6ebb2274708602be2c35e64a6b5932d4356eb96",
+  "files": {
+    "dinput8.dll": "5aaa6a1933e9d3404a1177cb3803092dac1ee747c72edad31338a85d8084bf58",
+    "dinput8.ini": "79262559ed83a7dbb0fdbb432dac748f677b06de23bfea6541e158e2b0832fc9",
+    "mss/bfme2perf.asi": "320f99d66269265c069388bc0231233e0ce234d26e78adad36a20bca9a9ba630",
+    "mss/bfme2perf.ini": "c176396029e5d5b889aca6fb90859669b2cd17a4009e916b8521721614dc1fb3"
+  },
+  "changed_files": [
+    "mss/bfme2perf.asi",
+    "mss/bfme2perf.ini"
+  ],
+  "all_previous_ini_values_preserved": true,
+  "new_ini_keys": [
+    "Experimental.PairPacing",
+    "Render.BulkRender",
+    "Render.QueueInsert",
+    "Render.QueueSort"
+  ],
+  "notes_sha256": "4fbac8919fbd0c89b2edbc630de0b8559330f6e4f640e1724eca07e2b3a74321",
+  "previous_signed_downloads_verified": 4,
+  "stable_snapshot": {
+    "channel": "stable",
+    "components": {}
+  },
+  "staged_source": "C:\\repositories\\realms-launcher\\target\\sage-boost-perf-beta14-release\\source",
+  "bundle_revision_reason": "The launcher compares four leading numeric components and ignores the perf suffix. Bundle revision 1 makes the update visible without relabeling either binary.",
+  "release_id": "0a495080a5beee260fce",
+  "manifest_key": "manifests/sage-boost/0.5.0.1-perf.0.9.11-beta.14-6c2f8631.json.zst",
+  "manifest_sha256": "6c2f8631f868db10bfdcbca647dece98aa25364c9ed19485d06e44e17dcc1db8",
+  "published_at": "2026-10-19T16:34:38.870Z",
+  "signed_downloads": [
+    {
+      "path": "dinput8.dll",
+      "sha256": "5aaa6a1933e9d3404a1177cb3803092dac1ee747c72edad31338a85d8084bf58",
+      "size": 33792,
+      "http_status": 206
+    },
+    {
+      "path": "dinput8.ini",
+      "sha256": "79262559ed83a7dbb0fdbb432dac748f677b06de23bfea6541e158e2b0832fc9",
+      "size": 2881,
+      "http_status": 206
+    },
+    {
+      "path": "mss/bfme2perf.asi",
+      "sha256": "320f99d66269265c069388bc0231233e0ce234d26e78adad36a20bca9a9ba630",
+      "size": 346112,
+      "http_status": 206
+    },
+    {
+      "path": "mss/bfme2perf.ini",
+      "sha256": "c176396029e5d5b889aca6fb90859669b2cd17a4009e916b8521721614dc1fb3",
+      "size": 7152,
+      "http_status": 206
+    }
+  ],
+  "unchanged_stable": true,
+  "unchanged_other_components": true,
+  "unchanged_local_installation": true,
+  "previous_release_id": "3c1c2b37aedb6612cd4e",
+  "game_launched": false,
+  "payload_notes_commit": "778bbd1",
+  "full_gameplay_goal_verified": false,
+  "multiplayer_validation_pending": true
+}

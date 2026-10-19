@@ -65,9 +65,15 @@ Strike an item through, with the date, when it's done.
   Verify normal game speed and matching-beta sync before claiming success.
   Keep render-thread work available, but do not resume small worker changes
   in place of this approved change of approach.
-- [ ] Launcher beta distribution is deferred. If the experiment demonstrates
-  a worthwhile improvement and Hans requests publication, provide an opt-in
-  beta with stable default/rollback and explicit matching-peer requirements.
+- [x] 2026-10-19: Hans accepts the roughly 55 FPS Ultra High heavy-scene
+  improvement and authorizes publication. Publish the exact beta.14 through
+  Launcher Beta; all four signed downloads match, Stable/other components
+  and local preferences remain unchanged. See the
+  [receipt](benchmarks/2026-10-19-beta14-launcher-publication.json).
+- [ ] Pursue the newly authorized adaptive 120 FPS path while retaining the
+  published beta.14 checkpoint. Preserve fresh shadows and ordinary-update
+  cadence. The earlier settled 59/s measurement remains incomplete, but Hans
+  explicitly asked to proceed with 120 research now.
 
 - [x] 2026-10-18: qualify equal final GPU completion for native/direct/worker
   paths at batch depths 2/4/8. All intermediate images/states are checked;

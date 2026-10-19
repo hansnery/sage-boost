@@ -16,6 +16,39 @@ and multiplayer qualification remain unmet.
 
 ## Next target: 60 visual FPS with shadows at 60 (2026-10-17)
 
+### Beta.14 published; next research target 120 FPS (2026-10-19)
+
+Hans confirmed the scene was very heavy with Ultra High graphics, accepted
+the roughly 55 FPS improvement, and explicitly authorized publishing it as
+a sage-boost beta and pursuing 120 FPS now. Stable remains unchanged. The
+older 59/s qualification record remains incomplete; do not rewrite it as a
+pass or make it a prerequisite for beginning the newly requested research.
+
+Published through Realms Launcher Beta as **0.5.0.1-perf.0.9.11-beta.14**,
+release `0a495080a5beee260fce`. Manifest:
+`manifests/sage-boost/0.5.0.1-perf.0.9.11-beta.14-6c2f8631.json.zst`.
+Only `mss/bfme2perf.asi` and its template changed. The exact tested ASI is
+published; unlocker 0.5.0 and its Realms aliases are byte-identical to the
+previous release. Every previous performance-template value is retained;
+QueueInsert, QueueSort, BulkRender and PairPacing are added enabled. Launcher
+overrides continue to apply. The numeric bundle revision makes the update
+visible to existing launchers, whose version comparator ignores the suffix.
+
+Public current-version/notes checks and all four signed HTTP 206 downloads
+pass with exact hashes. Stable and all other component metadata match the
+before snapshot; the local installation is unchanged. No game was launched.
+Frozen publisher source/config and recovery data:
+`C:\repositories\realms-launcher\target\sage-boost-perf-beta14-release`.
+[Publication receipt](benchmarks/2026-10-19-beta14-launcher-publication.json),
+[player notes](releases/perf-0.9.11-beta.14.md),
+[launcher profile](../perf/profiles/realms-beta14.ini).
+
+The next candidate must adapt between one, two and three extra draws based
+on measured headroom, preserve ordinary-update cadence and full-rate fresh
+shadows, and retain beta.14 as the published checkpoint. Raising MaxFPS alone
+does not provide that behavior. Gameplay 120 FPS and multiplayer remain
+unqualified.
+
 ### First user-confirmed heavy-scene improvement (2026-10-19)
 
 Hans reports definitely exceeding 30 FPS in the heavy scene, around 55 FPS,
