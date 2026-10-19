@@ -18,6 +18,15 @@ and multiplayer qualification remain unmet.
 
 ### Beta.16 intermittent recovery fix (2026-10-19)
 
+Follow-up offline screening reproduces another credit reset: intermittent
+frames whose remaining budget cannot fit the recovery candidate erase prior
+eligible observations. Removing that reset only in a generated test copy
+increases extras from 36 to 1,669 over 1,800 virtual updates, with one probe
+and no late predictions. Existing focused adapter tests pass. Long budget
+gaps and changing candidate costs still need explicit qualification before
+runtime promotion. [Reproduction and next checks](specs/2026-10-19-recovery-budget-gaps.md).
+The installed beta.16 and public releases are unchanged.
+
 Hans subsequently tested beta.16 and reports remaining above 30 FPS, near
 60. The new copied capture confirms beta.16 and the unchanged installed INI
 hash. Its 38 complete positive-logic/nonempty 60-second windows range from
