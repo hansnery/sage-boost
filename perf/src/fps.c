@@ -1356,15 +1356,14 @@ static void pair_wait(void **slot, const unsigned *engine, unsigned period_ms)
                         expected = avg = candidate;
                         guess = 0;
                     }
-                } else {
-                    g_pair_probe_frames = 0;
                 }
             }
             /* An admitted ordinary extra must not erase recovery credit from
              * earlier eligible cost-blocked frames. Otherwise intermittent
              * headroom can keep a stale maximum alive while preventing all
-             * recovery probes. Ineligible frames, probe attempts and pauses
-             * still reset the counter; the 60-frame threshold is unchanged. */
+             * recovery probes. A frame without candidate headroom neither
+             * adds nor removes credit. Ineligible UI/game state, attempts
+             * and pauses still reset it; the 60-observation limit is unchanged. */
             if (planned) {
                 unsigned start = g_fine();
                 LONGLONG wait_start = qpc();

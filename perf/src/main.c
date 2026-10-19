@@ -28,7 +28,7 @@
 #include "timing.h"
 #include "uistate.h"
 
-#define PERF_VERSION "0.9.11-beta.16"
+#define PERF_VERSION "0.9.11-beta.17"
 
 static WCHAR g_log_path[MAX_PATH];
 

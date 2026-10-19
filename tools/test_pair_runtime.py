@@ -44,6 +44,7 @@ def main():
     intermittent = re.search(r"intermittent recovery: (\d+) extras, 1 probe, 0 late, (\d+) us", output)
     assert intermittent and int(intermittent.group(1)) > 1700
     assert 59390000 <= int(intermittent.group(2)) <= 59410000
+    assert "recovery budget gaps: no unaffordable draws, later recovery, bounded failures" in output
     adaptive = []
     pattern = (r"adaptive max=(\d+) limit=(\d+) regular=(\d+) cost=(\d+): (\d+) ordinary, "
                r"(\d+) extra, (\d+) us, max gap (\d+) us, (\d+) late")
@@ -104,12 +105,13 @@ def main():
                                   "extra_draws": int(intermittent.group(1)),
                                   "probes": 1, "late_predictions": 0,
                                   "virtual_elapsed_us": int(intermittent.group(2))},
+        "recovery_budget_gap_cases_passed": True,
         "adaptive_cases": adaptive,
         "changing_period_case": {"ordinary_updates": 6000,
                                  "extra_draws": int(period_case.group(1)),
                                  "virtual_elapsed_us": int(period_case.group(2))},
         "raw_output": '\n'.join(line for line in output.splitlines()
-                                if line.startswith(('adaptive ', 'adapter ', 'intermittent ', 'paired runtime adapter:'))),
+                                if line.startswith(('adaptive ', 'adapter ', 'intermittent ', 'recovery ', 'paired runtime adapter:'))),
         "coverage": [
             "Production fps/catch-up/pairpace object files, not alternate implementations",
             "One pacing owner, real saved wait-threshold adapter and exact ordinary update count",

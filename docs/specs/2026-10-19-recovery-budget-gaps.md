@@ -42,3 +42,18 @@ Reproduction files are under `perf/build/`: `screen_pair_budget_gaps.py`,
 `budget_fps.exe`, `budget_screen_pair_budget_candidate.exe`, and
 `budget-candidate-suite.log`. These ignored artifacts are local test copies,
 not changes to the production scheduler.
+
+## Beta.17 runtime candidate
+
+The runtime candidate removes that one budget-refusal reset. Credit still
+increments only when the current recovery candidate fits. UI/game eligibility,
+pause handling and actual probe attempts retain their resets. No admission
+threshold, reserve, borrowing limit, game rate or user preference changes.
+
+Additional production-object regressions cover 1,800 consecutive non-fitting
+frames after 30 eligible observations, followed by recovery; a cost increase
+to 25 ms during that gap, which must reach the existing three-failure rest;
+and an intervening successful expensive sample, which must prevent admission
+until a new cheap successful sample fits. A long gap itself must produce no
+extras, probes or late predictions. These cases supplement the periodic-gap
+screen above; they do not turn its modeled rate into a gameplay forecast.

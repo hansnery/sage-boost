@@ -399,8 +399,61 @@ static void recovery_credit_gates(void)
     puts("recovery credit: pause, scrolling and placement reset eligibility");
 }
 
+static void seed_recovery_credit(void)
+{
+    setup_runtime(1);
+    for (unsigned i = 0; i < 120; i++) runtime_frame(8000, 33);
+    for (unsigned i = 0; i < 8; i++) game_draw(20000, 0);
+    extra_us = 18500;
+    runtime_frame(8000, 33);
+    extra_us = 12849;
+    runtime_frame(8000, 33);
+}
+
+static void recovery_budget_gaps(void)
+{
+    pf_fps_row row;
+    seed_recovery_credit();
+    pf_fps_take_row(&row);
+    for (unsigned i = 0; i < 30; i++) runtime_frame(19854, 33);
+    for (unsigned i = 0; i < 1800; i++) runtime_frame(25000, 33);
+    pf_fps_take_row(&row);
+    CHECK(!row.probes[0] && !row.extra && !row.late,
+          "unaffordable gap admitted work");
+    for (unsigned i = 0; i < 40; i++) runtime_frame(19854, 33);
+    pf_fps_take_row(&row);
+    CHECK(row.probes[0] == 1 && row.probes[1] == 1 && !row.late,
+          "long budget gap prevented recovery");
+    seed_recovery_credit();
+    pf_fps_take_row(&row);
+    for (unsigned i = 0; i < 30; i++) runtime_frame(19854, 33);
+    extra_us = 25000;
+    for (unsigned i = 0; i < 1800; i++) runtime_frame(25000, 33);
+    for (unsigned i = 0; i < 900; i++) runtime_frame(19854, 33);
+    pf_fps_take_row(&row);
+    CHECK(row.probes[0] == 3 && row.probes[2] == 3 && pf_fps_resting(),
+          "expensive transition after gap did not back off");
+    seed_recovery_credit();
+    for (unsigned i = 0; i < 30; i++) runtime_frame(19854, 33);
+    extra_us = 18500;
+    runtime_frame(8000, 33); /* latest successful candidate is now expensive */
+    pf_fps_take_row(&row);
+    for (unsigned i = 0; i < 80; i++) runtime_frame(19854, 33);
+    pf_fps_take_row(&row);
+    CHECK(!row.probes[0] && !row.extra && !row.late,
+          "retained credit bypassed current expensive candidate");
+    extra_us = 12849;
+    runtime_frame(8000, 33);
+    for (unsigned i = 0; i < 40; i++) runtime_frame(19854, 33);
+    pf_fps_take_row(&row);
+    CHECK(row.probes[0] == 1 && row.probes[1] == 1 && !row.late,
+          "changing candidate did not recover with fresh admission");
+    puts("recovery budget gaps: no unaffordable draws, later recovery, bounded failures");
+}
+
 int main(void)
 {
+    recovery_budget_gaps();
     intermittent_recovery();
     recovery_credit_gates();
     unsigned i;

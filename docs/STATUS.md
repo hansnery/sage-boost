@@ -16,6 +16,27 @@ and multiplayer qualification remain unmet.
 
 ## Performance beta and 120 FPS research (2026-10-19)
 
+### Beta.17 budget-gap recovery (2026-10-19)
+
+The candidate retains recovery credit across frames with insufficient budget,
+without counting those frames toward the 60 eligible-observation threshold.
+The current candidate must still fit at both planning and admission. Long
+non-fitting gaps, changing successful costs, pause/UI resets and persistent
+expensive-work backoff pass production-object regression tests. The periodic
+gap screen increases extras from 36 to 1,669 over 1,800 controlled updates;
+this is not gameplay evidence.
+
+The full suite rerun passes with exit 0 and six integer objects pass the
+instruction audit. The initial run failed the legacy smoothing assertion at
+`test_fps.c:1195` (+7.428436 versus +7.5 expected); the same executable passed
+unchanged on a direct rerun and then in the complete rerun. Preserve
+`perf/build/beta17-suite.log` and `beta17-suite-repeat.log` rather than hiding
+the initial failure. No test tolerance or legacy interpolation code changed.
+[Runtime report](benchmarks/2026-10-19-budget-gap-runtime.json) and
+[design/qualification](specs/2026-10-19-recovery-budget-gaps.md).
+Local deployment follows a backup and exact INI/hash verification. Published
+beta.14 and Stable remain unchanged; gameplay qualification remains open.
+
 ### Beta.16 intermittent recovery fix (2026-10-19)
 
 Follow-up offline screening reproduces another credit reset: intermittent

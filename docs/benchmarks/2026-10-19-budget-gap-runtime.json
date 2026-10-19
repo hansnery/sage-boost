@@ -1,0 +1,202 @@
+{
+  "version": "0.9.11-beta.17",
+  "kind": "production adapter correctness test with controlled virtual timing",
+  "gameplay_target_verified": false,
+  "plugin_sha256": "6be4b0434f4db825d17d12809d66947442e8c63b704d866399a6e66cbbfae6ba",
+  "fixture_sha256": "ab8ffa268de296c62960bbf6cf746ea932aa9498208510233736ee7e65708611",
+  "sources": {
+    "perf/src/fps.c": "7dea9f06f4e81e8ecb0f6e0f8eff1d32657699d7a9e6c5301ce4ed873d6b61b0",
+    "perf/src/fps.h": "2152bcace057bf98b3efa77df4a73f2897685a10eecb42645570328f46a48b8c",
+    "perf/src/pairpace.c": "d3ab81003464d292674aa5f3f8850733dac9d5f9bca59b643e0240fcb92fb084",
+    "perf/src/pairpace.h": "9b14c79bd5d9943394014ceb06d5c6eaa834d6e829ece385a66fb47f60a5fe34",
+    "perf/src/catchup.c": "f784a2afa7fbddd5f48f7beaa2df35ac89790f50d849bf0c05e2f2fcb2c1cc07",
+    "perf/src/catchup.h": "313504c392567003e2d6eb267cee2861e8161daac63b545e0571d4ab8655f8a3",
+    "perf/src/config.c": "deeacb1a8639200b80fd33847338ebb3e60e7ccfc1e85807a1a7158c747d27bb",
+    "perf/src/config.h": "168d2acb3d838548870e29827e838e381b39b258fec0e77c2d49ceda6405b85e",
+    "perf/src/main.c": "3bcfa526f584d2e21aaaad57f3629f370ade7fad68115f5c9361c84d6c70a0f4",
+    "perf/src/version.rc": "8a854c08531052d982937cf833550979ae0bccfaa9cdbe66fcf5ffa600f2d146",
+    "perf/tests/test_pair_runtime.c": "be3015d4562b3076f4af3807b781a8a2e98a87d482a2339b71494ca9fad08fa3",
+    "perf/tests/test_fps.c": "dcd2e8249f36ec17f5f6bac94a08404c46be0db0edeb2a4162db68b257e0ed31",
+    "perf/tests/test_config.c": "df196a87a8a527283567a210d1265459ee37443b540f70a7d7d0925358cbe064",
+    "perf/bfme2perf.ini": "9096cb35db3400f19bde1f6c6a322bb1bea1d12473e109c75fbf4b22563aaa40",
+    "tools/test_pair_runtime.py": "953bdccf068ac6cfe251f23774077d599f6d1ada56001a299abcfcc5f34a6cac"
+  },
+  "integer_object_audit": {
+    "fps": {
+      "sha256": "7d2c66e06ba04bd2358082a01726c711cac109691cccf7545a98b4cbda92ce85",
+      "instructions_checked": 4712,
+      "forbidden_fp_instructions": []
+    },
+    "pairpace": {
+      "sha256": "03fadb687308cb1f218ab9f74edf0d49dfe806ea8784062a51b65a2b2e61a5b6",
+      "instructions_checked": 340,
+      "forbidden_fp_instructions": []
+    },
+    "catchup": {
+      "sha256": "36cc28bde9717dd25fb4de46a2b635bc4f82bf88a4a001972bf4685a9c7b7756",
+      "instructions_checked": 1399,
+      "forbidden_fp_instructions": []
+    },
+    "config": {
+      "sha256": "39e5b0d41bffd2357143904ddf590029a528b14a27704e70f37956a5c62be90b",
+      "instructions_checked": 887,
+      "forbidden_fp_instructions": []
+    },
+    "main": {
+      "sha256": "23af76a7c2eae1ed86d7f32d1c22d796422d4ccbcc95a83db3871c1f5e7599c8",
+      "instructions_checked": 1849,
+      "forbidden_fp_instructions": []
+    },
+    "stubs": {
+      "sha256": "b6629e027c2d493891fe24431b50deacce67bfb18c9b2162059c40ca49d732cf",
+      "instructions_checked": 333,
+      "forbidden_fp_instructions": []
+    }
+  },
+  "full_suite_log": {
+    "path": "perf\\build\\beta17-suite-repeat.log",
+    "sha256": "cc0a8c063b3bcbfff4314320191fa1b883e62298d6af6c8e2f5ac97361b0aec5",
+    "required_markers_present": true,
+    "failure_markers": false
+  },
+  "closed_loop_cases": [
+    {
+      "paired": 0,
+      "regular_cost_us": 19854,
+      "jitter": 0,
+      "ordinary_updates": 1800,
+      "extra_draws": 0,
+      "virtual_elapsed_us": 59399970,
+      "shortened_waits": 0,
+      "late_predictions": 0
+    },
+    {
+      "paired": 1,
+      "regular_cost_us": 19854,
+      "jitter": 0,
+      "ordinary_updates": 1800,
+      "extra_draws": 1800,
+      "virtual_elapsed_us": 59400000,
+      "shortened_waits": 0,
+      "late_predictions": 0
+    },
+    {
+      "paired": 1,
+      "regular_cost_us": 19854,
+      "jitter": 1,
+      "ordinary_updates": 1800,
+      "extra_draws": 1800,
+      "virtual_elapsed_us": 59401890,
+      "shortened_waits": 899,
+      "late_predictions": 0
+    }
+  ],
+  "intermittent_recovery": {
+    "ordinary_updates": 1800,
+    "extra_draws": 1741,
+    "probes": 1,
+    "late_predictions": 0,
+    "virtual_elapsed_us": 59400015
+  },
+  "recovery_budget_gap_cases_passed": true,
+  "adaptive_cases": [
+    {
+      "max_fps": 120,
+      "pair_max_extras": 3,
+      "regular_cost_us": 6000,
+      "extra_cost_us": 4000,
+      "ordinary_updates": 1800,
+      "extra_draws": 5400,
+      "virtual_elapsed_us": 59400000,
+      "gap_max_us": 8770,
+      "late_predictions": 0,
+      "modeled_presentations_per_second": 121.21212121212122
+    },
+    {
+      "max_fps": 120,
+      "pair_max_extras": 1,
+      "regular_cost_us": 6000,
+      "extra_cost_us": 4000,
+      "ordinary_updates": 1800,
+      "extra_draws": 1800,
+      "virtual_elapsed_us": 59400000,
+      "gap_max_us": 16520,
+      "late_predictions": 0,
+      "modeled_presentations_per_second": 60.60606060606061
+    },
+    {
+      "max_fps": 90,
+      "pair_max_extras": 3,
+      "regular_cost_us": 6000,
+      "extra_cost_us": 4000,
+      "ordinary_updates": 1800,
+      "extra_draws": 3600,
+      "virtual_elapsed_us": 59400000,
+      "gap_max_us": 11020,
+      "late_predictions": 0,
+      "modeled_presentations_per_second": 90.9090909090909
+    },
+    {
+      "max_fps": 60,
+      "pair_max_extras": 3,
+      "regular_cost_us": 6000,
+      "extra_cost_us": 4000,
+      "ordinary_updates": 1800,
+      "extra_draws": 1800,
+      "virtual_elapsed_us": 59400000,
+      "gap_max_us": 16520,
+      "late_predictions": 0,
+      "modeled_presentations_per_second": 60.60606060606061
+    },
+    {
+      "max_fps": 120,
+      "pair_max_extras": 3,
+      "regular_cost_us": 12000,
+      "extra_cost_us": 7000,
+      "ordinary_updates": 1800,
+      "extra_draws": 3600,
+      "virtual_elapsed_us": 59400000,
+      "gap_max_us": 13210,
+      "late_predictions": 0,
+      "modeled_presentations_per_second": 90.9090909090909
+    },
+    {
+      "max_fps": 120,
+      "pair_max_extras": 3,
+      "regular_cost_us": 18000,
+      "extra_cost_us": 8900,
+      "ordinary_updates": 1800,
+      "extra_draws": 1800,
+      "virtual_elapsed_us": 59400000,
+      "gap_max_us": 19310,
+      "late_predictions": 0,
+      "modeled_presentations_per_second": 60.60606060606061
+    }
+  ],
+  "changing_period_case": {
+    "ordinary_updates": 6000,
+    "extra_draws": 14572,
+    "virtual_elapsed_us": 203996940
+  },
+  "raw_output": "recovery from a learned floor above the entire frame budget\nrecovery budget gaps: no unaffordable draws, later recovery, bounded failures\nintermittent recovery: 1741 extras, 1 probe, 0 late, 59400015 us\nrecovery credit: pause, scrolling and placement reset eligibility\nadaptive policy: deadline, anchor, wrap and quota boundaries checked\nadaptive max=120 limit=3 regular=6000 cost=4000: 1800 ordinary, 5400 extra, 59400000 us, max gap 8770 us, 0 late\nadaptive max=120 limit=1 regular=6000 cost=4000: 1800 ordinary, 1800 extra, 59400000 us, max gap 16520 us, 0 late\nadaptive max=90 limit=3 regular=6000 cost=4000: 1800 ordinary, 3600 extra, 59400000 us, max gap 11020 us, 0 late\nadaptive max=60 limit=3 regular=6000 cost=4000: 1800 ordinary, 1800 extra, 59400000 us, max gap 16520 us, 0 late\nadaptive max=120 limit=3 regular=12000 cost=7000: 1800 ordinary, 3600 extra, 59400000 us, max gap 13210 us, 0 late\nadaptive max=120 limit=3 regular=18000 cost=8900: 1800 ordinary, 1800 extra, 59400000 us, max gap 19310 us, 0 late\nadaptive second-draw spike/recovery/cost/state guards: checked\nadaptive changing-period updates: 6000 ordinary, 14572 extra, 203996940 us, 0 late\nadapter paired=0 regular=19854 jitter=0: 1800 ordinary, 0 extra, 59399970 us, 0 shortened waits, 0 late, stop=none\nadapter paired=1 regular=19854 jitter=0: 1800 ordinary, 1800 extra, 59400000 us, 0 shortened waits, 0 late, stop=none\nadapter paired=1 regular=19854 jitter=1: 1800 ordinary, 1800 extra, 59401890 us, 899 shortened waits, 0 late, stop=none\nadapter persistent cost: 5 extra, 3 probes, 3 failed, resting=three paired recovery probes exceeded their debt allowance\nadapter recovery: 211 extra draws after the spike, 1 late, 9932983 us for 301 updates\npaired runtime adapter: PASS (0 failures)",
+  "coverage": [
+    "Production fps/catch-up/pairpace object files, not alternate implementations",
+    "One pacing owner, real saved wait-threshold adapter and exact ordinary update count",
+    "Held view/particle updates, unchanged camera, fresh shadow calls, preserved reflection option",
+    "Pause, shell, minimization, screenshots, placement, scrolling and frames without a wait",
+    "Native period change and logic-random, engine-counter, client-frame and camera failure guards",
+    "One transient recovery with a more expensive ordinary reference draw",
+    "Persistent expensive draws: at most five draws, three failed bounded probes, then rest",
+    "Adaptive one/two/three draws, MaxFPS ceiling, shared deadline, repeated observations and clock wrap",
+    "Second-draw cost/state failures, UI eligibility lost after first draw and later recovery",
+    "6000 changing native periods with preserved ordinary cadence"
+  ],
+  "limits": [
+    "No game, game entry point, native update, GPU scene, Present or multiplayer peer executes.",
+    "Draw costs and the timeline are controlled fixture inputs; these rates are not measured gameplay FPS.",
+    "The hook adapter is called through its C interface; unchanged assembly/site behavior is checked by the full existing hook/site suite.",
+    "Shadow invocation is checked here; pixel correctness relies on the unchanged rendering path and prior GPU qualification.",
+    "Matching-beta multiplayer, real game speed/input behavior and the settled heavy-scene 59/s target still require gameplay capture.",
+    "120 is a controlled timing result. The heavier input falls back to one extra; actual heavy-scene 120 FPS is not achieved."
+  ]
+}
