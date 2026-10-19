@@ -39,6 +39,23 @@ the existing single-extra path remains predominantly cost-blocked here.
 Preserved hashes, selection, pacing and limits are in
 [the later capture report](benchmarks/2026-10-19-later-beta14-capture.json).
 
+Hans subsequently clarified that this test used **2x command-point limit**,
+making it stricter than his earlier test. This is a user-reported scenario
+setting, not an assertion that visible troop count or rendering work doubled.
+The precise 60-second interval remains unconfirmed. Preserve this distinction
+in comparisons; the lower rate does not establish a beta.14 regression.
+
+A small offline declaration-cache screen found that bypassing dense-rank
+updates on an already-most-recent hit reduced a repeated-hot lookup from
+about 128 ns to 2.8 ns (nine million lookups per variant, GCC -O2, fake COM
+device). Existing eviction, unsupported/failure caching and reference-balance
+checks passed for both generated variants. The capture records approximately
+6.7 million hits over roughly fifteen minutes: even if every hit qualified,
+this isolated saving is only about one millisecond per second of play.
+This is insufficient for a substantive build and was not promoted to runtime.
+The screen is in `perf/build/screen_decl.py`; it does not measure native GPU
+work or gameplay, and changing cache policy more broadly remains unqualified.
+
 ### Adaptive candidate beta.15 (2026-10-19)
 
 The next development candidate adds `[Experimental] PairMaxExtras=1..3`,
