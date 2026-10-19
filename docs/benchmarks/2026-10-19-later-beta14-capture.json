@@ -1,0 +1,138 @@
+{
+  "capture_sha256": {
+    "bfme2perf.asi": "320f99d66269265c069388bc0231233e0ce234d26e78adad36a20bca9a9ba630",
+    "bfme2perf.ini": "778f8032ff41fdad7437aaf7b43e717457d3e86e898a638c80409b1961a0bdd7",
+    "bfme2perf.log": "4de5249b8dcc65e2d23ef8f31206c51385975dea591e3374dc522c816dc27988",
+    "bfme2perf_scopes.csv": "8e8fa98b454e381abe09ba2ae4839797723b967d2be73d22c8aa34fca22694cc",
+    "bfme2perf_timing.csv": "04b0bbfe60d18e29ed1943d81a47c633c24a1caf99da1ce6c91d094a7e53bf0a"
+  },
+  "rows": 886,
+  "eligible_windows": 610,
+  "scene_identity_verified": false,
+  "window": {
+    "start_s": 835,
+    "end_s_exclusive": 895,
+    "nominal_seconds": 60,
+    "at_least_60_seconds": true
+  },
+  "presentation_calls": 2264,
+  "presentation_calls_per_nominal_second": 37.733333333333334,
+  "nominal_rate_at_least_59": false,
+  "rate_bounds_from_timestamp_quantization": {
+    "lower": 37.114754098360656,
+    "upper": 38.3728813559322
+  },
+  "per_row_calls": {
+    "min": 27,
+    "max": 53
+  },
+  "regular_frame_updates": 1818,
+  "extra_frames": 453,
+  "pacing": {
+    "gaps": 2264,
+    "histogram_counts": {
+      "present_gap_le_8333us": 0,
+      "present_gap_le_12500us": 7,
+      "present_gap_le_16667us": 469,
+      "present_gap_le_20000us": 405,
+      "present_gap_le_25000us": 70,
+      "present_gap_le_33334us": 851,
+      "present_gap_le_50000us": 448,
+      "present_gap_le_100000us": 12,
+      "present_gap_le_200000us": 2,
+      "present_gap_le_500000us": 0,
+      "present_gap_le_1000000us": 0,
+      "present_gap_over_1000000us": 0
+    },
+    "p50": {
+      "lower_exclusive_ms": 25.0,
+      "upper_ms": 33.334
+    },
+    "p95": {
+      "lower_exclusive_ms": 33.334,
+      "upper_ms": 50.0
+    },
+    "fraction_over_25_ms": 0.5799469964664311,
+    "fraction_over_50_ms": 0.006183745583038869
+  },
+  "shadows": {
+    "extra_draw_calls": 453,
+    "extra_completed_pass_samples": 453,
+    "valid_extra_profiles": 453,
+    "invalid_extra_profiles": 0,
+    "regular_shadow_skips": 0,
+    "extra_counts_match_each_row": true
+  },
+  "verification_failures": {
+    "verify_bad": 0,
+    "shadow_verify_bad": 0,
+    "spv_bad": 0,
+    "lt_verify_bad": 0
+  },
+  "bulk_coverage": {
+    "available": true,
+    "instrumented_rows": 60,
+    "selected_rows": 60,
+    "regular": {
+      "consumed_followers_by_method_count": {
+        "1": 1846365,
+        "2": 2020415,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      },
+      "consumed_followers": 3866780,
+      "multi_method_followers": 2020415,
+      "multi_method_fraction": 0.5225058058643108,
+      "frame_denominator": 1818,
+      "consumed_followers_per_frame": 2126.941694169417
+    },
+    "extra": {
+      "consumed_followers_by_method_count": {
+        "1": 453136,
+        "2": 493162,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      },
+      "consumed_followers": 946298,
+      "multi_method_followers": 493162,
+      "multi_method_fraction": 0.521148729047298,
+      "frame_denominator": 453,
+      "consumed_followers_per_frame": 2088.9580573951434
+    },
+    "limits": [
+      "Consumed follower records across render passes; not unique units or successful draws.",
+      "Deferred leaders are excluded; no total eligible-record denominator is recorded.",
+      "Regular per-frame values include updates whose render was skipped.",
+      "Method counts measure use of the path, not time saved or FPS gained."
+    ]
+  },
+  "limits": [
+    "Completed flip-enabled EndScene calls; not measured display refresh or GPU success.",
+    "Row timestamps quantize duration; reported FPS uses the nominal interval.",
+    "Percentiles are pooled histogram bounds, not exact gaps or averaged row percentiles.",
+    "The first gap may begin before the selected interval.",
+    "Matching shadow counts do not prove correct pixels or per-frame correspondence.",
+    "Confirm the saved-game scene, loaded version/settings, visual output and runtime log.",
+    "Simulation/network/input/camera invariants require separate evidence."
+  ],
+  "weighted_metrics": {
+    "frame_avg_ms": 22.277292629262927,
+    "logic_ms": 4.466395489548955,
+    "render_ms": 12.887488448844886,
+    "shadow_ms": 6.262429592959296,
+    "fx_batch_ms": 7.662823432343234,
+    "fx_mesh_ms": 3.7015258525852586,
+    "inst_meshes": 2664.864686468647
+  },
+  "blockers": {
+    "fps_block_cost": 1282,
+    "fps_block_catchup": 75,
+    "fps_block_pause": 0,
+    "extra_late": 0
+  },
+  "selection": "Highest frame-weighted instanced mesh count among complete positive-logic, nonempty 60-second windows; not a verified fixed scene."
+}

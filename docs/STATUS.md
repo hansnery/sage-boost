@@ -16,6 +16,29 @@ and multiplayer qualification remain unmet.
 
 ## Performance beta and 120 FPS research (2026-10-19)
 
+### Later installed capture reviewed (2026-10-19)
+
+Fresh inspection found beta.14 installed again, with its published ASI hash
+and a different INI hash from the original development installation. No game
+or Realms launcher process was present when the files were copied to
+`perf/build/captures/current-review-20261019`. No installation was changed.
+
+The highest frame-weighted mesh-count complete positive-logic window in
+this newer capture is seconds 835..894: 2,264 presentation calls, 37.73/s,
+with 453 extras and 1,282 cost blocks. Pacing p50 is (25, 33.334] ms and
+p95 (33.334, 50] ms. Every counted extra has a shadow sample; sampled
+verification failures and late extras are zero. Ordinary frame work averages
+22.28 ms, shadow work 6.26 ms, and FX batch work 7.66 ms. These scopes can
+overlap and must not be summed as independent costs.
+
+Scene identity and a settled fixed camera are unverified; this is not a
+same-save comparison with the earlier user-reported ~55 FPS capture and
+does not establish regression. It does strengthen the case for reducing
+complete rendering cost before installing the adaptive multi-extra candidate:
+the existing single-extra path remains predominantly cost-blocked here.
+Preserved hashes, selection, pacing and limits are in
+[the later capture report](benchmarks/2026-10-19-later-beta14-capture.json).
+
 ### Adaptive candidate beta.15 (2026-10-19)
 
 The next development candidate adds `[Experimental] PairMaxExtras=1..3`,
