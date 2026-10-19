@@ -112,11 +112,18 @@ Strike an item through, with the date, when it's done.
   pairs regress: synchronous group handoff adds a median 13.37-17.84 ms per
   pair across workloads. Reject runtime promotion. See
   `benchmarks/2026-10-18-native-group-consumer.json`.
-- [ ] Investigate a larger command handoff while keeping actual effect
-  lifecycle/results on the producer. Audit device calls and own all queued
-  values/resources; preserve explicit caller-state restoration and failure
-  propagation. Fixed single-pass group fixtures do not qualify the native
-  FX wrapper, general resource lifetime, whole scene or ordinary fallback.
+- [x] 2026-10-18: screen producer effect evaluation with owned command
+  batches of sixteen groups. Both images/backends pass 96 image/state cases,
+  27,600 group restoration checks and 64 faults. D3DX27 still saves state with
+  Begin(flags=6); flags=7 plus queued explicit restoration removes the
+  producer state-block calls in this fixture. DXVK regresses 2.31-3.08 ms
+  per pair; native D3D9 saves only 0.10-0.73 ms. No runtime promotion. See
+  `benchmarks/2026-10-18-group-command-batches.json`.
+- [ ] Measure/reduce producer capture cost, including redundant native
+  per-mesh dispatch in already-qualified bulk groups. Preserve native
+  events, ownership and ordinary fallback; do not omit capture cost from
+  comparisons. The changed flags=7 Begin contract, deferred driver errors,
+  cold effects, live resources and whole scene/Present remain unqualified.
 - [x] 2026-10-18: back up a second launcher replacement of beta.13 by
   0.9.10, restore the identical tested binary and only the three missing beta
   keys, and verify the shortcut with CheckOnly. No game launched; see

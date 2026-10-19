@@ -48,12 +48,11 @@ static void packet_consumer_close(void)
     consumer.submit.valid=0;consumer.owner=0;
 }
 
-static void packet_consumer_group(const float *palettes,unsigned count,unsigned extra,
+static void packet_consumer_group_loaded(const float *palettes,unsigned count,unsigned extra,
                                   IDirect3DVertexShader9 *game_shader)
 {
     REQUIRE(consumer.owner==GetCurrentThreadId() && extra<2 && count && count<=GROUP_SIZE);
     unsigned *bones=(unsigned *)palettes;
-    material_fixture_bones(bones,BONES*32);
     pf_submit_desc descriptor={0};
     descriptor.dev=g_dev;descriptor.game_vs=game_shader;descriptor.our_vs=consumer.shader;
     descriptor.game_decl=g_decl;descriptor.our_decl=consumer.declaration->ours;
@@ -78,6 +77,13 @@ static void packet_consumer_group(const float *palettes,unsigned count,unsigned 
     }
     if(descriptor.previous_vb)IDirect3DVertexBuffer9_Release((IDirect3DVertexBuffer9 *)descriptor.previous_vb);
     consumer.groups[extra]++;consumer.meshes[extra]+=count;
+}
+
+static void packet_consumer_group(const float *palettes,unsigned count,unsigned extra,
+                                  IDirect3DVertexShader9 *game_shader)
+{
+    material_fixture_bones(palettes,BONES*32);
+    packet_consumer_group_loaded(palettes,count,extra,game_shader);
 }
 
 #ifndef PF_PACKET_CONSUMER_GROUP_ONLY

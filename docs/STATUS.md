@@ -58,6 +58,49 @@ Accelerator has now run in isolated offline harnesses (below).
   resolve a reproducible multiplayer divergence only after one is observed.
   No promised FPS gain, deployment or new gameplay request from this review.
 
+### Producer effects and batched device commands (2026-10-18)
+
+The next optional fixture keeps D3DX evaluation and native group control on
+the producer, copying state commands and palettes into two owned queue slots
+of up to sixteen groups each. The GPU worker draws without accessing the
+producer's effect objects. Queued shader/texture references are retained
+and released, and publication poisons the producer's scratch storage.
+
+The audit found a real boundary problem: D3DX27 Begin(flags=6) still captures
+device state through cached state blocks with a custom manager installed.
+Direct replay concealed the interference; worker replay exposed incorrect
+restoration. The fixture now uses Begin(flags=7) and queues explicit
+flags=6 render-state/texture restoration on the GPU owner. All 119 public
+device methods and state-block Capture/Apply are audited during correctness,
+then restored before timing. The native D3D9 auditor also had to preserve
+private vtable entries beyond the public interface; its failed run and
+debugger evidence are retained.
+
+Both local images/backends pass **96 candidate image/state cases, 27,600
+per-group restoration checks and 64 deliberate fault processes**. Lit pixels
+and captured state match exactly; shadow depth differs by at most 1/2^24
+within the existing tolerance. The eight faults include automatic state
+saving, an unexpected producer device call, missing restoration and capacity
+failure through the real BeginPass result. See the
+[report](benchmarks/2026-10-18-group-command-batches.json).
+
+Performance does not justify installation: DXVK adds a median **2.31-3.08 ms
+per regular/extra pair** across workloads, while native D3D9 saves only
+**0.10-0.73 ms**. These are paired synthetic deltas against the unhooked native
+bulk prototype, not measured gameplay gains. Capture still visits every
+native mesh while the bulk reference suppresses qualified followers; measure
+and reduce that producer cost before attempting live integration.
+
+Real flags=7 Begin results do not prove flags=6 failure equivalence. State
+callbacks return queue-admission status; deferred driver failures, cold
+effects, arbitrary live resources and whole scene/Present remain open. No
+production source, installed setting or stable release changes.
+
+The original group and packet-consumer regressions also pass, including six
+device resets and two zero-reference releases. Both material-filter workloads
+and the full plugin suite pass without skips. Installed beta.13 and INI
+hashes remain unchanged.
+
 ### Native group capture: synchronous handoff rejected (2026-10-18)
 
 The new optional fixture executes verified native group control flow on the

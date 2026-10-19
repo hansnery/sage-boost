@@ -673,6 +673,9 @@ $(BUILD)/bench_native_group_gpu.exe: tests/bench_native_group_gpu.c tests/bench_
 $(BUILD)/bench_group_consumer.exe: tests/bench_group_consumer.c tests/packet_consumer.h tests/material_packet.h tests/bench_native_group_gpu.c tests/bench_native_leader.c tests/native_group_image.h tests/native_mesh_image.h tests/bench_material_queue.c tests/bench_retained.c tests/bench_dispatch.c tests/test_inst.c tests/bench_guard.h $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_native_leader_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(DISPATCH_OBJS) src/*.h
 	$(CC) $(TEST_CFLAGS) -O2 -Wno-unused-function -static -o $@ $< $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_native_leader_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
 
+$(BUILD)/bench_group_commands.exe: tests/bench_group_consumer.c tests/group_commands.h $(BUILD)/bench_group_consumer.exe
+	$(CC) $(TEST_CFLAGS) -O2 -DPF_GROUP_COMMANDS -Wno-unused-function -static -o $@ $< $(BUILD)/native_group_gpu_bridge.o $(BUILD)/material_fixture.o $(BUILD)/effect_filter_bench.o $(BUILD)/inst_native_leader_engine.o $(BUILD)/fps_extra_bench.o $(BUILD)/timing_bulk_bench.o $(filter-out $(BUILD)/fps.o $(BUILD)/timing.o,$(DISPATCH_OBJS))
+
 bench-native-group-gpu: $(BUILD)/bench_native_group_gpu.exe
 	python ../tools/bench_native_group_gpu.py "$(AOTR_DAT)" $(BUILD)/bench_native_group_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" lit narrow 10 leader-bulk-first
 	python ../tools/bench_native_group_gpu.py "$(AOTR_DAT)" $(BUILD)/bench_native_group_gpu.exe "$(DISPATCH_ASSETS)/Shaders.big" "$(DISPATCH_ASSETS)/msvcr71.dll" shadow narrow 10 leader-bulk-first

@@ -148,3 +148,54 @@ native FX lifecycle or a live render bridge. No installation follows.
 The full plugin regression suite passes without skips. Final source, binary,
 input and log hashes are recorded in the group report; installed beta.13 and
 INI hashes remain unchanged.
+
+## Producer effect evaluation with batched device commands
+
+Execute inline under the continuing development authorization. The rejected
+per-group reply path stays available as a regression. Keep native method
+control and real effect evaluation on the producer; move only recorded
+device-state calls and copied palette drawing to the GPU owner. Use two
+owned slots, publishing at most sixteen groups per batch. This is a measured
+alternative to per-group replies, not a claim that general asynchronous
+driver failures can already be propagated to native callers.
+
+- [x] Add `perf/tests/group_commands.h`: a bounded effect-state manager that
+  copies callback arguments, retains queued COM resources and records group
+  save/draw/restore commands. Return allocation/unsupported-command failure
+  to the real effect call; never predict Begin's returned pass count.
+- [x] Extend optional `bench_group_consumer.c` under `PF_GROUP_COMMANDS`,
+  preserving the existing build. Evaluate effect callbacks on the producer,
+  copy palettes there and publish completed batches to the existing queue.
+  Use the existing explicit render-state/texture restore block for flags=6.
+  Split the packet consumer's already-loaded draw from its effect setter so
+  the worker never touches the producer's effect object.
+- [x] Audit every public IDirect3DDevice9 vtable entry during untimed correctness
+  runs: any producer device call inside effect evaluation fails immediately.
+  Remove audit wrappers before timing all modes, including the native bulk
+  baseline. Deliberately inject a forbidden device call to prove the audit.
+- [x] Compare native bulk, direct command capture/replay and worker batches
+  with complete regular/extra GPU pairs. Require old pixel/state references,
+  copied-buffer poisoning, real Begin replies, alternating effects and
+  balanced native/queued resource ownership. Reject stale palettes, wrong
+  resource identity, omitted restoration and command overflow.
+- [x] Run both images/backends sequentially through an extended runner,
+  preserving raw timings, input/log hashes and failed pilots. Re-run the
+  original group/packet paths after shared helpers change. Document measured
+  outcome and remaining native resource/result boundaries before commit/push.
+  Install only if later runtime work supplies substantive improvement proof.
+
+Completed: 96 candidate image/state cases, 27,600 individual restoration
+checks and 64 fault processes pass. The audit also covers state-block
+Capture/Apply, which exposed automatic saving despite a custom manager.
+Begin(flags=7) plus explicit queued restoration passes this fixture; it does
+not establish original flags=6 failure equivalence or deferred driver-error
+propagation. Native D3D9 saves a median 0.10-0.73 ms per pair, while DXVK
+regresses 2.31-3.08 ms. No runtime promotion or installation follows.
+
+Regression checks pass: the original group path retains its 24 image/state
+cases and eight faults; the packet consumer retains 60 cases, six resets,
+two zero-reference device releases and eighteen faults. Both material-filter
+workloads and the full plugin suite pass without skips. Source, binary,
+input and log hashes are preserved in
+`../benchmarks/2026-10-18-group-command-batches.json`. Installed beta.13 and
+INI hashes remain unchanged.

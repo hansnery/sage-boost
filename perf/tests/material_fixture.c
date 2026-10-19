@@ -130,6 +130,23 @@ void material_fixture_identity(unsigned index)
     HR(F(SetStateManager,NULL));
 }
 
+void material_fixture_command_manager(ID3DXEffectStateManager *manager)
+{ REQUIRE(!lifecycle_open && !filter_mode); HR(F(SetStateManager,manager)); }
+
+unsigned material_fixture_restore_state(IDirect3DDevice9 *dev,unsigned *out,unsigned capacity)
+{
+    unsigned n=0;DWORD value;
+    for(unsigned i=0;i<256;i++)if(rs_mask[i]) {
+        REQUIRE(n<capacity);HR(IDirect3DDevice9_GetRenderState(dev,i,&value));out[n++]=value;
+    }
+    for(unsigned i=0;i<16;i++)if(texture_mask[i]) {
+        IDirect3DBaseTexture9 *texture=NULL;REQUIRE(n<capacity);
+        HR(IDirect3DDevice9_GetTexture(dev,i,&texture));out[n++]=(unsigned)texture;
+        if(texture)IDirect3DBaseTexture9_Release(texture);
+    }
+    return n;
+}
+
 void material_fixture_verify_end(unsigned enabled)
 {
     verify_end=enabled;
@@ -281,18 +298,20 @@ void material_fixture_native(void **fx,unsigned *tech,unsigned *block)
 }
 /* A retained hit keeps the real Begin/End pair but issues its drawing
  * directly. It never sends CommitChanges/EndPass without a BeginPass. */
-HRESULT material_fixture_try_open(unsigned *passes)
+HRESULT material_fixture_try_open_flags(unsigned *passes,unsigned flags)
 {
     *passes=0;
     REQUIRE(!lifecycle_open && !lifecycle_lost);
     if(verify_end) for(unsigned i=0;i<256;i++) if(rs_mask[i])
         HR(IDirect3DDevice9_GetRenderState(material_device,i,&entry_render_states[i]));
     if(filter_mode) HR(bench_filter_begin());
-    HRESULT result=F(Begin,passes,6);
+    HRESULT result=F(Begin,passes,flags);
     lifecycle_open=SUCCEEDED(result);
     if(FAILED(result) && filter_mode)HR(bench_filter_end());
     return result;
 }
+HRESULT material_fixture_try_open(unsigned *passes)
+{ return material_fixture_try_open_flags(passes,6); }
 void material_fixture_open(void)
 {
     unsigned passes;

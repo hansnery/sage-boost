@@ -385,8 +385,9 @@ Reject this boundary for runtime promotion. Keeping effect lifecycle and
 results on the producer while capturing owned GPU state/draw commands into
 larger batches is a next experiment, not an established solution. A custom
 [D3DX state manager](https://learn.microsoft.com/en-us/windows/win32/direct3d9/id3dxeffectstatemanager)
-bypasses automatic state saving/restoration, so explicit restoration and
-actual device-call behavior must be audited before making that change.
+supplies pass-state callbacks. Those callbacks alone do not establish that
+Begin/End have stopped using cached state blocks; the experiment below
+audits both device calls and the state-block child interface.
 
 Limits: native compare/prepare/finish and method callbacks remain controlled;
 this is not the full native FX wrapper/source lifecycle. Only one pass and
@@ -396,3 +397,77 @@ remain unqualified. This group fixture joins and closes its consumer but
 does not prove zero-reference final device release. The separate packet
 consumer reset regression covers that existing contract. No runtime change,
 installation, multiplayer validation or gameplay FPS claim follows.
+
+## Producer effect evaluation and owned command batches
+
+The optional `bench_group_commands.exe` builds the same native-group fixture
+with `PF_GROUP_COMMANDS`. Actual D3DX effect preparation, Begin, BeginPass,
+palette CommitChanges, EndPass and End run on the producer. A custom state
+manager records state changes into copied command data; textures and shader
+interfaces receive queued AddRef/Release ownership. The native group still
+produces each mesh palette on the producer. Completed groups are published
+in batches of at most sixteen, using the existing two-slot queue. The worker
+executes device calls and the checked palette consumer, without invoking a
+producer-owned effect. Poisoned producer buffers must not change output.
+
+Simply installing a state manager was insufficient: D3DX27 Begin with
+flags=6 still called cached StateBlock Capture, and concurrent drawing
+failed render-state/texture restoration. Independently created fresh effect
+contexts also retained this behavior. The command experiment therefore
+uses flags=7 on the producer and explicitly queues the flags=6 render-state
+and texture save/restore boundary on the GPU owner. Each group's restored
+state is compared in correctness runs, in addition to final frame state.
+This changes the effect-call contract. Its real Begin return value is not
+proof that all failure behavior of the original flags=6 call is preserved.
+
+The untimed audit covers all 119 public device slots plus state-block
+Capture/Apply. Its original copied public-only vtable crashed native D3D9:
+the implementation called private slot 134. The corrected audit patches
+only public entries in place, preserving the original extended table, and
+restores every changed entry before timings. Shared state-block entries
+cover cached blocks from the same implementation; the automatic-save fault
+must exercise this check on each backend. The small thunk allocation stays
+until process exit so a background driver call cannot return into freed
+memory. This is a test audit, not a proposed runtime vtable hook.
+
+Build `perf/build/bench_group_commands.exe`, then add `--commands` to the
+existing group runner. Its ordinary native bulk, direct command replay and
+worker modes share the same scene and resource setup. Eight faults cover
+incorrect pass count, false Begin success, stale palettes, wrong effect
+identity, a forbidden producer device call, omitted restoration, command
+capacity failure and automatic state saving during producer evaluation.
+Command admission failure propagates through the actual effect callback;
+deferred driver failures still abort the fixture rather than reaching the
+original native caller. No general recovery/fallback contract is claimed.
+
+The fixture uses two already-warmed effects, one pass and retained geometry.
+Cold shader creation, live native material/source callbacks, arbitrary
+resource loading/lifetimes and whole-scene/Present remain unqualified.
+Producer capture still visits each native mesh while the native bulk
+baseline suppresses qualified followers; that cost remains in timings.
+The command harness does not prove zero-reference final device release;
+the separate packet-reset regression checks the existing teardown path.
+
+Both local images/backends pass 96 candidate image/state cases, 48 ordinary/
+bulk reference images, 27,600 individual group-restoration checks and 64
+deliberate faults. Lit pixels and captured state match exactly; shadow depth
+differs by at most 1/2^24 within the existing 256/2^24 tolerance. The largest
+published batch holds 178,432 bytes of data; all queued resource references
+are balanced at each collected frame. The
+[report](../benchmarks/2026-10-18-group-command-batches.json) preserves the
+failed pilots, native auditor crash and corrected final runs.
+
+The 96 rotated timing rows do not support runtime promotion. Across
+workloads, DXVK's median paired completion cost increases 2.31-3.08 ms;
+native D3D9 saves 0.10-0.73 ms. Absolute times vary across runs, and these
+small native-backend savings are not a gameplay FPS prediction. Next,
+measure and reduce producer capture overhead, including redundant per-mesh
+native dispatch already suppressed by the native bulk reference. Do not
+drop that cost or compare only against the earlier synchronous prototype.
+
+After the shared helper changes, the original group path still passes 24
+image/state cases and eight faults with the previous pixel oracles. The
+packet path retains 60 exact cases, six real resets, two zero-reference
+device releases and eighteen faults. Both material-filter workloads and
+the full plugin suite pass without skips; installed binary/INI hashes are
+unchanged.

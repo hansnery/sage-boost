@@ -13,7 +13,7 @@ extern HRESULT material_fixture_try_open(unsigned *);
 extern void material_fixture_native(void **,unsigned *,unsigned *);
 extern int bench_scope_owner_idle(DWORD);
 
-enum { GC_FRAME, GC_BEGIN, GC_DRAW_END, GC_END_ONLY, GC_FINISH, GC_CLAIM, GC_STOP };
+enum { GC_FRAME, GC_BEGIN, GC_DRAW_END, GC_END_ONLY, GC_FINISH, GC_CLAIM, GC_STOP, GC_COMMANDS };
 typedef struct {
     unsigned kind,extra,group,count,identity,fail,check;
     fixture_material_values material;
@@ -33,6 +33,17 @@ static unsigned gc_output[RT*RT],gc_state[1600],gc_state_words;
 static GcRequest gc_group;
 static void *gc_effects[2];
 static unsigned gc_depth_max;
+#ifdef PF_GROUP_COMMANDS
+#include "group_commands.h"
+#define GC_MAX_FAULT 8
+#define GC_EFFECTS 2
+#define GC_CASE_NAME "NATIVE GROUP COMMANDS:"
+#else
+#define GC_MAX_FAULT 4
+#define GC_EFFECTS 2
+#define GC_CASE_NAME "NATIVE GROUP CONSUMER:"
+#endif
+static unsigned gc_worker_mode(void){return gc_mode==2 || gc_mode==4;}
 
 static int gc_pixels_equal(const unsigned *expected,const unsigned *actual)
 {
@@ -70,10 +81,14 @@ static unsigned gc_snapshot(unsigned *out)
 
 static void gc_execute(GcRequest *r)
 {
-    REQUIRE(GetCurrentThreadId()==(gc_mode==2?gc_gpu:gc_producer));
+    REQUIRE(GetCurrentThreadId()==(gc_worker_mode()?gc_gpu:gc_producer));
     switch(r->kind) {
     case GC_CLAIM: consumer.owner=GetCurrentThreadId();break;
     case GC_FRAME: {
+#ifdef PF_GROUP_COMMANDS
+        gc_command_verify=r->check;
+        if(r->check)HR(IDirect3DDevice9_SetRenderState(g_dev,D3DRS_CULLMODE,D3DCULL_CW));
+#endif
         static const float zero[1024]={0};
         if(r->check) {
             HR(IDirect3DDevice9_SetVertexShaderConstantF(g_dev,0,zero,256));
@@ -121,6 +136,9 @@ static void gc_execute(GcRequest *r)
         if(r->check){read_pixels(gc_output);gc_state_words=gc_snapshot(gc_state);}
         break;
     case GC_STOP: packet_consumer_close();break;
+#ifdef PF_GROUP_COMMANDS
+    case GC_COMMANDS: gc_command_replay(gc_mode==4?&gc_command_slots[r->group]:&gc_commands);break;
+#endif
     default: REQUIRE(!"unknown group command");
     }
 }
@@ -139,9 +157,18 @@ static DWORD WINAPI gc_run(void *unused)
 
 static void gc_send(GcRequest *r,unsigned wait)
 {
-    if(gc_mode!=2){gc_execute(r);return;}
-    GcSlot *slot=&gc_slots[gc_sent++%2];gc_wait(slot->done);
+    if(!gc_worker_mode()){gc_execute(r);return;}
+    unsigned index=gc_sent++%2;
+    GcSlot *slot=&gc_slots[index];gc_wait(slot->done);
     REQUIRE(ResetEvent(slot->done));slot->request=*r;
+#ifdef PF_GROUP_COMMANDS
+    if(r->kind==GC_COMMANDS) {
+        GcCommandBatch *to=&gc_command_slots[index];
+        to->count=gc_commands.count;to->bytes=gc_commands.bytes;to->groups=gc_commands.groups;
+        memcpy(to->command,gc_commands.command,to->count*sizeof(GcCommand));
+        memcpy(to->data,gc_commands.data,to->bytes);slot->request.group=index;
+    }
+#endif
     REQUIRE(ReleaseSemaphore(gc_available,1,NULL));
     if(wait){gc_wait(slot->done);r->result=slot->request.result;r->passes=slot->request.passes;}
 }
@@ -158,7 +185,27 @@ static int __attribute__((thiscall)) gc_begin(void *self,int *passes,int flags)
     gc_group.identity=ng_current_group&1;gc_group.extra=gc_extra;
     gc_group.fail=gc_fail && ng_current_group==7;
     material_fixture_capture(ng_current_group,gc_epoch,100,gc_epoch*33,&gc_group.material);
-    gc_send(&gc_group,1);*passes=(int)gc_group.passes;
+#ifdef PF_GROUP_COMMANDS
+    if(gc_mode>=3) {
+        unsigned commands=gc_commands.count;gc_command_capture=1;gc_command_audited++;
+        gc_identity_seen[gc_group.identity]++;
+        if(gc_fault==5){DWORD value;IDirect3DDevice9_GetRenderState(g_dev,D3DRS_CULLMODE,&value);}
+        material_fixture_identity(gc_fault==4?(gc_group.identity^1):gc_group.identity);
+        void *selected;unsigned technique,block;material_fixture_native(&selected,&technique,&block);
+        REQUIRE(selected==gc_effects[gc_group.identity]);
+        material_fixture_command_manager(&gc_command_manager);
+        material_fixture_captured(&gc_group.material,1);material_fixture_prepare(0);
+        gc_group.passes=0;
+        /* Explicit queued flags=6 restoration replaces automatic state
+         * saving here. Default saving must trip the state-block audit. */
+        gc_group.result=gc_group.fail?E_FAIL:material_fixture_try_open_flags(&gc_group.passes,gc_fault==8?6:7);
+        material_fixture_captured(NULL,0);gc_command_capture=0;
+        REQUIRE(gc_commands.count==commands); /* Preparation must not emit device state. */
+        if(SUCCEEDED(gc_group.result))HR(gc_command_emit(CMD_SAVE,0,0,NULL,0,NULL));
+    } else
+#endif
+    gc_send(&gc_group,1);
+    *passes=(int)gc_group.passes;
     int ok=SUCCEEDED(gc_group.result);
     if(ok){REQUIRE(gc_group.passes==1);gc_successes++;}
     else gc_failures++;
@@ -170,11 +217,22 @@ static void __attribute__((thiscall)) gc_pass(void *self,unsigned pass)
 {
     if(!gc_mode){ng_begin_pass(self,pass);return;}
     ng_state();REQUIRE(self==&g_method && pass==0 && gc_group.passes==1);
+#ifdef PF_GROUP_COMMANDS
+    if(gc_mode>=3){gc_command_capture=1;material_fixture_pass_begin(pass);gc_command_capture=0;}
+#endif
 }
 static void __attribute__((thiscall)) gc_end_pass(void *self)
 {
     if(!gc_mode){ng_end_pass(self);return;}
     ng_state();REQUIRE(self==&g_method && gc_group.count);
+#ifdef PF_GROUP_COMMANDS
+    if(gc_mode>=3) {
+        HR(gc_command_emit(CMD_DRAW,gc_group.count,gc_group.extra,gc_group.palette,
+                           gc_group.count*sizeof(gc_group.palette[0]),NULL));
+        gc_command_capture=1;material_fixture_pass_end();gc_command_capture=0;
+        memset(gc_group.palette,0xA5,sizeof gc_group.palette);return;
+    }
+#endif
     gc_group.kind=GC_DRAW_END;gc_send(&gc_group,0);
     memset(gc_group.palette,0xA5,sizeof gc_group.palette); /* Publication owns all values. */
 }
@@ -182,6 +240,14 @@ static void __attribute__((thiscall)) gc_end(void *self)
 {
     if(!gc_mode){ng_end(self);return;}
     ng_state();REQUIRE(self==&g_method);
+#ifdef PF_GROUP_COMMANDS
+    if(gc_mode>=3) {
+        gc_command_capture=1;material_fixture_close();gc_command_capture=0;
+        HR(gc_command_emit(CMD_RESTORE,0,0,NULL,0,NULL));
+        if(++gc_commands.groups==CMD_GROUPS)gc_command_flush();
+        return;
+    }
+#endif
     if(gc_group.kind!=GC_DRAW_END){gc_group.kind=GC_END_ONLY;gc_send(&gc_group,0);}
     /* End is ordered in the preceding owned DRAW_END command. */
 }
@@ -196,6 +262,11 @@ void __attribute__((thiscall)) gc_capture_render(fake_mesh *mesh,fake_method *me
         gc_group.palette[at][b][7]=0;
     }
     if(gc_fault==3 && at)memcpy(gc_group.palette[at],gc_group.palette[0],sizeof gc_group.palette[0]);
+#ifdef PF_GROUP_COMMANDS
+    if(gc_mode>=3 && !at) {
+        gc_command_capture=1;material_fixture_bones(gc_group.palette[0],BONES*32);gc_command_capture=0;
+    }
+#endif
     gc_captured++;method->refs--; /* Consume the native owning temporary. */
 }
 void gc_render_bridge(void);
@@ -220,7 +291,13 @@ static void gc_frame(unsigned mode,unsigned phase,unsigned check,unsigned fail)
         ng_group_call(ng_target(!mode && gc_native_optimized),ng_renderer,records[group],records[group]+sizeof records[0]);
     }
     ng_begin_fail=0;
+#ifdef PF_GROUP_COMMANDS
+    if(mode>=3)gc_command_flush();
+#endif
     request.kind=GC_FINISH;gc_send(&request,1);
+#ifdef PF_GROUP_COMMANDS
+    REQUIRE(!gc_command_references && !gc_commands.count && !gc_command_capture);
+#endif
     if(!mode)bench_extra_mode(0);
     REQUIRE(!ng_group_abi_errors && g_method.refs==refs && bench_scope_owner_idle(gc_producer));
     if(mode)REQUIRE(gc_captured-captured==(GROUPS-(fail?1:0))*GROUP_SIZE);
@@ -229,7 +306,7 @@ static void gc_frame(unsigned mode,unsigned phase,unsigned check,unsigned fail)
 int main(int argc,char **argv)
 {
     REQUIRE(argc==11 && bench_no_game());gc_producer=GetCurrentThreadId();
-    gc_fault=(unsigned)atoi(argv[10]);REQUIRE(gc_fault<=4);
+    gc_fault=(unsigned)atoi(argv[10]);REQUIRE(gc_fault<=GC_MAX_FAULT);
     nm_image=argv[7];nm_manifest=argv[8];ng_manifest=argv[9];setup_complete=ng_setup;
     const char *slash=strrchr(argv[2],'/'),*back=strrchr(argv[2],'\\');
     if(back && (!slash || back>slash))slash=back;
@@ -240,12 +317,15 @@ int main(int argc,char **argv)
     setup(7,argv);pf_timing_set_detail(1);packet_consumer_init();
     pf_timing_set_next(PF_FRAME,gc_empty_frame);
     ((void (*)(void))pf_enter_stubs[PF_FRAME])();
-    for(unsigned i=0;i<2;i++) {
+    for(unsigned i=0;i<GC_EFFECTS;i++) {
         unsigned technique,block;material_fixture_identity(i);
         material_fixture_native(&gc_effects[i],&technique,&block);
         REQUIRE(gc_effects[i] && technique && block);
     }
     REQUIRE(gc_effects[0]!=gc_effects[1]);material_fixture_identity(0);
+#ifdef PF_GROUP_COMMANDS
+    bench_filter_mode(1);gc_command_audit(1);
+#endif
     D3DDEVICE_CREATION_PARAMETERS creation;HR(IDirect3DDevice9_GetCreationParameters(g_dev,&creation));
     REQUIRE((creation.BehaviorFlags&D3DCREATE_MULTITHREADED) && GetWindowThreadProcessId(creation.hFocusWindow,NULL)==gc_producer);
     nm_method_vt[2]=gc_begin;nm_method_vt[3]=gc_pass;nm_method_vt[5]=gc_end_pass;nm_method_vt[6]=gc_end;
@@ -270,7 +350,11 @@ int main(int argc,char **argv)
             printf("GROUP ORACLE: phase=%u covered=%u changed=%u hash=%08X\n",phase,covered,changed,fnv((const unsigned char *)expected,sizeof expected));
         }
         unsigned words=gc_state_words;memcpy(state,gc_state,words*4);
-        for(unsigned mode=1;mode<=2;mode++) {
+        for(unsigned candidate=1;candidate<=2;candidate++) {
+            unsigned mode=candidate;
+#ifdef PF_GROUP_COMMANDS
+            mode+=2;
+#endif
             gc_frame(mode,phase,1,fail);
             for(unsigned i=0;i<RT*RT;i++)if(shadow_mode?pf_depth_diff(expected[i],gc_output[i])>PF_DEPTH_TOLERANCE:expected[i]!=gc_output[i]) {
                 fprintf(stderr,"group consumer image: mode=%u phase=%u fail=%u pixel=%u expected=%08X actual=%08X captured=%u\n",mode,phase,fail,i,expected[i],gc_output[i],gc_captured);
@@ -284,22 +368,34 @@ int main(int argc,char **argv)
             REQUIRE(words==gc_state_words && !memcmp(state,gc_state,words*4));cases++;
         }
     }
-    printf("NATIVE GROUP CONSUMER: %u image/state cases; lit pixels and state exact, shadow max difference=%u/2^24 (existing tolerance=%u); actual Begin reply, alternating effect identity, copied palette poisoning and native method ownership pass\n",cases,gc_depth_max,PF_DEPTH_TOLERANCE);
+    printf(GC_CASE_NAME " %u image/state cases; lit pixels and state exact, shadow max difference=%u/2^24 (existing tolerance=%u); actual Begin reply, alternating effect identity, copied palette poisoning and native method ownership pass\n",cases,gc_depth_max,PF_DEPTH_TOLERANCE);
+#ifdef PF_GROUP_COMMANDS
+    gc_command_audit(0);
+    REQUIRE(gc_command_audited && gc_command_callbacks && gc_command_restores);
+    printf("COMMAND AUDIT: effects=%u callbacks=%u restored_groups=%u outstanding_refs=%ld; no producer device/state-block calls; all audit wrappers removed before timing\n",gc_command_audited,gc_command_callbacks,gc_command_restores,gc_command_references);
+#endif
     for(unsigned round=0;round<12;round++) {
         REQUIRE(bench_no_game());double elapsed[3];
         for(unsigned offset=0;offset<3;offset++) {
-            unsigned mode=(round+offset)%3;
+            unsigned column=(round+offset)%3,mode=column;
+#ifdef PF_GROUP_COMMANDS
+            if(mode)mode+=2;
+#endif
             /* Warm the selected ownership mode before its measured pair. */
             gc_frame(mode,0,0,0);
             LONGLONG start=ticks();gc_frame(mode,0,0,0);gc_frame(mode,1,0,0);
-            elapsed[mode]=(ticks()-start)*1000.0/qpf;
+            elapsed[column]=(ticks()-start)*1000.0/qpf;
         }
         printf("sample,%u,%.4f,%.4f,%.4f,%.4f\n",round,elapsed[0],elapsed[1],elapsed[2],elapsed[0]-elapsed[2]);
     }
     gc_mode=2;GcRequest end={0};end.kind=GC_CLAIM;gc_send(&end,1);end.kind=GC_STOP;gc_send(&end,1);
     gc_wait(gc_worker);DWORD exit_code;REQUIRE(GetExitCodeThread(gc_worker,&exit_code) && !exit_code && gc_sent==gc_received);
     CloseHandle(gc_worker);CloseHandle(gc_available);for(unsigned i=0;i<2;i++)CloseHandle(gc_slots[i].done);
-    REQUIRE(gc_failures==6 && gc_identity_seen[0] && gc_identity_seen[1]);
+    REQUIRE(gc_failures==6 && gc_identity_seen[GC_EFFECTS-2] && gc_identity_seen[GC_EFFECTS-1]);
+#ifdef PF_GROUP_COMMANDS
+    REQUIRE(!gc_command_references);
+    printf("COMMAND BATCHES: %u; maximum_bytes=%u; groups_per_batch=%u; retained references balanced\n",gc_command_batches,gc_command_max_bytes,CMD_GROUPS);
+#endif
     printf("RESULTS: successful_begins=%u failed_begins=%u captured_meshes=%u worker_commands=%u; no game or runtime hook\n",gc_successes,gc_failures,gc_captured,gc_sent);
     REQUIRE(bench_no_game());return 0;
 }
