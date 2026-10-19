@@ -69,6 +69,20 @@ int main(int argc,char **argv)
          * constants again after a new effect commit to avoid that masking. */
         bones[4]^=1;material_fixture_bones(bones,sizeof bones);
         PROBE("GetVertexShaderConstantF_after_Commit",HR(IDirect3DDevice9_GetVertexShaderConstantF(g_dev,g_v->roles[PF_ROLE_BONES],constants,2*BONES)));
+        bones[4]^=1;material_fixture_bones(bones,sizeof bones);
+        PROBE("GetVertexDeclaration_after_Commit",HR(IDirect3DDevice9_GetVertexDeclaration(g_dev,&decl)));IDirect3DVertexDeclaration9_Release(decl);
+        bones[4]^=1;material_fixture_bones(bones,sizeof bones);
+        PROBE("GetStreamSourceFreq_after_Commit",HR(IDirect3DDevice9_GetStreamSourceFreq(g_dev,0,&frequency)));
+        bones[4]^=1;material_fixture_bones(bones,sizeof bones);
+        PROBE("GetStreamSource_after_Commit",HR(IDirect3DDevice9_GetStreamSource(g_dev,0,&vb,&offset,&stride)));IDirect3DVertexBuffer9_Release(vb);
+        bones[4]^=1;material_fixture_bones(bones,sizeof bones);
+        PROBE("GetIndices_after_Commit",HR(IDirect3DDevice9_GetIndices(g_dev,&ib)));IDirect3DIndexBuffer9_Release(ib);
+        /* Resource ownership cannot be inferred from a Release measured
+         * after an earlier getter already drained. Requeue work first. */
+        bones[4]^=1;material_fixture_bones(bones,sizeof bones);
+        PROBE("shader_AddRef_after_Commit",REQUIRE(vs);IDirect3DVertexShader9_AddRef(vs));
+        bones[4]^=1;material_fixture_bones(bones,sizeof bones);
+        PROBE("shader_Release_after_Commit",IDirect3DVertexShader9_Release(vs));
         PROBE("resource_Release",if(vs)IDirect3DVertexShader9_Release(vs);if(decl)IDirect3DVertexDeclaration9_Release(decl);if(vb)IDirect3DVertexBuffer9_Release(vb);if(ib)IDirect3DIndexBuffer9_Release(ib));
         PROBE("DrawIndexedPrimitive",HR(IDirect3DDevice9_DrawIndexedPrimitive(g_dev,D3DPT_TRIANGLELIST,0,0,(GRID+1)*(GRID+1),0,GRID*GRID*2)));
         PROBE("effect_EndPass",material_fixture_pass_end());

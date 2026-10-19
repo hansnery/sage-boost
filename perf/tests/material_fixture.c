@@ -256,6 +256,9 @@ void material_fixture_bones(const void *bones,unsigned bytes)
 }
 void material_fixture_bone_values(const void *bones,unsigned bytes)
 { HR(F(SetRawValue,bones_handle,bones,0,bytes)); }
+/* Untimed seed for the fixed-effect readback experiment. */
+void material_fixture_bone_snapshot(void *bones,unsigned bytes)
+{ HR(F(GetValue,bones_handle,bones,bytes)); }
 
 /* Observable child-method state for the offline chain recovery fixture. */
 void material_fixture_child_state(unsigned state[7],int restore)

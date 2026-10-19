@@ -58,6 +58,47 @@ Accelerator has now run in isolated offline harnesses (below).
   resolve a reproducible multiplayer divergence only after one is observed.
   No promised FPS gain, deployment or new gameplay request from this review.
 
+### Readback waits and the unhooked baseline (2026-10-18)
+
+The new optional `bench_external_readbacks.exe` compares external threading,
+fixed-effect caller replies, both together, and the external wrapper with
+both disabled. A separate `native` process never loads the external DLL
+and compares unhooked rendering against the same replies. The latter is
+essential: disabling the external worker does not remove its wrappers.
+
+Fresh CommitChanges probes show that shader, declaration, stream, frequency,
+index and constant getters each request a drain. Earlier probes let the first
+getter hide the later waits. Shader AddRef/Release do not request a drain.
+The controlled replies reduce drain requests from 2,887 to five per pair;
+these counters do not measure elapsed waiting time. The fixture knows its
+shader, stable bindings and exact bone-parameter/register mapping. An initial
+incorrect assumption that the instance registers were unused by the original
+effect failed the independent state oracle despite matching pixels. The
+corrected version includes full bone-parameter updates and real COM references.
+
+Two final repeats per workload pass **144 exact image/state cases** across
+external and unhooked processes, eight deliberately poisoned-answer controls,
+and changed-pose/material checks. Preserve **192 timing samples** in the
+[report](benchmarks/2026-10-18-external-readbacks.json). In the external
+four-mode comparison, combined completion saves 2.98-3.18 ms lit and
+2.43-2.51 ms shadow against the disabled wrapper. Adding threading to the
+fixed replies contributes only 0.15-0.28 ms lit and 0.08-0.35 ms shadow.
+Against the truly unhooked path, fixed replies instead regress lit by
+0.28-0.41 ms and save only 0.11-0.12 ms shadow. These are medians of paired
+differences; they cannot be reconstructed by subtracting separate medians.
+Workload/time drift also prevents treating separate processes as a paired
+comparison. The earlier multi-millisecond delta is not established as a
+gain over unhooked rendering and must not justify a deployment.
+
+The full `perf/` regression suite passes. Installed beta.13 and INI hashes
+match the existing restoration receipt. No runtime change, install or
+gameplay request. Full native sources,
+resource/failure/Reset handling and complete-frame costs remain unqualified.
+Further threading work must beat a genuinely unhooked baseline and account
+for real producer work; do not extend a compatibility layer based only on
+the external wrapper's enabled/disabled comparison. SAGE Unlocked remains
+a separate candidate under the multiplayer evidence distinctions above.
+
 ### Native source capture into worker packets (2026-10-18)
 
 The offline worker now receives actual native world/view/projection callback

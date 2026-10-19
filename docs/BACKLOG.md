@@ -41,6 +41,17 @@ Strike an item through, with the date, when it's done.
 - [x] 2026-10-18: independently attribute synchronous getter boundaries
   through the external DLL's counters. Shader and constant reads after
   queued effect work drain; counts do not establish their elapsed cost.
+- [x] 2026-10-18: repeat each binding getter with fresh queued effect work;
+  declaration, stream, frequency and index reads also drain. Compare fixed
+  replies with/without external threading and in an unhooked process.
+  Final runs pass 144 image/state cases and eight poisoned-answer controls;
+  preserve 192 timing samples in `benchmarks/2026-10-18-external-readbacks.json`.
+  Most apparent external savings do not reproduce against the unhooked path.
+- [ ] Require future render-thread performance comparisons to include a
+  truly unhooked baseline. The disabled external worker retains wrappers.
+  Fixed fixture replies do not establish general effect mappings, resource
+  lifetimes, failure behavior or a material improvement over the current
+  renderer. Do not promote this cache or request a gameplay test from it.
 - [x] 2026-10-18: screen a complete fixture batch with effect/state/GPU work
   on one worker. Two owned palette slots pass 60 exact image/state cases,
   12 alias faults and 12 capacity/recovery controls. Preserve 126 three-mode
