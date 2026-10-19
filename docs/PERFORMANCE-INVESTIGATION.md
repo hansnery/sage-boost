@@ -251,6 +251,13 @@ Only that isolated native leaf ran. Startup-derived timers, rounded duration
 fields, the complete loop and matching-peer sync still need qualification;
 no runtime switch was installed and no gameplay improvement was measured.
 
+The subsequent [native duration test](benchmarks/2026-10-18-native-durations.json)
+confirms those rounding effects with explicit scanner/CRT/error fixture
+dependencies. Doubling original rounded integer ticks preserves their old
+elapsed duration where storage permits; narrow overflow is refused. Actual
+mod field coverage and runtime integration are still open. This is timing
+correctness groundwork, with no measured gameplay or FPS improvement.
+
 ## What future attempts must do differently
 
 1. **Start from a measured game bottleneck and the current baseline.** Do

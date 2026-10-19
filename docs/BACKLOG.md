@@ -7,6 +7,17 @@ Strike an item through, with the date, when it's done.
 
 ## Full-rate 60 FPS investigation (2026-10-17)
 
+- [x] 2026-10-18: execute native float/uint/ushort/byte duration conversions
+  with explicit fixture dependencies on both images. Confirm rate-setter
+  rounding changes; qualify doubled legacy ticks for representable integer
+  durations and refusal without writes when narrow storage is insufficient.
+  Sample Python oracles and dense native width/ABI/write checks pass;
+  18 negative controls reject. [Report](benchmarks/2026-10-18-native-durations.json).
+- [ ] Audit actual duration-field coverage, overflow/sentinel semantics,
+  pre-ASI parsing, startup timers and field consumers before integrating the
+  compensation policy. Confirm a complete-frame cost benefit for the chosen
+  schedule; the native-duration screen is not an FPS result.
+
 - [x] 2026-10-18: record Hans's approved simulation-beta scope and explicit
   deferral of launcher integration/publication. Normal speed/balance,
   camera/input behavior, full-rate fresh shadows and matching-beta sync
@@ -16,8 +27,8 @@ Strike an item through, with the date, when it's done.
   reconfiguration calls, 12 rejected negative controls, no ABI/boundary failure.
   10/60 is accepted; 5/60 clamps to 5/30. No runtime integration or FPS result.
   Its computed 5/30 values differ from file startup by one ULP in two scales;
-  reset through the setter is not exact. Native integer duration checks must
-  cover this boundary effect. [Report](benchmarks/2026-10-18-native-rates.json).
+  reset through the setter is not exact. The native duration follow-up above
+  covers this boundary effect in isolation. [Report](benchmarks/2026-10-18-native-rates.json).
 - [ ] Prioritize the approved simulation-timing route: audit native integer
   duration rounding, startup-derived constants, values parsed before Miles
   loads the ASI, per-tick movement/combat/economy and network phase admission.

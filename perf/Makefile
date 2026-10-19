@@ -78,6 +78,13 @@ $(BUILD)/test_native_rates.exe: tests/test_native_rates.c | $(BUILD)
 test-native-rates: $(BUILD)/test_native_rates.exe
 	python ../tools/test_native_rates.py --image "$(AOTR_DAT)" --image "$(ROTWK_DAT)" --executable $< --output $(BUILD)/native-rate-screen.json
 
+$(BUILD)/test_native_durations.exe: tests/test_native_durations.c | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -msse2 -mfpmath=sse -static -o $@ $<
+
+.PHONY: test-native-durations
+test-native-durations: $(BUILD)/test_native_durations.exe
+	python ../tools/test_native_durations.py --image "$(AOTR_DAT)" --image "$(ROTWK_DAT)" --executable $< --output $(BUILD)/native-duration-screen.json
+
 # Offline CPU screen only; native bodies are read from local images at run time.
 $(BUILD)/bench_native_decode.exe: tests/bench_native_decode.c tests/bench_guard.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -O2 -mgeneral-regs-only -fno-tree-loop-distribute-patterns -static -o $@ $<

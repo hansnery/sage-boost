@@ -97,8 +97,8 @@ logic frames/ms `0x3ba3d70a` becomes `0x3ba3d70b`; client frames/ms
 `0x3cf5c28f` becomes `0x3cf5c290`. The repeated-call test restores the
 **computed** baseline, not the file's original values. Arithmetic with the
 measured factors and the source's ceiling operation predicts an extra tick
-for exact-boundary durations. Execute the native integer parser next to
-qualify that effect. Never treat a 5/30 setter call as exact rollback.
+for exact-boundary durations. The native integer follow-up below qualifies
+that effect in isolation. Never treat a 5/30 setter call as exact rollback.
 
 Read-only reference checkout at inspection:
 `ff1544d9fef63a5460d1fcd012cea309c13f7dff`. Relevant paths under
@@ -115,3 +115,46 @@ Read-only reference checkout at inspection:
   separate startup-derived timer fields and W3D frame length.
 - `System/INI_parseDurationUnsignedInt.cpp`: native ceiling of the duration
   product; its binary disassembly also uses that factor and ceiling call.
+
+## Native duration follow-up
+
+The [duration report](../benchmarks/2026-10-18-native-durations.json) executes
+the complete 38/70/71/119-byte real/uint/ushort/byte conversion bodies from
+both installed images. Full body and duration-global checks resolve the
+real parser's otherwise ambiguous pattern. The ushort body's actual length
+is 71 bytes, despite a 70-byte comment in the reference source.
+
+Fixture boundaries are numeric token scanning, mathematical ceiling, exact
+integral conversion and exception reporting. The native arithmetic, stores
+and byte-overflow branch run; MSVC exception construction/unwinding, actual
+INI tokenization and field consumers do not. The test keeps its existing FP
+environment and never writes x87/MXCSR controls; game FP initialization does
+not run. Copied native bodies and the compiled fixture are checked for
+control-word writes.
+
+Native results for 200/250/1000 ms respectively:
+
+- Original 5 Hz startup factor: 1/2/5 ticks, or 200/400/1000 ms.
+- Recomputed 5 Hz factor: 2/2/6 ticks, or 400/400/1200 ms.
+- Recomputed 10 Hz factor: 3/3/11 ticks, or 300/300/1100 ms.
+- Exactly doubled startup factor: 2/3/10 ticks, or 200/300/1000 ms.
+- Candidate legacy integer compensation: 2/4/10 ticks at 10 Hz, preserving
+  the original 200/400/1000 ms durations.
+
+The candidate first evaluates the original rounded tick count, then doubles
+it if representable. A hypothetical byte field of 25,401 ms needs 256 ticks
+and is refused without a partial write. A 6,553,600 ms duration similarly
+needs 65,536 ticks and cannot fit in a ushort. The stock byte parser reports
+overflow, while the stock ushort parser narrows. Do not silently wrap or
+saturate beta durations; classify the actual mod fields and sentinel uses.
+
+Per image: 100 integer sample outputs and 32 real outputs pass independent
+Python checks; every integer millisecond from 0 to 60,000 is swept across
+four factors for native width agreement, boundaries, normal-return ABI and
+compensation. Six preflight and three output faults per image are rejected.
+The floor-instead-of-ceil process deliberately exits successfully from its
+internal width checks but is rejected by Python's independent oracle.
+
+This establishes a conversion policy, not a working 60 FPS mode. Audit actual
+field coverage/startup order and complete-frame cost next. Logic consumers,
+network synchronization, camera/input semantics and performance remain open.

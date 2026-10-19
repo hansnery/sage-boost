@@ -15,6 +15,40 @@ troop-heavy scene has been demonstrated; the target remains unmet.
 
 ## Next target: 60 visual FPS with shadows at 60 (2026-10-17)
 
+### Native duration conversion and legacy rounding (2026-10-18)
+
+The next simulation-beta check executes the actual float/uint/ushort/byte
+duration conversion bodies from both installed executable variants, together
+with the native rate setter. Numeric token scanning, mathematical ceiling,
+exact integral conversion and overflow reporting are explicit fixture
+substitutions; no game initialization, imports or native MSVC unwinding run.
+
+The native outputs confirm the prior arithmetic concern. Startup 5 Hz gives
+1/2/5 ticks for 200/250/1000 ms; recomputed 5 Hz gives 2/2/6 and recomputed
+10 Hz gives 3/3/11. Doubling the original float factor removes the exact-
+boundary error, but still changes a 250 ms field from the original 400 ms
+to 300 ms. Doubling the **original rounded integer tick count** preserves
+the original elapsed duration at 10 Hz when the destination can hold it.
+
+The byte parser reports overflow; ushort narrows its result. A hypothetical
+25,401 ms field needs 256 compensated ticks and cannot fit in a byte. The
+candidate refuses insufficient capacity without writing. It is only fixture
+policy: actual field values, consumer behavior and all-or-nothing startup
+integration remain to qualify. Do not install a blanket rate conversion.
+
+Both images pass 100 independently checked integer samples and 32 float
+samples each, plus the 0..60,000 ms dense sweep for native width/ABI/write
+agreement and compensation. Eighteen total negative controls are rejected.
+The compiled fixture contains no FP control-word writers. Full body matching
+plus shared duration-global validation distinguishes the float parser from
+one code-identical parser using a different multiplier. See the
+[report](benchmarks/2026-10-18-native-durations.json) and
+[plan](plans/2026-10-18-simulation-duration-screen.md).
+
+Installed beta.13/INI hashes remain unchanged; no launcher or stable change.
+Next audit real duration-field coverage and startup-derived timers, and
+weigh complete-frame cost before choosing the runtime scheduling route.
+
 ### Approved simulation-timing investigation (2026-10-18)
 
 Hans approved relaxing exact game-logic invariance for the development beta
@@ -37,14 +71,14 @@ The setter's computed 5/30 result is **not identical to the file's startup
 state**: logic/client frames-per-millisecond each increase by one ULP.
 The report's arithmetic examples using those actual native factors predict
 an extra tick when an integer duration is rounded up at an exact boundary
-(for example, 200 ms becomes two 5 Hz ticks instead of one). Native integer
-parser execution is still pending. Do not use the setter as a transparent
+(for example, 200 ms becomes two 5 Hz ticks instead of one). The native
+duration follow-up above now checks that effect. Do not use the setter as a transparent
 reset; restore captured values exactly and compensate timing deliberately.
 
 The reference also exposes startup-derived timers and a six-phase scheduler.
 The current rate test does not run either. Integer duration rounding can
 change gameplay: a hypothetical 250 ms field rounds to 400 ms at 5 Hz but
-300 ms at 10 Hz. Native parser execution, startup compensation, per-tick
+300 ms at 10 Hz. Actual field coverage, startup compensation, per-tick
 behavior, actual installed load order and multiplayer remain unqualified.
 Next audit those dependencies before implementing a runtime switch.
 

@@ -22,6 +22,16 @@ the setter is therefore not an exact restoration of the original state.
 Use `--output` to preserve a report elsewhere. See the
 [accepted experiment](../docs/specs/2026-10-18-simulation-beta-design.md).
 
+`make test-native-durations` qualifies the native real/uint/ushort/byte
+duration conversion bodies with the native rate setter. Its fixture owns
+numeric token scanning, mathematical ceiling, integral conversion and error
+reporting; no game imports or MSVC exception unwinding run. Sample outputs
+have an independent Python oracle, and every integer millisecond from 0 to
+60,000 is swept across four factors for native width/ABI/write checks and
+legacy-duration compensation. Narrow compensation overflow is refused without
+a write. The result is `perf/build/native-duration-screen.json`; it does not
+qualify actual Realms fields, a live hook, multiplayer or FPS.
+
 | script | what |
 |---|---|
 | `verify_sites.py` | unlocker: checks every signature against each game's baseline image and regenerates `dll/src/patch_table.c` and `dll/tests/baseline_expect.h` (`--write`). Run by `make test` in `dll/`. Needs `pefile` and `capstone`. |

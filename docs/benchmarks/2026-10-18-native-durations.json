@@ -1,0 +1,3321 @@
+{
+  "schema": 1,
+  "created_utc": "2026-10-19T06:31:22.793334+00:00",
+  "purpose": "native duration correctness and legacy quantization; no FPS claim",
+  "source_sha256": {
+    "tools/test_native_durations.py": "c4d12b19d71f84790445d7fbed0282f4e14de360cc2d0c6cfca9b6ec509ddcd2",
+    "tools/test_native_rates.py": "90ac862d4934f72c295d78979a1caa196d03a38e767067905fc74f1480753dc1",
+    "tools/port_sites.py": "af6a2840a67c03a03c654962c520f4cc4eeebb3d53e5f09e42fbd33b604e68c4",
+    "tools/verify_sites.py": "0a7160d2c0c8803110147c7f462992c929e6121730bff70f0d54cbac9db85155",
+    "tools/test_fx_lifecycle.py": "4c572e4303041ec2f820ffe0afb4e110be0f2beefccaa952974ac00e1122a3ed",
+    "perf/tests/test_native_durations.c": "06ab3d43bcc1dbf52aa8c2cb417ab69dd059b98fc146919745ccc49d80d19375"
+  },
+  "reference": {
+    "path": "C:\\repositories\\Open-BFME-2\\baselines\\bfme2\\workshop-vanilla-1.06\\files\\game.dat",
+    "sha256": "f008b587570bad693981dc7218588c81d192a1e064b0f7f861539c51156a7640"
+  },
+  "executable": {
+    "path": "C:\\repositories\\sage-boost\\perf\\build\\test_native_durations.exe",
+    "sha256": "908427e45502a41b43df5e35236ed92c2e39ccfbfcd997b327cc25a24ba4645d"
+  },
+  "images": [
+    {
+      "path": "C:\\Jogos\\AgeoftheRing\\rotwk\\game.dat",
+      "sha256": "035da15c626af6cd1663d1886deea605464ec6776f2c5f1d24570c2be6d73e61",
+      "contracts": [
+        {
+          "kind": 0,
+          "rva": 3384323,
+          "size": 38,
+          "fnv1a": 169090721,
+          "body_sha256": "ac913d9fd9ddb2583d710794ef05408ba0fa12454b8b25b09c42c8cffede0190",
+          "pattern_matches": [
+            3384323,
+            3384502
+          ],
+          "patches": [
+            [
+              7,
+              0,
+              0
+            ],
+            [
+              17,
+              0,
+              2
+            ],
+            [
+              23,
+              1,
+              3
+            ]
+          ],
+          "dependencies": {
+            "0": 187551,
+            "2": 191149,
+            "3": 10090000
+          }
+        },
+        {
+          "kind": 1,
+          "rva": 3384361,
+          "size": 70,
+          "fnv1a": 2777983892,
+          "body_sha256": "76ae9c67fb048360ef6f168b48c955a72b2765aef1676b89ad7468bfb320753a",
+          "pattern_matches": [
+            3384361
+          ],
+          "patches": [
+            [
+              10,
+              0,
+              0
+            ],
+            [
+              19,
+              0,
+              1
+            ],
+            [
+              35,
+              1,
+              4
+            ],
+            [
+              41,
+              1,
+              3
+            ],
+            [
+              52,
+              1,
+              5
+            ],
+            [
+              59,
+              0,
+              6
+            ]
+          ],
+          "dependencies": {
+            "0": 187551,
+            "1": 191042,
+            "4": 8226456,
+            "3": 10090000,
+            "5": 8193416,
+            "6": 6541220
+          }
+        },
+        {
+          "kind": 2,
+          "rva": 3384431,
+          "size": 71,
+          "fnv1a": 4063073530,
+          "body_sha256": "4d80e57fa8467d86d7252e4963f4792112dd5233a31b6ddea3bee014a1d4adf8",
+          "pattern_matches": [
+            3384431
+          ],
+          "patches": [
+            [
+              10,
+              0,
+              0
+            ],
+            [
+              19,
+              0,
+              1
+            ],
+            [
+              35,
+              1,
+              4
+            ],
+            [
+              41,
+              1,
+              3
+            ],
+            [
+              52,
+              1,
+              5
+            ],
+            [
+              59,
+              0,
+              6
+            ]
+          ],
+          "dependencies": {
+            "0": 187551,
+            "1": 191042,
+            "4": 8226456,
+            "3": 10090000,
+            "5": 8193416,
+            "6": 6541220
+          }
+        },
+        {
+          "kind": 3,
+          "rva": 3387505,
+          "size": 119,
+          "fnv1a": 363901896,
+          "body_sha256": "38b37ed403039d3fd03f4d12b5eb6d1b809e76f38dcaaee8a48748650f1c7dd2",
+          "pattern_matches": [
+            3387505
+          ],
+          "patches": [
+            [
+              12,
+              0,
+              0
+            ],
+            [
+              21,
+              0,
+              1
+            ],
+            [
+              39,
+              1,
+              4
+            ],
+            [
+              45,
+              1,
+              3
+            ],
+            [
+              56,
+              1,
+              5
+            ],
+            [
+              63,
+              0,
+              6
+            ],
+            [
+              79,
+              1,
+              9
+            ],
+            [
+              90,
+              0,
+              7
+            ],
+            [
+              98,
+              1,
+              10
+            ],
+            [
+              107,
+              0,
+              8
+            ]
+          ],
+          "dependencies": {
+            "0": 187551,
+            "1": 191042,
+            "4": 8226456,
+            "3": 10090000,
+            "5": 8193416,
+            "6": 6541220,
+            "9": 8540416,
+            "7": 193473,
+            "10": 9531392,
+            "8": 6540804
+          }
+        },
+        {
+          "kind": 4,
+          "rva": 2379537,
+          "size": 191,
+          "fnv1a": 3021236073,
+          "body_sha256": "2803af2c998aec96841ddc3347106b66210902b887453978bb1df8753d7220e4",
+          "patches": [
+            [
+              46,
+              1,
+              20
+            ],
+            [
+              73,
+              1,
+              21
+            ],
+            [
+              96,
+              1,
+              22
+            ],
+            [
+              65,
+              1,
+              25
+            ],
+            [
+              88,
+              1,
+              26
+            ],
+            [
+              111,
+              1,
+              27
+            ],
+            [
+              127,
+              1,
+              29
+            ],
+            [
+              142,
+              1,
+              30
+            ],
+            [
+              151,
+              1,
+              23
+            ],
+            [
+              161,
+              1,
+              24
+            ],
+            [
+              169,
+              1,
+              28
+            ],
+            [
+              177,
+              1,
+              31
+            ],
+            [
+              185,
+              1,
+              32
+            ]
+          ]
+        }
+      ],
+      "preflight_faults": [
+        {
+          "fault": "changed_return_0",
+          "rejected": true,
+          "reason": "complete parser and duration dependency not unique"
+        },
+        {
+          "fault": "changed_return_1",
+          "rejected": true,
+          "reason": "complete parser and duration dependency not unique"
+        },
+        {
+          "fault": "changed_return_2",
+          "rejected": true,
+          "reason": "complete parser and duration dependency not unique"
+        },
+        {
+          "fault": "changed_return_3",
+          "rejected": true,
+          "reason": "complete parser and duration dependency not unique"
+        },
+        {
+          "fault": "wrong_duration_global",
+          "rejected": true,
+          "reason": "complete parser and duration dependency not unique"
+        },
+        {
+          "fault": "wrong_unsigned_bias",
+          "rejected": true,
+          "reason": "complete parser and duration dependency not unique"
+        }
+      ],
+      "factors": {
+        "0": 0.004999999888241291,
+        "1": 0.005000000353902578,
+        "2": 0.010000000707805157,
+        "3": 0.009999999776482582
+      },
+      "integer_cases": [
+        {
+          "mode": 0,
+          "milliseconds": 0,
+          "u32": 0,
+          "u16": 0,
+          "u8": 0,
+          "byte_threw": false,
+          "compensated_u32": 0,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 1,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": 2,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 99,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": 2,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 100,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": 2,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 199,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": 2,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 200,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": 2,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 201,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": 4,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 249,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": 4,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 250,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": 4,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 399,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": 4,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 400,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": 4,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 401,
+          "u32": 3,
+          "u16": 3,
+          "u8": 3,
+          "byte_threw": false,
+          "compensated_u32": 6,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 999,
+          "u32": 5,
+          "u16": 5,
+          "u8": 5,
+          "byte_threw": false,
+          "compensated_u32": 10,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 1000,
+          "u32": 5,
+          "u16": 5,
+          "u8": 5,
+          "byte_threw": false,
+          "compensated_u32": 10,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 1001,
+          "u32": 6,
+          "u16": 6,
+          "u8": 6,
+          "byte_threw": false,
+          "compensated_u32": 12,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 25400,
+          "u32": 127,
+          "u16": 127,
+          "u8": 127,
+          "byte_threw": false,
+          "compensated_u32": 254,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 25401,
+          "u32": 128,
+          "u16": 128,
+          "u8": 128,
+          "byte_threw": false,
+          "compensated_u32": 256,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": false
+        },
+        {
+          "mode": 0,
+          "milliseconds": 51000,
+          "u32": 255,
+          "u16": 255,
+          "u8": 255,
+          "byte_threw": false,
+          "compensated_u32": 510,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": false
+        },
+        {
+          "mode": 0,
+          "milliseconds": 51001,
+          "u32": 256,
+          "u16": 256,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": 512,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": false
+        },
+        {
+          "mode": 0,
+          "milliseconds": 6553400,
+          "u32": 32767,
+          "u16": 32767,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": 65534,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": false
+        },
+        {
+          "mode": 0,
+          "milliseconds": 6553600,
+          "u32": 32768,
+          "u16": 32768,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": 65536,
+          "compensated_u16_fits": false,
+          "compensated_u8_fits": false
+        },
+        {
+          "mode": 0,
+          "milliseconds": 13107000,
+          "u32": 65535,
+          "u16": 65535,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": 131070,
+          "compensated_u16_fits": false,
+          "compensated_u8_fits": false
+        },
+        {
+          "mode": 0,
+          "milliseconds": 13107200,
+          "u32": 65536,
+          "u16": 0,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": 131072,
+          "compensated_u16_fits": false,
+          "compensated_u8_fits": false
+        },
+        {
+          "mode": 0,
+          "milliseconds": 2147483648,
+          "u32": 10737418,
+          "u16": 55050,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": 21474836,
+          "compensated_u16_fits": false,
+          "compensated_u8_fits": false
+        },
+        {
+          "mode": 0,
+          "milliseconds": 4294967295,
+          "u32": 21474836,
+          "u16": 44564,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": 42949672,
+          "compensated_u16_fits": false,
+          "compensated_u8_fits": false
+        },
+        {
+          "mode": 1,
+          "milliseconds": 0,
+          "u32": 0,
+          "u16": 0,
+          "u8": 0,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 1,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 99,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 100,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 199,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 200,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 201,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 249,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 250,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 399,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 400,
+          "u32": 3,
+          "u16": 3,
+          "u8": 3,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 401,
+          "u32": 3,
+          "u16": 3,
+          "u8": 3,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 999,
+          "u32": 5,
+          "u16": 5,
+          "u8": 5,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 1000,
+          "u32": 6,
+          "u16": 6,
+          "u8": 6,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 1001,
+          "u32": 6,
+          "u16": 6,
+          "u8": 6,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 25400,
+          "u32": 128,
+          "u16": 128,
+          "u8": 128,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 25401,
+          "u32": 128,
+          "u16": 128,
+          "u8": 128,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 51000,
+          "u32": 256,
+          "u16": 256,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 51001,
+          "u32": 256,
+          "u16": 256,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 6553400,
+          "u32": 32768,
+          "u16": 32768,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 6553600,
+          "u32": 32769,
+          "u16": 32769,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 13107000,
+          "u32": 65536,
+          "u16": 0,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 13107200,
+          "u32": 65537,
+          "u16": 1,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 2147483648,
+          "u32": 10737419,
+          "u16": 55051,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 4294967295,
+          "u32": 21474838,
+          "u16": 44566,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 0,
+          "u32": 0,
+          "u16": 0,
+          "u8": 0,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 1,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 99,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 100,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 199,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 200,
+          "u32": 3,
+          "u16": 3,
+          "u8": 3,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 201,
+          "u32": 3,
+          "u16": 3,
+          "u8": 3,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 249,
+          "u32": 3,
+          "u16": 3,
+          "u8": 3,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 250,
+          "u32": 3,
+          "u16": 3,
+          "u8": 3,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 399,
+          "u32": 4,
+          "u16": 4,
+          "u8": 4,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 400,
+          "u32": 5,
+          "u16": 5,
+          "u8": 5,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 401,
+          "u32": 5,
+          "u16": 5,
+          "u8": 5,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 999,
+          "u32": 10,
+          "u16": 10,
+          "u8": 10,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 1000,
+          "u32": 11,
+          "u16": 11,
+          "u8": 11,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 1001,
+          "u32": 11,
+          "u16": 11,
+          "u8": 11,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 25400,
+          "u32": 255,
+          "u16": 255,
+          "u8": 255,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 25401,
+          "u32": 255,
+          "u16": 255,
+          "u8": 255,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 51000,
+          "u32": 511,
+          "u16": 511,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 51001,
+          "u32": 511,
+          "u16": 511,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 6553400,
+          "u32": 65535,
+          "u16": 65535,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 6553600,
+          "u32": 65537,
+          "u16": 1,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 13107000,
+          "u32": 131071,
+          "u16": 65535,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 13107200,
+          "u32": 131073,
+          "u16": 1,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 2147483648,
+          "u32": 21474838,
+          "u16": 44566,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 4294967295,
+          "u32": 42949676,
+          "u16": 23596,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 0,
+          "u32": 0,
+          "u16": 0,
+          "u8": 0,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 1,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 99,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 100,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 199,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 200,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 201,
+          "u32": 3,
+          "u16": 3,
+          "u8": 3,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 249,
+          "u32": 3,
+          "u16": 3,
+          "u8": 3,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 250,
+          "u32": 3,
+          "u16": 3,
+          "u8": 3,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 399,
+          "u32": 4,
+          "u16": 4,
+          "u8": 4,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 400,
+          "u32": 4,
+          "u16": 4,
+          "u8": 4,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 401,
+          "u32": 5,
+          "u16": 5,
+          "u8": 5,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 999,
+          "u32": 10,
+          "u16": 10,
+          "u8": 10,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 1000,
+          "u32": 10,
+          "u16": 10,
+          "u8": 10,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 1001,
+          "u32": 11,
+          "u16": 11,
+          "u8": 11,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 25400,
+          "u32": 254,
+          "u16": 254,
+          "u8": 254,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 25401,
+          "u32": 255,
+          "u16": 255,
+          "u8": 255,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 51000,
+          "u32": 510,
+          "u16": 510,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 51001,
+          "u32": 511,
+          "u16": 511,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 6553400,
+          "u32": 65534,
+          "u16": 65534,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 6553600,
+          "u32": 65536,
+          "u16": 0,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 13107000,
+          "u32": 131070,
+          "u16": 65534,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 13107200,
+          "u32": 131072,
+          "u16": 0,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 2147483648,
+          "u32": 21474836,
+          "u16": 44564,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 4294967295,
+          "u32": 42949672,
+          "u16": 23592,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        }
+      ],
+      "real_cases": [
+        {
+          "mode": 0,
+          "input": 0.0,
+          "result_word": "00000000"
+        },
+        {
+          "mode": 0,
+          "input": 0.125,
+          "result_word": "3a23d70a"
+        },
+        {
+          "mode": 0,
+          "input": 1.0,
+          "result_word": "3ba3d70a"
+        },
+        {
+          "mode": 0,
+          "input": 199.5,
+          "result_word": "3f7f5c29"
+        },
+        {
+          "mode": 0,
+          "input": 200.0,
+          "result_word": "3f800000"
+        },
+        {
+          "mode": 0,
+          "input": 250.25,
+          "result_word": "3fa028f6"
+        },
+        {
+          "mode": 0,
+          "input": 1000.0,
+          "result_word": "40a00000"
+        },
+        {
+          "mode": 0,
+          "input": 16777216.0,
+          "result_word": "47a3d70a"
+        },
+        {
+          "mode": 1,
+          "input": 0.0,
+          "result_word": "00000000"
+        },
+        {
+          "mode": 1,
+          "input": 0.125,
+          "result_word": "3a23d70b"
+        },
+        {
+          "mode": 1,
+          "input": 1.0,
+          "result_word": "3ba3d70b"
+        },
+        {
+          "mode": 1,
+          "input": 199.5,
+          "result_word": "3f7f5c2a"
+        },
+        {
+          "mode": 1,
+          "input": 200.0,
+          "result_word": "3f800001"
+        },
+        {
+          "mode": 1,
+          "input": 250.25,
+          "result_word": "3fa028f7"
+        },
+        {
+          "mode": 1,
+          "input": 1000.0,
+          "result_word": "40a00001"
+        },
+        {
+          "mode": 1,
+          "input": 16777216.0,
+          "result_word": "47a3d70b"
+        },
+        {
+          "mode": 2,
+          "input": 0.0,
+          "result_word": "00000000"
+        },
+        {
+          "mode": 2,
+          "input": 0.125,
+          "result_word": "3aa3d70b"
+        },
+        {
+          "mode": 2,
+          "input": 1.0,
+          "result_word": "3c23d70b"
+        },
+        {
+          "mode": 2,
+          "input": 199.5,
+          "result_word": "3fff5c2a"
+        },
+        {
+          "mode": 2,
+          "input": 200.0,
+          "result_word": "40000001"
+        },
+        {
+          "mode": 2,
+          "input": 250.25,
+          "result_word": "402028f7"
+        },
+        {
+          "mode": 2,
+          "input": 1000.0,
+          "result_word": "41200001"
+        },
+        {
+          "mode": 2,
+          "input": 16777216.0,
+          "result_word": "4823d70b"
+        },
+        {
+          "mode": 3,
+          "input": 0.0,
+          "result_word": "00000000"
+        },
+        {
+          "mode": 3,
+          "input": 0.125,
+          "result_word": "3aa3d70a"
+        },
+        {
+          "mode": 3,
+          "input": 1.0,
+          "result_word": "3c23d70a"
+        },
+        {
+          "mode": 3,
+          "input": 199.5,
+          "result_word": "3fff5c29"
+        },
+        {
+          "mode": 3,
+          "input": 200.0,
+          "result_word": "40000000"
+        },
+        {
+          "mode": 3,
+          "input": 250.25,
+          "result_word": "402028f6"
+        },
+        {
+          "mode": 3,
+          "input": 1000.0,
+          "result_word": "41200000"
+        },
+        {
+          "mode": 3,
+          "input": 16777216.0,
+          "result_word": "4823d70a"
+        }
+      ],
+      "positive": {
+        "returncode": 0,
+        "stdout": "FACTOR,0,3ba3d70a\nFACTOR,1,3ba3d70b\nFACTOR,2,3c23d70b\nFACTOR,3,3c23d70a\nINTEGER,0,0,0,0,0,0,0,1,1\nINTEGER,0,1,1,1,1,0,2,1,1\nINTEGER,0,99,1,1,1,0,2,1,1\nINTEGER,0,100,1,1,1,0,2,1,1\nINTEGER,0,199,1,1,1,0,2,1,1\nINTEGER,0,200,1,1,1,0,2,1,1\nINTEGER,0,201,2,2,2,0,4,1,1\nINTEGER,0,249,2,2,2,0,4,1,1\nINTEGER,0,250,2,2,2,0,4,1,1\nINTEGER,0,399,2,2,2,0,4,1,1\nINTEGER,0,400,2,2,2,0,4,1,1\nINTEGER,0,401,3,3,3,0,6,1,1\nINTEGER,0,999,5,5,5,0,10,1,1\nINTEGER,0,1000,5,5,5,0,10,1,1\nINTEGER,0,1001,6,6,6,0,12,1,1\nINTEGER,0,25400,127,127,127,0,254,1,1\nINTEGER,0,25401,128,128,128,0,256,1,0\nINTEGER,0,51000,255,255,255,0,510,1,0\nINTEGER,0,51001,256,256,165,1,512,1,0\nINTEGER,0,6553400,32767,32767,165,1,65534,1,0\nINTEGER,0,6553600,32768,32768,165,1,65536,0,0\nINTEGER,0,13107000,65535,65535,165,1,131070,0,0\nINTEGER,0,13107200,65536,0,165,1,131072,0,0\nINTEGER,0,2147483648,10737418,55050,165,1,21474836,0,0\nINTEGER,0,4294967295,21474836,44564,165,1,42949672,0,0\nREAL,0,00000000,00000000\nREAL,0,3e000000,3a23d70a\nREAL,0,3f800000,3ba3d70a\nREAL,0,43478000,3f7f5c29\nREAL,0,43480000,3f800000\nREAL,0,437a4000,3fa028f6\nREAL,0,447a0000,40a00000\nREAL,0,4b800000,47a3d70a\nINTEGER,1,0,0,0,0,0,0,0,0\nINTEGER,1,1,1,1,1,0,0,0,0\nINTEGER,1,99,1,1,1,0,0,0,0\nINTEGER,1,100,1,1,1,0,0,0,0\nINTEGER,1,199,1,1,1,0,0,0,0\nINTEGER,1,200,2,2,2,0,0,0,0\nINTEGER,1,201,2,2,2,0,0,0,0\nINTEGER,1,249,2,2,2,0,0,0,0\nINTEGER,1,250,2,2,2,0,0,0,0\nINTEGER,1,399,2,2,2,0,0,0,0\nINTEGER,1,400,3,3,3,0,0,0,0\nINTEGER,1,401,3,3,3,0,0,0,0\nINTEGER,1,999,5,5,5,0,0,0,0\nINTEGER,1,1000,6,6,6,0,0,0,0\nINTEGER,1,1001,6,6,6,0,0,0,0\nINTEGER,1,25400,128,128,128,0,0,0,0\nINTEGER,1,25401,128,128,128,0,0,0,0\nINTEGER,1,51000,256,256,165,1,0,0,0\nINTEGER,1,51001,256,256,165,1,0,0,0\nINTEGER,1,6553400,32768,32768,165,1,0,0,0\nINTEGER,1,6553600,32769,32769,165,1,0,0,0\nINTEGER,1,13107000,65536,0,165,1,0,0,0\nINTEGER,1,13107200,65537,1,165,1,0,0,0\nINTEGER,1,2147483648,10737419,55051,165,1,0,0,0\nINTEGER,1,4294967295,21474838,44566,165,1,0,0,0\nREAL,1,00000000,00000000\nREAL,1,3e000000,3a23d70b\nREAL,1,3f800000,3ba3d70b\nREAL,1,43478000,3f7f5c2a\nREAL,1,43480000,3f800001\nREAL,1,437a4000,3fa028f7\nREAL,1,447a0000,40a00001\nREAL,1,4b800000,47a3d70b\nINTEGER,2,0,0,0,0,0,0,0,0\nINTEGER,2,1,1,1,1,0,0,0,0\nINTEGER,2,99,1,1,1,0,0,0,0\nINTEGER,2,100,2,2,2,0,0,0,0\nINTEGER,2,199,2,2,2,0,0,0,0\nINTEGER,2,200,3,3,3,0,0,0,0\nINTEGER,2,201,3,3,3,0,0,0,0\nINTEGER,2,249,3,3,3,0,0,0,0\nINTEGER,2,250,3,3,3,0,0,0,0\nINTEGER,2,399,4,4,4,0,0,0,0\nINTEGER,2,400,5,5,5,0,0,0,0\nINTEGER,2,401,5,5,5,0,0,0,0\nINTEGER,2,999,10,10,10,0,0,0,0\nINTEGER,2,1000,11,11,11,0,0,0,0\nINTEGER,2,1001,11,11,11,0,0,0,0\nINTEGER,2,25400,255,255,255,0,0,0,0\nINTEGER,2,25401,255,255,255,0,0,0,0\nINTEGER,2,51000,511,511,165,1,0,0,0\nINTEGER,2,51001,511,511,165,1,0,0,0\nINTEGER,2,6553400,65535,65535,165,1,0,0,0\nINTEGER,2,6553600,65537,1,165,1,0,0,0\nINTEGER,2,13107000,131071,65535,165,1,0,0,0\nINTEGER,2,13107200,131073,1,165,1,0,0,0\nINTEGER,2,2147483648,21474838,44566,165,1,0,0,0\nINTEGER,2,4294967295,42949676,23596,165,1,0,0,0\nREAL,2,00000000,00000000\nREAL,2,3e000000,3aa3d70b\nREAL,2,3f800000,3c23d70b\nREAL,2,43478000,3fff5c2a\nREAL,2,43480000,40000001\nREAL,2,437a4000,402028f7\nREAL,2,447a0000,41200001\nREAL,2,4b800000,4823d70b\nINTEGER,3,0,0,0,0,0,0,0,0\nINTEGER,3,1,1,1,1,0,0,0,0\nINTEGER,3,99,1,1,1,0,0,0,0\nINTEGER,3,100,1,1,1,0,0,0,0\nINTEGER,3,199,2,2,2,0,0,0,0\nINTEGER,3,200,2,2,2,0,0,0,0\nINTEGER,3,201,3,3,3,0,0,0,0\nINTEGER,3,249,3,3,3,0,0,0,0\nINTEGER,3,250,3,3,3,0,0,0,0\nINTEGER,3,399,4,4,4,0,0,0,0\nINTEGER,3,400,4,4,4,0,0,0,0\nINTEGER,3,401,5,5,5,0,0,0,0\nINTEGER,3,999,10,10,10,0,0,0,0\nINTEGER,3,1000,10,10,10,0,0,0,0\nINTEGER,3,1001,11,11,11,0,0,0,0\nINTEGER,3,25400,254,254,254,0,0,0,0\nINTEGER,3,25401,255,255,255,0,0,0,0\nINTEGER,3,51000,510,510,165,1,0,0,0\nINTEGER,3,51001,511,511,165,1,0,0,0\nINTEGER,3,6553400,65534,65534,165,1,0,0,0\nINTEGER,3,6553600,65536,0,165,1,0,0,0\nINTEGER,3,13107000,131070,65534,165,1,0,0,0\nINTEGER,3,13107200,131072,0,165,1,0,0,0\nINTEGER,3,2147483648,21474836,44564,165,1,0,0,0\nINTEGER,3,4294967295,42949672,23592,165,1,0,0,0\nREAL,3,00000000,00000000\nREAL,3,3e000000,3aa3d70a\nREAL,3,3f800000,3c23d70a\nREAL,3,43478000,3fff5c29\nREAL,3,43480000,40000000\nREAL,3,437a4000,402028f6\nREAL,3,447a0000,41200000\nREAL,3,4b800000,4823d70a\nCOUNTS,720344,87033,145464,34614\nPASS,ABI,0\n",
+        "stderr": ""
+      },
+      "output_faults": [
+        {
+          "fault": "floor_instead_of_ceil",
+          "rejected": true,
+          "returncode": 0,
+          "stdout": "FACTOR,0,3ba3d70a\nFACTOR,1,3ba3d70b\nFACTOR,2,3c23d70b\nFACTOR,3,3c23d70a\nINTEGER,0,0,0,0,0,0,0,1,1\nINTEGER,0,1,0,0,0,0,0,1,1\nINTEGER,0,99,0,0,0,0,0,1,1\nINTEGER,0,100,0,0,0,0,0,1,1\nINTEGER,0,199,0,0,0,0,0,1,1\nINTEGER,0,200,0,0,0,0,0,1,1\nINTEGER,0,201,1,1,1,0,2,1,1\nINTEGER,0,249,1,1,1,0,2,1,1\nINTEGER,0,250,1,1,1,0,2,1,1\nINTEGER,0,399,1,1,1,0,2,1,1\nINTEGER,0,400,1,1,1,0,2,1,1\nINTEGER,0,401,2,2,2,0,4,1,1\nINTEGER,0,999,4,4,4,0,8,1,1\nINTEGER,0,1000,4,4,4,0,8,1,1\nINTEGER,0,1001,5,5,5,0,10,1,1\nINTEGER,0,25400,126,126,126,0,252,1,1\nINTEGER,0,25401,127,127,127,0,254,1,1\nINTEGER,0,51000,254,254,254,0,508,1,0\nINTEGER,0,51001,255,255,255,0,510,1,0\nINTEGER,0,6553400,32766,32766,165,1,65532,1,0\nINTEGER,0,6553600,32767,32767,165,1,65534,1,0\nINTEGER,0,13107000,65534,65534,165,1,131068,0,0\nINTEGER,0,13107200,65535,65535,165,1,131070,0,0\nINTEGER,0,2147483648,10737418,55050,165,1,21474836,0,0\nINTEGER,0,4294967295,21474835,44563,165,1,42949670,0,0\nREAL,0,00000000,00000000\nREAL,0,3e000000,3a23d70a\nREAL,0,3f800000,3ba3d70a\nREAL,0,43478000,3f7f5c29\nREAL,0,43480000,3f800000\nREAL,0,437a4000,3fa028f6\nREAL,0,447a0000,40a00000\nREAL,0,4b800000,47a3d70a\nINTEGER,1,0,0,0,0,0,0,0,0\nINTEGER,1,1,0,0,0,0,0,0,0\nINTEGER,1,99,0,0,0,0,0,0,0\nINTEGER,1,100,0,0,0,0,0,0,0\nINTEGER,1,199,0,0,0,0,0,0,0\nINTEGER,1,200,1,1,1,0,0,0,0\nINTEGER,1,201,1,1,1,0,0,0,0\nINTEGER,1,249,1,1,1,0,0,0,0\nINTEGER,1,250,1,1,1,0,0,0,0\nINTEGER,1,399,1,1,1,0,0,0,0\nINTEGER,1,400,2,2,2,0,0,0,0\nINTEGER,1,401,2,2,2,0,0,0,0\nINTEGER,1,999,4,4,4,0,0,0,0\nINTEGER,1,1000,5,5,5,0,0,0,0\nINTEGER,1,1001,5,5,5,0,0,0,0\nINTEGER,1,25400,127,127,127,0,0,0,0\nINTEGER,1,25401,127,127,127,0,0,0,0\nINTEGER,1,51000,255,255,255,0,0,0,0\nINTEGER,1,51001,255,255,255,0,0,0,0\nINTEGER,1,6553400,32767,32767,165,1,0,0,0\nINTEGER,1,6553600,32768,32768,165,1,0,0,0\nINTEGER,1,13107000,65535,65535,165,1,0,0,0\nINTEGER,1,13107200,65536,0,165,1,0,0,0\nINTEGER,1,2147483648,10737419,55051,165,1,0,0,0\nINTEGER,1,4294967295,21474837,44565,165,1,0,0,0\nREAL,1,00000000,00000000\nREAL,1,3e000000,3a23d70b\nREAL,1,3f800000,3ba3d70b\nREAL,1,43478000,3f7f5c2a\nREAL,1,43480000,3f800001\nREAL,1,437a4000,3fa028f7\nREAL,1,447a0000,40a00001\nREAL,1,4b800000,47a3d70b\nINTEGER,2,0,0,0,0,0,0,0,0\nINTEGER,2,1,0,0,0,0,0,0,0\nINTEGER,2,99,0,0,0,0,0,0,0\nINTEGER,2,100,1,1,1,0,0,0,0\nINTEGER,2,199,1,1,1,0,0,0,0\nINTEGER,2,200,2,2,2,0,0,0,0\nINTEGER,2,201,2,2,2,0,0,0,0\nINTEGER,2,249,2,2,2,0,0,0,0\nINTEGER,2,250,2,2,2,0,0,0,0\nINTEGER,2,399,3,3,3,0,0,0,0\nINTEGER,2,400,4,4,4,0,0,0,0\nINTEGER,2,401,4,4,4,0,0,0,0\nINTEGER,2,999,9,9,9,0,0,0,0\nINTEGER,2,1000,10,10,10,0,0,0,0\nINTEGER,2,1001,10,10,10,0,0,0,0\nINTEGER,2,25400,254,254,254,0,0,0,0\nINTEGER,2,25401,254,254,254,0,0,0,0\nINTEGER,2,51000,510,510,165,1,0,0,0\nINTEGER,2,51001,510,510,165,1,0,0,0\nINTEGER,2,6553400,65534,65534,165,1,0,0,0\nINTEGER,2,6553600,65536,0,165,1,0,0,0\nINTEGER,2,13107000,131070,65534,165,1,0,0,0\nINTEGER,2,13107200,131072,0,165,1,0,0,0\nINTEGER,2,2147483648,21474838,44566,165,1,0,0,0\nINTEGER,2,4294967295,42949675,23595,165,1,0,0,0\nREAL,2,00000000,00000000\nREAL,2,3e000000,3aa3d70b\nREAL,2,3f800000,3c23d70b\nREAL,2,43478000,3fff5c2a\nREAL,2,43480000,40000001\nREAL,2,437a4000,402028f7\nREAL,2,447a0000,41200001\nREAL,2,4b800000,4823d70b\nINTEGER,3,0,0,0,0,0,0,0,0\nINTEGER,3,1,0,0,0,0,0,0,0\nINTEGER,3,99,0,0,0,0,0,0,0\nINTEGER,3,100,0,0,0,0,0,0,0\nINTEGER,3,199,1,1,1,0,0,0,0\nINTEGER,3,200,1,1,1,0,0,0,0\nINTEGER,3,201,2,2,2,0,0,0,0\nINTEGER,3,249,2,2,2,0,0,0,0\nINTEGER,3,250,2,2,2,0,0,0,0\nINTEGER,3,399,3,3,3,0,0,0,0\nINTEGER,3,400,3,3,3,0,0,0,0\nINTEGER,3,401,4,4,4,0,0,0,0\nINTEGER,3,999,9,9,9,0,0,0,0\nINTEGER,3,1000,9,9,9,0,0,0,0\nINTEGER,3,1001,10,10,10,0,0,0,0\nINTEGER,3,25400,253,253,253,0,0,0,0\nINTEGER,3,25401,254,254,254,0,0,0,0\nINTEGER,3,51000,509,509,165,1,0,0,0\nINTEGER,3,51001,510,510,165,1,0,0,0\nINTEGER,3,6553400,65533,65533,165,1,0,0,0\nINTEGER,3,6553600,65535,65535,165,1,0,0,0\nINTEGER,3,13107000,131069,65533,165,1,0,0,0\nINTEGER,3,13107200,131071,65535,165,1,0,0,0\nINTEGER,3,2147483648,21474836,44564,165,1,0,0,0\nINTEGER,3,4294967295,42949671,23591,165,1,0,0,0\nREAL,3,00000000,00000000\nREAL,3,3e000000,3aa3d70a\nREAL,3,3f800000,3c23d70a\nREAL,3,43478000,3fff5c29\nREAL,3,43480000,40000000\nREAL,3,437a4000,402028f6\nREAL,3,447a0000,41200000\nREAL,3,4b800000,4823d70a\nCOUNTS,720344,86430,145666,34412\nPASS,ABI,0\n",
+          "stderr": "",
+          "rejection_mechanism": "independent Python oracle",
+          "oracle_failure": "('integer oracle', ['INTEGER', '0', '1', '0', '0', '0', '0', '0', '1', '1'], 1)"
+        },
+        {
+          "fault": "scale_before_rounding",
+          "rejected": true,
+          "returncode": 1,
+          "stdout": "FACTOR,0,3ba3d70a\nFACTOR,1,3ba3d70b\nFACTOR,2,3c23d70b\nFACTOR,3,3c23d70a\nINTEGER,0,0,0,0,0,0,0,1,1\n",
+          "stderr": "duration check refused line 162: value==baseline*2\n",
+          "rejection_mechanism": "C fixture assertion"
+        },
+        {
+          "fault": "narrow_overflow_write",
+          "rejected": true,
+          "returncode": 1,
+          "stdout": "FACTOR,0,3ba3d70a\nFACTOR,1,3ba3d70b\nFACTOR,2,3c23d70b\nFACTOR,3,3c23d70a\nINTEGER,0,0,0,0,0,0,0,1,1\nINTEGER,0,1,1,1,1,0,2,1,1\nINTEGER,0,99,1,1,1,0,2,1,1\nINTEGER,0,100,1,1,1,0,2,1,1\nINTEGER,0,199,1,1,1,0,2,1,1\nINTEGER,0,200,1,1,1,0,2,1,1\nINTEGER,0,201,2,2,2,0,4,1,1\nINTEGER,0,249,2,2,2,0,4,1,1\nINTEGER,0,250,2,2,2,0,4,1,1\nINTEGER,0,399,2,2,2,0,4,1,1\nINTEGER,0,400,2,2,2,0,4,1,1\nINTEGER,0,401,3,3,3,0,6,1,1\nINTEGER,0,999,5,5,5,0,10,1,1\nINTEGER,0,1000,5,5,5,0,10,1,1\nINTEGER,0,1001,6,6,6,0,12,1,1\nINTEGER,0,25400,127,127,127,0,254,1,1\n",
+          "stderr": "duration check refused line 163: value==0xdeadbeef\n",
+          "rejection_mechanism": "C fixture assertion"
+        }
+      ],
+      "counts": {
+        "parser_calls": 720344,
+        "byte_overflow_reports": 87033,
+        "accepted_compensations": 145464,
+        "refused_compensations": 34614
+      }
+    },
+    {
+      "path": "C:\\Jogos\\AgeoftheRing\\rotwk\\game820.dat",
+      "sha256": "bcf4c85ec72ecb9eb95a844fc0072434fdcef49a5b2c59abb77ac04af29c277e",
+      "contracts": [
+        {
+          "kind": 0,
+          "rva": 3384323,
+          "size": 38,
+          "fnv1a": 169090721,
+          "body_sha256": "ac913d9fd9ddb2583d710794ef05408ba0fa12454b8b25b09c42c8cffede0190",
+          "pattern_matches": [
+            3384323,
+            3384502
+          ],
+          "patches": [
+            [
+              7,
+              0,
+              0
+            ],
+            [
+              17,
+              0,
+              2
+            ],
+            [
+              23,
+              1,
+              3
+            ]
+          ],
+          "dependencies": {
+            "0": 187551,
+            "2": 191149,
+            "3": 10090000
+          }
+        },
+        {
+          "kind": 1,
+          "rva": 3384361,
+          "size": 70,
+          "fnv1a": 2777983892,
+          "body_sha256": "76ae9c67fb048360ef6f168b48c955a72b2765aef1676b89ad7468bfb320753a",
+          "pattern_matches": [
+            3384361
+          ],
+          "patches": [
+            [
+              10,
+              0,
+              0
+            ],
+            [
+              19,
+              0,
+              1
+            ],
+            [
+              35,
+              1,
+              4
+            ],
+            [
+              41,
+              1,
+              3
+            ],
+            [
+              52,
+              1,
+              5
+            ],
+            [
+              59,
+              0,
+              6
+            ]
+          ],
+          "dependencies": {
+            "0": 187551,
+            "1": 191042,
+            "4": 8226456,
+            "3": 10090000,
+            "5": 8193416,
+            "6": 6541220
+          }
+        },
+        {
+          "kind": 2,
+          "rva": 3384431,
+          "size": 71,
+          "fnv1a": 4063073530,
+          "body_sha256": "4d80e57fa8467d86d7252e4963f4792112dd5233a31b6ddea3bee014a1d4adf8",
+          "pattern_matches": [
+            3384431
+          ],
+          "patches": [
+            [
+              10,
+              0,
+              0
+            ],
+            [
+              19,
+              0,
+              1
+            ],
+            [
+              35,
+              1,
+              4
+            ],
+            [
+              41,
+              1,
+              3
+            ],
+            [
+              52,
+              1,
+              5
+            ],
+            [
+              59,
+              0,
+              6
+            ]
+          ],
+          "dependencies": {
+            "0": 187551,
+            "1": 191042,
+            "4": 8226456,
+            "3": 10090000,
+            "5": 8193416,
+            "6": 6541220
+          }
+        },
+        {
+          "kind": 3,
+          "rva": 3387505,
+          "size": 119,
+          "fnv1a": 363901896,
+          "body_sha256": "38b37ed403039d3fd03f4d12b5eb6d1b809e76f38dcaaee8a48748650f1c7dd2",
+          "pattern_matches": [
+            3387505
+          ],
+          "patches": [
+            [
+              12,
+              0,
+              0
+            ],
+            [
+              21,
+              0,
+              1
+            ],
+            [
+              39,
+              1,
+              4
+            ],
+            [
+              45,
+              1,
+              3
+            ],
+            [
+              56,
+              1,
+              5
+            ],
+            [
+              63,
+              0,
+              6
+            ],
+            [
+              79,
+              1,
+              9
+            ],
+            [
+              90,
+              0,
+              7
+            ],
+            [
+              98,
+              1,
+              10
+            ],
+            [
+              107,
+              0,
+              8
+            ]
+          ],
+          "dependencies": {
+            "0": 187551,
+            "1": 191042,
+            "4": 8226456,
+            "3": 10090000,
+            "5": 8193416,
+            "6": 6541220,
+            "9": 8540416,
+            "7": 193473,
+            "10": 9531392,
+            "8": 6540804
+          }
+        },
+        {
+          "kind": 4,
+          "rva": 2379537,
+          "size": 191,
+          "fnv1a": 3021236073,
+          "body_sha256": "2803af2c998aec96841ddc3347106b66210902b887453978bb1df8753d7220e4",
+          "patches": [
+            [
+              46,
+              1,
+              20
+            ],
+            [
+              73,
+              1,
+              21
+            ],
+            [
+              96,
+              1,
+              22
+            ],
+            [
+              65,
+              1,
+              25
+            ],
+            [
+              88,
+              1,
+              26
+            ],
+            [
+              111,
+              1,
+              27
+            ],
+            [
+              127,
+              1,
+              29
+            ],
+            [
+              142,
+              1,
+              30
+            ],
+            [
+              151,
+              1,
+              23
+            ],
+            [
+              161,
+              1,
+              24
+            ],
+            [
+              169,
+              1,
+              28
+            ],
+            [
+              177,
+              1,
+              31
+            ],
+            [
+              185,
+              1,
+              32
+            ]
+          ]
+        }
+      ],
+      "preflight_faults": [
+        {
+          "fault": "changed_return_0",
+          "rejected": true,
+          "reason": "complete parser and duration dependency not unique"
+        },
+        {
+          "fault": "changed_return_1",
+          "rejected": true,
+          "reason": "complete parser and duration dependency not unique"
+        },
+        {
+          "fault": "changed_return_2",
+          "rejected": true,
+          "reason": "complete parser and duration dependency not unique"
+        },
+        {
+          "fault": "changed_return_3",
+          "rejected": true,
+          "reason": "complete parser and duration dependency not unique"
+        },
+        {
+          "fault": "wrong_duration_global",
+          "rejected": true,
+          "reason": "complete parser and duration dependency not unique"
+        },
+        {
+          "fault": "wrong_unsigned_bias",
+          "rejected": true,
+          "reason": "complete parser and duration dependency not unique"
+        }
+      ],
+      "factors": {
+        "0": 0.004999999888241291,
+        "1": 0.005000000353902578,
+        "2": 0.010000000707805157,
+        "3": 0.009999999776482582
+      },
+      "integer_cases": [
+        {
+          "mode": 0,
+          "milliseconds": 0,
+          "u32": 0,
+          "u16": 0,
+          "u8": 0,
+          "byte_threw": false,
+          "compensated_u32": 0,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 1,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": 2,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 99,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": 2,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 100,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": 2,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 199,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": 2,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 200,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": 2,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 201,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": 4,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 249,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": 4,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 250,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": 4,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 399,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": 4,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 400,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": 4,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 401,
+          "u32": 3,
+          "u16": 3,
+          "u8": 3,
+          "byte_threw": false,
+          "compensated_u32": 6,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 999,
+          "u32": 5,
+          "u16": 5,
+          "u8": 5,
+          "byte_threw": false,
+          "compensated_u32": 10,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 1000,
+          "u32": 5,
+          "u16": 5,
+          "u8": 5,
+          "byte_threw": false,
+          "compensated_u32": 10,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 1001,
+          "u32": 6,
+          "u16": 6,
+          "u8": 6,
+          "byte_threw": false,
+          "compensated_u32": 12,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 25400,
+          "u32": 127,
+          "u16": 127,
+          "u8": 127,
+          "byte_threw": false,
+          "compensated_u32": 254,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": true
+        },
+        {
+          "mode": 0,
+          "milliseconds": 25401,
+          "u32": 128,
+          "u16": 128,
+          "u8": 128,
+          "byte_threw": false,
+          "compensated_u32": 256,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": false
+        },
+        {
+          "mode": 0,
+          "milliseconds": 51000,
+          "u32": 255,
+          "u16": 255,
+          "u8": 255,
+          "byte_threw": false,
+          "compensated_u32": 510,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": false
+        },
+        {
+          "mode": 0,
+          "milliseconds": 51001,
+          "u32": 256,
+          "u16": 256,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": 512,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": false
+        },
+        {
+          "mode": 0,
+          "milliseconds": 6553400,
+          "u32": 32767,
+          "u16": 32767,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": 65534,
+          "compensated_u16_fits": true,
+          "compensated_u8_fits": false
+        },
+        {
+          "mode": 0,
+          "milliseconds": 6553600,
+          "u32": 32768,
+          "u16": 32768,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": 65536,
+          "compensated_u16_fits": false,
+          "compensated_u8_fits": false
+        },
+        {
+          "mode": 0,
+          "milliseconds": 13107000,
+          "u32": 65535,
+          "u16": 65535,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": 131070,
+          "compensated_u16_fits": false,
+          "compensated_u8_fits": false
+        },
+        {
+          "mode": 0,
+          "milliseconds": 13107200,
+          "u32": 65536,
+          "u16": 0,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": 131072,
+          "compensated_u16_fits": false,
+          "compensated_u8_fits": false
+        },
+        {
+          "mode": 0,
+          "milliseconds": 2147483648,
+          "u32": 10737418,
+          "u16": 55050,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": 21474836,
+          "compensated_u16_fits": false,
+          "compensated_u8_fits": false
+        },
+        {
+          "mode": 0,
+          "milliseconds": 4294967295,
+          "u32": 21474836,
+          "u16": 44564,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": 42949672,
+          "compensated_u16_fits": false,
+          "compensated_u8_fits": false
+        },
+        {
+          "mode": 1,
+          "milliseconds": 0,
+          "u32": 0,
+          "u16": 0,
+          "u8": 0,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 1,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 99,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 100,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 199,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 200,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 201,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 249,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 250,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 399,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 400,
+          "u32": 3,
+          "u16": 3,
+          "u8": 3,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 401,
+          "u32": 3,
+          "u16": 3,
+          "u8": 3,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 999,
+          "u32": 5,
+          "u16": 5,
+          "u8": 5,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 1000,
+          "u32": 6,
+          "u16": 6,
+          "u8": 6,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 1001,
+          "u32": 6,
+          "u16": 6,
+          "u8": 6,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 25400,
+          "u32": 128,
+          "u16": 128,
+          "u8": 128,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 25401,
+          "u32": 128,
+          "u16": 128,
+          "u8": 128,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 51000,
+          "u32": 256,
+          "u16": 256,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 51001,
+          "u32": 256,
+          "u16": 256,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 6553400,
+          "u32": 32768,
+          "u16": 32768,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 6553600,
+          "u32": 32769,
+          "u16": 32769,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 13107000,
+          "u32": 65536,
+          "u16": 0,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 13107200,
+          "u32": 65537,
+          "u16": 1,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 2147483648,
+          "u32": 10737419,
+          "u16": 55051,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 1,
+          "milliseconds": 4294967295,
+          "u32": 21474838,
+          "u16": 44566,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 0,
+          "u32": 0,
+          "u16": 0,
+          "u8": 0,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 1,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 99,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 100,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 199,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 200,
+          "u32": 3,
+          "u16": 3,
+          "u8": 3,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 201,
+          "u32": 3,
+          "u16": 3,
+          "u8": 3,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 249,
+          "u32": 3,
+          "u16": 3,
+          "u8": 3,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 250,
+          "u32": 3,
+          "u16": 3,
+          "u8": 3,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 399,
+          "u32": 4,
+          "u16": 4,
+          "u8": 4,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 400,
+          "u32": 5,
+          "u16": 5,
+          "u8": 5,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 401,
+          "u32": 5,
+          "u16": 5,
+          "u8": 5,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 999,
+          "u32": 10,
+          "u16": 10,
+          "u8": 10,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 1000,
+          "u32": 11,
+          "u16": 11,
+          "u8": 11,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 1001,
+          "u32": 11,
+          "u16": 11,
+          "u8": 11,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 25400,
+          "u32": 255,
+          "u16": 255,
+          "u8": 255,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 25401,
+          "u32": 255,
+          "u16": 255,
+          "u8": 255,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 51000,
+          "u32": 511,
+          "u16": 511,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 51001,
+          "u32": 511,
+          "u16": 511,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 6553400,
+          "u32": 65535,
+          "u16": 65535,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 6553600,
+          "u32": 65537,
+          "u16": 1,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 13107000,
+          "u32": 131071,
+          "u16": 65535,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 13107200,
+          "u32": 131073,
+          "u16": 1,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 2147483648,
+          "u32": 21474838,
+          "u16": 44566,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 2,
+          "milliseconds": 4294967295,
+          "u32": 42949676,
+          "u16": 23596,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 0,
+          "u32": 0,
+          "u16": 0,
+          "u8": 0,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 1,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 99,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 100,
+          "u32": 1,
+          "u16": 1,
+          "u8": 1,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 199,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 200,
+          "u32": 2,
+          "u16": 2,
+          "u8": 2,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 201,
+          "u32": 3,
+          "u16": 3,
+          "u8": 3,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 249,
+          "u32": 3,
+          "u16": 3,
+          "u8": 3,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 250,
+          "u32": 3,
+          "u16": 3,
+          "u8": 3,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 399,
+          "u32": 4,
+          "u16": 4,
+          "u8": 4,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 400,
+          "u32": 4,
+          "u16": 4,
+          "u8": 4,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 401,
+          "u32": 5,
+          "u16": 5,
+          "u8": 5,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 999,
+          "u32": 10,
+          "u16": 10,
+          "u8": 10,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 1000,
+          "u32": 10,
+          "u16": 10,
+          "u8": 10,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 1001,
+          "u32": 11,
+          "u16": 11,
+          "u8": 11,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 25400,
+          "u32": 254,
+          "u16": 254,
+          "u8": 254,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 25401,
+          "u32": 255,
+          "u16": 255,
+          "u8": 255,
+          "byte_threw": false,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 51000,
+          "u32": 510,
+          "u16": 510,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 51001,
+          "u32": 511,
+          "u16": 511,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 6553400,
+          "u32": 65534,
+          "u16": 65534,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 6553600,
+          "u32": 65536,
+          "u16": 0,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 13107000,
+          "u32": 131070,
+          "u16": 65534,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 13107200,
+          "u32": 131072,
+          "u16": 0,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 2147483648,
+          "u32": 21474836,
+          "u16": 44564,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        },
+        {
+          "mode": 3,
+          "milliseconds": 4294967295,
+          "u32": 42949672,
+          "u16": 23592,
+          "u8": null,
+          "byte_threw": true,
+          "compensated_u32": null,
+          "compensated_u16_fits": null,
+          "compensated_u8_fits": null
+        }
+      ],
+      "real_cases": [
+        {
+          "mode": 0,
+          "input": 0.0,
+          "result_word": "00000000"
+        },
+        {
+          "mode": 0,
+          "input": 0.125,
+          "result_word": "3a23d70a"
+        },
+        {
+          "mode": 0,
+          "input": 1.0,
+          "result_word": "3ba3d70a"
+        },
+        {
+          "mode": 0,
+          "input": 199.5,
+          "result_word": "3f7f5c29"
+        },
+        {
+          "mode": 0,
+          "input": 200.0,
+          "result_word": "3f800000"
+        },
+        {
+          "mode": 0,
+          "input": 250.25,
+          "result_word": "3fa028f6"
+        },
+        {
+          "mode": 0,
+          "input": 1000.0,
+          "result_word": "40a00000"
+        },
+        {
+          "mode": 0,
+          "input": 16777216.0,
+          "result_word": "47a3d70a"
+        },
+        {
+          "mode": 1,
+          "input": 0.0,
+          "result_word": "00000000"
+        },
+        {
+          "mode": 1,
+          "input": 0.125,
+          "result_word": "3a23d70b"
+        },
+        {
+          "mode": 1,
+          "input": 1.0,
+          "result_word": "3ba3d70b"
+        },
+        {
+          "mode": 1,
+          "input": 199.5,
+          "result_word": "3f7f5c2a"
+        },
+        {
+          "mode": 1,
+          "input": 200.0,
+          "result_word": "3f800001"
+        },
+        {
+          "mode": 1,
+          "input": 250.25,
+          "result_word": "3fa028f7"
+        },
+        {
+          "mode": 1,
+          "input": 1000.0,
+          "result_word": "40a00001"
+        },
+        {
+          "mode": 1,
+          "input": 16777216.0,
+          "result_word": "47a3d70b"
+        },
+        {
+          "mode": 2,
+          "input": 0.0,
+          "result_word": "00000000"
+        },
+        {
+          "mode": 2,
+          "input": 0.125,
+          "result_word": "3aa3d70b"
+        },
+        {
+          "mode": 2,
+          "input": 1.0,
+          "result_word": "3c23d70b"
+        },
+        {
+          "mode": 2,
+          "input": 199.5,
+          "result_word": "3fff5c2a"
+        },
+        {
+          "mode": 2,
+          "input": 200.0,
+          "result_word": "40000001"
+        },
+        {
+          "mode": 2,
+          "input": 250.25,
+          "result_word": "402028f7"
+        },
+        {
+          "mode": 2,
+          "input": 1000.0,
+          "result_word": "41200001"
+        },
+        {
+          "mode": 2,
+          "input": 16777216.0,
+          "result_word": "4823d70b"
+        },
+        {
+          "mode": 3,
+          "input": 0.0,
+          "result_word": "00000000"
+        },
+        {
+          "mode": 3,
+          "input": 0.125,
+          "result_word": "3aa3d70a"
+        },
+        {
+          "mode": 3,
+          "input": 1.0,
+          "result_word": "3c23d70a"
+        },
+        {
+          "mode": 3,
+          "input": 199.5,
+          "result_word": "3fff5c29"
+        },
+        {
+          "mode": 3,
+          "input": 200.0,
+          "result_word": "40000000"
+        },
+        {
+          "mode": 3,
+          "input": 250.25,
+          "result_word": "402028f6"
+        },
+        {
+          "mode": 3,
+          "input": 1000.0,
+          "result_word": "41200000"
+        },
+        {
+          "mode": 3,
+          "input": 16777216.0,
+          "result_word": "4823d70a"
+        }
+      ],
+      "positive": {
+        "returncode": 0,
+        "stdout": "FACTOR,0,3ba3d70a\nFACTOR,1,3ba3d70b\nFACTOR,2,3c23d70b\nFACTOR,3,3c23d70a\nINTEGER,0,0,0,0,0,0,0,1,1\nINTEGER,0,1,1,1,1,0,2,1,1\nINTEGER,0,99,1,1,1,0,2,1,1\nINTEGER,0,100,1,1,1,0,2,1,1\nINTEGER,0,199,1,1,1,0,2,1,1\nINTEGER,0,200,1,1,1,0,2,1,1\nINTEGER,0,201,2,2,2,0,4,1,1\nINTEGER,0,249,2,2,2,0,4,1,1\nINTEGER,0,250,2,2,2,0,4,1,1\nINTEGER,0,399,2,2,2,0,4,1,1\nINTEGER,0,400,2,2,2,0,4,1,1\nINTEGER,0,401,3,3,3,0,6,1,1\nINTEGER,0,999,5,5,5,0,10,1,1\nINTEGER,0,1000,5,5,5,0,10,1,1\nINTEGER,0,1001,6,6,6,0,12,1,1\nINTEGER,0,25400,127,127,127,0,254,1,1\nINTEGER,0,25401,128,128,128,0,256,1,0\nINTEGER,0,51000,255,255,255,0,510,1,0\nINTEGER,0,51001,256,256,165,1,512,1,0\nINTEGER,0,6553400,32767,32767,165,1,65534,1,0\nINTEGER,0,6553600,32768,32768,165,1,65536,0,0\nINTEGER,0,13107000,65535,65535,165,1,131070,0,0\nINTEGER,0,13107200,65536,0,165,1,131072,0,0\nINTEGER,0,2147483648,10737418,55050,165,1,21474836,0,0\nINTEGER,0,4294967295,21474836,44564,165,1,42949672,0,0\nREAL,0,00000000,00000000\nREAL,0,3e000000,3a23d70a\nREAL,0,3f800000,3ba3d70a\nREAL,0,43478000,3f7f5c29\nREAL,0,43480000,3f800000\nREAL,0,437a4000,3fa028f6\nREAL,0,447a0000,40a00000\nREAL,0,4b800000,47a3d70a\nINTEGER,1,0,0,0,0,0,0,0,0\nINTEGER,1,1,1,1,1,0,0,0,0\nINTEGER,1,99,1,1,1,0,0,0,0\nINTEGER,1,100,1,1,1,0,0,0,0\nINTEGER,1,199,1,1,1,0,0,0,0\nINTEGER,1,200,2,2,2,0,0,0,0\nINTEGER,1,201,2,2,2,0,0,0,0\nINTEGER,1,249,2,2,2,0,0,0,0\nINTEGER,1,250,2,2,2,0,0,0,0\nINTEGER,1,399,2,2,2,0,0,0,0\nINTEGER,1,400,3,3,3,0,0,0,0\nINTEGER,1,401,3,3,3,0,0,0,0\nINTEGER,1,999,5,5,5,0,0,0,0\nINTEGER,1,1000,6,6,6,0,0,0,0\nINTEGER,1,1001,6,6,6,0,0,0,0\nINTEGER,1,25400,128,128,128,0,0,0,0\nINTEGER,1,25401,128,128,128,0,0,0,0\nINTEGER,1,51000,256,256,165,1,0,0,0\nINTEGER,1,51001,256,256,165,1,0,0,0\nINTEGER,1,6553400,32768,32768,165,1,0,0,0\nINTEGER,1,6553600,32769,32769,165,1,0,0,0\nINTEGER,1,13107000,65536,0,165,1,0,0,0\nINTEGER,1,13107200,65537,1,165,1,0,0,0\nINTEGER,1,2147483648,10737419,55051,165,1,0,0,0\nINTEGER,1,4294967295,21474838,44566,165,1,0,0,0\nREAL,1,00000000,00000000\nREAL,1,3e000000,3a23d70b\nREAL,1,3f800000,3ba3d70b\nREAL,1,43478000,3f7f5c2a\nREAL,1,43480000,3f800001\nREAL,1,437a4000,3fa028f7\nREAL,1,447a0000,40a00001\nREAL,1,4b800000,47a3d70b\nINTEGER,2,0,0,0,0,0,0,0,0\nINTEGER,2,1,1,1,1,0,0,0,0\nINTEGER,2,99,1,1,1,0,0,0,0\nINTEGER,2,100,2,2,2,0,0,0,0\nINTEGER,2,199,2,2,2,0,0,0,0\nINTEGER,2,200,3,3,3,0,0,0,0\nINTEGER,2,201,3,3,3,0,0,0,0\nINTEGER,2,249,3,3,3,0,0,0,0\nINTEGER,2,250,3,3,3,0,0,0,0\nINTEGER,2,399,4,4,4,0,0,0,0\nINTEGER,2,400,5,5,5,0,0,0,0\nINTEGER,2,401,5,5,5,0,0,0,0\nINTEGER,2,999,10,10,10,0,0,0,0\nINTEGER,2,1000,11,11,11,0,0,0,0\nINTEGER,2,1001,11,11,11,0,0,0,0\nINTEGER,2,25400,255,255,255,0,0,0,0\nINTEGER,2,25401,255,255,255,0,0,0,0\nINTEGER,2,51000,511,511,165,1,0,0,0\nINTEGER,2,51001,511,511,165,1,0,0,0\nINTEGER,2,6553400,65535,65535,165,1,0,0,0\nINTEGER,2,6553600,65537,1,165,1,0,0,0\nINTEGER,2,13107000,131071,65535,165,1,0,0,0\nINTEGER,2,13107200,131073,1,165,1,0,0,0\nINTEGER,2,2147483648,21474838,44566,165,1,0,0,0\nINTEGER,2,4294967295,42949676,23596,165,1,0,0,0\nREAL,2,00000000,00000000\nREAL,2,3e000000,3aa3d70b\nREAL,2,3f800000,3c23d70b\nREAL,2,43478000,3fff5c2a\nREAL,2,43480000,40000001\nREAL,2,437a4000,402028f7\nREAL,2,447a0000,41200001\nREAL,2,4b800000,4823d70b\nINTEGER,3,0,0,0,0,0,0,0,0\nINTEGER,3,1,1,1,1,0,0,0,0\nINTEGER,3,99,1,1,1,0,0,0,0\nINTEGER,3,100,1,1,1,0,0,0,0\nINTEGER,3,199,2,2,2,0,0,0,0\nINTEGER,3,200,2,2,2,0,0,0,0\nINTEGER,3,201,3,3,3,0,0,0,0\nINTEGER,3,249,3,3,3,0,0,0,0\nINTEGER,3,250,3,3,3,0,0,0,0\nINTEGER,3,399,4,4,4,0,0,0,0\nINTEGER,3,400,4,4,4,0,0,0,0\nINTEGER,3,401,5,5,5,0,0,0,0\nINTEGER,3,999,10,10,10,0,0,0,0\nINTEGER,3,1000,10,10,10,0,0,0,0\nINTEGER,3,1001,11,11,11,0,0,0,0\nINTEGER,3,25400,254,254,254,0,0,0,0\nINTEGER,3,25401,255,255,255,0,0,0,0\nINTEGER,3,51000,510,510,165,1,0,0,0\nINTEGER,3,51001,511,511,165,1,0,0,0\nINTEGER,3,6553400,65534,65534,165,1,0,0,0\nINTEGER,3,6553600,65536,0,165,1,0,0,0\nINTEGER,3,13107000,131070,65534,165,1,0,0,0\nINTEGER,3,13107200,131072,0,165,1,0,0,0\nINTEGER,3,2147483648,21474836,44564,165,1,0,0,0\nINTEGER,3,4294967295,42949672,23592,165,1,0,0,0\nREAL,3,00000000,00000000\nREAL,3,3e000000,3aa3d70a\nREAL,3,3f800000,3c23d70a\nREAL,3,43478000,3fff5c29\nREAL,3,43480000,40000000\nREAL,3,437a4000,402028f6\nREAL,3,447a0000,41200000\nREAL,3,4b800000,4823d70a\nCOUNTS,720344,87033,145464,34614\nPASS,ABI,0\n",
+        "stderr": ""
+      },
+      "output_faults": [
+        {
+          "fault": "floor_instead_of_ceil",
+          "rejected": true,
+          "returncode": 0,
+          "stdout": "FACTOR,0,3ba3d70a\nFACTOR,1,3ba3d70b\nFACTOR,2,3c23d70b\nFACTOR,3,3c23d70a\nINTEGER,0,0,0,0,0,0,0,1,1\nINTEGER,0,1,0,0,0,0,0,1,1\nINTEGER,0,99,0,0,0,0,0,1,1\nINTEGER,0,100,0,0,0,0,0,1,1\nINTEGER,0,199,0,0,0,0,0,1,1\nINTEGER,0,200,0,0,0,0,0,1,1\nINTEGER,0,201,1,1,1,0,2,1,1\nINTEGER,0,249,1,1,1,0,2,1,1\nINTEGER,0,250,1,1,1,0,2,1,1\nINTEGER,0,399,1,1,1,0,2,1,1\nINTEGER,0,400,1,1,1,0,2,1,1\nINTEGER,0,401,2,2,2,0,4,1,1\nINTEGER,0,999,4,4,4,0,8,1,1\nINTEGER,0,1000,4,4,4,0,8,1,1\nINTEGER,0,1001,5,5,5,0,10,1,1\nINTEGER,0,25400,126,126,126,0,252,1,1\nINTEGER,0,25401,127,127,127,0,254,1,1\nINTEGER,0,51000,254,254,254,0,508,1,0\nINTEGER,0,51001,255,255,255,0,510,1,0\nINTEGER,0,6553400,32766,32766,165,1,65532,1,0\nINTEGER,0,6553600,32767,32767,165,1,65534,1,0\nINTEGER,0,13107000,65534,65534,165,1,131068,0,0\nINTEGER,0,13107200,65535,65535,165,1,131070,0,0\nINTEGER,0,2147483648,10737418,55050,165,1,21474836,0,0\nINTEGER,0,4294967295,21474835,44563,165,1,42949670,0,0\nREAL,0,00000000,00000000\nREAL,0,3e000000,3a23d70a\nREAL,0,3f800000,3ba3d70a\nREAL,0,43478000,3f7f5c29\nREAL,0,43480000,3f800000\nREAL,0,437a4000,3fa028f6\nREAL,0,447a0000,40a00000\nREAL,0,4b800000,47a3d70a\nINTEGER,1,0,0,0,0,0,0,0,0\nINTEGER,1,1,0,0,0,0,0,0,0\nINTEGER,1,99,0,0,0,0,0,0,0\nINTEGER,1,100,0,0,0,0,0,0,0\nINTEGER,1,199,0,0,0,0,0,0,0\nINTEGER,1,200,1,1,1,0,0,0,0\nINTEGER,1,201,1,1,1,0,0,0,0\nINTEGER,1,249,1,1,1,0,0,0,0\nINTEGER,1,250,1,1,1,0,0,0,0\nINTEGER,1,399,1,1,1,0,0,0,0\nINTEGER,1,400,2,2,2,0,0,0,0\nINTEGER,1,401,2,2,2,0,0,0,0\nINTEGER,1,999,4,4,4,0,0,0,0\nINTEGER,1,1000,5,5,5,0,0,0,0\nINTEGER,1,1001,5,5,5,0,0,0,0\nINTEGER,1,25400,127,127,127,0,0,0,0\nINTEGER,1,25401,127,127,127,0,0,0,0\nINTEGER,1,51000,255,255,255,0,0,0,0\nINTEGER,1,51001,255,255,255,0,0,0,0\nINTEGER,1,6553400,32767,32767,165,1,0,0,0\nINTEGER,1,6553600,32768,32768,165,1,0,0,0\nINTEGER,1,13107000,65535,65535,165,1,0,0,0\nINTEGER,1,13107200,65536,0,165,1,0,0,0\nINTEGER,1,2147483648,10737419,55051,165,1,0,0,0\nINTEGER,1,4294967295,21474837,44565,165,1,0,0,0\nREAL,1,00000000,00000000\nREAL,1,3e000000,3a23d70b\nREAL,1,3f800000,3ba3d70b\nREAL,1,43478000,3f7f5c2a\nREAL,1,43480000,3f800001\nREAL,1,437a4000,3fa028f7\nREAL,1,447a0000,40a00001\nREAL,1,4b800000,47a3d70b\nINTEGER,2,0,0,0,0,0,0,0,0\nINTEGER,2,1,0,0,0,0,0,0,0\nINTEGER,2,99,0,0,0,0,0,0,0\nINTEGER,2,100,1,1,1,0,0,0,0\nINTEGER,2,199,1,1,1,0,0,0,0\nINTEGER,2,200,2,2,2,0,0,0,0\nINTEGER,2,201,2,2,2,0,0,0,0\nINTEGER,2,249,2,2,2,0,0,0,0\nINTEGER,2,250,2,2,2,0,0,0,0\nINTEGER,2,399,3,3,3,0,0,0,0\nINTEGER,2,400,4,4,4,0,0,0,0\nINTEGER,2,401,4,4,4,0,0,0,0\nINTEGER,2,999,9,9,9,0,0,0,0\nINTEGER,2,1000,10,10,10,0,0,0,0\nINTEGER,2,1001,10,10,10,0,0,0,0\nINTEGER,2,25400,254,254,254,0,0,0,0\nINTEGER,2,25401,254,254,254,0,0,0,0\nINTEGER,2,51000,510,510,165,1,0,0,0\nINTEGER,2,51001,510,510,165,1,0,0,0\nINTEGER,2,6553400,65534,65534,165,1,0,0,0\nINTEGER,2,6553600,65536,0,165,1,0,0,0\nINTEGER,2,13107000,131070,65534,165,1,0,0,0\nINTEGER,2,13107200,131072,0,165,1,0,0,0\nINTEGER,2,2147483648,21474838,44566,165,1,0,0,0\nINTEGER,2,4294967295,42949675,23595,165,1,0,0,0\nREAL,2,00000000,00000000\nREAL,2,3e000000,3aa3d70b\nREAL,2,3f800000,3c23d70b\nREAL,2,43478000,3fff5c2a\nREAL,2,43480000,40000001\nREAL,2,437a4000,402028f7\nREAL,2,447a0000,41200001\nREAL,2,4b800000,4823d70b\nINTEGER,3,0,0,0,0,0,0,0,0\nINTEGER,3,1,0,0,0,0,0,0,0\nINTEGER,3,99,0,0,0,0,0,0,0\nINTEGER,3,100,0,0,0,0,0,0,0\nINTEGER,3,199,1,1,1,0,0,0,0\nINTEGER,3,200,1,1,1,0,0,0,0\nINTEGER,3,201,2,2,2,0,0,0,0\nINTEGER,3,249,2,2,2,0,0,0,0\nINTEGER,3,250,2,2,2,0,0,0,0\nINTEGER,3,399,3,3,3,0,0,0,0\nINTEGER,3,400,3,3,3,0,0,0,0\nINTEGER,3,401,4,4,4,0,0,0,0\nINTEGER,3,999,9,9,9,0,0,0,0\nINTEGER,3,1000,9,9,9,0,0,0,0\nINTEGER,3,1001,10,10,10,0,0,0,0\nINTEGER,3,25400,253,253,253,0,0,0,0\nINTEGER,3,25401,254,254,254,0,0,0,0\nINTEGER,3,51000,509,509,165,1,0,0,0\nINTEGER,3,51001,510,510,165,1,0,0,0\nINTEGER,3,6553400,65533,65533,165,1,0,0,0\nINTEGER,3,6553600,65535,65535,165,1,0,0,0\nINTEGER,3,13107000,131069,65533,165,1,0,0,0\nINTEGER,3,13107200,131071,65535,165,1,0,0,0\nINTEGER,3,2147483648,21474836,44564,165,1,0,0,0\nINTEGER,3,4294967295,42949671,23591,165,1,0,0,0\nREAL,3,00000000,00000000\nREAL,3,3e000000,3aa3d70a\nREAL,3,3f800000,3c23d70a\nREAL,3,43478000,3fff5c29\nREAL,3,43480000,40000000\nREAL,3,437a4000,402028f6\nREAL,3,447a0000,41200000\nREAL,3,4b800000,4823d70a\nCOUNTS,720344,86430,145666,34412\nPASS,ABI,0\n",
+          "stderr": "",
+          "rejection_mechanism": "independent Python oracle",
+          "oracle_failure": "('integer oracle', ['INTEGER', '0', '1', '0', '0', '0', '0', '0', '1', '1'], 1)"
+        },
+        {
+          "fault": "scale_before_rounding",
+          "rejected": true,
+          "returncode": 1,
+          "stdout": "FACTOR,0,3ba3d70a\nFACTOR,1,3ba3d70b\nFACTOR,2,3c23d70b\nFACTOR,3,3c23d70a\nINTEGER,0,0,0,0,0,0,0,1,1\n",
+          "stderr": "duration check refused line 162: value==baseline*2\n",
+          "rejection_mechanism": "C fixture assertion"
+        },
+        {
+          "fault": "narrow_overflow_write",
+          "rejected": true,
+          "returncode": 1,
+          "stdout": "FACTOR,0,3ba3d70a\nFACTOR,1,3ba3d70b\nFACTOR,2,3c23d70b\nFACTOR,3,3c23d70a\nINTEGER,0,0,0,0,0,0,0,1,1\nINTEGER,0,1,1,1,1,0,2,1,1\nINTEGER,0,99,1,1,1,0,2,1,1\nINTEGER,0,100,1,1,1,0,2,1,1\nINTEGER,0,199,1,1,1,0,2,1,1\nINTEGER,0,200,1,1,1,0,2,1,1\nINTEGER,0,201,2,2,2,0,4,1,1\nINTEGER,0,249,2,2,2,0,4,1,1\nINTEGER,0,250,2,2,2,0,4,1,1\nINTEGER,0,399,2,2,2,0,4,1,1\nINTEGER,0,400,2,2,2,0,4,1,1\nINTEGER,0,401,3,3,3,0,6,1,1\nINTEGER,0,999,5,5,5,0,10,1,1\nINTEGER,0,1000,5,5,5,0,10,1,1\nINTEGER,0,1001,6,6,6,0,12,1,1\nINTEGER,0,25400,127,127,127,0,254,1,1\n",
+          "stderr": "duration check refused line 163: value==0xdeadbeef\n",
+          "rejection_mechanism": "C fixture assertion"
+        }
+      ],
+      "counts": {
+        "parser_calls": 720344,
+        "byte_overflow_reports": 87033,
+        "accepted_compensations": 145464,
+        "refused_compensations": 34614
+      }
+    }
+  ],
+  "substitutions": [
+    "numeric token getters/scanners",
+    "positive finite mathematical ceil",
+    "exact integral x87 result conversion without control-word changes",
+    "byte-overflow exception reporting via fixture longjmp"
+  ],
+  "limits": [
+    "no text tokenization, MSVC exception unwinding or live object storage qualification",
+    "no installed hook, game startup, multiplayer or gameplay executed",
+    "narrow overflow is refused by the candidate; actual field coverage unresolved"
+  ],
+  "fixture_fp_control_audit": {
+    "object_sha256": "fd11bd14fa28b16a46e2347567e69d50a0b395dbfb6f9467df6e4704dcd70aa2",
+    "control_word_writers": [],
+    "scope": "compiled fixture object; linked CRT startup excluded; all copied native bodies separately preflighted"
+  },
+  "installed_checkpoint": {
+    "version": "0.9.11-beta.13",
+    "sha256": {
+      "bfme2perf.asi": "976f529feab68574dce9bcc2c77af030554fdb29f3e17274bf68cdcff92cdcdd",
+      "bfme2perf.ini": "e5dd4a0ce274f4adc6ad6472dfc9a63017e31b8e076e48f05e24c8c6f758837b"
+    },
+    "changed": false,
+    "launcher_changed": false
+  },
+  "attempt_notes": [
+    {
+      "result": "initial preflight refused before native execution",
+      "reason": "float parser has two complete code-pattern matches with different multiplier globals",
+      "correction": "require a unique complete body plus the duration global identified by the rate setter"
+    }
+  ],
+  "coverage": {
+    "integer_sample_inputs_per_image": 25,
+    "factor_modes": 4,
+    "real_sample_inputs_per_image": 8,
+    "dense_sweep_ms_inclusive": [
+      0,
+      60000
+    ],
+    "dense_sweep_oracle": "native uint/ushort/byte agreement, write boundaries, ABI and legacy compensation relationship",
+    "sample_oracle": "Python binary64 multiplication/ceil and binary32 float-store results",
+    "scope_limit": "does not execute actual mod parsing, field consumers, native MSVC unwinding or a real game"
+  }
+}
