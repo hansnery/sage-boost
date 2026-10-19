@@ -16,6 +16,17 @@ and multiplayer qualification remain unmet.
 
 ## Performance beta and 120 FPS research (2026-10-19)
 
+### User target update: pursue 120 now
+
+Hans explicitly accepts the near-60 result as a milestone and asks to pursue
+120 FPS and another substantial breakthrough. The historical 59/s acceptance
+record remains unproven, but is no longer a gate for moving forward or a
+reason to keep requesting near-60 tests. Preserve beta.17 as the installed
+baseline while screening larger rendering changes. The first new screen
+measures capture-once/replay-three, with complete capture costs and fresh
+poses/shadows: [design](specs/2026-10-19-120fps-retained-screen-design.md),
+[plan](plans/2026-10-19-120fps-retained-screen.md).
+
 ### Beta.17 budget-gap recovery (2026-10-19)
 
 The candidate retains recovery credit across frames with insufficient budget,
