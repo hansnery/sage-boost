@@ -48,6 +48,33 @@ Accelerator has now run in isolated offline harnesses (below).
   resolve a reproducible multiplayer divergence only after one is observed.
   No promised FPS gain, deployment or new gameplay request from this review.
 
+### Owned render-batch worker (2026-10-18)
+
+An independently written offline worker now owns all effect/state/GPU calls
+and consumes two bounded slots of copied skeletal palettes and synthetic
+material inputs. No live engine objects or external implementation are
+transferred. Six runs pass 60 exact image/state cases, 12 borrowed-buffer
+negative controls and 12 full-queue/recovery controls; 126 three-mode samples
+are retained in the [report](benchmarks/2026-10-18-render-batch-worker.json).
+
+Producer preparation takes **0.7024-0.8115 ms per synthetic regular/extra
+pair**, excluding separately measured queue/collection waits. Against a
+direct no-palette-copy baseline, completion regresses 0.1288-0.2633 ms lit
+and 0.2262-0.6285 ms shadow. This establishes a bounded handoff, not faster
+rendering or game FPS. Its possible benefit is overlapping other caller
+work; the fixture does not execute real simulation or native data capture.
+Full-payload integrity mode adds about 5.9-6.0 ms versus direct rendering;
+all ownership/image controls remain checked in both timing modes.
+
+The native lifecycle contract identifies the next integration work:
+readiness, source callbacks and native ownership must remain on their
+original thread; copied effect values/resource identities need a qualified
+handoff, including Begin/pass results and changing effect identity. The
+fixture's worker-created device also does not solve live window/Reset
+ownership. See [scope and next boundary](specs/2026-10-18-render-batch-worker.md).
+No runtime change, installation or new gameplay request. Beta.13 and its INI
+hashes still match; sustained 60 FPS remains unproved.
+
 ### External render-thread screen (2026-10-18)
 
 The matching upstream harness for official Accelerator 2.0 build 73 runs

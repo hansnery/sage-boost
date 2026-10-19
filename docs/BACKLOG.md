@@ -31,10 +31,17 @@ Strike an item through, with the date, when it's done.
 - [x] 2026-10-18: independently attribute synchronous getter boundaries
   through the external DLL's counters. Shader and constant reads after
   queued effect work drain; counts do not establish their elapsed cost.
-- [ ] Investigate a complete render-batch boundary that keeps effect work,
-  state queries and submission together on the worker. Prove copied inputs,
-  ownership, ordering and completion before implementing production hooks.
-  Full scene/Present, native sources and multiplayer remain unqualified.
+- [x] 2026-10-18: screen a complete fixture batch with effect/state/GPU work
+  on one worker. Two owned palette slots pass 60 exact image/state cases,
+  12 alias faults and 12 capacity/recovery controls. Preserve 126 three-mode
+  samples in `benchmarks/2026-10-18-render-batch-worker.json`. Copying takes
+  0.70-0.81 ms/pair before waits; completion is slightly slower than direct.
+- [ ] Qualify real producer-side capture: keep readiness, native state,
+  source evaluation and object lifetimes on their original thread; copy
+  effect values and use stable resource identities. Handle Begin/pass
+  results, effect identity changes and unsupported/failing work explicitly.
+  Live device/window/Reset ownership, full scene/Present and multiplayer
+  remain unproved. Do not move live engine callbacks onto the worker.
 - [x] 2026-10-18: back up a second launcher replacement of beta.13 by
   0.9.10, restore the identical tested binary and only the three missing beta
   keys, and verify the shortcut with CheckOnly. No game launched; see
