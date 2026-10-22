@@ -7,6 +7,12 @@ Strike an item through, with the date, when it's done.
 
 ## Full-rate 60 FPS investigation (2026-10-17)
 
+- [x] 2026-10-22: publish beta.18 as an authorized maintenance Beta with
+  PairMaxExtras=1, preserving beta.14 settings and the faction unlocker.
+  Full plugin suite and all four public download comparisons pass. Stable
+  remains on perf 0.9.10; no new heavy-scene FPS or multiplayer claim.
+  [Receipt](benchmarks/2026-10-22-beta18-launcher-publication.json).
+
 - [x] 2026-10-18: screen paired cadence with actual legacy admission as the
   comparison, native-clock quantization, bounded predicted borrowing and
   later debt repayment. Controlled costs give 60.6/45.45/30.3 modeled rates

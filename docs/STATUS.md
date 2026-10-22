@@ -1,4 +1,4 @@
-# Status and handoff (2026-10-19)
+# Status and handoff (2026-10-22)
 
 Where the three repositories and the installed game stand, for a model or
 person picking the work up. Rules, build steps and branches are in
@@ -13,6 +13,64 @@ It separates gameplay results, offline regressions, insufficient synthetic
 gains and untested alternatives. On October 19 Hans reported the first clear
 heavy-scene improvement with beta.14, around 55 FPS. The settled 59/s target
 and multiplayer qualification remain unmet.
+
+## Beta.18 maintenance update published (2026-10-22)
+
+Hans authorized publishing beta.18 with conservative defaults after reviewing
+its recovery fixes and the absence of a demonstrated heavy-scene FPS gain.
+Current launcher Beta: **0.5.0.2-perf.0.9.11-beta.18**, release
+`802c3ff8cd611b34d1c5`. Stable remains **0.5.0-perf.0.9.10**. The new bundle's
+fourth numeric revision makes the update visible to existing launcher clients.
+
+Published the exact previously tested beta.18 ASI (SHA-256
+`da6a45e616653ba9d4496f88631c969ca7614207998e69f93bad5134267dc111`).
+The full plugin suite passed again on October 22. Production sources match
+the original qualification; the intervening Makefile change only adds an
+offline UI-upload benchmark. The profile preserves every beta.14 value and
+adds **PairMaxExtras=1**; PairPacing stays enabled. The faction unlocker and
+its INI are byte-identical to the previous public release. Higher-rate modes
+remain an advanced opt-in, with gameplay gains unverified.
+
+Public latest metadata, complete notes and all four signed HTTP 206 downloads
+were checked; every downloaded byte matches the frozen source. Stable and
+other components in the public release response are unchanged. The local
+development ASI/INI are unchanged, including its existing PairMaxExtras=3.
+No game was launched. The payload/notes were committed and pushed as
+`7606dd9`; publishing created no new runtime build or launcher installer.
+
+Frozen source, before/after snapshots, test evidence and publication log:
+`C:\repositories\realms-launcher\target\sage-boost-perf-beta18-release`.
+[Publication receipt](benchmarks/2026-10-22-beta18-launcher-publication.json),
+[player release notes](releases/perf-0.9.11-beta.18.md).
+Players select **sage-boost > Beta > Apply selected release** in the launcher.
+This is a recovery maintenance beta, with no claim of a heavy-scene FPS
+increase or completed multiplayer validation. Older entries below preserve
+the historical public beta.14/local beta.18 distinction.
+
+### Upstream recheck (2026-10-22)
+
+Reviewed release notes, branch/commit metadata, README documentation and
+issue/PR discussions; no external implementation was copied or installed.
+No newer relevant development since the October 18 review was found.
+
+- SAGE Unlocked's stable download remains **1.9.5**. A **1.9.6 prerelease**
+  from October 10 UTC was missing from our previous summary; it predates that
+  review. Its documented new work concerns effect timing, optional higher
+  shadow resolution and camera zoom in RA3/Uprising/TW/KW, without a new
+  BFME2/ROTWK performance or multiplayer fix claim. Main remains `a770379`;
+  the prerelease branch `sweep-fixes` is `8355312`.
+  [Release notes](https://github.com/TheeHorse/SAGE-Unlocked/releases/tag/v1.9.6).
+  Hans's multiplayer unit-skipping report still has no subsequent maintainer
+  fix confirmation in [issue 20](https://github.com/TheeHorse/SAGE-Unlocked/issues/20#issuecomment-6121525031).
+  [ROTWK effect-speed issue 32](https://github.com/TheeHorse/SAGE-Unlocked/issues/32)
+  remains open; the maintainer's last reply promises investigation.
+- BFME2 Accelerator still offers **2.0 build 73**, main `c993d9a`, the same
+  download reviewed earlier. Its [player README](https://github.com/OhadBaehr/bfme2-accelerator/blob/main/packaging/README.txt)
+  still says multiplayer is untested. [PR 5](https://github.com/OhadBaehr/bfme2-accelerator/pull/5)
+  remains open: an external-loader initialization API for heap/CRT/preshader
+  optimizations, with renderer/engine hooks excluded and in-game/multiplayer
+  qualification outstanding. Its two edge-case fixes are already in build 73;
+  the open API proposal is not a new released rendering improvement.
 
 ## Performance beta and 120 FPS research (2026-10-19)
 

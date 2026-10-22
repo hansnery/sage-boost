@@ -93,27 +93,31 @@ and nothing in its added code jumps into a hooked prologue.
 
 ### Performance plugin
 
-The development branch includes an opt-in **0.9.11-beta.14 paired cadence**
-experiment. `[Experimental] PairPacing=1` allows one extra draw per native
-update and repays small deadline overruns in later waits. It requires
-`MaxFPS>=60`, `FrameSmoothing=3`, `ShadowInterval=1` and
-`ExtraFrameShadows=1`; reflection preferences remain unchanged. Missing
-requirements leave the old scheduler active. The default is `PairPacing=0`.
-Offline adapter tests pass. Hans reports around 55 FPS in the heavy scene;
-the copied capture supports improvement, but a settled 59/s result and
-matching-beta multiplayer remain unverified. It is now available in the
-Realms Launcher **Beta** channel as `0.5.0.1-perf.0.9.11-beta.14`, with
-paired cadence enabled in its launcher profile. Stable is unchanged.
-See the [release notes](docs/releases/perf-0.9.11-beta.14.md) and
-[gameplay report](docs/benchmarks/2026-10-19-beta14-gameplay-check.json).
-See the [behavior and verification limits](docs/specs/2026-10-19-paired-cadence-runtime.md).
+The Realms Launcher **Beta** channel now offers **0.9.11-beta.18** as
+bundle `0.5.0.2-perf.0.9.11-beta.18`. It fixes two recovery cases that could
+keep suppressing extra frames after a temporary slowdown. The full plugin
+suite passes; public downloads match the tested build. Stable remains on
+0.9.10. See the [release notes](docs/releases/perf-0.9.11-beta.18.md) and
+[publication receipt](docs/benchmarks/2026-10-22-beta18-launcher-publication.json).
 
-The development candidate **0.9.11-beta.18** improves `PairMaxExtras=1..3`
-(default 1), also capped by MaxFPS. A cheap extra draw can now leave room for
-another independently checked draw, retaining fresh shadows. Controlled
-adapter tests exercise roughly 90/120 schedules; actual gameplay gains from
-this change remain unverified. The public launcher Beta remains on beta.14;
-[STATUS.md](docs/STATUS.md) records the local test installation. See the
+The launcher Beta profile uses `[Experimental] PairPacing=1` and
+`PairMaxExtras=1`, allowing one extra draw per native update and repaying
+small deadline overruns in later waits. It requires `MaxFPS>=60`,
+`FrameSmoothing=3`, `ShadowInterval=1` and `ExtraFrameShadows=1`; reflection
+preferences remain unchanged. Missing requirements leave the old scheduler
+active. The generic standalone INI still defaults to `PairPacing=0`.
+
+Beta.14 first improved Hans's heavy scene from around 30 to around 55 FPS.
+The beta.18 test reports around 50 FPS and does not establish an additional
+heavy-scene gain. Matching-beta multiplayer remains unverified. See the
+[gameplay evidence](docs/benchmarks/2026-10-19-beta18-gameplay-check.json) and
+[behavior limits](docs/specs/2026-10-19-paired-cadence-runtime.md).
+
+An advanced opt-in, `PairMaxExtras=2` or `3`, allows more draws when their
+measured work fits, also capped by MaxFPS. Every extra retains fresh shadows.
+Controlled adapter tests exercise roughly 90/120 schedules; actual gameplay
+gains remain unverified. The launcher profile keeps this at **1**, so selecting
+120 alone still targets approximately 60 FPS during paired gameplay. See the
 [sequential-admission design](docs/specs/2026-10-19-sequential-extras-design.md).
 
 1. Copy `bfme2perf.asi` and `bfme2perf.ini` into the `mss\` folder next to

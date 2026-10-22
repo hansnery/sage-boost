@@ -4,6 +4,12 @@ Evidence through 2026-10-19. Initially consolidated from development commit
 `79d58c5`; subsequent experiments cite their own reports below.
 Written at Hans's request after repeated reports of approximately 30 FPS.
 
+Publication update, 2026-10-22: beta.18 is now the launcher Beta maintenance
+release with PairMaxExtras=1. Its recovery fixes passed the full suite again;
+publication does not establish an additional heavy-scene FPS gain. Stable
+remains on 0.9.10. [Receipt](benchmarks/2026-10-22-beta18-launcher-publication.json).
+The latest upstream documentation recheck is in [STATUS.md](STATUS.md).
+
 **Beta.14 is the first user-confirmed heavy-scene improvement, around 55 FPS.
 Hans accepts near-60 as a milestone and now targets 120 FPS.** The older
 settled 59/s gate is unproven but no longer blocks this research. Earlier builds sometimes felt
