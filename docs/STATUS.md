@@ -2465,3 +2465,13 @@ sage-boost:
 - What the docs can't settle (in-game tests, the user's WorldBuilder work,
   starting a new model): [BACKLOG.md](BACKLOG.md).
 - Vanilla BFME2 1.06 for the plugin; the unlocker's manual test checklist.
+
+
+## 2026-10-30 release validation
+
+Unlocker 0.5.1 ASI passed a fresh complete dll make test run. User confirmed
+Realms BFME Online login after selecting the physical adapter instead of Radmin.
+Launcher 2.0.8 migrates ASI ownership, preserves Tacitus and saved settings,
+and format-2 manifests prevent older launchers applying the new bundle.
+Full multiplayer-match validation remains pending. Performance binary is the
+unchanged, hash-verified 0.9.11-beta.18 build.
