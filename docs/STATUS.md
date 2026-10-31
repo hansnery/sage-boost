@@ -13,6 +13,11 @@ processes for ASI exports, disabled configuration, non-game refusal, module
 pinning, duplicate ASIs and legacy proxy detection. The installed Tacitus
 DLL is mapped with DONT_RESOLVE_DLL_REFERENCES for a resource-only loader
 check; none of its code runs. This is not live coexistence verification.
+Installed to `C:/Jogos/AgeoftheRing/rotwk/mss/bfme2unlocker.asi` after
+`make test` passed. Restored missing bfme2perf from the hash-verified beta.18
+release and its Realms settings; new unlocker INI uses that release
+configuration too. Tacitus hash unchanged. Backup: `C:\Users\Hans\AppData\Local\Temp\unlocker-0.5.1-20261030-232216`.
+
 User testing remains required for Miles startup timing, faction parsing,
 Tacitus overlay and an online match. No game was launched by the agent.
 
