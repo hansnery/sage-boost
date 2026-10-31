@@ -23,6 +23,7 @@ BUILD := build
 SRCS  := src/main.c src/unlocker.c src/engine.c src/patch_table.c src/gameversion.c \
          src/config.c src/log.c src/hooks.c src/sides.c src/skirmish.c src/network.c src/rt.c
 OBJS  := $(SRCS:src/%.c=$(BUILD)/%.o) $(BUILD)/version.o
+ASI_OBJS := $(filter-out $(BUILD)/main.o $(BUILD)/version.o,$(OBJS)) $(BUILD)/asi.o $(BUILD)/asi_version.o
 
 COMMON_FLAGS := -std=gnu11 -Wall -Wextra -Werror -DWIN32_LEAN_AND_MEAN -DUNICODE -D_UNICODE
 # No C runtime in the DLL: nothing runs before or around DllMain but our code.
@@ -34,9 +35,9 @@ LIBS    := -lkernel32 -lgcc
 
 TEST_CFLAGS := -O1 $(COMMON_FLAGS) -Isrc -Itests
 
-.PHONY: all test dist clean check-arch
+.PHONY: all test dist dist-asi clean check-arch
 
-all: check-arch $(BUILD)/dinput8.dll
+all: check-arch $(BUILD)/dinput8.dll $(BUILD)/bfme2unlocker.asi
 
 check-arch:
 	@case "$$($(CC) -dumpmachine)" in \
@@ -52,6 +53,12 @@ $(BUILD)/%.o: src/%.c src/*.h | $(BUILD)
 
 $(BUILD)/version.o: src/version.rc | $(BUILD)
 	$(WINDRES) -O coff -o $@ $<
+
+$(BUILD)/asi_version.o: src/asi_version.rc | $(BUILD)
+	$(WINDRES) -O coff -o $@ $<
+
+$(BUILD)/bfme2unlocker.asi: $(ASI_OBJS) src/bfme2unlocker.def
+	$(CC) $(LDFLAGS) -o $@ $(ASI_OBJS) src/bfme2unlocker.def $(LIBS)
 
 $(BUILD)/dinput8.dll: $(OBJS) src/dinput8.def
 	$(CC) $(LDFLAGS) -o $@ $(OBJS) src/dinput8.def $(LIBS)
@@ -72,19 +79,29 @@ $(BUILD)/test_hooks.exe: $(HOOK_TEST_SRCS) src/*.h | $(BUILD)
 $(BUILD)/test_proxy.exe: tests/test_proxy.c | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -static -o $@ $<
 
+$(BUILD)/test_asi.exe: tests/test_asi.c | $(BUILD)
+	$(CC) $(TEST_CFLAGS) -static -o $@ $<
+
 $(BUILD)/test_network.exe: tests/test_network.c src/engine.c src/patch_table.c src/hooks.c src/network.c src/log.c src/sides.c src/skirmish.c src/*.h | $(BUILD)
 	$(CC) $(TEST_CFLAGS) -static -o $@ $(filter %.c,$^)
 
-test: all $(BUILD)/test_engine.exe $(BUILD)/test_hooks.exe $(BUILD)/test_proxy.exe $(BUILD)/test_network.exe
+test: all $(BUILD)/test_engine.exe $(BUILD)/test_hooks.exe $(BUILD)/test_proxy.exe $(BUILD)/test_network.exe $(BUILD)/test_asi.exe
 	$(PYTHON) ../tools/verify_sites.py
 	./$(BUILD)/test_engine.exe $(ENGINE_TEST_ARGS)
 	./$(BUILD)/test_hooks.exe "$(GAME_DAT)"
 	./$(BUILD)/test_proxy.exe "$(BUILD)/dinput8.dll"
 	./$(BUILD)/test_network.exe $(ENGINE_TEST_ARGS)
+	$(PYTHON) tests/test_asi.py
 
 dist: all
 	mkdir -p dist
 	cp $(BUILD)/dinput8.dll dinput8.ini ../LICENSE dist/
 
+dist-asi: all
+	mkdir -p dist-asi/mss
+	cp ../LICENSE dist-asi/
+	cp $(BUILD)/bfme2unlocker.asi dist-asi/mss/
+	cp dinput8.ini dist-asi/mss/bfme2unlocker.ini
+
 clean:
-	rm -rf $(BUILD) dist
+	rm -rf $(BUILD) dist dist-asi

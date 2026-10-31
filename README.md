@@ -60,6 +60,22 @@ shaders or other assets) is ever included.
 
 ### Faction unlocker
 
+**With Tacitus / BFME Online:** keep Tacitus's `dinput8.dll`. Build with
+`make dist-asi` in `dll/`, then copy `dist-asi/mss/bfme2unlocker.asi` and
+`bfme2unlocker.ini` into the game's `mss/` folder. If migrating from the
+sage-boost proxy, copy your existing `dinput8.ini` to `mss/bfme2unlocker.ini`
+to retain settings. Do not install both unlocker formats. The ASI refuses
+when the sage-boost proxy or another unlocker ASI is already loaded.
+It writes `mss/bfme2unlocker.log`; `bfme2perf.asi` can stay alongside it.
+Remove only the unlocker ASI, its INI and log to uninstall this variant.
+
+Version 0.5.1 provides this alternative loading route. Offline loader and
+patch tests do not establish live Tacitus compatibility: startup timing,
+faction selection and online play still need testing in game. The existing
+experimental LAN encoding requires compatible unlockers on every peer.
+
+**Without another DirectInput proxy:**
+
 1. Copy `dinput8.dll` and `dinput8.ini` into the folder that contains `game.dat`.
    For ROTWK that is the expansion's own folder (for Age of the Ring:
    `...\AgeoftheRing\rotwk\`), not the BFME2 folder. A mod's data folder is

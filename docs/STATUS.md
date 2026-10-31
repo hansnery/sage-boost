@@ -1,5 +1,22 @@
 # Status and handoff (2026-10-22)
 
+## Unlocker 0.5.1: alternative ASI loader (2026-10-30)
+
+Added `dll/build/bfme2unlocker.asi` using the existing unlocker engine.
+Tacitus retains `rotwk/dinput8.dll`; the ASI reads its sibling INI and logs
+beside itself in `mss/`. It pins its module and refuses a loaded sage-boost
+proxy or a second ASI instance. `make dist-asi` packages this independently
+of the original proxy distribution. The performance plugin is unchanged.
+
+Validation includes existing engine/hook/proxy/network tests and separate
+processes for ASI exports, disabled configuration, non-game refusal, module
+pinning, duplicate ASIs and legacy proxy detection. The installed Tacitus
+DLL is mapped with DONT_RESOLVE_DLL_REFERENCES for a resource-only loader
+check; none of its code runs. This is not live coexistence verification.
+User testing remains required for Miles startup timing, faction parsing,
+Tacitus overlay and an online match. No game was launched by the agent.
+
+
 Where the three repositories and the installed game stand, for a model or
 person picking the work up. Rules, build steps and branches are in
 [AGENTS.md](../AGENTS.md); the Realms side (factions, AI, files outside the

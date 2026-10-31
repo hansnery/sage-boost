@@ -1,5 +1,6 @@
 dll/build/
 dll/dist/
+dll/dist-asi/
 __pycache__/
 perf/build/
 perf/dist/
